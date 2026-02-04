@@ -38,7 +38,6 @@ public class AutoNotifyGenerator : IIncrementalGenerator
     /// <inheritdoc />
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        // Use ForAttribute extension to find types with the attribute
         context.ForEach(
             query: ctx => ctx.ForAttribute<AutoNotifyAttribute>().Map((c, _) => new AutoNotifyModel(c.TargetSymbol)),
             generate: (ctx, model) =>
