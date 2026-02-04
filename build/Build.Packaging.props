@@ -36,8 +36,8 @@
     -->
     <PackageLicenseExpression>RPL-1.5</PackageLicenseExpression>
 
-    <PackageProjectUrl>https://github.com/deepstaging/deepstaging</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/deepstaging/deepstaging</RepositoryUrl>
+    <PackageProjectUrl>https://deepstaging.github.io/roslyn</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/deepstaging/roslyn</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
 
     <!-- 
