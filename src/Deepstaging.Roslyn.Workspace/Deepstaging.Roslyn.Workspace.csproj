@@ -1,0 +1,36 @@
+<!-- SPDX-FileCopyrightText: 2024-present Deepstaging -->
+<!-- SPDX-License-Identifier: RPL-1.5 -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <RootNamespace>Deepstaging.Roslyn</RootNamespace>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        
+        <!-- Package metadata -->
+        <IsPackable>true</IsPackable>
+        <PackageId>Deepstaging.Roslyn.Workspace</PackageId>
+        <Title>Deepstaging.Roslyn.Workspace</Title>
+        <Description>Roslyn Workspace utilities for code fixes and refactoring.</Description>
+        <PackageTags>deepstaging;roslyn;workspace;codefix</PackageTags>
+        
+        <!-- Override icon/readme requirements from shared props -->
+        <PackageIcon></PackageIcon>
+        <PackageReadmeFile></PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" />
+        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../Deepstaging.Roslyn/Deepstaging.Roslyn.csproj" />
+    </ItemGroup>
+
+</Project>

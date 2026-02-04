@@ -1,0 +1,35 @@
+<!-- SPDX-FileCopyrightText: 2024-present Deepstaging -->
+<!-- SPDX-License-Identifier: RPL-1.5 -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <RootNamespace>Deepstaging.Roslyn</RootNamespace>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+
+        <!-- Package metadata -->
+        <IsPackable>true</IsPackable>
+        <PackageId>Deepstaging.Roslyn</PackageId>
+        <Title>Deepstaging.Roslyn</Title>
+        <Description>Fluent query builders, projections, and emit API for Roslyn source generators.</Description>
+        <PackageTags>deepstaging;roslyn;queries;projections;source-generator</PackageTags>
+        
+        <!-- Override icon/readme requirements from shared props -->
+        <PackageIcon></PackageIcon>
+        <PackageReadmeFile></PackageReadmeFile>
+
+        <!-- Generate XML documentation for IntelliSense -->
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="System.Text.Json"/>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp"/>
+        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+</Project>

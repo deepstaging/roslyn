@@ -1,0 +1,50 @@
+﻿<!-- SPDX-FileCopyrightText: 2024-present Deepstaging -->
+<!-- SPDX-License-Identifier: RPL-1.5 -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <IsTestProject>false</IsTestProject>
+        <RootNamespace>Deepstaging.Roslyn.Testing</RootNamespace>
+        
+        <!-- Package metadata -->
+        <IsPackable>true</IsPackable>
+        <PackageId>Deepstaging.Roslyn.Testing</PackageId>
+        <Title>Deepstaging.Roslyn.Testing</Title>
+        <Description>Testing infrastructure for Roslyn analyzers and generators. Includes TUnit base classes and Verify snapshot testing support.</Description>
+        <PackageTags>deepstaging;roslyn;testing;tunit;verify;source-generator;analyzer</PackageTags>
+        
+        <!-- Override icon/readme requirements from shared props -->
+        <PackageIcon></PackageIcon>
+        <PackageReadmeFile></PackageReadmeFile>
+        
+        <!-- This is test infrastructure, not an analyzer -->
+        <EnforceExtendedAnalyzerRules>false</EnforceExtendedAnalyzerRules>
+        <IsRoslynComponent>false</IsRoslynComponent>
+        
+        <!-- Suppress CS1591 for generated code (TUnit generators don't include XML docs) -->
+        <!-- Suppress NU5104: Prerelease dependency warning (LanguageExt is beta) -->
+        <NoWarn>$(NoWarn);CS1591;NU5104</NoWarn>
+        
+        <!-- Don't auto-include README.md from parent folders -->
+        <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Basic.Reference.Assemblies.Net100" />
+        <PackageReference Include="LanguageExt.Core" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp"/>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces"/>
+        <PackageReference Include="TUnit"/>
+        <PackageReference Include="TUnit.Engine" />
+        <PackageReference Include="Verify" />
+        <PackageReference Include="Verify.TUnit"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../Deepstaging.Roslyn/Deepstaging.Roslyn.csproj" />
+        <ProjectReference Include="../Deepstaging.Roslyn.Workspace/Deepstaging.Roslyn.Workspace.csproj" />
+        <ProjectReference Include="../Deepstaging.Roslyn.Scriban/Deepstaging.Roslyn.Scriban.csproj" />
+    </ItemGroup>
+
+</Project>
