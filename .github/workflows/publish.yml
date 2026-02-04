@@ -1,0 +1,52 @@
+name: Publish NuGet Packages
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version-suffix:
+        description: 'Version suffix (leave empty for release)'
+        required: false
+        default: ''
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Build and Pack
+        run: |
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            # Tag push - release build without version suffix
+            ./build/pack.sh --no-version-suffix --output ./artifacts/packages
+          elif [[ -n "${{ github.event.inputs.version-suffix }}" ]]; then
+            # Manual trigger with suffix
+            ./build/pack.sh --version-suffix "${{ github.event.inputs.version-suffix }}" --output ./artifacts/packages
+          else
+            # Manual trigger without suffix - release build
+            ./build/pack.sh --no-version-suffix --output ./artifacts/packages
+          fi
+
+      - name: Upload packages artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-packages
+          path: ./artifacts/packages/*.nupkg
+
+      - name: Push to NuGet.org
+        run: |
+          for package in ./artifacts/packages/*.nupkg; do
+            echo "Pushing $package..."
+            dotnet nuget push "$package" \
+              --api-key ${{ secrets.NUGET_API_KEY }} \
+              --source https://api.nuget.org/v3/index.json \
+              --skip-duplicate
+          done
