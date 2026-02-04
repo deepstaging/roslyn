@@ -41,11 +41,10 @@
     <RepositoryType>git</RepositoryType>
 
     <!-- 
-      Package assets (README and icon)
+      Package assets (README)
       These files are included in the NuGet package for display on nuget.org
     -->
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageIcon>icon.png</PackageIcon>
 
     <!-- 
       PackageTags: Semicolon-separated tags for discoverability on nuget.org
