@@ -2,7 +2,7 @@
 
 Fluent builders for finding types, methods, properties, fields, constructors, events, and parameters.
 
-> **See also:** [Projections](Projections.md) | [Emit](Emit.md) | [Extensions](Extensions.md) | [Roslyn Toolkit README](../README.md)
+> **See also:** [Projections](projections.md) | [Emit](emit.md) | [Extensions](extensions.md) | [Roslyn Toolkit README](../index.md)
 
 ## Overview
 

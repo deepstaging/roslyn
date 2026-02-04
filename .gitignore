@@ -37,3 +37,7 @@ Thumbs.db
 
 # Husky marker file (created on first build)
 .husky/.installed
+
+# MkDocs
+.venv/
+site/

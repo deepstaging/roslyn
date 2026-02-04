@@ -2,7 +2,7 @@
 
 Fluent builders for generating compilable C# code.
 
-> **See also:** [Queries](Queries.md) | [Projections](Projections.md) | [Extensions](Extensions.md) | [Roslyn Toolkit README](../README.md)
+> **See also:** [Queries](queries.md) | [Projections](projections.md) | [Extensions](extensions.md) | [Roslyn Toolkit README](../index.md)
 
 ## Overview
 

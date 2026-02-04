@@ -2,7 +2,7 @@
 
 Test Scriban template rendering with symbol queries and snapshot verification.
 
-> **See also:** [RoslynTestBase](RoslynTestBase.md) | [Scriban Templates](../../Deepstaging.Roslyn.Scriban/README.md)
+> **See also:** [RoslynTestBase](roslyn-test-base.md) | [Scriban Templates](../packages/scriban.md)
 
 ## Overview
 

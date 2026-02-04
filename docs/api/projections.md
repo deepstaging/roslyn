@@ -2,7 +2,7 @@
 
 Optional and validated wrappers that make null-checking less painful.
 
-> **See also:** [Queries](Queries.md) | [Emit](Emit.md) | [Extensions](Extensions.md) | [Roslyn Toolkit README](../README.md)
+> **See also:** [Queries](queries.md) | [Emit](emit.md) | [Extensions](extensions.md) | [Roslyn Toolkit README](../index.md)
 
 ## Overview
 

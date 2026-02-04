@@ -2,7 +2,7 @@
 
 Unified base class for testing Roslyn analyzers, generators, and code fixes.
 
-> **See also:** [Testing README](../README.md) | [Reference Configuration](ReferenceConfiguration.md) | [Roslyn Toolkit](../../Deepstaging.Roslyn/README.md)
+> **See also:** [Testing README](../index.md) | [Reference Configuration](reference-configuration.md) | [Roslyn Toolkit](../index.md)
 
 ## Quick Start
 
@@ -319,7 +319,7 @@ public static void Init() =>
     ReferenceConfiguration.AddReferencesFromTypes(typeof(MyAttribute));
 ```
 
-See [Reference Configuration](ReferenceConfiguration.md) for details.
+See [Reference Configuration](reference-configuration.md) for details.
 
 ---
 

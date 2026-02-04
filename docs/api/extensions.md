@@ -2,7 +2,7 @@
 
 Convenience methods for common Roslyn operations.
 
-> **See also:** [Queries](Queries.md) | [Projections](Projections.md) | [Emit](Emit.md) | [Roslyn Toolkit README](../README.md)
+> **See also:** [Queries](queries.md) | [Projections](projections.md) | [Emit](emit.md) | [Roslyn Toolkit README](../index.md)
 
 ## Overview
 
