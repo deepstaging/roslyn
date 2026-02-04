@@ -16,6 +16,9 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write  # Required for OIDC Trusted Publishing
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
@@ -49,12 +52,30 @@ jobs:
           name: nuget-packages
           path: ./artifacts/packages/*.nupkg
 
+      # Trusted Publishing: Exchange OIDC token for temporary NuGet API key
+      - name: NuGet Login (Trusted Publishing)
+        uses: nuget/login@v1
+        with:
+          user: ${{ vars.NUGET_USER }}
+
       - name: Push to NuGet.org
         run: |
           for package in ./artifacts/packages/*.nupkg; do
             echo "Pushing $package..."
             dotnet nuget push "$package" \
-              --api-key ${{ secrets.NUGET_API_KEY }} \
+              --api-key ${{ env.NUGET_API_KEY }} \
               --source https://api.nuget.org/v3/index.json \
               --skip-duplicate
           done
+
+      # Future: Uncomment when code signing certificate is available
+      # - name: Sign NuGet Packages
+      #   run: |
+      #     echo "${{ secrets.CODESIGN_CERT_PFX }}" | base64 -d > certificate.pfx
+      #     for package in ./artifacts/packages/*.nupkg; do
+      #       dotnet nuget sign "$package" \
+      #         --certificate-path certificate.pfx \
+      #         --certificate-password "${{ secrets.CODESIGN_CERT_PASSWORD }}" \
+      #         --timestamper http://timestamp.digicert.com/
+      #     done
+      #     rm certificate.pfx
