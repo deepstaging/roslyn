@@ -65,32 +65,49 @@ var types = compilation.QueryTypes()
 | Method | Description |
 |--------|-------------|
 | `ThatArePublic()` | Public types |
+| `ThatAreNotPublic()` | Non-public types |
 | `ThatAreInternal()` | Internal types |
+| `ThatAreNotInternal()` | Non-internal types |
 | `ThatArePrivate()` | Private types (nested only) |
+| `ThatAreNotPrivate()` | Non-private types |
 | `ThatAreProtected()` | Protected types (nested only) |
+| `ThatAreNotProtected()` | Non-protected types |
 
 ### Type Kind Filters
 
 | Method | Description |
 |--------|-------------|
 | `ThatAreClasses()` | Class types |
+| `ThatAreNotClasses()` | Non-class types |
 | `ThatAreInterfaces()` | Interface types |
+| `ThatAreNotInterfaces()` | Non-interface types |
 | `ThatAreStructs()` | Struct types |
+| `ThatAreNotStructs()` | Non-struct types |
 | `ThatAreEnums()` | Enum types |
+| `ThatAreNotEnums()` | Non-enum types |
 | `ThatAreDelegates()` | Delegate types |
+| `ThatAreNotDelegates()` | Non-delegate types |
 | `ThatAreRecords()` | Record types (class or struct) |
+| `ThatAreNotRecords()` | Non-record types |
 
 ### Modifier Filters
 
 | Method | Description |
 |--------|-------------|
 | `ThatAreStatic()` | Static types |
+| `ThatAreNotStatic()` | Non-static types |
 | `ThatAreAbstract()` | Abstract types |
+| `ThatAreNotAbstract()` | Non-abstract types |
 | `ThatAreSealed()` | Sealed types |
+| `ThatAreNotSealed()` | Non-sealed types |
 | `ThatAreGeneric()` | Generic types |
+| `ThatAreNotGeneric()` | Non-generic types |
 | `ThatArePartial()` | Partial types |
+| `ThatAreNotPartial()` | Non-partial types |
 | `ThatAreRefStructs()` | Ref struct types |
+| `ThatAreNotRefStructs()` | Non-ref struct types |
 | `ThatAreReadOnlyStructs()` | Readonly struct types |
+| `ThatAreNotReadOnlyStructs()` | Non-readonly struct types |
 
 ### Name Filters
 
@@ -168,10 +185,15 @@ var handlers = typeSymbol.QueryMethods()
 | Method | Description |
 |--------|-------------|
 | `ThatArePublic()` | Public methods |
+| `ThatAreNotPublic()` | Non-public methods |
 | `ThatArePrivate()` | Private methods |
+| `ThatAreNotPrivate()` | Non-private methods |
 | `ThatAreProtected()` | Protected methods |
+| `ThatAreNotProtected()` | Non-protected methods |
 | `ThatAreInternal()` | Internal methods |
+| `ThatAreNotInternal()` | Non-internal methods |
 | `ThatAreProtectedOrInternal()` | Protected internal methods |
+| `ThatAreNotProtectedOrInternal()` | Non-protected internal methods |
 
 ### Modifier Filters
 
@@ -180,11 +202,17 @@ var handlers = typeSymbol.QueryMethods()
 | `ThatAreStatic()` | Static methods |
 | `ThatAreInstance()` | Instance methods |
 | `ThatAreAsync()` | Async methods |
+| `ThatAreNotAsync()` | Non-async methods |
 | `ThatAreGeneric()` | Generic methods |
+| `ThatAreNotGeneric()` | Non-generic methods |
 | `ThatAreVirtual()` | Virtual methods |
+| `ThatAreNotVirtual()` | Non-virtual methods |
 | `ThatAreAbstract()` | Abstract methods |
+| `ThatAreNotAbstract()` | Non-abstract methods |
 | `ThatAreOverrides()` | Override methods |
+| `ThatAreNotOverrides()` | Non-override methods |
 | `ThatAreSealed()` | Sealed methods |
+| `ThatAreNotSealed()` | Non-sealed methods |
 
 ### Name Filters
 
@@ -251,10 +279,15 @@ var readOnlyProps = typeSymbol.QueryProperties()
 | Method | Description |
 |--------|-------------|
 | `ThatArePublic()` | Public properties |
+| `ThatAreNotPublic()` | Non-public properties |
 | `ThatArePrivate()` | Private properties |
+| `ThatAreNotPrivate()` | Non-private properties |
 | `ThatAreProtected()` | Protected properties |
+| `ThatAreNotProtected()` | Non-protected properties |
 | `ThatAreInternal()` | Internal properties |
+| `ThatAreNotInternal()` | Non-internal properties |
 | `ThatAreProtectedOrInternal()` | Protected internal properties |
+| `ThatAreNotProtectedOrInternal()` | Non-protected internal properties |
 
 ### Modifier Filters
 
@@ -263,14 +296,19 @@ var readOnlyProps = typeSymbol.QueryProperties()
 | `ThatAreStatic()` | Static properties |
 | `ThatAreInstance()` | Instance properties |
 | `ThatAreVirtual()` | Virtual properties |
+| `ThatAreNotVirtual()` | Non-virtual properties |
 | `ThatAreAbstract()` | Abstract properties |
+| `ThatAreNotAbstract()` | Non-abstract properties |
 | `ThatAreOverride()` | Override properties |
+| `ThatAreNotOverride()` | Non-override properties |
 | `ThatAreSealed()` | Sealed properties |
+| `ThatAreNotSealed()` | Non-sealed properties |
 | `ThatAreReadOnly()` | Read-only (no setter) |
 | `ThatAreWriteOnly()` | Write-only (no getter) |
 | `ThatAreReadWrite()` | Has getter and setter |
 | `WithInitOnlySetter()` | Init-only setter |
 | `ThatAreRequired()` | Required properties |
+| `ThatAreNotRequired()` | Non-required properties |
 
 ### Name Filters
 
@@ -320,9 +358,13 @@ var injectableFields = typeSymbol.QueryFields()
 | Method | Description |
 |--------|-------------|
 | `ThatArePublic()` | Public fields |
+| `ThatAreNotPublic()` | Non-public fields |
 | `ThatArePrivate()` | Private fields |
+| `ThatAreNotPrivate()` | Non-private fields |
 | `ThatAreProtected()` | Protected fields |
+| `ThatAreNotProtected()` | Non-protected fields |
 | `ThatAreInternal()` | Internal fields |
+| `ThatAreNotInternal()` | Non-internal fields |
 
 ### Modifier Filters
 
@@ -331,8 +373,11 @@ var injectableFields = typeSymbol.QueryFields()
 | `ThatAreStatic()` | Static fields |
 | `ThatAreInstance()` | Instance fields |
 | `ThatAreReadOnly()` | Readonly fields |
+| `ThatAreNotReadOnly()` | Non-readonly fields |
 | `ThatAreConst()` | Const fields |
+| `ThatAreNotConst()` | Non-const fields |
 | `ThatAreVolatile()` | Volatile fields |
+| `ThatAreNotVolatile()` | Non-volatile fields |
 
 ### Name Filters
 
@@ -350,7 +395,9 @@ var injectableFields = typeSymbol.QueryFields()
 | `WithType<T>()` | Fields of type T |
 | `WithType(string)` | Fields with type name |
 | `ThatAreGenericType()` | Fields with generic types |
+| `ThatAreNotGenericType()` | Fields without generic types |
 | `ThatAreNullable()` | Fields with nullable annotation |
+| `ThatAreNotNullable()` | Fields without nullable annotation |
 
 ### Attribute Filters
 
@@ -382,10 +429,15 @@ var parameterless = typeSymbol.QueryConstructors()
 | Method | Description |
 |--------|-------------|
 | `ThatArePublic()` | Public constructors |
+| `ThatAreNotPublic()` | Non-public constructors |
 | `ThatArePrivate()` | Private constructors |
+| `ThatAreNotPrivate()` | Non-private constructors |
 | `ThatAreProtected()` | Protected constructors |
+| `ThatAreNotProtected()` | Non-protected constructors |
 | `ThatAreInternal()` | Internal constructors |
+| `ThatAreNotInternal()` | Non-internal constructors |
 | `ThatAreProtectedOrInternal()` | Protected internal constructors |
+| `ThatAreNotProtectedOrInternal()` | Non-protected internal constructors |
 
 ### Modifier Filters
 
@@ -429,9 +481,13 @@ var publicEvents = typeSymbol.QueryEvents()
 | Method | Description |
 |--------|-------------|
 | `ThatArePublic()` | Public events |
+| `ThatAreNotPublic()` | Non-public events |
 | `ThatArePrivate()` | Private events |
+| `ThatAreNotPrivate()` | Non-private events |
 | `ThatAreProtected()` | Protected events |
+| `ThatAreNotProtected()` | Non-protected events |
 | `ThatAreInternal()` | Internal events |
+| `ThatAreNotInternal()` | Non-internal events |
 
 ### Modifier Filters
 
@@ -440,9 +496,13 @@ var publicEvents = typeSymbol.QueryEvents()
 | `ThatAreStatic()` | Static events |
 | `ThatAreInstance()` | Instance events |
 | `ThatAreAbstract()` | Abstract events |
+| `ThatAreNotAbstract()` | Non-abstract events |
 | `ThatAreVirtual()` | Virtual events |
+| `ThatAreNotVirtual()` | Non-virtual events |
 | `ThatAreSealed()` | Sealed events |
+| `ThatAreNotSealed()` | Non-sealed events |
 | `ThatAreOverride()` | Override events |
+| `ThatAreNotOverride()` | Non-override events |
 
 ### Name Filters
 
@@ -495,13 +555,19 @@ var refParams = methodSymbol.QueryParameters()
 | Method | Description |
 |--------|-------------|
 | `ThatAreRef()` | Ref parameters |
+| `ThatAreNotRef()` | Non-ref parameters |
 | `ThatAreOut()` | Out parameters |
+| `ThatAreNotOut()` | Non-out parameters |
 | `ThatAreIn()` | In parameters |
+| `ThatAreNotIn()` | Non-in parameters |
 | `ThatAreParams()` | Params array parameters |
+| `ThatAreNotParams()` | Non-params parameters |
 | `ThatAreOptional()` | Optional parameters (with defaults) |
 | `ThatAreRequired()` | Required parameters |
 | `ThatAreThis()` | Extension method 'this' parameter |
+| `ThatAreNotThis()` | Non-this parameters |
 | `ThatAreDiscards()` | Discard parameters (named `_`) |
+| `ThatAreNotDiscards()` | Non-discard parameters |
 
 ### Name Filters
 
@@ -519,7 +585,9 @@ var refParams = methodSymbol.QueryParameters()
 | `WithType<T>()` | Parameters of type T |
 | `WithType(string)` | Parameters with type name |
 | `ThatAreGenericType()` | Parameters with generic types |
+| `ThatAreNotGenericType()` | Parameters without generic types |
 | `ThatAreNullable()` | Parameters with nullable annotation |
+| `ThatAreNotNullable()` | Parameters without nullable annotation |
 
 ### Position Filters
 
