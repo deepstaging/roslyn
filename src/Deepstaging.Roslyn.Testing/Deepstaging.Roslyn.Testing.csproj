@@ -14,10 +14,6 @@
         <Description>Testing infrastructure for Roslyn analyzers and generators. Includes TUnit base classes and Verify snapshot testing support.</Description>
         <PackageTags>deepstaging;roslyn;testing;tunit;verify;source-generator;analyzer</PackageTags>
         
-        <!-- Override icon/readme requirements from shared props -->
-        <PackageIcon></PackageIcon>
-        <PackageReadmeFile></PackageReadmeFile>
-        
         <!-- This is test infrastructure, not an analyzer -->
         <EnforceExtendedAnalyzerRules>false</EnforceExtendedAnalyzerRules>
         <IsRoslynComponent>false</IsRoslynComponent>
@@ -31,7 +27,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Basic.Reference.Assemblies.Net100" />
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="LanguageExt.Core" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp"/>
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces"/>

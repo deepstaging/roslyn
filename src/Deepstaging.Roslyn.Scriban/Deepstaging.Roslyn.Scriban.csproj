@@ -18,10 +18,11 @@
         <Description>Scriban template infrastructure for Roslyn source generators.</Description>
         <PackageTags>deepstaging;roslyn;scriban;source-generator</PackageTags>
         
-        <!-- Override icon/readme requirements from shared props -->
-        <PackageIcon></PackageIcon>
-        <PackageReadmeFile></PackageReadmeFile>
     </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
 
     <ItemGroup>
         <InternalsVisibleTo Include="Deepstaging.Roslyn.Testing" />

@@ -15,13 +15,13 @@
         <Description>Fluent query builders, projections, and emit API for Roslyn source generators.</Description>
         <PackageTags>deepstaging;roslyn;queries;projections;source-generator</PackageTags>
         
-        <!-- Override icon/readme requirements from shared props -->
-        <PackageIcon></PackageIcon>
-        <PackageReadmeFile></PackageReadmeFile>
-
         <!-- Generate XML documentation for IntelliSense -->
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="System.Text.Json"/>

@@ -16,10 +16,11 @@
         <Description>Roslyn Workspace utilities for code fixes and refactoring.</Description>
         <PackageTags>deepstaging;roslyn;workspace;codefix</PackageTags>
         
-        <!-- Override icon/readme requirements from shared props -->
-        <PackageIcon></PackageIcon>
-        <PackageReadmeFile></PackageReadmeFile>
     </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" />
