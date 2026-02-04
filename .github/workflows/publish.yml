@@ -2,6 +2,8 @@ name: Publish NuGet Packages
 
 on:
   push:
+    branches:
+      - main
     tags:
       - 'v*'
   workflow_dispatch:
@@ -24,9 +26,12 @@ jobs:
 
       - name: Build and Pack
         run: |
-          if [[ "${{ github.event_name }}" == "push" ]]; then
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
             # Tag push - release build without version suffix
             ./build/pack.sh --no-version-suffix --output ./artifacts/packages
+          elif [[ "${{ github.event_name }}" == "push" ]]; then
+            # Branch push - dev build with version suffix
+            ./build/pack.sh --output ./artifacts/packages
           elif [[ -n "${{ github.event.inputs.version-suffix }}" ]]; then
             # Manual trigger with suffix
             ./build/pack.sh --version-suffix "${{ github.event.inputs.version-suffix }}" --output ./artifacts/packages
