@@ -2,6 +2,8 @@
 
 Test utilities for Roslyn analyzers, generators, and code fixes.
 
+📚 **[Full Documentation](https://deepstaging.github.io/roslyn)**
+
 > **See also:** [RoslynTestBase](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/RoslynTestBase.md) | [Reference Configuration](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/ReferenceConfiguration.md) | [Roslyn Toolkit](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/README.md)
 
 ## Quick Start

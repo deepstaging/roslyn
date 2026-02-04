@@ -2,6 +2,8 @@
 
 Roslyn APIs are powerful but awkward. This library wraps them in something that feels natural.
 
+📚 **[Full Documentation](https://deepstaging.github.io/roslyn)**
+
 ## What is this?
 
 Three things:

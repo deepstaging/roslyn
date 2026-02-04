@@ -2,6 +2,8 @@
 
 Scriban template infrastructure for Roslyn incremental source generators.
 
+📚 **[Full Documentation](https://deepstaging.github.io/roslyn)**
+
 > **See also:** [Roslyn Toolkit](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/README.md) | [Testing](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/README.md)
 
 ## What is this?
