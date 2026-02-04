@@ -24,67 +24,66 @@ Your `.csproj` should target `netstandard2.0` for Roslyn compatibility:
 Here's a complete incremental generator that finds classes with `[AutoNotify]` and generates property change notifications:
 
 ```csharp
-using Deepstaging.Roslyn;
 using Deepstaging.Roslyn.Generators;
-using Microsoft.CodeAnalysis;
 
+namespace Deepstaging.Generators;
+
+/// <inheritdoc />
 [Generator]
 public class AutoNotifyGenerator : IIncrementalGenerator
 {
+    /// <inheritdoc />
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         // Use ForAttribute extension to find types with the attribute
         var models = context
             .ForAttribute<AutoNotifyAttribute>()
-            .Map((ctx, ct) => new AutoNotifyModel(ctx.TargetSymbol as INamedTypeSymbol));
+            .Map((ctx, _) => new AutoNotifyModel(ctx.TargetSymbol));
 
         context.RegisterSourceOutput(models.Collect(), Generate);
     }
 
-    private void Generate(SourceProductionContext context, 
-                          ImmutableArray<AutoNotifyModel> models)
+    private void Generate(SourceProductionContext context,
+        ImmutableArray<AutoNotifyModel> models)
     {
         foreach (var model in models)
         {
-            if (model.Type is null) continue;
-
-            // Query for fields to wrap
-            var fields = model.Type.QueryFields()
-                .ThatArePrivate()
-                .ThatAreNotStatic()
-                .GetAll();
-
+            var hint = new HintName(model.Namespace);
+            
             // Build the partial class
-            var code = TypeBuilder.Class(model.Type.Name)
-                .InNamespace(model.Type.ContainingNamespace.ToDisplayString())
+            var code = TypeBuilder.Class(model.TypeName)
+                .InNamespace(model.Namespace)
                 .AsPartial()
-                .AddUsing("System.ComponentModel");
+                .AddUsing("System.ComponentModel")
+                .WithEach(model.Fields, (builder, field) => builder
+                    .AddProperty(field.PropertyName,
+                        field.Type.FullyQualifiedName, p => p
+                            .WithGetter(b => b.AddStatement($"return {field.Name}"))
+                            .WithSetter(b => b
+                                .AddStatement($"{field.Name} = value")
+                                .AddStatement($"OnPropertyChanged(nameof({field.ParameterName}))"))));
 
-            foreach (var field in fields)
-            {
-                var propName = ToPascalCase(field.Value.Name);
-                code = code.AddProperty(propName, field.Value.Type.ToDisplayString(), p => p
-                    .WithGetter(b => b.AddStatement($"return {field.Value.Name}"))
-                    .WithSetter(b => b
-                        .AddStatement($"{field.Value.Name} = value")
-                        .AddStatement($"OnPropertyChanged(nameof({propName}))")));
-            }
-
-            var result = code.Emit();
-            if (result.IsValid(out var valid))
-            {
-                context.AddSource($"{model.Type.Name}.g.cs", valid.Code);
-            }
+            context.AddFromEmit(
+                hint.Filename(model.TypeName),
+                code.Emit()
+            );
         }
     }
-
-    private static string ToPascalCase(string fieldName) =>
-        fieldName.TrimStart('_') is { Length: > 0 } s 
-            ? char.ToUpper(s[0]) + s[1..] 
-            : fieldName;
 }
 
-record AutoNotifyModel(INamedTypeSymbol? Type);
+internal record AutoNotifyModel(ISymbol? Type)
+{
+    public ISymbol? Type { get; init; } = Type;
+    private readonly ValidSymbol<INamedTypeSymbol> _symbol = Type.AsValidNamedType();
+
+    public string TypeName => _symbol.Name;
+    public string Namespace => _symbol.Namespace ?? "Global";
+
+    public ImmutableArray<ValidSymbol<IFieldSymbol>> Fields => _symbol.QueryFields()
+        .ThatArePrivate()
+        .ThatAreInstance()
+        .GetAll();
+}
 ```
 
 ### Generator Context Extensions
