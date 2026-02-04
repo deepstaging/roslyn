@@ -31,6 +31,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Basic.Reference.Assemblies.Net100" />
         <PackageReference Include="LanguageExt.Core" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp"/>
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces"/>
