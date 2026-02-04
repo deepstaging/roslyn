@@ -39,10 +39,10 @@ TypeBuilder
 
 ## Features
 
-- **[Queries](Docs/Queries.md)** - Fluent builders for finding types, methods, properties, fields, constructors, events, and parameters
-- **[Projections](Docs/Projections.md)** - Optional/validated wrappers that make null-checking less painful
-- **[Emit](Docs/Emit.md)** - Fluent builders for generating compilable C# code
-- **[Extensions](Docs/Extensions.md)** - Convenience methods for common Roslyn operations
+- **[Queries](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/Docs/Queries.md)** - Fluent builders for finding types, methods, properties, fields, constructors, events, and parameters
+- **[Projections](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/Docs/Projections.md)** - Optional/validated wrappers that make null-checking less painful
+- **[Emit](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/Docs/Emit.md)** - Fluent builders for generating compilable C# code
+- **[Extensions](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/Docs/Extensions.md)** - Convenience methods for common Roslyn operations
 
 ## Why?
 
@@ -111,10 +111,10 @@ if (result.IsValid(out var validEmit))
 
 Each feature has its own doc file with examples:
 
-- **[Queries.md](Docs/Queries.md)** - How to use each query builder
-- **[Projections.md](Docs/Projections.md)** - OptionalSymbol, ValidSymbol, and friends
-- **[Emit.md](Docs/Emit.md)** - Fluent builders for generating C# code
-- **[Extensions.md](Docs/Extensions.md)** - Helper methods for common tasks
+- **[Queries.md](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/Docs/Queries.md)** - How to use each query builder
+- **[Projections.md](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/Docs/Projections.md)** - OptionalSymbol, ValidSymbol, and friends
+- **[Emit.md](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/Docs/Emit.md)** - Fluent builders for generating C# code
+- **[Extensions.md](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/Docs/Extensions.md)** - Helper methods for common tasks
 
 The test project is also useful documentation - every test shows real usage.
 
@@ -132,11 +132,11 @@ When you call `.GetAll()`, you get an array of actual Roslyn symbols you can use
 
 ## Related Documentation
 
-- **[Main README](../../README.md)** - Project overview and effects system
-- **[Testing](../Deepstaging.Roslyn.Testing/README.md)** - Test infrastructure for Roslyn components
-- **[Scriban Templates](../Deepstaging.Roslyn.Scriban/README.md)** - Template infrastructure for source generators
-- **[Workspace / Code Fixes](../Deepstaging.Roslyn.Workspace/README.md)** - Code fix provider infrastructure
-- **[Emit API Overview](Emit/README.md)** - Quick reference for the Emit API
+- **[Main README](https://github.com/deepstaging/roslyn/blob/main/README.md)** - Project overview and effects system
+- **[Testing](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/README.md)** - Test infrastructure for Roslyn components
+- **[Scriban Templates](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Scriban/README.md)** - Template infrastructure for source generators
+- **[Workspace / Code Fixes](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Workspace/README.md)** - Code fix provider infrastructure
+- **[Emit API Overview](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/Emit/README.md)** - Quick reference for the Emit API
 
 ## License
 
@@ -148,4 +148,4 @@ Why? We believe if you benefit from this code, the community should benefit from
 
 **Personal research and experimentation? No obligations.** Go learn, explore, and build.
 
-See [LICENSE](../../LICENSE) for the full legal text.
+See [LICENSE](https://github.com/deepstaging/roslyn/blob/main/LICENSE) for the full legal text.

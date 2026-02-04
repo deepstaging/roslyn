@@ -2,7 +2,7 @@
 
 Test utilities for Roslyn analyzers, generators, and code fixes.
 
-> **See also:** [RoslynTestBase](Docs/RoslynTestBase.md) | [Reference Configuration](Docs/ReferenceConfiguration.md) | [Roslyn Toolkit](../Deepstaging.Roslyn/README.md)
+> **See also:** [RoslynTestBase](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/RoslynTestBase.md) | [Reference Configuration](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/ReferenceConfiguration.md) | [Roslyn Toolkit](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/README.md)
 
 ## Quick Start
 
@@ -75,16 +75,16 @@ public static void Init() =>
 
 Each entry point returns a test context with fluent assertions:
 
-- **[SymbolTestContext](Docs/SymbolTestContext.md)** — Query symbols from compiled source
-- **[AnalyzerTestContext](Docs/AnalyzerTestContext.md)** — Assert on analyzer diagnostics
-- **[GeneratorTestContext](Docs/GeneratorTestContext.md)** — Assert on generator output
-- **[CodeFixTestContext](Docs/CodeFixTestContext.md)** — Assert on code fix transformations
-- **[TemplateTestContext](Docs/TemplateTestContext.md)** — Assert on template rendering
+- **[SymbolTestContext](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/SymbolTestContext.md)** — Query symbols from compiled source
+- **[AnalyzerTestContext](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/AnalyzerTestContext.md)** — Assert on analyzer diagnostics
+- **[GeneratorTestContext](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/GeneratorTestContext.md)** — Assert on generator output
+- **[CodeFixTestContext](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/CodeFixTestContext.md)** — Assert on code fix transformations
+- **[TemplateTestContext](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/TemplateTestContext.md)** — Assert on template rendering
 
 ### Guides
 
-- **[RoslynTestBase](Docs/RoslynTestBase.md)** — Full API reference for the base class
-- **[Reference Configuration](Docs/ReferenceConfiguration.md)** — Configure assembly references for tests
+- **[RoslynTestBase](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/RoslynTestBase.md)** — Full API reference for the base class
+- **[Reference Configuration](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/ReferenceConfiguration.md)** — Configure assembly references for tests
 
 ---
 
@@ -149,4 +149,4 @@ Why? We believe if you benefit from this code, the community should benefit from
 
 **Personal research and experimentation? No obligations.** Go learn, explore, and build.
 
-See [LICENSE](../../LICENSE) for the full legal text.
+See [LICENSE](https://github.com/deepstaging/roslyn/blob/main/LICENSE) for the full legal text.

@@ -2,7 +2,7 @@
 
 Code fix infrastructure for Roslyn analyzers using the Workspace API.
 
-> **See also:** [Roslyn Toolkit](../Deepstaging.Roslyn/README.md) | [Testing](../Deepstaging.Roslyn.Testing/README.md)
+> **See also:** [Roslyn Toolkit](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/README.md) | [Testing](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/README.md)
 
 ## What is this?
 
@@ -185,9 +185,9 @@ public class MyCodeFix : SyntaxCodeFix<TypeDeclarationSyntax>
 
 ## Related Documentation
 
-- **[Roslyn Toolkit](../Deepstaging.Roslyn/README.md)** - Query builders, projections, and emit API
-- **[Testing](../Deepstaging.Roslyn.Testing/README.md)** - Test infrastructure including code fix testing
-- **[Main README](../../README.md)** - Project overview
+- **[Roslyn Toolkit](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/README.md)** - Query builders, projections, and emit API
+- **[Testing](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/README.md)** - Test infrastructure including code fix testing
+- **[Main README](https://github.com/deepstaging/roslyn/blob/main/README.md)** - Project overview
 
 ## License
 
@@ -199,4 +199,4 @@ Why? We believe if you benefit from this code, the community should benefit from
 
 **Personal research and experimentation? No obligations.** Go learn, explore, and build.
 
-See [LICENSE](../../LICENSE) for the full legal text.
+See [LICENSE](https://github.com/deepstaging/roslyn/blob/main/LICENSE) for the full legal text.
