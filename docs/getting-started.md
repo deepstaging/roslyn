@@ -25,6 +25,7 @@ Here's a complete incremental generator that finds classes with `[AutoNotify]` a
 
 ```csharp
 using Deepstaging.Roslyn;
+using Deepstaging.Roslyn.Generators;
 using Microsoft.CodeAnalysis;
 
 [Generator]
@@ -32,29 +33,32 @@ public class AutoNotifyGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        var types = context.SyntaxProvider
-            .ForTypesWithAttribute("AutoNotifyAttribute")
-            .Collect();
+        // Use ForAttribute extension to find types with the attribute
+        var models = context
+            .ForAttribute<AutoNotifyAttribute>()
+            .Map((ctx, ct) => new AutoNotifyModel(ctx.TargetSymbol as INamedTypeSymbol));
 
-        context.RegisterSourceOutput(types, Generate);
+        context.RegisterSourceOutput(models.Collect(), Generate);
     }
 
     private void Generate(SourceProductionContext context, 
-                          ImmutableArray<INamedTypeSymbol> types)
+                          ImmutableArray<AutoNotifyModel> models)
     {
-        foreach (var type in types)
+        foreach (var model in models)
         {
+            if (model.Type is null) continue;
+
             // Query for fields to wrap
-            var fields = type.QueryFields()
+            var fields = model.Type.QueryFields()
                 .ThatArePrivate()
                 .ThatAreNotStatic()
                 .GetAll();
 
             // Build the partial class
-            var code = TypeBuilder.Class(type.Name)
-                .InNamespace(type.ContainingNamespace.ToDisplayString())
+            var code = TypeBuilder.Class(model.Type.Name)
+                .InNamespace(model.Type.ContainingNamespace.ToDisplayString())
                 .AsPartial()
-                .WithUsing("System.ComponentModel");
+                .AddUsing("System.ComponentModel");
 
             foreach (var field in fields)
             {
@@ -69,11 +73,49 @@ public class AutoNotifyGenerator : IIncrementalGenerator
             var result = code.Emit();
             if (result.IsValid(out var valid))
             {
-                context.AddSource($"{type.Name}.g.cs", valid.Code);
+                context.AddSource($"{model.Type.Name}.g.cs", valid.Code);
             }
         }
     }
+
+    private static string ToPascalCase(string fieldName) =>
+        fieldName.TrimStart('_') is { Length: > 0 } s 
+            ? char.ToUpper(s[0]) + s[1..] 
+            : fieldName;
 }
+
+record AutoNotifyModel(INamedTypeSymbol? Type);
+```
+
+### Generator Context Extensions
+
+The `ForAttribute` extension simplifies attribute-based symbol discovery:
+
+```csharp
+// By generic type (requires attribute assembly reference)
+context.ForAttribute<MyAttribute>()
+    .Map((ctx, ct) => BuildModel(ctx));
+
+// By fully qualified name (no assembly reference needed)
+context.ForAttribute("MyNamespace.MyAttribute")
+    .Map((ctx, ct) => BuildModel(ctx));
+
+// With syntax predicate for filtering
+context.ForAttribute<MyAttribute>()
+    .Where(
+        syntaxPredicate: (node, ct) => node is ClassDeclarationSyntax,
+        builder: (ctx, ct) => BuildModel(ctx));
+```
+
+For non-attribute-based discovery, use `MapTypes`:
+
+```csharp
+context.MapTypes((compilation, ct) =>
+    TypeQuery.From(compilation)
+        .ThatAreClasses()
+        .ThatArePartial()
+        .WithName("*Repository")
+        .Select(t => new RepositoryModel(t.Value)));
 ```
 
 ## Core Concepts
