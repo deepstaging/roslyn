@@ -41,11 +41,27 @@ public readonly struct MethodQuery
     }
 
     /// <summary>
+    /// Filters for non-public methods.
+    /// </summary>
+    public MethodQuery ThatAreNotPublic()
+    {
+        return AddFilter(m => m.DeclaredAccessibility != Accessibility.Public);
+    }
+
+    /// <summary>
     /// Filters for private methods.
     /// </summary>
     public MethodQuery ThatArePrivate()
     {
         return AddFilter(m => m.DeclaredAccessibility == Accessibility.Private);
+    }
+
+    /// <summary>
+    /// Filters for non-private methods.
+    /// </summary>
+    public MethodQuery ThatAreNotPrivate()
+    {
+        return AddFilter(m => m.DeclaredAccessibility != Accessibility.Private);
     }
 
     /// <summary>
@@ -57,6 +73,14 @@ public readonly struct MethodQuery
     }
 
     /// <summary>
+    /// Filters for non-protected methods.
+    /// </summary>
+    public MethodQuery ThatAreNotProtected()
+    {
+        return AddFilter(m => m.DeclaredAccessibility != Accessibility.Protected);
+    }
+
+    /// <summary>
     /// Filters for internal methods.
     /// </summary>
     public MethodQuery ThatAreInternal()
@@ -65,11 +89,27 @@ public readonly struct MethodQuery
     }
 
     /// <summary>
+    /// Filters for non-internal methods.
+    /// </summary>
+    public MethodQuery ThatAreNotInternal()
+    {
+        return AddFilter(m => m.DeclaredAccessibility != Accessibility.Internal);
+    }
+
+    /// <summary>
     /// Filters for protected internal methods.
     /// </summary>
     public MethodQuery ThatAreProtectedOrInternal()
     {
         return AddFilter(m => m.DeclaredAccessibility == Accessibility.ProtectedOrInternal);
+    }
+
+    /// <summary>
+    /// Filters for methods that are not protected internal.
+    /// </summary>
+    public MethodQuery ThatAreNotProtectedOrInternal()
+    {
+        return AddFilter(m => m.DeclaredAccessibility != Accessibility.ProtectedOrInternal);
     }
 
     #endregion
@@ -101,11 +141,27 @@ public readonly struct MethodQuery
     }
 
     /// <summary>
+    /// Filters for methods that are not async.
+    /// </summary>
+    public MethodQuery ThatAreNotAsync()
+    {
+        return AddFilter(m => !m.IsAsync);
+    }
+
+    /// <summary>
     /// Filters for generic methods.
     /// </summary>
     public MethodQuery ThatAreGeneric()
     {
         return AddFilter(m => m.IsGenericMethod);
+    }
+
+    /// <summary>
+    /// Filters for non-generic methods.
+    /// </summary>
+    public MethodQuery ThatAreNotGeneric()
+    {
+        return AddFilter(m => !m.IsGenericMethod);
     }
 
     /// <summary>
@@ -117,11 +173,27 @@ public readonly struct MethodQuery
     }
 
     /// <summary>
+    /// Filters for non-virtual methods.
+    /// </summary>
+    public MethodQuery ThatAreNotVirtual()
+    {
+        return AddFilter(m => !m.IsVirtual);
+    }
+
+    /// <summary>
     /// Filters for abstract methods.
     /// </summary>
     public MethodQuery ThatAreAbstract()
     {
         return AddFilter(m => m.IsAbstract);
+    }
+
+    /// <summary>
+    /// Filters for non-abstract methods.
+    /// </summary>
+    public MethodQuery ThatAreNotAbstract()
+    {
+        return AddFilter(m => !m.IsAbstract);
     }
 
     /// <summary>
@@ -133,11 +205,27 @@ public readonly struct MethodQuery
     }
 
     /// <summary>
+    /// Filters for methods that are not overrides.
+    /// </summary>
+    public MethodQuery ThatAreNotOverrides()
+    {
+        return AddFilter(m => !m.IsOverride);
+    }
+
+    /// <summary>
     /// Filters for sealed methods.
     /// </summary>
     public MethodQuery ThatAreSealed()
     {
         return AddFilter(m => m.IsSealed);
+    }
+
+    /// <summary>
+    /// Filters for non-sealed methods.
+    /// </summary>
+    public MethodQuery ThatAreNotSealed()
+    {
+        return AddFilter(m => !m.IsSealed);
     }
 
     #endregion

@@ -41,11 +41,27 @@ public readonly struct FieldQuery
     }
 
     /// <summary>
+    /// Filters for non-public fields.
+    /// </summary>
+    public FieldQuery ThatAreNotPublic()
+    {
+        return AddFilter(f => f.DeclaredAccessibility != Accessibility.Public);
+    }
+
+    /// <summary>
     /// Filters for private fields.
     /// </summary>
     public FieldQuery ThatArePrivate()
     {
         return AddFilter(f => f.DeclaredAccessibility == Accessibility.Private);
+    }
+
+    /// <summary>
+    /// Filters for non-private fields.
+    /// </summary>
+    public FieldQuery ThatAreNotPrivate()
+    {
+        return AddFilter(f => f.DeclaredAccessibility != Accessibility.Private);
     }
 
     /// <summary>
@@ -57,11 +73,27 @@ public readonly struct FieldQuery
     }
 
     /// <summary>
+    /// Filters for non-protected fields.
+    /// </summary>
+    public FieldQuery ThatAreNotProtected()
+    {
+        return AddFilter(f => f.DeclaredAccessibility != Accessibility.Protected);
+    }
+
+    /// <summary>
     /// Filters for internal fields.
     /// </summary>
     public FieldQuery ThatAreInternal()
     {
         return AddFilter(f => f.DeclaredAccessibility == Accessibility.Internal);
+    }
+
+    /// <summary>
+    /// Filters for non-internal fields.
+    /// </summary>
+    public FieldQuery ThatAreNotInternal()
+    {
+        return AddFilter(f => f.DeclaredAccessibility != Accessibility.Internal);
     }
 
     #endregion
@@ -93,6 +125,14 @@ public readonly struct FieldQuery
     }
 
     /// <summary>
+    /// Filters for non-readonly fields.
+    /// </summary>
+    public FieldQuery ThatAreNotReadOnly()
+    {
+        return AddFilter(f => !f.IsReadOnly);
+    }
+
+    /// <summary>
     /// Filters for const fields.
     /// </summary>
     public FieldQuery ThatAreConst()
@@ -101,11 +141,27 @@ public readonly struct FieldQuery
     }
 
     /// <summary>
+    /// Filters for non-const fields.
+    /// </summary>
+    public FieldQuery ThatAreNotConst()
+    {
+        return AddFilter(f => !f.IsConst);
+    }
+
+    /// <summary>
     /// Filters for volatile fields.
     /// </summary>
     public FieldQuery ThatAreVolatile()
     {
         return AddFilter(f => f.IsVolatile);
+    }
+
+    /// <summary>
+    /// Filters for non-volatile fields.
+    /// </summary>
+    public FieldQuery ThatAreNotVolatile()
+    {
+        return AddFilter(f => !f.IsVolatile);
     }
 
     #endregion
@@ -173,11 +229,27 @@ public readonly struct FieldQuery
     }
 
     /// <summary>
+    /// Filters for fields that are not generic types.
+    /// </summary>
+    public FieldQuery ThatAreNotGenericType()
+    {
+        return AddFilter(f => f.Type is not INamedTypeSymbol { IsGenericType: true });
+    }
+
+    /// <summary>
     /// Filters for fields with nullable value types.
     /// </summary>
     public FieldQuery ThatAreNullable()
     {
         return AddFilter(f => f.Type.NullableAnnotation == NullableAnnotation.Annotated);
+    }
+
+    /// <summary>
+    /// Filters for fields that are not nullable.
+    /// </summary>
+    public FieldQuery ThatAreNotNullable()
+    {
+        return AddFilter(f => f.Type.NullableAnnotation != NullableAnnotation.Annotated);
     }
 
     #endregion

@@ -41,11 +41,27 @@ public readonly struct ConstructorQuery
     }
 
     /// <summary>
+    /// Filters for non-public constructors.
+    /// </summary>
+    public ConstructorQuery ThatAreNotPublic()
+    {
+        return AddFilter(c => c.DeclaredAccessibility != Accessibility.Public);
+    }
+
+    /// <summary>
     /// Filters for private constructors.
     /// </summary>
     public ConstructorQuery ThatArePrivate()
     {
         return AddFilter(c => c.DeclaredAccessibility == Accessibility.Private);
+    }
+
+    /// <summary>
+    /// Filters for non-private constructors.
+    /// </summary>
+    public ConstructorQuery ThatAreNotPrivate()
+    {
+        return AddFilter(c => c.DeclaredAccessibility != Accessibility.Private);
     }
 
     /// <summary>
@@ -57,6 +73,14 @@ public readonly struct ConstructorQuery
     }
 
     /// <summary>
+    /// Filters for non-protected constructors.
+    /// </summary>
+    public ConstructorQuery ThatAreNotProtected()
+    {
+        return AddFilter(c => c.DeclaredAccessibility != Accessibility.Protected);
+    }
+
+    /// <summary>
     /// Filters for internal constructors.
     /// </summary>
     public ConstructorQuery ThatAreInternal()
@@ -65,11 +89,27 @@ public readonly struct ConstructorQuery
     }
 
     /// <summary>
+    /// Filters for non-internal constructors.
+    /// </summary>
+    public ConstructorQuery ThatAreNotInternal()
+    {
+        return AddFilter(c => c.DeclaredAccessibility != Accessibility.Internal);
+    }
+
+    /// <summary>
     /// Filters for protected internal constructors.
     /// </summary>
     public ConstructorQuery ThatAreProtectedOrInternal()
     {
         return AddFilter(c => c.DeclaredAccessibility == Accessibility.ProtectedOrInternal);
+    }
+
+    /// <summary>
+    /// Filters for constructors that are not protected internal.
+    /// </summary>
+    public ConstructorQuery ThatAreNotProtectedOrInternal()
+    {
+        return AddFilter(c => c.DeclaredAccessibility != Accessibility.ProtectedOrInternal);
     }
 
     #endregion

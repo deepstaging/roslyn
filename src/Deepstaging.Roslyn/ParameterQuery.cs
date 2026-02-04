@@ -41,11 +41,27 @@ public readonly struct ParameterQuery
     }
 
     /// <summary>
+    /// Filters for parameters that are not ref.
+    /// </summary>
+    public ParameterQuery ThatAreNotRef()
+    {
+        return AddFilter(p => p.RefKind != RefKind.Ref);
+    }
+
+    /// <summary>
     /// Filters for out parameters.
     /// </summary>
     public ParameterQuery ThatAreOut()
     {
         return AddFilter(p => p.RefKind == RefKind.Out);
+    }
+
+    /// <summary>
+    /// Filters for parameters that are not out.
+    /// </summary>
+    public ParameterQuery ThatAreNotOut()
+    {
+        return AddFilter(p => p.RefKind != RefKind.Out);
     }
 
     /// <summary>
@@ -57,11 +73,27 @@ public readonly struct ParameterQuery
     }
 
     /// <summary>
+    /// Filters for parameters that are not in.
+    /// </summary>
+    public ParameterQuery ThatAreNotIn()
+    {
+        return AddFilter(p => p.RefKind != RefKind.In);
+    }
+
+    /// <summary>
     /// Filters for params parameters (parameter arrays).
     /// </summary>
     public ParameterQuery ThatAreParams()
     {
         return AddFilter(p => p.IsParams);
+    }
+
+    /// <summary>
+    /// Filters for parameters that are not params.
+    /// </summary>
+    public ParameterQuery ThatAreNotParams()
+    {
+        return AddFilter(p => !p.IsParams);
     }
 
     /// <summary>
@@ -89,11 +121,27 @@ public readonly struct ParameterQuery
     }
 
     /// <summary>
+    /// Filters for parameters that are not this.
+    /// </summary>
+    public ParameterQuery ThatAreNotThis()
+    {
+        return AddFilter(p => !p.IsThis);
+    }
+
+    /// <summary>
     /// Filters for parameters that discard their value (named _).
     /// </summary>
     public ParameterQuery ThatAreDiscards()
     {
         return AddFilter(p => p.IsDiscard);
+    }
+
+    /// <summary>
+    /// Filters for parameters that are not discards.
+    /// </summary>
+    public ParameterQuery ThatAreNotDiscards()
+    {
+        return AddFilter(p => !p.IsDiscard);
     }
 
     #endregion
@@ -161,11 +209,27 @@ public readonly struct ParameterQuery
     }
 
     /// <summary>
+    /// Filters for parameters that are not generic types.
+    /// </summary>
+    public ParameterQuery ThatAreNotGenericType()
+    {
+        return AddFilter(p => p.Type is not INamedTypeSymbol { IsGenericType: true });
+    }
+
+    /// <summary>
     /// Filters for parameters with nullable value types.
     /// </summary>
     public ParameterQuery ThatAreNullable()
     {
         return AddFilter(p => p.Type.NullableAnnotation == NullableAnnotation.Annotated);
+    }
+
+    /// <summary>
+    /// Filters for parameters that are not nullable.
+    /// </summary>
+    public ParameterQuery ThatAreNotNullable()
+    {
+        return AddFilter(p => p.Type.NullableAnnotation != NullableAnnotation.Annotated);
     }
 
     #endregion

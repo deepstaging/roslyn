@@ -49,11 +49,27 @@ public readonly struct TypeQuery
     }
 
     /// <summary>
+    /// Filters for non-public types.
+    /// </summary>
+    public TypeQuery ThatAreNotPublic()
+    {
+        return AddFilter(t => t.DeclaredAccessibility != Accessibility.Public);
+    }
+
+    /// <summary>
     /// Filters for internal types.
     /// </summary>
     public TypeQuery ThatAreInternal()
     {
         return AddFilter(t => t.DeclaredAccessibility == Accessibility.Internal);
+    }
+
+    /// <summary>
+    /// Filters for non-internal types.
+    /// </summary>
+    public TypeQuery ThatAreNotInternal()
+    {
+        return AddFilter(t => t.DeclaredAccessibility != Accessibility.Internal);
     }
 
     /// <summary>
@@ -65,11 +81,27 @@ public readonly struct TypeQuery
     }
 
     /// <summary>
+    /// Filters for non-private types.
+    /// </summary>
+    public TypeQuery ThatAreNotPrivate()
+    {
+        return AddFilter(t => t.DeclaredAccessibility != Accessibility.Private);
+    }
+
+    /// <summary>
     /// Filters for protected types (nested types only).
     /// </summary>
     public TypeQuery ThatAreProtected()
     {
         return AddFilter(t => t.DeclaredAccessibility == Accessibility.Protected);
+    }
+
+    /// <summary>
+    /// Filters for non-protected types.
+    /// </summary>
+    public TypeQuery ThatAreNotProtected()
+    {
+        return AddFilter(t => t.DeclaredAccessibility != Accessibility.Protected);
     }
 
     #endregion
@@ -85,11 +117,27 @@ public readonly struct TypeQuery
     }
 
     /// <summary>
+    /// Filters for types that are not classes.
+    /// </summary>
+    public TypeQuery ThatAreNotClasses()
+    {
+        return AddFilter(t => t.TypeKind != TypeKind.Class);
+    }
+
+    /// <summary>
     /// Filters for interface types.
     /// </summary>
     public TypeQuery ThatAreInterfaces()
     {
         return AddFilter(t => t.TypeKind == TypeKind.Interface);
+    }
+
+    /// <summary>
+    /// Filters for types that are not interfaces.
+    /// </summary>
+    public TypeQuery ThatAreNotInterfaces()
+    {
+        return AddFilter(t => t.TypeKind != TypeKind.Interface);
     }
 
     /// <summary>
@@ -101,11 +149,27 @@ public readonly struct TypeQuery
     }
 
     /// <summary>
+    /// Filters for types that are not structs.
+    /// </summary>
+    public TypeQuery ThatAreNotStructs()
+    {
+        return AddFilter(t => t.TypeKind != TypeKind.Struct);
+    }
+
+    /// <summary>
     /// Filters for enum types.
     /// </summary>
     public TypeQuery ThatAreEnums()
     {
         return AddFilter(t => t.TypeKind == TypeKind.Enum);
+    }
+
+    /// <summary>
+    /// Filters for types that are not enums.
+    /// </summary>
+    public TypeQuery ThatAreNotEnums()
+    {
+        return AddFilter(t => t.TypeKind != TypeKind.Enum);
     }
 
     /// <summary>
@@ -117,11 +181,27 @@ public readonly struct TypeQuery
     }
 
     /// <summary>
+    /// Filters for types that are not delegates.
+    /// </summary>
+    public TypeQuery ThatAreNotDelegates()
+    {
+        return AddFilter(t => t.TypeKind != TypeKind.Delegate);
+    }
+
+    /// <summary>
     /// Filters for record types (record class or record struct).
     /// </summary>
     public TypeQuery ThatAreRecords()
     {
         return AddFilter(t => t.IsRecord);
+    }
+
+    /// <summary>
+    /// Filters for types that are not records.
+    /// </summary>
+    public TypeQuery ThatAreNotRecords()
+    {
+        return AddFilter(t => !t.IsRecord);
     }
 
     #endregion
@@ -137,11 +217,27 @@ public readonly struct TypeQuery
     }
 
     /// <summary>
+    /// Filters for non-static types.
+    /// </summary>
+    public TypeQuery ThatAreNotStatic()
+    {
+        return AddFilter(t => !t.IsStatic);
+    }
+
+    /// <summary>
     /// Filters for abstract types.
     /// </summary>
     public TypeQuery ThatAreAbstract()
     {
         return AddFilter(t => t.IsAbstract);
+    }
+
+    /// <summary>
+    /// Filters for non-abstract types.
+    /// </summary>
+    public TypeQuery ThatAreNotAbstract()
+    {
+        return AddFilter(t => !t.IsAbstract);
     }
 
     /// <summary>
@@ -153,11 +249,27 @@ public readonly struct TypeQuery
     }
 
     /// <summary>
+    /// Filters for non-sealed types.
+    /// </summary>
+    public TypeQuery ThatAreNotSealed()
+    {
+        return AddFilter(t => !t.IsSealed);
+    }
+
+    /// <summary>
     /// Filters for generic types.
     /// </summary>
     public TypeQuery ThatAreGeneric()
     {
         return AddFilter(t => t.IsGenericType);
+    }
+
+    /// <summary>
+    /// Filters for non-generic types.
+    /// </summary>
+    public TypeQuery ThatAreNotGeneric()
+    {
+        return AddFilter(t => !t.IsGenericType);
     }
 
     /// <summary>
@@ -169,6 +281,14 @@ public readonly struct TypeQuery
     }
 
     /// <summary>
+    /// Filters for non-partial types.
+    /// </summary>
+    public TypeQuery ThatAreNotPartial()
+    {
+        return AddFilter(t => t.DeclaringSyntaxReferences.Length <= 1);
+    }
+
+    /// <summary>
     /// Filters for ref struct types.
     /// </summary>
     public TypeQuery ThatAreRefStructs()
@@ -177,11 +297,27 @@ public readonly struct TypeQuery
     }
 
     /// <summary>
+    /// Filters for types that are not ref structs.
+    /// </summary>
+    public TypeQuery ThatAreNotRefStructs()
+    {
+        return AddFilter(t => !t.IsRefLikeType);
+    }
+
+    /// <summary>
     /// Filters for readonly struct types.
     /// </summary>
     public TypeQuery ThatAreReadOnlyStructs()
     {
         return AddFilter(t => t.IsReadOnly);
+    }
+
+    /// <summary>
+    /// Filters for types that are not readonly structs.
+    /// </summary>
+    public TypeQuery ThatAreNotReadOnlyStructs()
+    {
+        return AddFilter(t => !t.IsReadOnly);
     }
 
     #endregion

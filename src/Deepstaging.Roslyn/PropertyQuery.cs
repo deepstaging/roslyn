@@ -41,11 +41,27 @@ public readonly struct PropertyQuery
     }
 
     /// <summary>
+    /// Filters for non-public properties.
+    /// </summary>
+    public PropertyQuery ThatAreNotPublic()
+    {
+        return AddFilter(p => p.DeclaredAccessibility != Accessibility.Public);
+    }
+
+    /// <summary>
     /// Filters for private properties.
     /// </summary>
     public PropertyQuery ThatArePrivate()
     {
         return AddFilter(p => p.DeclaredAccessibility == Accessibility.Private);
+    }
+
+    /// <summary>
+    /// Filters for non-private properties.
+    /// </summary>
+    public PropertyQuery ThatAreNotPrivate()
+    {
+        return AddFilter(p => p.DeclaredAccessibility != Accessibility.Private);
     }
 
     /// <summary>
@@ -57,6 +73,14 @@ public readonly struct PropertyQuery
     }
 
     /// <summary>
+    /// Filters for non-protected properties.
+    /// </summary>
+    public PropertyQuery ThatAreNotProtected()
+    {
+        return AddFilter(p => p.DeclaredAccessibility != Accessibility.Protected);
+    }
+
+    /// <summary>
     /// Filters for internal properties.
     /// </summary>
     public PropertyQuery ThatAreInternal()
@@ -65,11 +89,27 @@ public readonly struct PropertyQuery
     }
 
     /// <summary>
+    /// Filters for non-internal properties.
+    /// </summary>
+    public PropertyQuery ThatAreNotInternal()
+    {
+        return AddFilter(p => p.DeclaredAccessibility != Accessibility.Internal);
+    }
+
+    /// <summary>
     /// Filters for protected internal properties.
     /// </summary>
     public PropertyQuery ThatAreProtectedOrInternal()
     {
         return AddFilter(p => p.DeclaredAccessibility == Accessibility.ProtectedOrInternal);
+    }
+
+    /// <summary>
+    /// Filters for properties that are not protected internal.
+    /// </summary>
+    public PropertyQuery ThatAreNotProtectedOrInternal()
+    {
+        return AddFilter(p => p.DeclaredAccessibility != Accessibility.ProtectedOrInternal);
     }
 
     #endregion
@@ -101,11 +141,27 @@ public readonly struct PropertyQuery
     }
 
     /// <summary>
+    /// Filters for non-virtual properties.
+    /// </summary>
+    public PropertyQuery ThatAreNotVirtual()
+    {
+        return AddFilter(p => !p.IsVirtual);
+    }
+
+    /// <summary>
     /// Filters for abstract properties.
     /// </summary>
     public PropertyQuery ThatAreAbstract()
     {
         return AddFilter(p => p.IsAbstract);
+    }
+
+    /// <summary>
+    /// Filters for non-abstract properties.
+    /// </summary>
+    public PropertyQuery ThatAreNotAbstract()
+    {
+        return AddFilter(p => !p.IsAbstract);
     }
 
     /// <summary>
@@ -117,11 +173,27 @@ public readonly struct PropertyQuery
     }
 
     /// <summary>
+    /// Filters for properties that are not overrides.
+    /// </summary>
+    public PropertyQuery ThatAreNotOverride()
+    {
+        return AddFilter(p => !p.IsOverride);
+    }
+
+    /// <summary>
     /// Filters for sealed properties.
     /// </summary>
     public PropertyQuery ThatAreSealed()
     {
         return AddFilter(p => p.IsSealed);
+    }
+
+    /// <summary>
+    /// Filters for non-sealed properties.
+    /// </summary>
+    public PropertyQuery ThatAreNotSealed()
+    {
+        return AddFilter(p => !p.IsSealed);
     }
 
     /// <summary>
@@ -162,6 +234,14 @@ public readonly struct PropertyQuery
     public PropertyQuery ThatAreRequired()
     {
         return AddFilter(p => p.IsRequired);
+    }
+
+    /// <summary>
+    /// Filters for properties that are not required.
+    /// </summary>
+    public PropertyQuery ThatAreNotRequired()
+    {
+        return AddFilter(p => !p.IsRequired);
     }
 
     #endregion

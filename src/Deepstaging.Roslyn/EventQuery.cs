@@ -41,11 +41,27 @@ public readonly struct EventQuery
     }
 
     /// <summary>
+    /// Filters for non-public events.
+    /// </summary>
+    public EventQuery ThatAreNotPublic()
+    {
+        return AddFilter(e => e.DeclaredAccessibility != Accessibility.Public);
+    }
+
+    /// <summary>
     /// Filters for private events.
     /// </summary>
     public EventQuery ThatArePrivate()
     {
         return AddFilter(e => e.DeclaredAccessibility == Accessibility.Private);
+    }
+
+    /// <summary>
+    /// Filters for non-private events.
+    /// </summary>
+    public EventQuery ThatAreNotPrivate()
+    {
+        return AddFilter(e => e.DeclaredAccessibility != Accessibility.Private);
     }
 
     /// <summary>
@@ -57,11 +73,27 @@ public readonly struct EventQuery
     }
 
     /// <summary>
+    /// Filters for non-protected events.
+    /// </summary>
+    public EventQuery ThatAreNotProtected()
+    {
+        return AddFilter(e => e.DeclaredAccessibility != Accessibility.Protected);
+    }
+
+    /// <summary>
     /// Filters for internal events.
     /// </summary>
     public EventQuery ThatAreInternal()
     {
         return AddFilter(e => e.DeclaredAccessibility == Accessibility.Internal);
+    }
+
+    /// <summary>
+    /// Filters for non-internal events.
+    /// </summary>
+    public EventQuery ThatAreNotInternal()
+    {
+        return AddFilter(e => e.DeclaredAccessibility != Accessibility.Internal);
     }
 
     #endregion
@@ -93,11 +125,27 @@ public readonly struct EventQuery
     }
 
     /// <summary>
+    /// Filters for non-abstract events.
+    /// </summary>
+    public EventQuery ThatAreNotAbstract()
+    {
+        return AddFilter(e => !e.IsAbstract);
+    }
+
+    /// <summary>
     /// Filters for virtual events.
     /// </summary>
     public EventQuery ThatAreVirtual()
     {
         return AddFilter(e => e.IsVirtual);
+    }
+
+    /// <summary>
+    /// Filters for non-virtual events.
+    /// </summary>
+    public EventQuery ThatAreNotVirtual()
+    {
+        return AddFilter(e => !e.IsVirtual);
     }
 
     /// <summary>
@@ -109,11 +157,27 @@ public readonly struct EventQuery
     }
 
     /// <summary>
+    /// Filters for non-sealed events.
+    /// </summary>
+    public EventQuery ThatAreNotSealed()
+    {
+        return AddFilter(e => !e.IsSealed);
+    }
+
+    /// <summary>
     /// Filters for override events.
     /// </summary>
     public EventQuery ThatAreOverride()
     {
         return AddFilter(e => e.IsOverride);
+    }
+
+    /// <summary>
+    /// Filters for events that are not overrides.
+    /// </summary>
+    public EventQuery ThatAreNotOverride()
+    {
+        return AddFilter(e => !e.IsOverride);
     }
 
     #endregion
