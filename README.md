@@ -2,6 +2,8 @@
 
 A fluent toolkit for building Roslyn source generators, analyzers, and code fixes.
 
+[![Documentation](https://img.shields.io/badge/docs-deepstaging.github.io%2Froslyn-blue)](https://deepstaging.github.io/roslyn)
+
 Roslyn APIs are powerful but awkward. This library wraps them in something that feels natural.
 
 ## Packages

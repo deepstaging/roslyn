@@ -1,0 +1,83 @@
+site_name: Deepstaging.Roslyn
+site_description: A fluent toolkit for building Roslyn source generators, analyzers, and code fixes
+site_url: https://deepstaging.github.io/roslyn
+repo_url: https://github.com/deepstaging/roslyn
+repo_name: deepstaging/roslyn
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: deep purple
+      accent: purple
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep purple
+      accent: purple
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+  icon:
+    repo: fontawesome/brands/github
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/deepstaging
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+  - minify:
+      minify_html: true
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - API Reference:
+    - Queries: api/queries.md
+    - Projections: api/projections.md
+    - Emit: api/emit.md
+    - Extensions: api/extensions.md
+  - Packages:
+    - Roslyn.Scriban: packages/scriban.md
+    - Roslyn.Workspace: packages/workspace.md
+    - Roslyn.Testing: packages/testing.md
+  - Testing:
+    - RoslynTestBase: testing/roslyn-test-base.md
+    - GeneratorTestContext: testing/generator-test-context.md
+    - AnalyzerTestContext: testing/analyzer-test-context.md
+    - CodeFixTestContext: testing/codefix-test-context.md
+    - SymbolTestContext: testing/symbol-test-context.md
+    - TemplateTestContext: testing/template-test-context.md
+    - ReferenceConfiguration: testing/reference-configuration.md
