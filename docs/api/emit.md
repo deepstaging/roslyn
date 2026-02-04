@@ -42,6 +42,69 @@ if (result.IsValid(out var valid))
 
 ---
 
+## Parse API
+
+Build from natural C# signatures — parse the signature, then customize with builder methods:
+
+```csharp
+// Parse a method signature, then add the body
+var method = MethodBuilder.Parse("public async Task<bool> ProcessAsync(string input, CancellationToken ct = default)")
+    .WithBody(b => b
+        .AddStatement("await Task.Delay(100, ct)")
+        .AddReturn("true"));
+
+// Parse a property, optionally customize further
+var property = PropertyBuilder.Parse("public string Name { get; set; }")
+    .WithAttribute("Required");
+
+// Parse a field
+var field = FieldBuilder.Parse("private readonly ILogger _logger");
+
+// Parse a type signature with base types, then add members
+var service = TypeBuilder.Parse("public sealed class CustomerService : ICustomerService")
+    .InNamespace("MyApp.Services")
+    .AddField(field)
+    .AddProperty(property)
+    .AddMethod(method);
+```
+
+### What Parse Handles
+
+| Parsed from Signature | Added via Builder Methods |
+|-----------------------|---------------------------|
+| Name, type, return type | Method/property bodies |
+| Accessibility (public, private, etc.) | Attributes |
+| Modifiers (static, async, virtual, readonly, etc.) | XML documentation |
+| Parameters with modifiers and defaults | Namespace and usings |
+| Generic type parameters and constraints | Additional members |
+| Base types and interfaces | |
+| Property accessors ({ get; set; }) | |
+| Field initializers | |
+
+### Parse Examples
+
+```csharp
+// Methods with generics and constraints
+MethodBuilder.Parse("public T Convert<T>(object value) where T : class")
+
+// Abstract and virtual methods
+MethodBuilder.Parse("protected virtual void OnPropertyChanged(string name)")
+
+// Properties with various accessors
+PropertyBuilder.Parse("public int Count { get; }")
+PropertyBuilder.Parse("public List<string> Items { get; set; } = new()")
+
+// Fields with modifiers
+FieldBuilder.Parse("private static int _count = 0")
+FieldBuilder.Parse("public const int MaxRetries = 3")
+
+// Types with inheritance
+TypeBuilder.Parse("public abstract class BaseHandler<T> : IHandler<T> where T : class")
+TypeBuilder.Parse("public partial record OrderDto(string Id, decimal Total)")
+```
+
+---
+
 ## TypeBuilder
 
 Create type declarations.
