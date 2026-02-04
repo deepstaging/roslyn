@@ -29,6 +29,9 @@ using Deepstaging.Roslyn.Generators;
 namespace Deepstaging.Generators;
 
 /// <inheritdoc />
+public class AutoNotifyAttribute : Attribute;
+
+/// <inheritdoc />
 [Generator]
 public class AutoNotifyGenerator : IIncrementalGenerator
 {
@@ -36,38 +39,30 @@ public class AutoNotifyGenerator : IIncrementalGenerator
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         // Use ForAttribute extension to find types with the attribute
-        var models = context
-            .ForAttribute<AutoNotifyAttribute>()
-            .Map((ctx, _) => new AutoNotifyModel(ctx.TargetSymbol));
+        context.ForEach(
+            query: ctx => ctx.ForAttribute<AutoNotifyAttribute>().Map((c, _) => new AutoNotifyModel(c.TargetSymbol)),
+            generate: (ctx, model) =>
+            {
+                var hint = new HintName(model.Namespace);
 
-        context.RegisterSourceOutput(models.Collect(), Generate);
-    }
+                // Build the partial class
+                var code = TypeBuilder.Class(model.TypeName)
+                    .InNamespace(model.Namespace)
+                    .AsPartial()
+                    .AddUsing("System.ComponentModel")
+                    .WithEach(model.Fields, (builder, field) => builder
+                        .AddProperty(field.PropertyName,
+                            field.Type.FullyQualifiedName, p => p
+                                .WithGetter(b => b.AddStatement($"return {field.Name}"))
+                                .WithSetter(b => b
+                                    .AddStatement($"{field.Name} = value")
+                                    .AddStatement($"OnPropertyChanged(nameof({field.ParameterName}))"))));
 
-    private void Generate(SourceProductionContext context,
-        ImmutableArray<AutoNotifyModel> models)
-    {
-        foreach (var model in models)
-        {
-            var hint = new HintName(model.Namespace);
-            
-            // Build the partial class
-            var code = TypeBuilder.Class(model.TypeName)
-                .InNamespace(model.Namespace)
-                .AsPartial()
-                .AddUsing("System.ComponentModel")
-                .WithEach(model.Fields, (builder, field) => builder
-                    .AddProperty(field.PropertyName,
-                        field.Type.FullyQualifiedName, p => p
-                            .WithGetter(b => b.AddStatement($"return {field.Name}"))
-                            .WithSetter(b => b
-                                .AddStatement($"{field.Name} = value")
-                                .AddStatement($"OnPropertyChanged(nameof({field.ParameterName}))"))));
-
-            context.AddFromEmit(
-                hint.Filename(model.TypeName),
-                code.Emit()
-            );
-        }
+                ctx.AddFromEmit(
+                    hint.Filename(model.TypeName),
+                    code.Emit()
+                );
+            });
     }
 }
 

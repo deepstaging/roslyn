@@ -45,7 +45,7 @@ public static class IncrementalGeneratorContextExtensions
         /// <param name="query">Function to query and transform symbols into models</param>
         /// <param name="generate">Action to generate code for each model</param>
         /// <param name="onError">Optional error handler for generation failures</param>
-        public void GenerateFromQuery<TModel>(
+        public void ForEach<TModel>(
             Func<IncrementalGeneratorInitializationContext, IncrementalValuesProvider<TModel>> query,
             Action<SourceProductionContext, TModel> generate,
             Action<SourceProductionContext, TModel, Exception>? onError = null)
