@@ -232,11 +232,18 @@ public readonly struct ValidSymbol<TSymbol> : IProjection<TSymbol>
     public string GloballyQualifiedName => _symbol.ToDisplayString(GloballyQualifiedFormatWithNullability);
 
     /// <summary>
-    /// Gets the fully qualified type reference suitable for code generation.
-    /// Includes global:: prefix and nullable annotations (e.g., "global::System.String?").
-    /// Alias for GloballyQualifiedName for clarity in code generation contexts.
+    /// Gets the type of the property or field as a ValidSymbol.
+    /// Returns null for symbols that don't have an associated type.
     /// </summary>
-    public string TypeReference => GloballyQualifiedName;
+    public ValidSymbol<ITypeSymbol>? Type => _symbol switch
+    {
+        IPropertySymbol prop => ValidSymbol<ITypeSymbol>.TryFrom(prop.Type),
+        IFieldSymbol fieldSymbol => ValidSymbol<ITypeSymbol>.TryFrom(fieldSymbol.Type),
+        IParameterSymbol param => ValidSymbol<ITypeSymbol>.TryFrom(param.Type),
+        ILocalSymbol local => ValidSymbol<ITypeSymbol>.TryFrom(local.Type),
+        IEventSymbol evt => ValidSymbol<ITypeSymbol>.TryFrom(evt.Type),
+        _ => null
+    };
 
     /// <summary>
     /// Gets the display name (namespace.name) of the symbol.
