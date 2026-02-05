@@ -43,4 +43,48 @@ public class PropertyQueryTests : RoslynTestBase
 
         await Assert.That(readonlyProps.Any(p => p.Value.Name == "ReadOnlyProp")).IsTrue();
     }
+
+    [Test]
+    public async Task Can_filter_readable_properties()
+    {
+        var code = """
+            public class TestClass
+            {
+                public int ReadableProp { get; set; }
+                public int WriteOnlyProp { set { } }
+            }
+            """;
+
+        var readableProps = SymbolsFor(code)
+            .RequireNamedType("TestClass")
+            .QueryProperties()
+            .ThatAreReadable()
+            .GetAll();
+
+        await Assert.That(readableProps).Count().IsEqualTo(1);
+        await Assert.That(readableProps[0].Value.Name).IsEqualTo("ReadableProp");
+    }
+
+    [Test]
+    public async Task Can_filter_writable_properties()
+    {
+        var code = """
+            public class TestClass
+            {
+                public int WritableProp { get; set; }
+                public int InitOnlyProp { get; init; }
+                public int ReadOnlyProp { get; }
+            }
+            """;
+
+        var writableProps = SymbolsFor(code)
+            .RequireNamedType("TestClass")
+            .QueryProperties()
+            .ThatAreWritable()
+            .GetAll();
+
+        await Assert.That(writableProps).Count().IsEqualTo(2);
+        await Assert.That(writableProps.Any(p => p.Value.Name == "WritableProp")).IsTrue();
+        await Assert.That(writableProps.Any(p => p.Value.Name == "InitOnlyProp")).IsTrue();
+    }
 }

@@ -105,6 +105,55 @@ public readonly struct BodyBuilder
     }
 
     /// <summary>
+    /// Adds an if statement with a body built using a nested BodyBuilder.
+    /// </summary>
+    /// <param name="condition">The condition expression (e.g., "x > 0", "value != null").</param>
+    /// <param name="configureBody">Configuration callback for the if body.</param>
+    public BodyBuilder AddIf(string condition, Func<BodyBuilder, BodyBuilder> configureBody)
+    {
+        var body = configureBody(Empty());
+        var ifStatement = SyntaxFactory.IfStatement(
+            SyntaxFactory.ParseExpression(condition),
+            body.Build());
+        return new BodyBuilder(_statements.Add(ifStatement));
+    }
+
+    /// <summary>
+    /// Adds an if-else statement with bodies built using nested BodyBuilders.
+    /// </summary>
+    /// <param name="condition">The condition expression (e.g., "x > 0", "value != null").</param>
+    /// <param name="configureIfBody">Configuration callback for the if body.</param>
+    /// <param name="configureElseBody">Configuration callback for the else body.</param>
+    public BodyBuilder AddIfElse(string condition, Func<BodyBuilder, BodyBuilder> configureIfBody, Func<BodyBuilder, BodyBuilder> configureElseBody)
+    {
+        var ifBody = configureIfBody(Empty());
+        var elseBody = configureElseBody(Empty());
+        var ifStatement = SyntaxFactory.IfStatement(
+            SyntaxFactory.ParseExpression(condition),
+            ifBody.Build(),
+            SyntaxFactory.ElseClause(elseBody.Build()));
+        return new BodyBuilder(_statements.Add(ifStatement));
+    }
+
+    /// <summary>
+    /// Adds a foreach statement with a body built using a nested BodyBuilder.
+    /// </summary>
+    /// <param name="variableType">The type of the loop variable (e.g., "var", "string").</param>
+    /// <param name="variableName">The name of the loop variable (e.g., "item", "x").</param>
+    /// <param name="collection">The collection expression (e.g., "items", "GetValues()").</param>
+    /// <param name="configureBody">Configuration callback for the loop body.</param>
+    public BodyBuilder AddForEach(string variableType, string variableName, string collection, Func<BodyBuilder, BodyBuilder> configureBody)
+    {
+        var body = configureBody(Empty());
+        var forEachStatement = SyntaxFactory.ForEachStatement(
+            SyntaxFactory.ParseTypeName(variableType),
+            SyntaxFactory.Identifier(variableName),
+            SyntaxFactory.ParseExpression(collection),
+            body.Build());
+        return new BodyBuilder(_statements.Add(forEachStatement));
+    }
+
+    /// <summary>
     /// Adds a custom statement syntax directly.
     /// Use this as an escape hatch for complex scenarios not covered by string-based methods.
     /// </summary>

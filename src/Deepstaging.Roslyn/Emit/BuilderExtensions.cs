@@ -25,34 +25,38 @@ public static class BuilderExtensions
     }
     
     /// <summary>
-    /// 
+    /// Conditionally applies a transformation when the condition is true.
     /// </summary>
-    /// <param name="builder"></param>
-    /// <param name="condition"></param>
-    /// <param name="transform"></param>
-    /// <typeparam name="TBuilder"></typeparam>
-    /// <returns></returns>
+    /// <param name="builder">The builder instance.</param>
+    /// <param name="condition">The condition to evaluate.</param>
+    /// <param name="then">The transformation to apply when condition is true.</param>
+    /// <param name="else">Optional transformation to apply when condition is false.</param>
+    /// <typeparam name="TBuilder">The builder type.</typeparam>
+    /// <returns>The transformed builder.</returns>
     public static TBuilder If<TBuilder>(
         this TBuilder builder,
         bool condition,
-        Func<TBuilder, TBuilder> transform) where TBuilder : struct
+        Func<TBuilder, TBuilder> then,
+        Func<TBuilder, TBuilder>? @else = null) where TBuilder : struct
     {
-        return condition ? transform(builder) : builder;
+        return condition ? then(builder) : @else?.Invoke(builder) ?? builder;
     }
 
     /// <summary>
-    /// 
+    /// Conditionally applies a transformation when the condition is false.
     /// </summary>
-    /// <param name="builder"></param>
-    /// <param name="condition"></param>
-    /// <param name="transform"></param>
-    /// <typeparam name="TBuilder"></typeparam>
-    /// <returns></returns>
+    /// <param name="builder">The builder instance.</param>
+    /// <param name="condition">The condition to evaluate.</param>
+    /// <param name="then">The transformation to apply when condition is false.</param>
+    /// <param name="else">Optional transformation to apply when condition is true.</param>
+    /// <typeparam name="TBuilder">The builder type.</typeparam>
+    /// <returns>The transformed builder.</returns>
     public static TBuilder IfNot<TBuilder>(
         this TBuilder builder,
         bool condition,
-        Func<TBuilder, TBuilder> transform) where TBuilder : struct
+        Func<TBuilder, TBuilder> then,
+        Func<TBuilder, TBuilder>? @else = null) where TBuilder : struct
     {
-        return !condition ? transform(builder) : builder;
+        return !condition ? then(builder) : @else?.Invoke(builder) ?? builder;
     }
 }

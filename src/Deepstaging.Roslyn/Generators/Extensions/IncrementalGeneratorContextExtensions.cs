@@ -39,26 +39,23 @@ public static class IncrementalGeneratorContextExtensions
         }
 
         /// <summary>
-        /// Creates a standard generator initialization pipeline.
-        /// Discovers models using the provided function and registers code generation for each model.
+        /// Registers code generation for each model in the provided values provider.
         /// </summary>
-        /// <param name="query">Function to query and transform symbols into models</param>
-        /// <param name="generate">Action to generate code for each model</param>
+        /// <param name="models">The incremental values provider containing models to process</param>
+        /// <param name="produce">Action to generate code for each model</param>
         /// <param name="onError">Optional error handler for generation failures</param>
         public void ForEach<TModel>(
-            Func<IncrementalGeneratorInitializationContext, IncrementalValuesProvider<TModel>> query,
-            Action<SourceProductionContext, TModel> generate,
+            IncrementalValuesProvider<TModel> models,
+            Action<SourceProductionContext, TModel> produce,
             Action<SourceProductionContext, TModel, Exception>? onError = null)
         {
-            var models = query(context);
-
             context.RegisterImplementationSourceOutput(models.Collect(), (ctx, array) =>
             {
                 foreach (var model in array)
                 {
                     try
                     {
-                        generate(ctx, model);
+                        produce(ctx, model);
                     }
                     catch (Exception ex)
                     {

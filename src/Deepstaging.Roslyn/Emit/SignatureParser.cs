@@ -224,12 +224,17 @@ internal static class SignatureParser
         {
             var hasGetter = property.AccessorList.Accessors.Any(a => a.IsKind(SyntaxKind.GetAccessorDeclaration));
             var hasSetter = property.AccessorList.Accessors.Any(a => a.IsKind(SyntaxKind.SetAccessorDeclaration));
+            var hasInit = property.AccessorList.Accessors.Any(a => a.IsKind(SyntaxKind.InitAccessorDeclaration));
 
-            if (hasGetter && hasSetter)
+            if (hasGetter && (hasSetter || hasInit))
             {
                 builder = builder.WithAutoPropertyAccessors();
+                if (hasInit)
+                {
+                    builder = builder.WithInitOnlySetter();
+                }
             }
-            else if (hasGetter && !hasSetter)
+            else if (hasGetter && !hasSetter && !hasInit)
             {
                 builder = builder.WithAutoPropertyAccessors().AsReadOnly();
             }
@@ -263,6 +268,8 @@ internal static class SignatureParser
                 SyntaxKind.VirtualKeyword => builder.AsVirtual(),
                 SyntaxKind.OverrideKeyword => builder.AsOverride(),
                 SyntaxKind.AbstractKeyword => builder.AsAbstract(),
+                SyntaxKind.SealedKeyword => builder.AsSealed(),
+                SyntaxKind.RequiredKeyword => builder.AsRequired(),
                 _ => builder
             };
         }

@@ -89,6 +89,28 @@ public static class CodeFixActionExtensions
 
         #endregion
 
+        #region Field Modifier Helpers
+
+        /// <summary>
+        /// Creates a code action that makes a field private by replacing its accessibility modifiers.
+        /// </summary>
+        /// <param name="fieldDecl">The validated field declaration syntax.</param>
+        /// <param name="title">Optional title for the code action. Defaults to "Make field private".</param>
+        public CodeAction MakeFieldPrivateAction(
+            ValidSyntax<FieldDeclarationSyntax> fieldDecl,
+            string title = "Make field private")
+        {
+            return CodeAction.Create(
+                title: title,
+                createChangedDocument: ct => document.ReplaceNode(
+                    fieldDecl.Node,
+                    MakeFieldPrivate(fieldDecl.Node),
+                    ct),
+                equivalenceKey: title);
+        }
+
+        #endregion
+
         #region Using Directive Helpers
 
         /// <summary>
@@ -185,6 +207,25 @@ public static class CodeFixActionExtensions
     }
 
     #region Private Helper Methods
+
+    private static readonly SyntaxKind[] AccessibilityModifiers =
+    [
+        SyntaxKind.PublicKeyword,
+        SyntaxKind.ProtectedKeyword,
+        SyntaxKind.InternalKeyword,
+        SyntaxKind.PrivateKeyword
+    ];
+
+    private static FieldDeclarationSyntax MakeFieldPrivate(FieldDeclarationSyntax fieldDeclaration)
+    {
+        var newModifiers = fieldDeclaration.Modifiers
+            .Where(m => !AccessibilityModifiers.Contains(m.Kind()))
+            .ToList();
+
+        newModifiers.Insert(0, SyntaxFactory.Token(SyntaxKind.PrivateKeyword));
+
+        return fieldDeclaration.WithModifiers(SyntaxFactory.TokenList(newModifiers));
+    }
 
     private static async Task<Document> AddUsingDirectiveAsync(
         Document document,

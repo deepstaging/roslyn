@@ -230,17 +230,37 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
         }
     }
 
+    // Static format for fully qualified names with nullable annotations
+    private static readonly SymbolDisplayFormat FullyQualifiedFormatWithNullability = new(
+        SymbolDisplayGlobalNamespaceStyle.Omitted,
+        SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces,
+        SymbolDisplayGenericsOptions.IncludeTypeParameters,
+        miscellaneousOptions: SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier);
+
+    private static readonly SymbolDisplayFormat GloballyQualifiedFormatWithNullability = new(
+        SymbolDisplayGlobalNamespaceStyle.Included,
+        SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces,
+        SymbolDisplayGenericsOptions.IncludeTypeParameters,
+        miscellaneousOptions: SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier);
+
     /// <summary>
     /// Gets the fully qualified name of the symbol without global namespace prefix.
+    /// Includes nullable reference type annotations (e.g., "System.String?").
     /// </summary>
-    public string? FullyQualifiedName => _symbol?.ToDisplayString(
-        SymbolDisplayFormat.FullyQualifiedFormat.WithGlobalNamespaceStyle(
-            SymbolDisplayGlobalNamespaceStyle.Omitted));
+    public string? FullyQualifiedName => _symbol?.ToDisplayString(FullyQualifiedFormatWithNullability);
 
     /// <summary>
     /// Gets the fully qualified name of the symbol with global namespace prefix.
+    /// Includes nullable reference type annotations (e.g., "global::System.String?").
     /// </summary>
-    public string? GloballyQualifiedName => _symbol?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+    public string? GloballyQualifiedName => _symbol?.ToDisplayString(GloballyQualifiedFormatWithNullability);
+
+    /// <summary>
+    /// Gets the fully qualified type reference suitable for code generation.
+    /// Includes global:: prefix and nullable annotations (e.g., "global::System.String?").
+    /// Alias for GloballyQualifiedName for clarity in code generation contexts.
+    /// </summary>
+    public string? TypeReference => GloballyQualifiedName;
 
     /// <summary>
     /// Gets the display name (namespace.name) of the symbol.

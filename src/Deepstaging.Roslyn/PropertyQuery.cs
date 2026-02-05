@@ -197,6 +197,22 @@ public readonly struct PropertyQuery
     }
 
     /// <summary>
+    /// Filters for properties that have a getter.
+    /// </summary>
+    public PropertyQuery ThatAreReadable()
+    {
+        return AddFilter(p => p.GetMethod is not null);
+    }
+
+    /// <summary>
+    /// Filters for properties that have a setter (including init-only setters).
+    /// </summary>
+    public PropertyQuery ThatAreWritable()
+    {
+        return AddFilter(p => p.SetMethod is not null);
+    }
+
+    /// <summary>
     /// Filters for read-only properties (no setter).
     /// </summary>
     public PropertyQuery ThatAreReadOnly()
