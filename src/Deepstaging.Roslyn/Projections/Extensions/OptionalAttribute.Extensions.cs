@@ -22,18 +22,18 @@ public static class OptionalAttributeExtensions
     extension(ITypeSymbol? type)
     {
         /// <summary>
-        /// Gets all attributes applied to the type as optional projections.
+        /// Gets all attributes applied to the type as valid projections.
         /// </summary>
-        public IEnumerable<OptionalAttribute> QueryAttributes()
+        public IEnumerable<ValidAttribute> QueryAttributes()
         {
             if (type == null) return [];
-            return type.GetAttributes().Select(OptionalAttribute.WithValue);
+            return type.GetAttributes().Select(ValidAttribute.From);
         }
 
         /// <summary>
         /// Gets attributes with the specified name applied to the type.
         /// </summary>
-        public IEnumerable<OptionalAttribute> QueryAttributes(string attributeName)
+        public IEnumerable<ValidAttribute> QueryAttributes(string attributeName)
         {
             if (type == null) return [];
 
@@ -45,7 +45,7 @@ public static class OptionalAttributeExtensions
             return type.GetAttributes()
                 .Where(attr => attr.AttributeClass?.Name == withAttribute ||
                                attr.AttributeClass?.Name == withoutAttribute)
-                .Select(OptionalAttribute.WithValue);
+                .Select(ValidAttribute.From);
         }
     }
 }

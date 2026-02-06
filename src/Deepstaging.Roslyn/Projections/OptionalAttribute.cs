@@ -95,10 +95,10 @@ public readonly struct OptionalAttribute(AttributeData? attribute)
     /// Returns empty array if attribute class is not generic or has no type arguments.
     /// </summary>
     /// <returns>Array of TypeModels representing the type arguments.</returns>
-    public ImmutableArray<OptionalSymbol<INamedTypeSymbol>> GetTypeArguments()
+    public ImmutableArray<ValidSymbol<INamedTypeSymbol>> GetTypeArguments()
     {
         return attribute?.AttributeClass is { IsGenericType: true } attrType
-            ? [..attrType.TypeArguments.Select(t => t.AsNamedType())]
+            ? [..attrType.TypeArguments.Select(t => t.AsValidNamedType())]
             : [];
     }
 

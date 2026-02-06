@@ -29,7 +29,7 @@ OptionalArgument<string> message = attr.NamedArg<string>("Message");
 For generic attributes like `[MyAttribute<TRuntime, TEvent>]`:
 
 ```csharp
-attr.GetTypeArguments()         // ImmutableArray<OptionalSymbol<INamedTypeSymbol>>
+attr.GetTypeArguments()         // ImmutableArray<ValidSymbol<INamedTypeSymbol>>
 attr.GetTypeArgument(0)         // OptionalArgument<INamedTypeSymbol>
 attr.GetTypeArgumentSymbol(0)   // OptionalSymbol<ITypeSymbol>
 attr.AttributeClass             // OptionalSymbol<INamedTypeSymbol>

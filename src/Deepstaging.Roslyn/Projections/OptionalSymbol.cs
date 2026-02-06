@@ -573,10 +573,10 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
     /// <summary>
     /// Gets the interfaces implemented by the symbol.
     /// </summary>
-    public ImmutableArray<OptionalSymbol<INamedTypeSymbol>> Interfaces =>
+    public ImmutableArray<ValidSymbol<INamedTypeSymbol>> Interfaces =>
         _symbol is INamedTypeSymbol namedType
-            ? [..namedType.Interfaces.Select(OptionalSymbol<INamedTypeSymbol>.WithValue)]
-            : ImmutableArray<OptionalSymbol<INamedTypeSymbol>>.Empty;
+            ? [..namedType.Interfaces.Select(ValidSymbol<INamedTypeSymbol>.From)]
+            : ImmutableArray<ValidSymbol<INamedTypeSymbol>>.Empty;
 
     #endregion
 
@@ -590,11 +590,11 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
     /// <summary>
     /// Gets the type arguments of the generic type.
     /// </summary>
-    public ImmutableArray<OptionalSymbol<INamedTypeSymbol>> GetTypeArguments()
+    public ImmutableArray<ValidSymbol<INamedTypeSymbol>> GetTypeArguments()
     {
         return _symbol is INamedTypeSymbol { IsGenericType: true } namedType
-            ? [..namedType.TypeArguments.Select(t => t.AsNamedType())]
-            : ImmutableArray<OptionalSymbol<INamedTypeSymbol>>.Empty;
+            ? [..namedType.TypeArguments.Select(t => t.AsValidNamedType())]
+            : ImmutableArray<ValidSymbol<INamedTypeSymbol>>.Empty;
     }
 
     /// <summary>
@@ -655,25 +655,25 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
     /// <summary>
     /// Gets the type parameters of the generic type.
     /// </summary>
-    public IEnumerable<OptionalSymbol<ITypeParameterSymbol>> GetTypeParameters()
+    public IEnumerable<ValidSymbol<ITypeParameterSymbol>> GetTypeParameters()
     {
         if (_symbol is not INamedTypeSymbol { IsGenericType: true } namedType)
             yield break;
 
         foreach (var typeParam in namedType.TypeParameters)
-            yield return OptionalSymbol<ITypeParameterSymbol>.WithValue(typeParam);
+            yield return ValidSymbol<ITypeParameterSymbol>.From(typeParam);
     }
 
     /// <summary>
     /// Gets the type parameters of a generic method.
     /// </summary>
-    public IEnumerable<OptionalSymbol<ITypeParameterSymbol>> GetMethodTypeParameters()
+    public IEnumerable<ValidSymbol<ITypeParameterSymbol>> GetMethodTypeParameters()
     {
         if (_symbol is not IMethodSymbol { IsGenericMethod: true } method)
             yield break;
 
         foreach (var typeParam in method.TypeParameters)
-            yield return OptionalSymbol<ITypeParameterSymbol>.WithValue(typeParam);
+            yield return ValidSymbol<ITypeParameterSymbol>.From(typeParam);
     }
 
     #endregion
@@ -701,13 +701,13 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
     /// <summary>
     /// Gets all attributes applied to the symbol.
     /// </summary>
-    public IEnumerable<OptionalAttribute> GetAttributes()
+    public IEnumerable<ValidAttribute> GetAttributes()
     {
         if (_symbol == null)
             yield break;
 
         foreach (var attr in _symbol.GetAttributes())
-            yield return OptionalAttribute.WithValue(attr);
+            yield return ValidAttribute.From(attr);
     }
 
     /// <summary>

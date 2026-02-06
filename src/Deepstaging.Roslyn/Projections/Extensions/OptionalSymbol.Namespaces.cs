@@ -14,13 +14,13 @@ public static class ProjectedNamespaceSymbolExtensions
         /// Gets all types directly declared in this namespace (non-recursive).
         /// Returns empty enumerable if namespace is empty.
         /// </summary>
-        public IEnumerable<OptionalSymbol<INamedTypeSymbol>> GetTypes()
+        public IEnumerable<ValidSymbol<INamedTypeSymbol>> GetTypes()
         {
             if (!ns.HasValue)
                 yield break;
 
             foreach (var type in ns.Symbol!.GetTypeMembers())
-                yield return OptionalSymbol<INamedTypeSymbol>.WithValue(type);
+                yield return ValidSymbol<INamedTypeSymbol>.From(type);
         }
 
         /// <summary>
@@ -51,13 +51,13 @@ public static class ProjectedNamespaceSymbolExtensions
         /// Gets all child namespaces declared within this namespace (non-recursive).
         /// Returns empty enumerable if namespace is empty.
         /// </summary>
-        public IEnumerable<OptionalSymbol<INamespaceSymbol>> GetNamespaces()
+        public IEnumerable<ValidSymbol<INamespaceSymbol>> GetNamespaces()
         {
             if (!ns.HasValue)
                 yield break;
 
             foreach (var childNs in ns.Symbol!.GetNamespaceMembers())
-                yield return OptionalSymbol<INamespaceSymbol>.WithValue(childNs);
+                yield return ValidSymbol<INamespaceSymbol>.From(childNs);
         }
 
         /// <summary>

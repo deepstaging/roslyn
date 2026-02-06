@@ -52,11 +52,11 @@ public static class TypeSymbolQueryExtensions
         }
 
         /// <summary>
-        /// Gets all attributes on this type as optional attributes.
+        /// Gets all attributes on this type as valid attributes.
         /// </summary>
-        public ImmutableArray<AttributeData> QueryAttributes()
+        public ImmutableArray<ValidAttribute> QueryAttributes()
         {
-            return typeSymbol.GetAttributes();
+            return [..typeSymbol.GetAttributes().Select(ValidAttribute.From)];
         }
 
         /// <summary>

@@ -125,7 +125,7 @@ optional.IsExtensionMethod      // bool
 ```csharp
 optional.ContainingType         // OptionalSymbol<INamedTypeSymbol>
 optional.BaseType               // OptionalSymbol<INamedTypeSymbol>
-optional.Interfaces             // ImmutableArray<INamedTypeSymbol>
+optional.Interfaces             // ImmutableArray<ValidSymbol<INamedTypeSymbol>>
 
 // Get all base types in inheritance chain
 optional.GetBaseTypes()         // IEnumerable<ValidSymbol<INamedTypeSymbol>>
@@ -143,12 +143,12 @@ optional.InheritsFrom("BaseClass")           // bool — checks inheritance chai
 
 ```csharp
 optional.Arity                  // int — number of type parameters
-optional.GetTypeArguments()     // ImmutableArray<OptionalSymbol<INamedTypeSymbol>>
+optional.GetTypeArguments()     // ImmutableArray<ValidSymbol<INamedTypeSymbol>>
 optional.GetTypeArgument(0)     // OptionalArgument<INamedTypeSymbol>
 optional.GetTypeArgumentSymbol(0) // OptionalSymbol<ITypeSymbol>
 optional.GetFirstTypeArgument() // OptionalSymbol<ITypeSymbol>
 optional.SingleTypeArgument     // OptionalSymbol<ITypeSymbol> (for arity-1 generics)
-optional.GetTypeParameters()    // IEnumerable<OptionalSymbol<ITypeParameterSymbol>>
+optional.GetTypeParameters()    // IEnumerable<ValidSymbol<ITypeParameterSymbol>>
 optional.GetMethodTypeParameters() // method-specific type parameters
 ```
 
@@ -162,7 +162,7 @@ optional.InnerTaskType          // OptionalSymbol<ITypeSymbol> — T in Task<T>
 ## Attributes
 
 ```csharp
-optional.GetAttributes()                    // IEnumerable<OptionalAttribute>
+optional.GetAttributes()                    // IEnumerable<ValidAttribute>
 optional.GetAttributes("MyAttribute")       // IEnumerable<ValidAttribute>
 optional.GetAttributes<ObsoleteAttribute>() // IEnumerable<ValidAttribute>
 optional.GetAttribute("MyAttribute")        // OptionalAttribute (first match)
