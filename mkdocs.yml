@@ -80,6 +80,7 @@ nav:
       - ValidSymbol: api/projections/valid-symbol.md
       - OptionalAttribute: api/projections/optional-attribute.md
       - ValidAttribute: api/projections/valid-attribute.md
+      - AttributeQuery: api/projections/attribute-query.md
       - OptionalArgument: api/projections/optional-argument.md
       - OptionalValue: api/projections/optional-value.md
       - Syntax Wrappers: api/projections/syntax-wrappers.md

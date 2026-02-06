@@ -14,6 +14,7 @@ Roslyn symbols are often nullable, requiring constant null checks. Projections w
 | [ValidSymbol](valid-symbol.md) | A symbol guaranteed to be non-null |
 | [OptionalAttribute](optional-attribute.md) | An attribute that may or may not be present |
 | [ValidAttribute](valid-attribute.md) | An attribute guaranteed to be non-null |
+| [AttributeQuery](attribute-query.md) | Base for strongly-typed attribute query wrappers |
 | [OptionalArgument](optional-argument.md) | An attribute argument that may or may not exist |
 | [OptionalValue](optional-value.md) | A general-purpose optional wrapper |
 | [Syntax Wrappers](syntax-wrappers.md) | Optional/Valid wrappers for syntax nodes |
