@@ -23,6 +23,7 @@ public readonly struct TypeBuilder
     private readonly ImmutableArray<FieldBuilder> _fields;
     private readonly ImmutableArray<EventBuilder> _events;
     private readonly ImmutableArray<MethodBuilder> _methods;
+    private readonly ImmutableArray<ConversionOperatorBuilder> _conversionOperators;
     private readonly ImmutableArray<ConstructorBuilder> _constructors;
     private readonly ImmutableArray<TypeBuilder> _nestedTypes;
     private readonly ImmutableArray<string> _interfaces;
@@ -44,6 +45,7 @@ public readonly struct TypeBuilder
         ImmutableArray<FieldBuilder> fields,
         ImmutableArray<EventBuilder> events,
         ImmutableArray<MethodBuilder> methods,
+        ImmutableArray<ConversionOperatorBuilder> conversionOperators,
         ImmutableArray<ConstructorBuilder> constructors,
         ImmutableArray<TypeBuilder> nestedTypes,
         ImmutableArray<string> interfaces,
@@ -64,6 +66,7 @@ public readonly struct TypeBuilder
         _fields = fields.IsDefault ? ImmutableArray<FieldBuilder>.Empty : fields;
         _events = events.IsDefault ? ImmutableArray<EventBuilder>.Empty : events;
         _methods = methods.IsDefault ? ImmutableArray<MethodBuilder>.Empty : methods;
+        _conversionOperators = conversionOperators.IsDefault ? ImmutableArray<ConversionOperatorBuilder>.Empty : conversionOperators;
         _constructors = constructors.IsDefault ? ImmutableArray<ConstructorBuilder>.Empty : constructors;
         _nestedTypes = nestedTypes.IsDefault ? ImmutableArray<TypeBuilder>.Empty : nestedTypes;
         _interfaces = interfaces.IsDefault ? ImmutableArray<string>.Empty : interfaces;
@@ -111,6 +114,7 @@ public readonly struct TypeBuilder
             ImmutableArray<FieldBuilder>.Empty,
             ImmutableArray<EventBuilder>.Empty,
             ImmutableArray<MethodBuilder>.Empty,
+            ImmutableArray<ConversionOperatorBuilder>.Empty,
             ImmutableArray<ConstructorBuilder>.Empty,
             ImmutableArray<TypeBuilder>.Empty,
             ImmutableArray<string>.Empty,
@@ -142,6 +146,7 @@ public readonly struct TypeBuilder
             ImmutableArray<FieldBuilder>.Empty,
             ImmutableArray<EventBuilder>.Empty,
             ImmutableArray<MethodBuilder>.Empty,
+            ImmutableArray<ConversionOperatorBuilder>.Empty,
             ImmutableArray<ConstructorBuilder>.Empty,
             ImmutableArray<TypeBuilder>.Empty,
             ImmutableArray<string>.Empty,
@@ -173,6 +178,7 @@ public readonly struct TypeBuilder
             ImmutableArray<FieldBuilder>.Empty,
             ImmutableArray<EventBuilder>.Empty,
             ImmutableArray<MethodBuilder>.Empty,
+            ImmutableArray<ConversionOperatorBuilder>.Empty,
             ImmutableArray<ConstructorBuilder>.Empty,
             ImmutableArray<TypeBuilder>.Empty,
             ImmutableArray<string>.Empty,
@@ -204,6 +210,7 @@ public readonly struct TypeBuilder
             ImmutableArray<FieldBuilder>.Empty,
             ImmutableArray<EventBuilder>.Empty,
             ImmutableArray<MethodBuilder>.Empty,
+            ImmutableArray<ConversionOperatorBuilder>.Empty,
             ImmutableArray<ConstructorBuilder>.Empty,
             ImmutableArray<TypeBuilder>.Empty,
             ImmutableArray<string>.Empty,
@@ -249,7 +256,7 @@ public readonly struct TypeBuilder
     public TypeBuilder InNamespace(string @namespace)
     {
         return new TypeBuilder(_name, _kind, @namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _constructors, _nestedTypes,
+            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors, _nestedTypes,
             _interfaces,
             _attributes, _xmlDoc, _primaryConstructor);
     }
@@ -261,7 +268,7 @@ public readonly struct TypeBuilder
     public TypeBuilder AddUsing(string @namespace)
     {
         return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings.Add(@namespace), _properties, _fields, _events, _methods, _constructors,
+            _isSealed, _isPartial, _usings.Add(@namespace), _properties, _fields, _events, _methods, _conversionOperators, _constructors,
             _nestedTypes,
             _interfaces, _attributes, _xmlDoc, _primaryConstructor);
     }
@@ -273,7 +280,7 @@ public readonly struct TypeBuilder
     public TypeBuilder AddUsings(params string[] namespaces)
     {
         return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings.AddRange(namespaces), _properties, _fields, _events, _methods, _constructors,
+            _isSealed, _isPartial, _usings.AddRange(namespaces), _properties, _fields, _events, _methods, _conversionOperators, _constructors,
             _nestedTypes,
             _interfaces, _attributes, _xmlDoc, _primaryConstructor);
     }
@@ -288,7 +295,7 @@ public readonly struct TypeBuilder
     public TypeBuilder WithAccessibility(Accessibility accessibility)
     {
         return new TypeBuilder(_name, _kind, _namespace, accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _constructors, _nestedTypes,
+            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors, _nestedTypes,
             _interfaces,
             _attributes, _xmlDoc, _primaryConstructor);
     }
@@ -299,7 +306,7 @@ public readonly struct TypeBuilder
     public TypeBuilder AsStatic()
     {
         return new TypeBuilder(_name, _kind, _namespace, _accessibility, true, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _constructors, _nestedTypes,
+            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors, _nestedTypes,
             _interfaces,
             _attributes, _xmlDoc, _primaryConstructor);
     }
@@ -310,7 +317,7 @@ public readonly struct TypeBuilder
     public TypeBuilder AsAbstract()
     {
         return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, true,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _constructors, _nestedTypes,
+            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors, _nestedTypes,
             _interfaces,
             _attributes, _xmlDoc, _primaryConstructor);
     }
@@ -321,7 +328,7 @@ public readonly struct TypeBuilder
     public TypeBuilder AsSealed()
     {
         return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            true, _isPartial, _usings, _properties, _fields, _events, _methods, _constructors, _nestedTypes,
+            true, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors, _nestedTypes,
             _interfaces,
             _attributes, _xmlDoc, _primaryConstructor);
     }
@@ -332,7 +339,7 @@ public readonly struct TypeBuilder
     public TypeBuilder AsPartial()
     {
         return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, true, _usings, _properties, _fields, _events, _methods, _constructors, _nestedTypes, _interfaces,
+            _isSealed, true, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors, _nestedTypes, _interfaces,
             _attributes, _xmlDoc, _primaryConstructor);
     }
 
@@ -350,7 +357,7 @@ public readonly struct TypeBuilder
             throw new ArgumentException("Interface name cannot be null or empty.", nameof(interfaceName));
 
         return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _constructors, _nestedTypes,
+            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors, _nestedTypes,
             _interfaces.Add(interfaceName), _attributes, _xmlDoc, _primaryConstructor);
     }
 
@@ -377,7 +384,7 @@ public readonly struct TypeBuilder
     {
         var property = configure(PropertyBuilder.For(name, type));
         return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties.Add(property), _fields, _events, _methods, _constructors,
+            _isSealed, _isPartial, _usings, _properties.Add(property), _fields, _events, _methods, _conversionOperators, _constructors,
             _nestedTypes,
             _interfaces, _attributes, _xmlDoc, _primaryConstructor);
     }
@@ -388,7 +395,7 @@ public readonly struct TypeBuilder
     public TypeBuilder AddProperty(PropertyBuilder property)
     {
         return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties.Add(property), _fields, _events, _methods, _constructors,
+            _isSealed, _isPartial, _usings, _properties.Add(property), _fields, _events, _methods, _conversionOperators, _constructors,
             _nestedTypes,
             _interfaces, _attributes, _xmlDoc, _primaryConstructor);
     }
@@ -404,7 +411,7 @@ public readonly struct TypeBuilder
     {
         var field = configure(FieldBuilder.For(name, type));
         return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields.Add(field), _events, _methods, _constructors,
+            _isSealed, _isPartial, _usings, _properties, _fields.Add(field), _events, _methods, _conversionOperators, _constructors,
             _nestedTypes,
             _interfaces, _attributes, _xmlDoc, _primaryConstructor);
     }
@@ -415,7 +422,7 @@ public readonly struct TypeBuilder
     public TypeBuilder AddField(FieldBuilder field)
     {
         return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields.Add(field), _events, _methods, _constructors,
+            _isSealed, _isPartial, _usings, _properties, _fields.Add(field), _events, _methods, _conversionOperators, _constructors,
             _nestedTypes,
             _interfaces, _attributes, _xmlDoc, _primaryConstructor);
     }
@@ -434,7 +441,7 @@ public readonly struct TypeBuilder
     {
         var @event = configure(EventBuilder.For(name, type));
         return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events.Add(@event), _methods, _constructors,
+            _isSealed, _isPartial, _usings, _properties, _fields, _events.Add(@event), _methods, _conversionOperators, _constructors,
             _nestedTypes,
             _interfaces, _attributes, _xmlDoc, _primaryConstructor);
     }
@@ -445,7 +452,7 @@ public readonly struct TypeBuilder
     public TypeBuilder AddEvent(EventBuilder @event)
     {
         return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events.Add(@event), _methods, _constructors,
+            _isSealed, _isPartial, _usings, _properties, _fields, _events.Add(@event), _methods, _conversionOperators, _constructors,
             _nestedTypes,
             _interfaces, _attributes, _xmlDoc, _primaryConstructor);
     }
@@ -461,7 +468,7 @@ public readonly struct TypeBuilder
     {
         var method = configure(MethodBuilder.For(name));
         return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods.Add(method), _constructors,
+            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods.Add(method), _conversionOperators, _constructors,
             _nestedTypes,
             _interfaces, _attributes, _xmlDoc, _primaryConstructor);
     }
@@ -472,7 +479,36 @@ public readonly struct TypeBuilder
     public TypeBuilder AddMethod(MethodBuilder method)
     {
         return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods.Add(method), _constructors,
+            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods.Add(method), _conversionOperators, _constructors,
+            _nestedTypes,
+            _interfaces, _attributes, _xmlDoc, _primaryConstructor);
+    }
+
+    #endregion
+
+    #region Add Members - Conversion Operators
+
+    /// <summary>
+    /// Adds a pre-configured conversion operator.
+    /// </summary>
+    public TypeBuilder AddConversionOperator(ConversionOperatorBuilder op)
+    {
+        return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
+            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators.Add(op), _constructors,
+            _nestedTypes,
+            _interfaces, _attributes, _xmlDoc, _primaryConstructor);
+    }
+
+    /// <summary>
+    /// Adds a conversion operator with lambda configuration.
+    /// Use ConversionOperatorBuilder.Explicit() or ConversionOperatorBuilder.Implicit() as the starting point.
+    /// </summary>
+    /// <param name="configure">Configuration callback for the conversion operator.</param>
+    public TypeBuilder AddConversionOperator(Func<ConversionOperatorBuilder, ConversionOperatorBuilder> configure)
+    {
+        var op = configure(default);
+        return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
+            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators.Add(op), _constructors,
             _nestedTypes,
             _interfaces, _attributes, _xmlDoc, _primaryConstructor);
     }
@@ -488,7 +524,7 @@ public readonly struct TypeBuilder
     {
         var constructor = configure(ConstructorBuilder.For(_name));
         return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _constructors.Add(constructor),
+            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors.Add(constructor),
             _nestedTypes, _interfaces, _attributes, _xmlDoc, _primaryConstructor);
     }
 
@@ -498,7 +534,7 @@ public readonly struct TypeBuilder
     public TypeBuilder AddConstructor(ConstructorBuilder constructor)
     {
         return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _constructors.Add(constructor),
+            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors.Add(constructor),
             _nestedTypes, _interfaces, _attributes, _xmlDoc, _primaryConstructor);
     }
 
@@ -511,7 +547,7 @@ public readonly struct TypeBuilder
     {
         var constructor = configure(ConstructorBuilder.For(_name).AsPrimary());
         return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _constructors,
+            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors,
             _nestedTypes, _interfaces, _attributes, _xmlDoc, constructor);
     }
 
@@ -522,7 +558,7 @@ public readonly struct TypeBuilder
     public TypeBuilder WithPrimaryConstructor(ConstructorBuilder constructor)
     {
         return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _constructors,
+            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors,
             _nestedTypes, _interfaces, _attributes, _xmlDoc, constructor.AsPrimary());
     }
 
@@ -537,7 +573,7 @@ public readonly struct TypeBuilder
     {
         var nestedType = configure(Class(name));
         return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _constructors,
+            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors,
             _nestedTypes.Add(nestedType),
             _interfaces, _attributes, _xmlDoc, _primaryConstructor);
     }
@@ -548,7 +584,7 @@ public readonly struct TypeBuilder
     public TypeBuilder AddNestedType(TypeBuilder nestedType)
     {
         return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _constructors,
+            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors,
             _nestedTypes.Add(nestedType),
             _interfaces, _attributes, _xmlDoc, _primaryConstructor);
     }
@@ -565,7 +601,7 @@ public readonly struct TypeBuilder
     {
         var xmlDoc = configure(XmlDocumentationBuilder.Create());
         return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _constructors, _nestedTypes,
+            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors, _nestedTypes,
             _interfaces,
             _attributes, xmlDoc, _primaryConstructor);
     }
@@ -578,7 +614,7 @@ public readonly struct TypeBuilder
     {
         var xmlDoc = XmlDocumentationBuilder.WithSummary(summary);
         return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _constructors, _nestedTypes,
+            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors, _nestedTypes,
             _interfaces,
             _attributes, xmlDoc, _primaryConstructor);
     }
@@ -594,7 +630,7 @@ public readonly struct TypeBuilder
 
         var xmlDoc = XmlDocumentationBuilder.From(documentation);
         return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _constructors, _nestedTypes,
+            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors, _nestedTypes,
             _interfaces,
             _attributes, xmlDoc, _primaryConstructor);
     }
@@ -611,7 +647,7 @@ public readonly struct TypeBuilder
     {
         var attribute = AttributeBuilder.For(name);
         return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _constructors, _nestedTypes,
+            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors, _nestedTypes,
             _interfaces,
             _attributes.Add(attribute), _xmlDoc, _primaryConstructor);
     }
@@ -625,7 +661,7 @@ public readonly struct TypeBuilder
     {
         var attribute = configure(AttributeBuilder.For(name));
         return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _constructors, _nestedTypes,
+            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors, _nestedTypes,
             _interfaces,
             _attributes.Add(attribute), _xmlDoc, _primaryConstructor);
     }
@@ -636,7 +672,7 @@ public readonly struct TypeBuilder
     public TypeBuilder WithAttribute(AttributeBuilder attribute)
     {
         return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _constructors, _nestedTypes,
+            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors, _nestedTypes,
             _interfaces,
             _attributes.Add(attribute), _xmlDoc, _primaryConstructor);
     }
@@ -822,7 +858,7 @@ public readonly struct TypeBuilder
                 SyntaxFactory.BaseList(SyntaxFactory.SeparatedList(baseTypes)));
         }
 
-        // Add members in logical order: fields, events, constructors, properties, methods
+        // Add members in logical order: fields, events, constructors, properties, methods, conversion operators
         foreach (var field in _fields) typeDecl = typeDecl.AddMembers(field.Build());
 
         foreach (var @event in _events) typeDecl = typeDecl.AddMembers(@event.Build());
@@ -832,6 +868,8 @@ public readonly struct TypeBuilder
         foreach (var property in _properties) typeDecl = typeDecl.AddMembers(property.Build());
 
         foreach (var method in _methods) typeDecl = typeDecl.AddMembers(method.Build());
+
+        foreach (var convOp in _conversionOperators) typeDecl = typeDecl.AddMembers(convOp.Build());
 
         foreach (var nestedType in _nestedTypes)
             typeDecl = typeDecl.AddMembers(nestedType.BuildNestedTypeDeclaration());
@@ -866,6 +904,11 @@ public readonly struct TypeBuilder
         // Method usings
         foreach (var method in _methods)
         foreach (var @using in method.Usings)
+            yield return @using;
+
+        // Conversion operator usings
+        foreach (var convOp in _conversionOperators)
+        foreach (var @using in convOp.Usings)
             yield return @using;
 
         // Property usings
