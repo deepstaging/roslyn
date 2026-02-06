@@ -190,6 +190,8 @@ var semanticModel = compilation.GetSemanticModel(compilation.SyntaxTrees.First()
 
 ### Testing Symbol Properties
 
+Use the fluent TUnit assertions from `Deepstaging.Roslyn.Testing.Assertions`:
+
 ```csharp
 [Test]
 public async Task CustomerHasExpectedProperties()
@@ -201,10 +203,16 @@ public async Task CustomerHasExpectedProperties()
             public int Age { get; set; }
         }");
 
+    var type = ctx.RequireNamedType("Customer");
     var props = ctx.Type("Customer").Properties().GetAll();
     
+    // Use Deepstaging.Roslyn.Testing assertions
+    await Assert.That(type).IsClassSymbol();
+    await Assert.That(type).IsPublicSymbol();
     await Assert.That(props).HasCount(2);
-    await Assert.That(props.Any(p => p.Name == "Name" && p.IsRequired)).IsTrue();
+    
+    var nameProp = props.First(p => p.Name == "Name");
+    await Assert.That(nameProp).IsRequired();
 }
 ```
 
@@ -223,9 +231,29 @@ public async Task ProcessAsyncHasCorrectSignature()
 
     var method = ctx.RequireMethod("ProcessAsync");
     
-    await Assert.That(method.Value.IsAsync).IsTrue();
-    await Assert.That(method.Value.Parameters).HasCount(2);
-    await Assert.That(method.Value.ReturnType.Name).IsEqualTo("Task");
+    // Fluent assertions for method symbols
+    await Assert.That(method).IsAsyncSymbol();
+    await Assert.That(method).IsPublicSymbol();
+    await Assert.That(method).HasParameterCount(2);
+    await Assert.That(method).HasReturnType();
+}
+```
+
+### Testing Type Symbols
+
+```csharp
+[Test]
+public async Task TypeHasExpectedShape()
+{
+    var ctx = SymbolsFor(@"
+        public partial record Customer<T> where T : class { }");
+
+    var type = ctx.RequireNamedType("Customer");
+    
+    await Assert.That(type).IsRecordSymbol();
+    await Assert.That(type).IsPartialSymbol();
+    await Assert.That(type).IsGenericSymbol();
+    await Assert.That(type).HasTypeParameterCount(1);
 }
 ```
 
@@ -240,11 +268,119 @@ public async Task TypeHasExpectedAttribute()
         public class Customer { }");
 
     var type = ctx.RequireNamedType("Customer");
-    var attr = type.Value.GetAttribute("Obsolete");
     
-    await Assert.That(attr.IsValid).IsTrue();
+    // Fluent attribute assertions
+    await Assert.That(type).HasAttribute("Obsolete");
+    await Assert.That(type).DoesNotHaveAttribute("Serializable");
 }
 ```
+
+### Testing Field Symbols
+
+```csharp
+[Test]
+public async Task FieldHasExpectedModifiers()
+{
+    var ctx = SymbolsFor(@"
+        public class Service 
+        {
+            private readonly ILogger _logger;
+            public static int Counter;
+        }");
+
+    var logger = ctx.RequireField("_logger");
+    var counter = ctx.RequireField("Counter");
+    
+    await Assert.That(logger).IsPrivateSymbol();
+    await Assert.That(logger).IsReadOnly();
+    await Assert.That(counter).IsPublicSymbol();
+    await Assert.That(counter).IsStaticSymbol();
+}
+```
+
+---
+
+## Available Assertions
+
+Deepstaging.Roslyn.Testing provides fluent TUnit assertions for all symbol types:
+
+### ValidSymbol&lt;T&gt; (All Symbols)
+
+| Assertion | Description |
+|-----------|-------------|
+| `IsNamed(name)` | Symbol has the specified name |
+| `NameStartsWith(prefix)` | Name starts with prefix |
+| `NameEndsWith(suffix)` | Name ends with suffix |
+| `NameContains(substring)` | Name contains substring |
+| `IsPublicSymbol()` | Symbol is public |
+| `IsPrivateSymbol()` | Symbol is private |
+| `IsInternalSymbol()` | Symbol is internal |
+| `IsProtectedSymbol()` | Symbol is protected |
+| `IsStaticSymbol()` | Symbol is static |
+| `IsAbstractSymbol()` | Symbol is abstract |
+| `IsSealedSymbol()` | Symbol is sealed |
+| `IsVirtualSymbol()` | Symbol is virtual |
+| `HasAttribute(name)` | Symbol has the attribute |
+| `DoesNotHaveAttribute(name)` | Symbol lacks the attribute |
+
+### ValidSymbol&lt;INamedTypeSymbol&gt;
+
+| Assertion | Description |
+|-----------|-------------|
+| `IsClassSymbol()` | Type is a class |
+| `IsInterfaceSymbol()` | Type is an interface |
+| `IsStructSymbol()` | Type is a struct |
+| `IsRecordSymbol()` | Type is a record |
+| `IsEnumSymbol()` | Type is an enum |
+| `IsDelegateSymbol()` | Type is a delegate |
+| `IsPartialSymbol()` | Type is partial |
+| `IsGenericSymbol()` | Type is generic |
+| `HasTypeParameterCount(n)` | Has n type parameters |
+
+### ValidSymbol&lt;IMethodSymbol&gt;
+
+| Assertion | Description |
+|-----------|-------------|
+| `IsAsyncSymbol()` | Method is async |
+| `ReturnsVoid()` | Method returns void |
+| `HasReturnType()` | Method has a return type |
+| `HasParameterCount(n)` | Has n parameters |
+| `IsExtension()` | Is an extension method |
+| `IsGeneric()` | Is a generic method |
+| `IsConstructor()` | Is a constructor |
+| `IsOperator()` | Is an operator |
+
+### ValidSymbol&lt;IPropertySymbol&gt;
+
+| Assertion | Description |
+|-----------|-------------|
+| `IsRequired()` | Property is required |
+| `HasGetter()` | Property has a getter |
+| `HasSetter()` | Property has a setter |
+| `IsIndexer()` | Property is an indexer |
+
+### ValidSymbol&lt;IFieldSymbol&gt;
+
+| Assertion | Description |
+|-----------|-------------|
+| `IsReadOnly()` | Field is readonly |
+| `IsConst()` | Field is const |
+| `IsVolatile()` | Field is volatile |
+
+### OptionalEmit
+
+| Assertion | Description |
+|-----------|-------------|
+| `IsSuccessful()` | Emit succeeded |
+| `HasFailed()` | Emit failed |
+| `HasValue()` | Has syntax output |
+| `IsEmpty()` | No syntax output |
+| `HasDiagnostics()` | Has any diagnostics |
+| `HasNoDiagnostics()` | No diagnostics |
+| `HasErrors()` | Has error diagnostics |
+| `HasWarnings()` | Has warning diagnostics |
+| `CodeContains(text)` | Output contains text |
+| `CodeDoesNotContain(text)` | Output lacks text |
 
 ---
 

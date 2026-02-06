@@ -15,7 +15,11 @@ public class MyTests : RoslynTestBase
     public async Task QuerySymbols()
     {
         var type = SymbolsFor("public class Foo { }").RequireNamedType("Foo");
-        await Assert.That(type.Value.Name).IsEqualTo("Foo");
+        
+        // Use Deepstaging.Roslyn.Testing assertions
+        await Assert.That(type).IsNamed("Foo");
+        await Assert.That(type).IsClassSymbol();
+        await Assert.That(type).IsPublicSymbol();
     }
 
     [Test]
@@ -306,6 +310,44 @@ await RenderTemplateFrom<MyGenerator>(source)
     .Render("Invalid.scriban-cs", new { })
     .ShouldFail();
 ```
+
+---
+
+## TUnit Symbol Assertions
+
+Deepstaging.Roslyn.Testing provides fluent TUnit assertions for testing symbols directly:
+
+```csharp
+// Type assertions
+var type = ctx.RequireNamedType("Customer");
+await Assert.That(type).IsClassSymbol();
+await Assert.That(type).IsPartialSymbol();
+await Assert.That(type).IsPublicSymbol();
+await Assert.That(type).HasAttribute("Serializable");
+
+// Method assertions
+var method = ctx.RequireMethod("ProcessAsync");
+await Assert.That(method).IsAsyncSymbol();
+await Assert.That(method).HasParameterCount(2);
+await Assert.That(method).IsPublicSymbol();
+
+// Property assertions
+var prop = ctx.RequireProperty("Name");
+await Assert.That(prop).IsRequired();
+await Assert.That(prop).HasGetter();
+
+// Field assertions
+var field = ctx.RequireField("_logger");
+await Assert.That(field).IsPrivateSymbol();
+await Assert.That(field).IsReadOnly();
+
+// Emit assertions
+var emit = TypeBuilder.Class("Test").Emit();
+await Assert.That(emit).IsSuccessful();
+await Assert.That(emit).CodeContains("class Test");
+```
+
+See [SymbolTestContext](symbol-test-context.md#available-assertions) for the complete list of available assertions.
 
 ---
 
