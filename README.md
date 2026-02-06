@@ -125,14 +125,14 @@ public partial class {{ type_name }}
 
 ## Documentation
 
-- **[Core Toolkit](src/Deepstaging.Roslyn/README.md)** — Main library overview
-  - [Queries](src/Deepstaging.Roslyn/Docs/Queries.md) — Find types, methods, properties, and more
-  - [Projections](src/Deepstaging.Roslyn/Docs/Projections.md) — Safe nullable symbol wrappers
-  - [Emit](src/Deepstaging.Roslyn/Docs/Emit.md) — Generate C# code with fluent builders
-  - [Extensions](src/Deepstaging.Roslyn/Docs/Extensions.md) — Convenience methods for Roslyn types
-- **[Scriban Templates](src/Deepstaging.Roslyn.Scriban/README.md)** — Template infrastructure
-- **[Workspace / Code Fixes](src/Deepstaging.Roslyn.Workspace/README.md)** — Code fix providers
-- **[Testing](src/Deepstaging.Roslyn.Testing/README.md)** — Test infrastructure for analyzers and generators
+- **[Full Documentation](https://deepstaging.github.io/roslyn)** — Complete API reference
+  - [Queries](https://deepstaging.github.io/roslyn/api/queries/) — Find types, methods, properties, and more
+  - [Projections](https://deepstaging.github.io/roslyn/api/projections/) — Safe nullable symbol wrappers
+  - [Emit](https://deepstaging.github.io/roslyn/api/emit/) — Generate C# code with fluent builders
+  - [Extensions](https://deepstaging.github.io/roslyn/api/extensions/) — Convenience methods for Roslyn types
+- **[Scriban Templates](https://deepstaging.github.io/roslyn/packages/scriban/)** — Template infrastructure
+- **[Workspace / Code Fixes](https://deepstaging.github.io/roslyn/packages/workspace/)** — Code fix providers
+- **[Testing](https://deepstaging.github.io/roslyn/packages/testing/)** — Test infrastructure for analyzers and generators
 
 ## Build & Test
 
