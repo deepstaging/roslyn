@@ -265,6 +265,14 @@ public readonly struct MethodQuery
         return AddFilter(m => m.Name.Contains(substring));
     }
 
+    /// <summary>
+    /// Filters for methods whose name matches the specified regex pattern.
+    /// </summary>
+    public MethodQuery WithNameMatching(Regex pattern)
+    {
+        return AddFilter(m => pattern.IsMatch(m.Name));
+    }
+
     #endregion
 
     #region Parameter Filters

@@ -357,6 +357,14 @@ public readonly struct TypeQuery
         return AddFilter(t => t.Name.EndsWith(suffix, StringComparison.Ordinal));
     }
 
+    /// <summary>
+    /// Filters for types whose names match the specified regex pattern.
+    /// </summary>
+    public TypeQuery WithNameMatching(Regex pattern)
+    {
+        return AddFilter(t => pattern.IsMatch(t.Name));
+    }
+
     #endregion
 
     #region Inheritance Filters

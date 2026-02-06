@@ -65,10 +65,42 @@ nav:
   - Home: index.md
   - Getting Started: getting-started.md
   - API Reference:
-    - Queries: api/queries.md
-    - Projections: api/projections.md
-    - Emit: api/emit.md
-    - Extensions: api/extensions.md
+    - Queries:
+      - Overview: api/queries/index.md
+      - TypeQuery: api/queries/type-query.md
+      - MethodQuery: api/queries/method-query.md
+      - PropertyQuery: api/queries/property-query.md
+      - FieldQuery: api/queries/field-query.md
+      - ConstructorQuery: api/queries/constructor-query.md
+      - EventQuery: api/queries/event-query.md
+      - ParameterQuery: api/queries/parameter-query.md
+    - Projections:
+      - Overview: api/projections/index.md
+      - OptionalSymbol: api/projections/optional-symbol.md
+      - ValidSymbol: api/projections/valid-symbol.md
+      - OptionalAttribute: api/projections/optional-attribute.md
+      - ValidAttribute: api/projections/valid-attribute.md
+      - OptionalArgument: api/projections/optional-argument.md
+      - OptionalValue: api/projections/optional-value.md
+      - Syntax Wrappers: api/projections/syntax-wrappers.md
+      - XmlDocumentation: api/projections/xml-documentation.md
+    - Emit:
+      - Overview: api/emit/index.md
+      - TypeBuilder: api/emit/type-builder.md
+      - MethodBuilder: api/emit/method-builder.md
+      - PropertyBuilder: api/emit/property-builder.md
+      - FieldBuilder: api/emit/field-builder.md
+      - ConstructorBuilder: api/emit/constructor-builder.md
+      - Other Builders: api/emit/other-builders.md
+      - BodyBuilder: api/emit/body-builder.md
+      - Support Types: api/emit/support-types.md
+    - Extensions:
+      - Overview: api/extensions/index.md
+      - Symbol Extensions: api/extensions/symbol-extensions.md
+      - Compilation Extensions: api/extensions/compilation-extensions.md
+      - Attribute Extensions: api/extensions/attribute-extensions.md
+      - String Extensions: api/extensions/string-extensions.md
+      - Domain Extensions: api/extensions/domain-extensions.md
   - Packages:
     - Roslyn.Scriban: packages/scriban.md
     - Roslyn.Workspace: packages/workspace.md

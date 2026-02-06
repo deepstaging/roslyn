@@ -297,6 +297,14 @@ public readonly struct PropertyQuery
         return AddFilter(p => p.Name.EndsWith(suffix, StringComparison.Ordinal));
     }
 
+    /// <summary>
+    /// Filters for properties whose names match the specified regex pattern.
+    /// </summary>
+    public PropertyQuery WithNameMatching(Regex pattern)
+    {
+        return AddFilter(p => pattern.IsMatch(p.Name));
+    }
+
     #endregion
 
     #region Type Filters

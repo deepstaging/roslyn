@@ -125,7 +125,7 @@ var methods = type.QueryMethods()
     .GetAll();
 ```
 
-See [Queries](api/queries.md) for the full API.
+See [Queries](api/queries/index.md) for the full API.
 
 ### Projections
 
@@ -142,7 +142,7 @@ if (attr.IsNotValid(out var valid))
 var name = valid.NamedArg("Name").OrDefault("default");
 ```
 
-See [Projections](api/projections.md) for details.
+See [Projections](api/projections/index.md) for details.
 
 ### Emit
 
@@ -156,11 +156,11 @@ var code = TypeBuilder.Class("Generated")
     .Emit();
 ```
 
-See [Emit](api/emit.md) for the full API.
+See [Emit](api/emit/index.md) for the full API.
 
 ## Next Steps
 
-- [Queries API Reference](api/queries.md)
-- [Projections API Reference](api/projections.md)
-- [Emit API Reference](api/emit.md)
+- [Queries API Reference](api/queries/index.md)
+- [Projections API Reference](api/projections/index.md)
+- [Emit API Reference](api/emit/index.md)
 - [Testing your generators](packages/testing.md)

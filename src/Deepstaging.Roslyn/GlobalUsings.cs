@@ -8,6 +8,7 @@ global using System.Collections.Immutable;
 global using System.Threading;
 global using System.Threading.Tasks;
 global using System.Linq;
+global using System.Text.RegularExpressions;
 global using Deepstaging.Roslyn;
 global using Microsoft.CodeAnalysis;
 global using Microsoft.CodeAnalysis.CSharp;

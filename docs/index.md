@@ -49,7 +49,7 @@ var code = TypeBuilder.Class("CustomerDto")
 
 | Package | Purpose |
 |---------|---------|
-| [`Deepstaging.Roslyn`](api/queries.md) | Core toolkit: Queries, Projections, Emit builders |
+| [`Deepstaging.Roslyn`](api/queries/index.md) | Core toolkit: Queries, Projections, Emit builders |
 | [`Deepstaging.Roslyn.Scriban`](packages/scriban.md) | Scriban template integration for source generators |
 | [`Deepstaging.Roslyn.Workspace`](packages/workspace.md) | Code fix provider infrastructure |
 | [`Deepstaging.Roslyn.Testing`](packages/testing.md) | Test utilities for generators and analyzers |
