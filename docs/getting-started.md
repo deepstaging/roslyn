@@ -44,7 +44,7 @@ public sealed class AutoNotifyGenerator : IIncrementalGenerator
 
         context.RegisterSourceOutput(models, static (ctx, model) => model
             .WriteAutoNotifyClass()
-            .RegisterSourceWith(ctx, HintName.From(model.Namespace, model.TypeName)));
+            .AddSourceTo(ctx, HintName.From(model.Namespace, model.TypeName)));
     }
 }
 

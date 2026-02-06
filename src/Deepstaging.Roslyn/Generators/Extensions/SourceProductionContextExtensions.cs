@@ -13,11 +13,12 @@ public static class SourceProductionContextExtensions
     extension(OptionalEmit emit)
     {
         /// <summary>
-        /// 
+        /// Adds this emit result as generated source to the production context.
+        /// Reports any diagnostics and only adds source if the emit was successful.
         /// </summary>
-        /// <param name="ctx"></param>
-        /// <param name="filename"></param>
-        public void RegisterSourceWith(SourceProductionContext ctx, string filename)
+        /// <param name="ctx">The source production context.</param>
+        /// <param name="filename">Unique hint name for the generated file.</param>
+        public void AddSourceTo(SourceProductionContext ctx, string filename)
         {
             if (emit.IsNotValid(out var validCode))
             {

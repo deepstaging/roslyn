@@ -104,7 +104,7 @@ public sealed class AutoNotifyGenerator : IIncrementalGenerator
 
         context.RegisterSourceOutput(models, static (ctx, model) => model
             .WriteAutoNotifyClass()   // Writer layer
-            .RegisterSourceWith(ctx, HintName.From(model.Namespace, model.TypeName)));
+            .AddSourceTo(ctx, HintName.From(model.Namespace, model.TypeName)));
     }
 }
 ```
@@ -128,7 +128,7 @@ extension(AutoNotifyModel model)
 ```
 
 !!! note "Why OptionalEmit?"
-    `Emit()` returns `OptionalEmit` which safely handles null models. The `RegisterSourceWith` extension only emits when the result is valid.
+    `Emit()` returns `OptionalEmit` which safely handles null models. The `AddSourceTo` extension only emits when the result is valid.
 
 ## Analyzer Pattern
 
