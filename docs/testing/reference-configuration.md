@@ -230,4 +230,4 @@ Why? We believe if you benefit from this code, the community should benefit from
 
 **Personal research and experimentation? No obligations.** Go learn, explore, and build.
 
-See [LICENSE](../../../LICENSE) for the full legal text.
+See [LICENSE](https://github.com/deepstaging/roslyn/blob/main/LICENSE) for the full legal text.
