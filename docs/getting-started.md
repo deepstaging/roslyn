@@ -21,62 +21,151 @@ Your `.csproj` should target `netstandard2.0` for Roslyn compatibility:
 
 ## Your First Generator
 
-Here's a complete incremental generator that finds classes with `[AutoNotify]` and generates property change notifications:
+Here's an incremental generator that finds classes with `[AutoNotify]` and generates property change notifications. This example follows the recommended **Projection Pattern** with separate model, projection, and writer layers.
+
+### The Attribute
 
 ```csharp
-using Deepstaging.Roslyn.Generators;
+namespace MyProject;
 
-namespace Deepstaging.Generators;
-
-/// <inheritdoc />
+[AttributeUsage(AttributeTargets.Class)]
 public class AutoNotifyAttribute : Attribute;
+```
 
-/// <inheritdoc />
-[Generator]
-public class AutoNotifyGenerator : IIncrementalGenerator
+### The Model
+
+Models are simple records that capture the data needed for code generation:
+
+```csharp
+namespace MyProject.Projection.Models;
+
+public sealed record AutoNotifyModel
 {
-    /// <inheritdoc />
-    public void Initialize(IncrementalGeneratorInitializationContext context)
+    public required string Namespace { get; init; }
+    public required string TypeName { get; init; }
+    public required Accessibility Accessibility { get; init; }
+    public required ImmutableArray<NotifyPropertyModel> Properties { get; init; }
+}
+
+public sealed record NotifyPropertyModel
+{
+    public required string PropertyName { get; init; }
+    public required string FieldName { get; init; }
+    public required string TypeName { get; init; }
+}
+```
+
+### The Projection
+
+Projections query symbols and build models. This layer is the single source of truth for interpreting attributes:
+
+```csharp
+using Deepstaging.Roslyn;
+
+namespace MyProject.Projection;
+
+public static class AutoNotify
+{
+    extension(ValidSymbol<INamedTypeSymbol> symbol)
     {
-        context.ForEach(
-            query: ctx => ctx.ForAttribute<AutoNotifyAttribute>().Map((c, _) => new AutoNotifyModel(c.TargetSymbol)),
-            generate: (ctx, model) =>
+        public AutoNotifyModel? QueryAutoNotify()
+        {
+            var properties = symbol.QueryNotifyProperties();
+            if (properties.IsEmpty)
+                return null;
+
+            return new AutoNotifyModel
             {
-                var hint = new HintName(model.Namespace);
+                Namespace = symbol.Namespace ?? "",
+                TypeName = symbol.Name,
+                Accessibility = symbol.Accessibility,
+                Properties = properties
+            };
+        }
+    }
 
-                // Build the partial class
-                var code = TypeBuilder.Class(model.TypeName)
-                    .InNamespace(model.Namespace)
-                    .AsPartial()
-                    .AddUsing("System.ComponentModel")
-                    .WithEach(model.Fields, (builder, field) => builder
-                        .AddProperty(field.PropertyName,
-                            field.Type.FullyQualifiedName, p => p
-                                .WithGetter(b => b.AddStatement($"return {field.Name}"))
-                                .WithSetter(b => b
-                                    .AddStatement($"{field.Name} = value")
-                                    .AddStatement($"OnPropertyChanged(nameof({field.ParameterName}))"))));
-
-                ctx.AddFromEmit(
-                    hint.Filename(model.TypeName),
-                    code.Emit()
-                );
+    private static ImmutableArray<NotifyPropertyModel> QueryNotifyProperties(
+        this ValidSymbol<INamedTypeSymbol> symbol)
+    {
+        return symbol.QueryFields()
+            .ThatAreInstance()
+            .ThatArePrivate()
+            .Where(f => f.Name.StartsWith("_"))
+            .Select(field => new NotifyPropertyModel
+            {
+                PropertyName = field.Name.TrimStart('_').ToPascalCase(),
+                FieldName = field.Name,
+                TypeName = field.Type?.FullyQualifiedName!
             });
     }
 }
+```
 
-internal record AutoNotifyModel(ISymbol? Type)
+### The Writer
+
+Writers use the Emit API to generate code from models:
+
+```csharp
+using Deepstaging.Roslyn.Emit;
+
+namespace MyProject.Generators.Writers;
+
+public static class AutoNotifyWriter
 {
-    public ISymbol? Type { get; init; } = Type;
-    private readonly ValidSymbol<INamedTypeSymbol> _symbol = Type.AsValidNamedType();
+    extension(AutoNotifyModel model)
+    {
+        public OptionalEmit WriteAutoNotifyClass()
+        {
+            return TypeBuilder
+                .Class(model.TypeName)
+                .AsPartial()
+                .InNamespace(model.Namespace)
+                .WithAccessibility(model.Accessibility)
+                .AddUsing("System.ComponentModel")
+                .Implements("INotifyPropertyChanged")
+                .AddEvent("PropertyChanged", "PropertyChangedEventHandler?")
+                .AddMethod(MethodBuilder.Parse("protected void OnPropertyChanged(string name)")
+                    .WithBody(b => b.AddStatement(
+                        "PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name))")))
+                .WithEach(model.Properties, AddProperty)
+                .Emit();
+        }
+    }
 
-    public string TypeName => _symbol.Name;
-    public string Namespace => _symbol.Namespace ?? "Global";
+    private static TypeBuilder AddProperty(TypeBuilder type, NotifyPropertyModel prop)
+    {
+        return type.AddProperty(prop.PropertyName, prop.TypeName, p => p
+            .WithGetter(b => b.AddStatement($"return {prop.FieldName}"))
+            .WithSetter(b => b
+                .AddStatement($"{prop.FieldName} = value")
+                .AddStatement($"OnPropertyChanged(nameof({prop.PropertyName}))")));
+    }
+}
+```
 
-    public ImmutableArray<ValidSymbol<IFieldSymbol>> Fields => _symbol.QueryFields()
-        .ThatArePrivate()
-        .ThatAreInstance()
-        .GetAll();
+### The Generator
+
+The generator ties it all together with minimal code:
+
+```csharp
+using Deepstaging.Roslyn.Generators;
+using MyProject.Projection;
+using MyProject.Generators.Writers;
+
+namespace MyProject.Generators;
+
+[Generator]
+public sealed class AutoNotifyGenerator : IIncrementalGenerator
+{
+    public void Initialize(IncrementalGeneratorInitializationContext context)
+    {
+        var models = context.ForAttribute<AutoNotifyAttribute>()
+            .Map(static (ctx, _) => ctx.TargetSymbol.AsValidNamedType().QueryAutoNotify());
+
+        context.RegisterSourceOutput(models, static (ctx, model) => model
+            .WriteAutoNotifyClass()
+            .RegisterSourceWith(ctx, HintName.From(model.Namespace, model.TypeName)));
+    }
 }
 ```
 
