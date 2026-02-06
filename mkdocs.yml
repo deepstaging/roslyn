@@ -24,7 +24,6 @@ theme:
   features:
     - navigation.instant
     - navigation.tracking
-    - navigation.sections
     - navigation.top
     - search.suggest
     - search.highlight
@@ -54,6 +53,9 @@ markdown_extensions:
   - md_in_html
   - toc:
       permalink: true
+
+extra_javascript:
+  - javascripts/accordion.js
 
 plugins:
   - search
