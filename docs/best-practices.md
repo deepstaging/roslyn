@@ -40,10 +40,11 @@ Wrap attribute access with typed properties and defaults:
 
 ```csharp
 // Attributes/AutoNotifyAttributeQuery.cs
-public readonly record struct AutoNotifyAttributeQuery(ValidAttribute Attribute)
+public sealed record AutoNotifyAttributeQuery(AttributeData AttributeData)
+    : AttributeQuery(AttributeData)
 {
     public bool GenerateBaseImplementation => 
-        Attribute.NamedArg("GenerateBaseImplementation").OrDefault(true);
+        NamedArg<bool>("GenerateBaseImplementation").OrDefault(true);
 }
 ```
 
