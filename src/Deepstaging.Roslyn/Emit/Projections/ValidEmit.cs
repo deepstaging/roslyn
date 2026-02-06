@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Emit;
 
 /// <summary>
@@ -25,7 +26,9 @@ public readonly struct ValidEmit : IProjection<CompilationUnitSyntax>
     /// </summary>
     /// <exception cref="ArgumentNullException">Thrown if syntax or code is null.</exception>
     internal static ValidEmit From(CompilationUnitSyntax syntax, string code)
-        => new(syntax, code);
+    {
+        return new ValidEmit(syntax, code);
+    }
 
     #endregion
 
@@ -60,12 +63,18 @@ public readonly struct ValidEmit : IProjection<CompilationUnitSyntax>
     /// <summary>
     /// Returns the guaranteed non-null syntax.
     /// </summary>
-    public CompilationUnitSyntax OrThrow(string? message = null) => _syntax;
+    public CompilationUnitSyntax OrThrow(string? message = null)
+    {
+        return _syntax;
+    }
 
     /// <summary>
     /// Returns the guaranteed non-null syntax.
     /// </summary>
-    public CompilationUnitSyntax? OrNull() => _syntax;
+    public CompilationUnitSyntax? OrNull()
+    {
+        return _syntax;
+    }
 
     #endregion
 
@@ -87,16 +96,11 @@ public readonly struct ValidEmit : IProjection<CompilationUnitSyntax>
         {
             var types = ImmutableArray.CreateBuilder<MemberDeclarationSyntax>();
             foreach (var member in _syntax.Members)
-            {
                 if (member is BaseNamespaceDeclarationSyntax ns)
-                {
                     types.AddRange(ns.Members);
-                }
                 else
-                {
                     types.Add(member);
-                }
-            }
+
             return types.ToImmutable();
         }
     }
@@ -147,28 +151,24 @@ public readonly struct ValidEmit : IProjection<CompilationUnitSyntax>
         var usingDirectives = new List<UsingDirectiveSyntax>();
 
         foreach (var emit in emitList)
+        foreach (var usingDirective in emit.Usings)
         {
-            foreach (var usingDirective in emit.Usings)
+            var name = usingDirective.Name?.ToString() ?? string.Empty;
+            if (string.IsNullOrEmpty(name))
+                continue;
+
+            // Create a unique key that includes whether it's static
+            var isStatic = usingDirective.StaticKeyword != default;
+            var key = isStatic ? $"static {name}" : name;
+
+            if (seenUsings.Add(key))
             {
-                var name = usingDirective.Name?.ToString() ?? string.Empty;
-                if (string.IsNullOrEmpty(name))
-                    continue;
-
-                // Create a unique key that includes whether it's static
-                var isStatic = usingDirective.StaticKeyword != default;
-                var key = isStatic ? $"static {name}" : name;
-
-                if (seenUsings.Add(key))
-                {
-                    // Recreate the using directive to ensure clean syntax
-                    var newUsing = SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(name));
-                    if (isStatic)
-                    {
-                        newUsing = newUsing.WithStaticKeyword(
-                            SyntaxFactory.Token(SyntaxKind.StaticKeyword));
-                    }
-                    usingDirectives.Add(newUsing);
-                }
+                // Recreate the using directive to ensure clean syntax
+                var newUsing = SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(name));
+                if (isStatic)
+                    newUsing = newUsing.WithStaticKeyword(
+                        SyntaxFactory.Token(SyntaxKind.StaticKeyword));
+                usingDirectives.Add(newUsing);
             }
         }
 
@@ -177,10 +177,7 @@ public readonly struct ValidEmit : IProjection<CompilationUnitSyntax>
             .OrderBy(u => u.StaticKeyword != default ? 1 : 0)
             .ThenBy(u => u.Name?.ToString() ?? string.Empty, StringComparer.Ordinal);
 
-        foreach (var usingDirective in sortedUsings)
-        {
-            compilationUnit = compilationUnit.AddUsings(usingDirective);
-        }
+        foreach (var usingDirective in sortedUsings) compilationUnit = compilationUnit.AddUsings(usingDirective);
 
         // Group types by namespace (using empty string for global scope)
         var typesByNamespace = new Dictionary<string, List<MemberDeclarationSyntax>>();
@@ -192,6 +189,7 @@ public readonly struct ValidEmit : IProjection<CompilationUnitSyntax>
                 list = [];
                 typesByNamespace[ns] = list;
             }
+
             list.AddRange(emit.Types);
         }
 
@@ -235,7 +233,9 @@ public readonly struct ValidEmit : IProjection<CompilationUnitSyntax>
     /// </summary>
     /// <param name="emits">The emits to combine.</param>
     public static ValidEmit Combine(params ValidEmit[] emits)
-        => Combine((IEnumerable<ValidEmit>)emits);
+    {
+        return Combine((IEnumerable<ValidEmit>)emits);
+    }
 
     #endregion
 
@@ -244,7 +244,10 @@ public readonly struct ValidEmit : IProjection<CompilationUnitSyntax>
     /// <summary>
     /// Returns the formatted code string.
     /// </summary>
-    public override string ToString() => _code;
+    public override string ToString()
+    {
+        return _code;
+    }
 
     #endregion
 }

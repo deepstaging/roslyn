@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -77,12 +78,18 @@ public readonly struct ValidTypeSyntax<TSyntax> : IProjection<TSyntax>
     /// <summary>
     /// Returns the guaranteed non-null syntax node.
     /// </summary>
-    public TSyntax OrThrow(string? message = null) => _node;
+    public TSyntax OrThrow(string? message = null)
+    {
+        return _node;
+    }
 
     /// <summary>
     /// Returns the guaranteed non-null syntax node.
     /// </summary>
-    public TSyntax OrNull() => _node;
+    public TSyntax OrNull()
+    {
+        return _node;
+    }
 
     #endregion
 
@@ -115,7 +122,10 @@ public readonly struct ValidTypeSyntax<TSyntax> : IProjection<TSyntax>
     /// <summary>
     /// Checks if the type has a specific modifier.
     /// </summary>
-    public bool HasModifier(SyntaxKind kind) => _node.Modifiers.Any(m => m.IsKind(kind));
+    public bool HasModifier(SyntaxKind kind)
+    {
+        return _node.Modifiers.Any(m => m.IsKind(kind));
+    }
 
     /// <summary>
     /// Gets a value indicating whether the type is partial.
@@ -330,7 +340,8 @@ public readonly struct ValidTypeSyntax<TSyntax> : IProjection<TSyntax>
     /// <summary>
     /// Gets all constructor declarations in this type.
     /// </summary>
-    public IEnumerable<ConstructorDeclarationSyntax> Constructors => _node.Members.OfType<ConstructorDeclarationSyntax>();
+    public IEnumerable<ConstructorDeclarationSyntax> Constructors =>
+        _node.Members.OfType<ConstructorDeclarationSyntax>();
 
     #endregion
 
@@ -347,22 +358,34 @@ public readonly struct ValidTypeSyntax<TSyntax> : IProjection<TSyntax>
     /// <summary>
     /// Enables equality checks: validated == node
     /// </summary>
-    public static bool operator ==(ValidTypeSyntax<TSyntax> left, TSyntax? right) => left.Equals(right);
+    public static bool operator ==(ValidTypeSyntax<TSyntax> left, TSyntax? right)
+    {
+        return left.Equals(right);
+    }
 
     /// <summary>
     /// Enables inequality checks: validated != node
     /// </summary>
-    public static bool operator !=(ValidTypeSyntax<TSyntax> left, TSyntax? right) => !left.Equals(right);
+    public static bool operator !=(ValidTypeSyntax<TSyntax> left, TSyntax? right)
+    {
+        return !left.Equals(right);
+    }
 
     /// <summary>
     /// Determines whether the current instance equals the specified object (always returns false).
     /// </summary>
-    public override bool Equals(object? obj) => false;
+    public override bool Equals(object? obj)
+    {
+        return false;
+    }
 
     /// <summary>
     /// Returns the hash code for this instance.
     /// </summary>
-    public override int GetHashCode() => _node.GetHashCode();
+    public override int GetHashCode()
+    {
+        return _node.GetHashCode();
+    }
 
     #endregion
 
@@ -371,12 +394,18 @@ public readonly struct ValidTypeSyntax<TSyntax> : IProjection<TSyntax>
     /// <summary>
     /// Implicitly converts to the underlying syntax node for seamless interop with Roslyn APIs.
     /// </summary>
-    public static implicit operator TSyntax(ValidTypeSyntax<TSyntax> valid) => valid._node;
+    public static implicit operator TSyntax(ValidTypeSyntax<TSyntax> valid)
+    {
+        return valid._node;
+    }
 
     /// <summary>
     /// Implicitly converts to ValidSyntax for generic syntax operations.
     /// </summary>
-    public static implicit operator ValidSyntax<TSyntax>(ValidTypeSyntax<TSyntax> valid) => ValidSyntax<TSyntax>.From(valid._node);
+    public static implicit operator ValidSyntax<TSyntax>(ValidTypeSyntax<TSyntax> valid)
+    {
+        return ValidSyntax<TSyntax>.From(valid._node);
+    }
 
     #endregion
 }

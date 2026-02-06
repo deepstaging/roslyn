@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Tests.Projections.Extensions;
 
 public class ValidSymbolNamespaceTests : RoslynTestBase
@@ -8,11 +9,11 @@ public class ValidSymbolNamespaceTests : RoslynTestBase
     public async Task Can_get_namespace_by_name()
     {
         var code = """
-            namespace MyNamespace
-            {
-                public class MyClass { }
-            }
-            """;
+                   namespace MyNamespace
+                   {
+                       public class MyClass { }
+                   }
+                   """;
 
         var context = SymbolsFor(code);
         var ns = context.RequireNamespace("MyNamespace");
@@ -25,11 +26,11 @@ public class ValidSymbolNamespaceTests : RoslynTestBase
     public async Task Can_require_namespace_by_name()
     {
         var code = """
-            namespace MyNamespace
-            {
-                public class MyClass { }
-            }
-            """;
+                   namespace MyNamespace
+                   {
+                       public class MyClass { }
+                   }
+                   """;
 
         var context = SymbolsFor(code);
         var ns = context.RequireNamespace("MyNamespace");
@@ -41,12 +42,12 @@ public class ValidSymbolNamespaceTests : RoslynTestBase
     public async Task Can_get_types_from_namespace()
     {
         var code = """
-            namespace MyNamespace
-            {
-                public class ClassA { }
-                public class ClassB { }
-            }
-            """;
+                   namespace MyNamespace
+                   {
+                       public class ClassA { }
+                       public class ClassB { }
+                   }
+                   """;
 
         var context = SymbolsFor(code);
         var ns = context.RequireNamespace("MyNamespace");
@@ -61,11 +62,11 @@ public class ValidSymbolNamespaceTests : RoslynTestBase
     public async Task Can_get_named_type_from_namespace()
     {
         var code = """
-            namespace MyNamespace
-            {
-                public class MyClass { }
-            }
-            """;
+                   namespace MyNamespace
+                   {
+                       public class MyClass { }
+                   }
+                   """;
 
         var context = SymbolsFor(code);
         var ns = context.RequireNamespace("MyNamespace");
@@ -79,11 +80,11 @@ public class ValidSymbolNamespaceTests : RoslynTestBase
     public async Task Can_require_named_type_from_namespace()
     {
         var code = """
-            namespace MyNamespace
-            {
-                public class MyClass { }
-            }
-            """;
+                   namespace MyNamespace
+                   {
+                       public class MyClass { }
+                   }
+                   """;
 
         var context = SymbolsFor(code);
         var ns = context.RequireNamespace("MyNamespace");
@@ -96,14 +97,14 @@ public class ValidSymbolNamespaceTests : RoslynTestBase
     public async Task Can_get_nested_namespaces()
     {
         var code = """
-            namespace Parent
-            {
-                namespace Child
-                {
-                    public class MyClass { }
-                }
-            }
-            """;
+                   namespace Parent
+                   {
+                       namespace Child
+                       {
+                           public class MyClass { }
+                       }
+                   }
+                   """;
 
         var context = SymbolsFor(code);
         var parent = context.RequireNamespace("Parent");
@@ -117,11 +118,11 @@ public class ValidSymbolNamespaceTests : RoslynTestBase
     public async Task Can_navigate_nested_namespaces()
     {
         var code = """
-            namespace Parent.Child
-            {
-                public class MyClass { }
-            }
-            """;
+                   namespace Parent.Child
+                   {
+                       public class MyClass { }
+                   }
+                   """;
 
         var context = SymbolsFor(code);
         var parent = context.RequireNamespace("Parent");
@@ -135,11 +136,11 @@ public class ValidSymbolNamespaceTests : RoslynTestBase
     public async Task IsGlobalNamespace_returns_false_for_regular_namespace()
     {
         var code = """
-            namespace MyNamespace
-            {
-                public class MyClass { }
-            }
-            """;
+                   namespace MyNamespace
+                   {
+                       public class MyClass { }
+                   }
+                   """;
 
         var context = SymbolsFor(code);
         var ns = context.RequireNamespace("MyNamespace");
@@ -151,12 +152,12 @@ public class ValidSymbolNamespaceTests : RoslynTestBase
     public async Task Can_query_types_from_namespace()
     {
         var code = """
-            namespace MyNamespace
-            {
-                public class PublicClass { }
-                internal class InternalClass { }
-            }
-            """;
+                   namespace MyNamespace
+                   {
+                       public class PublicClass { }
+                       internal class InternalClass { }
+                   }
+                   """;
 
         var context = SymbolsFor(code);
         var ns = context.RequireNamespace("MyNamespace");

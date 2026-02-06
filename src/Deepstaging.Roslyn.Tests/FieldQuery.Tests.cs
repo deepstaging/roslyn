@@ -10,12 +10,12 @@ public class FieldQueryTests : RoslynTestBase
     public async Task Can_filter_public_fields()
     {
         var code = """
-            public class TestClass
-            {
-                public int PublicField;
-                private int PrivateField;
-            }
-            """;
+                   public class TestClass
+                   {
+                       public int PublicField;
+                       private int PrivateField;
+                   }
+                   """;
 
         var fields = SymbolsFor(code)
             .RequireNamedType("TestClass")
@@ -30,12 +30,12 @@ public class FieldQueryTests : RoslynTestBase
     public async Task Can_filter_const_fields()
     {
         var code = """
-            public class TestClass
-            {
-                public const int ConstField = 42;
-                public readonly int ReadonlyField = 42;
-            }
-            """;
+                   public class TestClass
+                   {
+                       public const int ConstField = 42;
+                       public readonly int ReadonlyField = 42;
+                   }
+                   """;
 
         var constFields = SymbolsFor(code)
             .RequireNamedType("TestClass")

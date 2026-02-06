@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 global using System.Linq;
 global using System.Threading.Tasks;
 global using Deepstaging.Roslyn.Emit;

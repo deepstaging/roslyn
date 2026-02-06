@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Tests.Projections.Extensions;
 
 public class OptionalSymbolNamespaceTests : RoslynTestBase
@@ -8,12 +9,12 @@ public class OptionalSymbolNamespaceTests : RoslynTestBase
     public async Task GetTypes_returns_types_from_namespace()
     {
         var code = """
-            namespace MyNamespace
-            {
-                public class ClassA { }
-                public class ClassB { }
-            }
-            """;
+                   namespace MyNamespace
+                   {
+                       public class ClassA { }
+                       public class ClassB { }
+                   }
+                   """;
 
         var context = SymbolsFor(code);
         var ns = context.GetNamespace("MyNamespace");
@@ -29,8 +30,8 @@ public class OptionalSymbolNamespaceTests : RoslynTestBase
     public async Task GetTypes_returns_empty_for_empty_namespace()
     {
         var code = """
-            public class MyClass { }
-            """;
+                   public class MyClass { }
+                   """;
 
         var context = SymbolsFor(code);
         var ns = context.GetNamespace("NonExistent");
@@ -43,11 +44,11 @@ public class OptionalSymbolNamespaceTests : RoslynTestBase
     public async Task GetNamedType_returns_type_from_namespace()
     {
         var code = """
-            namespace MyNamespace
-            {
-                public class MyClass { }
-            }
-            """;
+                   namespace MyNamespace
+                   {
+                       public class MyClass { }
+                   }
+                   """;
 
         var context = SymbolsFor(code);
         var ns = context.GetNamespace("MyNamespace");
@@ -61,8 +62,8 @@ public class OptionalSymbolNamespaceTests : RoslynTestBase
     public async Task GetNamedType_returns_empty_when_namespace_is_empty()
     {
         var code = """
-            public class MyClass { }
-            """;
+                   public class MyClass { }
+                   """;
 
         var context = SymbolsFor(code);
         var ns = context.GetNamespace("NonExistent");
@@ -75,11 +76,11 @@ public class OptionalSymbolNamespaceTests : RoslynTestBase
     public async Task GetNamedType_returns_empty_when_type_not_found()
     {
         var code = """
-            namespace MyNamespace
-            {
-                public class MyClass { }
-            }
-            """;
+                   namespace MyNamespace
+                   {
+                       public class MyClass { }
+                   }
+                   """;
 
         var context = SymbolsFor(code);
         var ns = context.GetNamespace("MyNamespace");
@@ -92,11 +93,11 @@ public class OptionalSymbolNamespaceTests : RoslynTestBase
     public async Task RequireNamedType_returns_type_from_namespace()
     {
         var code = """
-            namespace MyNamespace
-            {
-                public class MyClass { }
-            }
-            """;
+                   namespace MyNamespace
+                   {
+                       public class MyClass { }
+                   }
+                   """;
 
         var context = SymbolsFor(code);
         var ns = context.GetNamespace("MyNamespace");
@@ -109,12 +110,12 @@ public class OptionalSymbolNamespaceTests : RoslynTestBase
     public async Task GetNamespaces_returns_child_namespaces()
     {
         var code = """
-            namespace Parent
-            {
-                namespace Child1 { }
-                namespace Child2 { }
-            }
-            """;
+                   namespace Parent
+                   {
+                       namespace Child1 { }
+                       namespace Child2 { }
+                   }
+                   """;
 
         var context = SymbolsFor(code);
         var parent = context.GetNamespace("Parent");
@@ -130,8 +131,8 @@ public class OptionalSymbolNamespaceTests : RoslynTestBase
     public async Task GetNamespaces_returns_empty_for_empty_namespace()
     {
         var code = """
-            public class MyClass { }
-            """;
+                   public class MyClass { }
+                   """;
 
         var context = SymbolsFor(code);
         var ns = context.GetNamespace("NonExistent");
@@ -144,11 +145,11 @@ public class OptionalSymbolNamespaceTests : RoslynTestBase
     public async Task GetNamespace_returns_child_namespace()
     {
         var code = """
-            namespace Parent.Child
-            {
-                public class MyClass { }
-            }
-            """;
+                   namespace Parent.Child
+                   {
+                       public class MyClass { }
+                   }
+                   """;
 
         var context = SymbolsFor(code);
         var parent = context.GetNamespace("Parent");
@@ -162,8 +163,8 @@ public class OptionalSymbolNamespaceTests : RoslynTestBase
     public async Task GetNamespace_returns_empty_when_parent_is_empty()
     {
         var code = """
-            public class MyClass { }
-            """;
+                   public class MyClass { }
+                   """;
 
         var context = SymbolsFor(code);
         var parent = context.GetNamespace("NonExistent");
@@ -176,11 +177,11 @@ public class OptionalSymbolNamespaceTests : RoslynTestBase
     public async Task GetNamespace_returns_empty_when_child_not_found()
     {
         var code = """
-            namespace Parent
-            {
-                public class MyClass { }
-            }
-            """;
+                   namespace Parent
+                   {
+                       public class MyClass { }
+                   }
+                   """;
 
         var context = SymbolsFor(code);
         var parent = context.GetNamespace("Parent");
@@ -193,11 +194,11 @@ public class OptionalSymbolNamespaceTests : RoslynTestBase
     public async Task RequireNamespace_returns_child_namespace()
     {
         var code = """
-            namespace Parent.Child
-            {
-                public class MyClass { }
-            }
-            """;
+                   namespace Parent.Child
+                   {
+                       public class MyClass { }
+                   }
+                   """;
 
         var context = SymbolsFor(code);
         var parent = context.GetNamespace("Parent");
@@ -210,11 +211,11 @@ public class OptionalSymbolNamespaceTests : RoslynTestBase
     public async Task IsGlobalNamespace_returns_false_for_regular_namespace()
     {
         var code = """
-            namespace MyNamespace
-            {
-                public class MyClass { }
-            }
-            """;
+                   namespace MyNamespace
+                   {
+                       public class MyClass { }
+                   }
+                   """;
 
         var context = SymbolsFor(code);
         var ns = context.GetNamespace("MyNamespace");
@@ -226,8 +227,8 @@ public class OptionalSymbolNamespaceTests : RoslynTestBase
     public async Task IsGlobalNamespace_returns_false_for_empty()
     {
         var code = """
-            public class MyClass { }
-            """;
+                   public class MyClass { }
+                   """;
 
         var context = SymbolsFor(code);
         var ns = context.GetNamespace("NonExistent");
@@ -239,11 +240,11 @@ public class OptionalSymbolNamespaceTests : RoslynTestBase
     public async Task Can_chain_namespace_navigation()
     {
         var code = """
-            namespace Parent.Child.GrandChild
-            {
-                public class MyClass { }
-            }
-            """;
+                   namespace Parent.Child.GrandChild
+                   {
+                       public class MyClass { }
+                   }
+                   """;
 
         var context = SymbolsFor(code);
         var grandChild = context.GetNamespace("Parent")
@@ -260,11 +261,11 @@ public class OptionalSymbolNamespaceTests : RoslynTestBase
     public async Task Chained_navigation_stops_at_first_empty()
     {
         var code = """
-            namespace Parent
-            {
-                public class MyClass { }
-            }
-            """;
+                   namespace Parent
+                   {
+                       public class MyClass { }
+                   }
+                   """;
 
         var context = SymbolsFor(code);
         var result = context.GetNamespace("Parent")

@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Analyzers;
 
 /// <summary>
@@ -57,12 +58,15 @@ public sealed class ReportsAttribute : Attribute
     /// <summary>
     /// Creates a <see cref="DiagnosticDescriptor"/> from this attribute.
     /// </summary>
-    internal DiagnosticDescriptor ToDescriptor() => new(
-        DiagnosticId,
-        Title,
-        Message,
-        Category,
-        Severity,
-        IsEnabledByDefault,
-        Description);
+    internal DiagnosticDescriptor ToDescriptor()
+    {
+        return new DiagnosticDescriptor(
+            DiagnosticId,
+            Title,
+            Message,
+            Category,
+            Severity,
+            IsEnabledByDefault,
+            Description);
+    }
 }

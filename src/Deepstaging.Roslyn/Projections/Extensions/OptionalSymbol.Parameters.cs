@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn;
 
 /// <summary>
@@ -33,8 +34,9 @@ public static class ProjectedParameterSymbolExtensions
         /// 
         /// </summary>
         /// <returns></returns>
-        public string? DefaultValueString() =>
-            parameter.Symbol!.HasExplicitDefaultValue
+        public string? DefaultValueString()
+        {
+            return parameter.Symbol!.HasExplicitDefaultValue
                 ? parameter.Symbol.ExplicitDefaultValue switch
                 {
                     null => "default",
@@ -43,5 +45,6 @@ public static class ProjectedParameterSymbolExtensions
                     var value => value.ToString()
                 }
                 : null;
+        }
     }
 }

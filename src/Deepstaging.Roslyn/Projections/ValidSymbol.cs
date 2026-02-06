@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 using Access = Microsoft.CodeAnalysis.Accessibility;
 
 namespace Deepstaging.Roslyn;
@@ -43,7 +44,7 @@ public readonly struct ValidSymbol<TSymbol> : IProjection<TSymbol>
     private static bool IsErrorSymbol(TSymbol symbol)
     {
         return symbol is ITypeSymbol { TypeKind: TypeKind.Error }
-            || symbol is IErrorTypeSymbol;
+               || symbol is IErrorTypeSymbol;
     }
 
     #endregion
@@ -211,13 +212,19 @@ public readonly struct ValidSymbol<TSymbol> : IProjection<TSymbol>
         SymbolDisplayGlobalNamespaceStyle.Omitted,
         SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces,
         SymbolDisplayGenericsOptions.IncludeTypeParameters,
-        miscellaneousOptions: SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier);
+        miscellaneousOptions: SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier |
+                              SymbolDisplayMiscellaneousOptions.AllowDefaultLiteral |
+                              SymbolDisplayMiscellaneousOptions.IncludeNotNullableReferenceTypeModifier |
+                              SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
 
     private static readonly SymbolDisplayFormat GloballyQualifiedFormatWithNullability = new(
         SymbolDisplayGlobalNamespaceStyle.Included,
         SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces,
         SymbolDisplayGenericsOptions.IncludeTypeParameters,
-        miscellaneousOptions: SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier);
+        miscellaneousOptions: SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier |
+                              SymbolDisplayMiscellaneousOptions.AllowDefaultLiteral |
+                              SymbolDisplayMiscellaneousOptions.IncludeNotNullableReferenceTypeModifier |
+                              SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
 
     /// <summary>
     /// Gets the fully qualified name without global namespace prefix.
@@ -651,7 +658,8 @@ public readonly struct ValidSymbol<TSymbol> : IProjection<TSymbol>
     {
         get
         {
-            if (_symbol is not INamedTypeSymbol namedType || !namedType.IsGenericTaskType() && !namedType.IsGenericValueTaskType())
+            if (_symbol is not INamedTypeSymbol namedType ||
+                (!namedType.IsGenericTaskType() && !namedType.IsGenericValueTaskType()))
                 return OptionalSymbol<ITypeSymbol>.Empty();
 
             return SingleTypeArgument;

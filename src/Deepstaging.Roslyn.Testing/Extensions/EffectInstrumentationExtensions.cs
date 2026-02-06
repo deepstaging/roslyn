@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 using System.Diagnostics;
 
 namespace Deepstaging.Roslyn.Testing;
@@ -60,17 +61,12 @@ public static class EffectInstrumentationExtensions
                     capturedActivity = activity;
                     capturedStatus = activity.Status;
                     capturedStatusDescription = activity.StatusDescription;
-                    
-                    foreach (var tag in activity.Tags)
-                    {
-                        capturedTags[tag.Key] = tag.Value;
-                    }
 
-                    if (capturedTags.TryGetValue("operation.duration_ms", out var durationValue) 
+                    foreach (var tag in activity.Tags) capturedTags[tag.Key] = tag.Value;
+
+                    if (capturedTags.TryGetValue("operation.duration_ms", out var durationValue)
                         && durationValue is long duration)
-                    {
                         durationMs = duration;
-                    }
                 }
             };
 
@@ -81,26 +77,26 @@ public static class EffectInstrumentationExtensions
                 var res = await effect.RunAsync(runtime);
 
                 var result = res.Match(
-                    Succ: value => new InstrumentationTestContext(
+                    value => new InstrumentationTestContext(
                         capturedActivity,
                         capturedStatus,
                         capturedStatusDescription,
                         capturedTags,
                         durationMs,
                         wasStarted,
-                        result: value,
-                        error: null,
+                        value,
+                        null,
                         // ReSharper disable once AccessToDisposedClosure
                         listener),
-                    Fail: error => new InstrumentationTestContext(
+                    error => new InstrumentationTestContext(
                         capturedActivity,
                         capturedStatus,
                         capturedStatusDescription,
                         capturedTags,
                         durationMs,
                         wasStarted,
-                        result: null,
-                        error: error,
+                        null,
+                        error,
                         // ReSharper disable once AccessToDisposedClosure
                         listener));
 
@@ -111,7 +107,6 @@ public static class EffectInstrumentationExtensions
                 listener.Dispose();
                 throw;
             }
-
         }
     }
 }

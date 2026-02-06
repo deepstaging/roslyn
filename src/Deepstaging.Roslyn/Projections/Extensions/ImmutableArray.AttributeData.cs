@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn;
 
 /// <summary>
@@ -18,7 +19,7 @@ public static class ImmutableArrayAttributeDataExtensions
         {
             return attributes.GetByName(typeof(T).Name);
         }
-        
+
         /// <summary>
         /// Gets attribute by full name as OptionalSymbol.
         /// Returns Empty if not found.

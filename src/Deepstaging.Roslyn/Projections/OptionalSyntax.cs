@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
@@ -26,17 +27,26 @@ public readonly struct OptionalSyntax<TSyntax> : IValidatableProjection<TSyntax,
     /// <summary>
     /// Creates an optional syntax with a value.
     /// </summary>
-    public static OptionalSyntax<TSyntax> WithValue(TSyntax node) => new(node);
+    public static OptionalSyntax<TSyntax> WithValue(TSyntax node)
+    {
+        return new OptionalSyntax<TSyntax>(node);
+    }
 
     /// <summary>
     /// Creates an empty optional syntax without a value.
     /// </summary>
-    public static OptionalSyntax<TSyntax> Empty() => new(null);
+    public static OptionalSyntax<TSyntax> Empty()
+    {
+        return new OptionalSyntax<TSyntax>(null);
+    }
 
     /// <summary>
     /// Creates an optional syntax from a nullable syntax reference.
     /// </summary>
-    public static OptionalSyntax<TSyntax> FromNullable(TSyntax? node) => node != null ? WithValue(node) : Empty();
+    public static OptionalSyntax<TSyntax> FromNullable(TSyntax? node)
+    {
+        return node != null ? WithValue(node) : Empty();
+    }
 
     #endregion
 
@@ -80,7 +90,10 @@ public readonly struct OptionalSyntax<TSyntax> : IValidatableProjection<TSyntax,
     /// <summary>
     /// Returns the syntax node or null if absent.
     /// </summary>
-    public TSyntax? OrNull() => _node;
+    public TSyntax? OrNull()
+    {
+        return _node;
+    }
 
     /// <summary>
     /// Validates the optional syntax to a ValidSyntax with guaranteed non-null access.
@@ -118,12 +131,18 @@ public readonly struct OptionalSyntax<TSyntax> : IValidatableProjection<TSyntax,
     /// <summary>
     /// Checks if the optional syntax is not valid (empty). Returns true if invalid.
     /// </summary>
-    public bool IsNotValid(out ValidSyntax<TSyntax> validated) => !IsValid(out validated);
+    public bool IsNotValid(out ValidSyntax<TSyntax> validated)
+    {
+        return !IsValid(out validated);
+    }
 
     /// <summary>
     /// Checks if the optional syntax is valid (has value). Returns true if valid.
     /// </summary>
-    public bool IsValid(out ValidSyntax<TSyntax> validated) => TryValidate(out validated);
+    public bool IsValid(out ValidSyntax<TSyntax> validated)
+    {
+        return TryValidate(out validated);
+    }
 
     #endregion
 
@@ -142,7 +161,10 @@ public readonly struct OptionalSyntax<TSyntax> : IValidatableProjection<TSyntax,
     /// <summary>
     /// Alias for Map. Maps the syntax node to a different type.
     /// </summary>
-    public OptionalValue<TResult> Select<TResult>(Func<ValidSyntax<TSyntax>, TResult> selector) => Map(selector);
+    public OptionalValue<TResult> Select<TResult>(Func<ValidSyntax<TSyntax>, TResult> selector)
+    {
+        return Map(selector);
+    }
 
     /// <summary>
     /// Filters the syntax node based on a predicate.
@@ -230,22 +252,34 @@ public readonly struct OptionalSyntax<TSyntax> : IValidatableProjection<TSyntax,
     /// <summary>
     /// Enables equality checks: optional == node
     /// </summary>
-    public static bool operator ==(OptionalSyntax<TSyntax> left, TSyntax? right) => left.Equals(right);
+    public static bool operator ==(OptionalSyntax<TSyntax> left, TSyntax? right)
+    {
+        return left.Equals(right);
+    }
 
     /// <summary>
     /// Enables inequality checks: optional != node
     /// </summary>
-    public static bool operator !=(OptionalSyntax<TSyntax> left, TSyntax? right) => !left.Equals(right);
+    public static bool operator !=(OptionalSyntax<TSyntax> left, TSyntax? right)
+    {
+        return !left.Equals(right);
+    }
 
     /// <summary>
     /// Determines whether the current instance equals the specified object (always returns false).
     /// </summary>
-    public override bool Equals(object? obj) => false;
+    public override bool Equals(object? obj)
+    {
+        return false;
+    }
 
     /// <summary>
     /// Returns the hash code for this instance.
     /// </summary>
-    public override int GetHashCode() => _node?.GetHashCode() ?? 0;
+    public override int GetHashCode()
+    {
+        return _node?.GetHashCode() ?? 0;
+    }
 
     #endregion
 

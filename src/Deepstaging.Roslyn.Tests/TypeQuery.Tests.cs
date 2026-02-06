@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Tests;
 
 public class TypeQueryTests : RoslynTestBase
@@ -8,9 +9,9 @@ public class TypeQueryTests : RoslynTestBase
     public async Task Can_find_public_classes()
     {
         var code = """
-            public class PublicClass { }
-            internal class InternalClass { }
-            """;
+                   public class PublicClass { }
+                   internal class InternalClass { }
+                   """;
 
         var types = SymbolsFor(code)
             .Types()
@@ -25,9 +26,9 @@ public class TypeQueryTests : RoslynTestBase
     public async Task Can_filter_interfaces()
     {
         var code = """
-            public interface IService { }
-            public class ServiceClass { }
-            """;
+                   public interface IService { }
+                   public class ServiceClass { }
+                   """;
 
         var interfaces = SymbolsFor(code)
             .Types()
@@ -42,12 +43,12 @@ public class TypeQueryTests : RoslynTestBase
     public async Task Can_filter_by_attribute()
     {
         var code = """
-            using System;
-            
-            [Obsolete]
-            public class OldClass { }
-            public class NewClass { }
-            """;
+                   using System;
+
+                   [Obsolete]
+                   public class OldClass { }
+                   public class NewClass { }
+                   """;
 
         var obsoleteTypes = SymbolsFor(code)
             .Types()

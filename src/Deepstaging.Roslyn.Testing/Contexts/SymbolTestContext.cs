@@ -15,12 +15,12 @@ public class SymbolTestContext
     /// The underlying compilation.
     /// </summary>
     public Compilation Compilation { get; }
-    
+
     internal SymbolTestContext(Compilation compilation)
     {
         Compilation = compilation;
     }
-    
+
     /// <summary>
     /// Execute a query projection that requires both a symbol and compilation.
     /// Returns the result directly.
@@ -40,8 +40,8 @@ public class SymbolTestContext
         var validSymbol = symbolSelector(this);
         return projection(validSymbol.Value, Compilation);
     }
-    
-    
+
+
     /// <summary>
     /// Get a namespace by name from the compilation.
     /// Returns Empty if not found.
@@ -51,8 +51,8 @@ public class SymbolTestContext
     public OptionalSymbol<INamespaceSymbol> GetNamespace(string namespaceName)
     {
         var parts = namespaceName.Split('.');
-        INamespaceSymbol current = Compilation.GlobalNamespace;
-        
+        var current = Compilation.GlobalNamespace;
+
         foreach (var part in parts)
         {
             var next = current.GetNamespaceMembers().FirstOrDefault(ns => ns.Name == part);
@@ -60,19 +60,21 @@ public class SymbolTestContext
                 return OptionalSymbol<INamespaceSymbol>.Empty();
             current = next;
         }
-        
+
         return OptionalSymbol<INamespaceSymbol>.WithValue(current);
     }
-    
+
     /// <summary>
     /// Get a namespace by name from the compilation.
     /// Throws if not found.
     /// </summary>
     /// <param name="namespaceName">The namespace name (e.g., "MyApp.Services").</param>
     /// <returns>The namespace symbol.</returns>
-    public ValidSymbol<INamespaceSymbol> RequireNamespace(string namespaceName) =>
-        GetNamespace(namespaceName).ValidateOrThrow();
-    
+    public ValidSymbol<INamespaceSymbol> RequireNamespace(string namespaceName)
+    {
+        return GetNamespace(namespaceName).ValidateOrThrow();
+    }
+
     /// <summary>
     /// Start a fluent query for a specific type by name.
     /// </summary>
@@ -81,20 +83,20 @@ public class SymbolTestContext
     {
         return new TypeQueryContext(this, typeName);
     }
-    
+
     /// <summary>s
     /// Start a fluent query for types in the source code under test (excludes referenced assemblies).
     /// </summary>
     public TypeQuery Types()
     {
         var sourceTreePaths = Compilation.SyntaxTrees.Select(t => t.FilePath).ToHashSet();
-        
+
         return TypeQuery.From(Compilation)
-            .Where(t => t.Locations.Any(loc => 
-                loc.IsInSource && 
+            .Where(t => t.Locations.Any(loc =>
+                loc.IsInSource &&
                 sourceTreePaths.Contains(loc.SourceTree?.FilePath ?? "")));
     }
-    
+
     /// <summary>
     /// Start a fluent query for all types in the entire compilation (includes referenced assemblies).
     /// Use this when you need to query system types or types from dependencies.
@@ -104,7 +106,7 @@ public class SymbolTestContext
     {
         return new TypesQueryContext(this);
     }
-    
+
     /// <summary>
     /// Execute a custom projection on a type.
     /// </summary>
@@ -113,7 +115,7 @@ public class SymbolTestContext
         var type = GetType(typeName);
         return projection(type);
     }
-    
+
     /// <summary>
     /// Get a symbol by name and cast to INamedTypeSymbol.
     /// Returns Empty if not found or not a named type.
@@ -127,17 +129,19 @@ public class SymbolTestContext
         var optionalSymbol = types.Length == 1
             ? OptionalSymbol<INamedTypeSymbol>.WithValue(types[0])
             : OptionalSymbol<INamedTypeSymbol>.Empty();
-        
+
         return optionalSymbol;
     }
-    
+
     /// <summary>
     /// Get a symbol by name and cast to INamedTypeSymbol.
     /// Throws if not found or not a named type.
     /// </summary>
-    public ValidSymbol<INamedTypeSymbol> RequireNamedType(string typeName) =>
-        GetNamedType(typeName).ValidateOrThrow();
-    
+    public ValidSymbol<INamedTypeSymbol> RequireNamedType(string typeName)
+    {
+        return GetNamedType(typeName).ValidateOrThrow();
+    }
+
     /// <summary>
     /// Get a symbol by name and cast to ITypeSymbol.
     /// Returns Empty if not found or not a type.
@@ -147,19 +151,21 @@ public class SymbolTestContext
         var types = GetAllTypes(Compilation.GlobalNamespace)
             .Where(t => t.Name == typeName)
             .ToArray();
-        
+
         return types.Length == 1
             ? OptionalSymbol<ITypeSymbol>.WithValue(types[0])
             : OptionalSymbol<ITypeSymbol>.Empty();
     }
-    
+
     /// <summary>
     /// Get a symbol by name and cast to ITypeSymbol.
     /// Throws if not found or not a type.
     /// </summary>
-    public ValidSymbol<ITypeSymbol> RequireType(string typeName) =>
-        GetType(typeName).ValidateOrThrow();
-    
+    public ValidSymbol<ITypeSymbol> RequireType(string typeName)
+    {
+        return GetType(typeName).ValidateOrThrow();
+    }
+
     /// <summary>
     /// Get a method by name from all types in compilation and cast to IMethodSymbol.
     /// Returns Empty if not found or not a method.
@@ -170,19 +176,21 @@ public class SymbolTestContext
             .SelectMany(t => t.GetMembers(methodName))
             .OfType<IMethodSymbol>()
             .ToArray();
-        
+
         return methods.Length == 1
             ? OptionalSymbol<IMethodSymbol>.WithValue(methods[0])
             : OptionalSymbol<IMethodSymbol>.Empty();
     }
-    
+
     /// <summary>
     /// Get a method by name from all types in compilation and cast to IMethodSymbol.
     /// Throws if not found or not a method.
     /// </summary>
-    public ValidSymbol<IMethodSymbol> RequireMethod(string methodName) =>
-        GetMethod(methodName).ValidateOrThrow();
-    
+    public ValidSymbol<IMethodSymbol> RequireMethod(string methodName)
+    {
+        return GetMethod(methodName).ValidateOrThrow();
+    }
+
     /// <summary>
     /// Get a property by name from all types in compilation and cast to IPropertySymbol.
     /// Returns Empty if not found or not a property.
@@ -193,19 +201,21 @@ public class SymbolTestContext
             .SelectMany(t => t.GetMembers(propertyName))
             .OfType<IPropertySymbol>()
             .ToArray();
-        
+
         return properties.Length == 1
             ? OptionalSymbol<IPropertySymbol>.WithValue(properties[0])
             : OptionalSymbol<IPropertySymbol>.Empty();
     }
-    
+
     /// <summary>
     /// Get a property by name from all types in compilation and cast to IPropertySymbol.
     /// Throws if not found or not a property.
     /// </summary>
-    public ValidSymbol<IPropertySymbol> RequireProperty(string propertyName) =>
-        GetProperty(propertyName).ValidateOrThrow();
-    
+    public ValidSymbol<IPropertySymbol> RequireProperty(string propertyName)
+    {
+        return GetProperty(propertyName).ValidateOrThrow();
+    }
+
     /// <summary>
     /// Get a field by name from all types in compilation and cast to IFieldSymbol.
     /// Returns Empty if not found or not a field.
@@ -216,19 +226,21 @@ public class SymbolTestContext
             .SelectMany(t => t.GetMembers(fieldName))
             .OfType<IFieldSymbol>()
             .ToArray();
-        
+
         return fields.Length == 1
             ? OptionalSymbol<IFieldSymbol>.WithValue(fields[0])
             : OptionalSymbol<IFieldSymbol>.Empty();
     }
-    
+
     /// <summary>
     /// Get a field by name from all types in compilation and cast to IFieldSymbol.
     /// Throws if not found or not a field.
     /// </summary>
-    public ValidSymbol<IFieldSymbol> RequireField(string fieldName) =>
-        GetField(fieldName).ValidateOrThrow();
-    
+    public ValidSymbol<IFieldSymbol> RequireField(string fieldName)
+    {
+        return GetField(fieldName).ValidateOrThrow();
+    }
+
     /// <summary>
     /// Get a parameter by name from all methods in compilation and cast to IParameterSymbol.
     /// Returns Empty if not found or not a parameter.
@@ -241,50 +253,42 @@ public class SymbolTestContext
             .SelectMany(m => m.Parameters)
             .Where(p => p.Name == parameterName)
             .ToArray();
-        
+
         return parameters.Length == 1
             ? OptionalSymbol<IParameterSymbol>.WithValue(parameters[0])
             : OptionalSymbol<IParameterSymbol>.Empty();
     }
-    
+
     /// <summary>
     /// Get a parameter by name from all methods in compilation and cast to IParameterSymbol.
     /// Throws if not found or not a parameter.
     /// </summary>
-    public ValidSymbol<IParameterSymbol> RequireParameter(string parameterName) =>
-        GetParameter(parameterName).ValidateOrThrow();
-    
+    public ValidSymbol<IParameterSymbol> RequireParameter(string parameterName)
+    {
+        return GetParameter(parameterName).ValidateOrThrow();
+    }
+
     private static IEnumerable<INamedTypeSymbol> GetAllTypes(INamespaceSymbol ns)
     {
         foreach (var type in ns.GetTypeMembers())
         {
             yield return type;
-            
+
             // Recursively get nested types
-            foreach (var nested in GetNestedTypes(type))
-            {
-                yield return nested;
-            }
+            foreach (var nested in GetNestedTypes(type)) yield return nested;
         }
-        
+
         foreach (var childNs in ns.GetNamespaceMembers())
-        {
-            foreach (var type in GetAllTypes(childNs))
-            {
-                yield return type;
-            }
-        }
+        foreach (var type in GetAllTypes(childNs))
+            yield return type;
     }
-    
+
     private static IEnumerable<INamedTypeSymbol> GetNestedTypes(INamedTypeSymbol type)
     {
         foreach (var nested in type.GetTypeMembers())
         {
             yield return nested;
-            foreach (var child in GetNestedTypes(nested))
-            {
-                yield return child;
-            }
+            foreach (var child in GetNestedTypes(nested)) yield return child;
         }
     }
 }
@@ -296,13 +300,13 @@ public class TypeQueryContext
 {
     private readonly SymbolTestContext _context;
     private readonly string _typeName;
-    
+
     internal TypeQueryContext(SymbolTestContext context, string typeName)
     {
         _context = context;
         _typeName = typeName;
     }
-    
+
     /// <summary>
     /// Start querying properties on this type.
     /// </summary>
@@ -310,7 +314,7 @@ public class TypeQueryContext
     {
         return _context.GetType(_typeName).QueryProperties();
     }
-    
+
     /// <summary>
     /// Start querying methods on this type.
     /// </summary>
@@ -318,7 +322,7 @@ public class TypeQueryContext
     {
         return _context.GetType(_typeName).QueryMethods();
     }
-    
+
     /// <summary>
     /// Start querying constructors on this type.
     /// </summary>
@@ -335,19 +339,19 @@ public class TypesQueryContext
 {
     private readonly SymbolTestContext _context;
     private readonly TypeQuery _query;
-    
+
     internal TypesQueryContext(SymbolTestContext context)
     {
         _context = context;
         _query = TypeQuery.From(_context.Compilation);
     }
-    
+
     private TypesQueryContext(SymbolTestContext context, TypeQuery query)
     {
         _context = context;
         _query = query;
     }
-    
+
     /// <summary>
     /// Get the underlying TypeQuery for further operations.
     /// </summary>
@@ -355,7 +359,7 @@ public class TypesQueryContext
     {
         return _query;
     }
-    
+
     /// <summary>
     /// Filter to only public types.
     /// </summary>
@@ -363,7 +367,7 @@ public class TypesQueryContext
     {
         return new TypesQueryContext(_context, _query.ThatArePublic());
     }
-    
+
     /// <summary>
     /// Filter to only class types.
     /// </summary>
@@ -371,7 +375,7 @@ public class TypesQueryContext
     {
         return new TypesQueryContext(_context, _query.ThatAreClasses());
     }
-    
+
     /// <summary>
     /// Filter to only interface types.
     /// </summary>
@@ -379,7 +383,7 @@ public class TypesQueryContext
     {
         return new TypesQueryContext(_context, _query.ThatAreInterfaces());
     }
-    
+
     /// <summary>
     /// Filter to types with a specific attribute.
     /// </summary>

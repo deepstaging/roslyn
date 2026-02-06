@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Emit;
 
 /// <summary>
@@ -62,13 +63,13 @@ public readonly struct FieldBuilder
             name,
             type,
             Accessibility.Private,
-            isStatic: false,
-            isReadonly: false,
-            isConst: false,
-            initializer: null,
+            false,
+            false,
+            false,
+            null,
             ImmutableArray<AttributeBuilder>.Empty,
             ImmutableArray<string>.Empty,
-            xmlDoc: null);
+            null);
     }
 
     /// <summary>
@@ -89,7 +90,10 @@ public readonly struct FieldBuilder
     /// var builder = FieldBuilder.Parse("public const int MaxRetries = 3");
     /// </code>
     /// </example>
-    public static FieldBuilder Parse(string signature) => SignatureParser.ParseField(signature);
+    public static FieldBuilder Parse(string signature)
+    {
+        return SignatureParser.ParseField(signature);
+    }
 
     #endregion
 
@@ -100,7 +104,8 @@ public readonly struct FieldBuilder
     /// </summary>
     public FieldBuilder WithAccessibility(Accessibility accessibility)
     {
-        return new FieldBuilder(_name, _type, accessibility, _isStatic, _isReadonly, _isConst, _initializer, _attributes, _usings, _xmlDoc);
+        return new FieldBuilder(_name, _type, accessibility, _isStatic, _isReadonly, _isConst, _initializer,
+            _attributes, _usings, _xmlDoc);
     }
 
     /// <summary>
@@ -108,7 +113,8 @@ public readonly struct FieldBuilder
     /// </summary>
     public FieldBuilder AsStatic()
     {
-        return new FieldBuilder(_name, _type, _accessibility, true, _isReadonly, _isConst, _initializer, _attributes, _usings, _xmlDoc);
+        return new FieldBuilder(_name, _type, _accessibility, true, _isReadonly, _isConst, _initializer, _attributes,
+            _usings, _xmlDoc);
     }
 
     /// <summary>
@@ -116,7 +122,8 @@ public readonly struct FieldBuilder
     /// </summary>
     public FieldBuilder AsReadonly()
     {
-        return new FieldBuilder(_name, _type, _accessibility, _isStatic, true, _isConst, _initializer, _attributes, _usings, _xmlDoc);
+        return new FieldBuilder(_name, _type, _accessibility, _isStatic, true, _isConst, _initializer, _attributes,
+            _usings, _xmlDoc);
     }
 
     /// <summary>
@@ -125,7 +132,8 @@ public readonly struct FieldBuilder
     /// </summary>
     public FieldBuilder AsConst()
     {
-        return new FieldBuilder(_name, _type, _accessibility, _isStatic, _isReadonly, true, _initializer, _attributes, _usings, _xmlDoc);
+        return new FieldBuilder(_name, _type, _accessibility, _isStatic, _isReadonly, true, _initializer, _attributes,
+            _usings, _xmlDoc);
     }
 
     #endregion
@@ -138,7 +146,8 @@ public readonly struct FieldBuilder
     /// <param name="initializer">The initializer expression (e.g., "new()", "null", "42").</param>
     public FieldBuilder WithInitializer(string initializer)
     {
-        return new FieldBuilder(_name, _type, _accessibility, _isStatic, _isReadonly, _isConst, initializer, _attributes, _usings, _xmlDoc);
+        return new FieldBuilder(_name, _type, _accessibility, _isStatic, _isReadonly, _isConst, initializer,
+            _attributes, _usings, _xmlDoc);
     }
 
     #endregion
@@ -152,7 +161,8 @@ public readonly struct FieldBuilder
     public FieldBuilder WithXmlDoc(Func<XmlDocumentationBuilder, XmlDocumentationBuilder> configure)
     {
         var xmlDoc = configure(XmlDocumentationBuilder.Create());
-        return new FieldBuilder(_name, _type, _accessibility, _isStatic, _isReadonly, _isConst, _initializer, _attributes, _usings, xmlDoc);
+        return new FieldBuilder(_name, _type, _accessibility, _isStatic, _isReadonly, _isConst, _initializer,
+            _attributes, _usings, xmlDoc);
     }
 
     /// <summary>
@@ -162,7 +172,8 @@ public readonly struct FieldBuilder
     public FieldBuilder WithXmlDoc(string summary)
     {
         var xmlDoc = XmlDocumentationBuilder.WithSummary(summary);
-        return new FieldBuilder(_name, _type, _accessibility, _isStatic, _isReadonly, _isConst, _initializer, _attributes, _usings, xmlDoc);
+        return new FieldBuilder(_name, _type, _accessibility, _isStatic, _isReadonly, _isConst, _initializer,
+            _attributes, _usings, xmlDoc);
     }
 
     /// <summary>
@@ -175,7 +186,8 @@ public readonly struct FieldBuilder
             return this;
 
         var xmlDoc = XmlDocumentationBuilder.From(documentation);
-        return new FieldBuilder(_name, _type, _accessibility, _isStatic, _isReadonly, _isConst, _initializer, _attributes, _usings, xmlDoc);
+        return new FieldBuilder(_name, _type, _accessibility, _isStatic, _isReadonly, _isConst, _initializer,
+            _attributes, _usings, xmlDoc);
     }
 
     #endregion
@@ -189,7 +201,8 @@ public readonly struct FieldBuilder
     public FieldBuilder WithAttribute(string name)
     {
         var attribute = AttributeBuilder.For(name);
-        return new FieldBuilder(_name, _type, _accessibility, _isStatic, _isReadonly, _isConst, _initializer, _attributes.Add(attribute), _usings, _xmlDoc);
+        return new FieldBuilder(_name, _type, _accessibility, _isStatic, _isReadonly, _isConst, _initializer,
+            _attributes.Add(attribute), _usings, _xmlDoc);
     }
 
     /// <summary>
@@ -200,7 +213,8 @@ public readonly struct FieldBuilder
     public FieldBuilder WithAttribute(string name, Func<AttributeBuilder, AttributeBuilder> configure)
     {
         var attribute = configure(AttributeBuilder.For(name));
-        return new FieldBuilder(_name, _type, _accessibility, _isStatic, _isReadonly, _isConst, _initializer, _attributes.Add(attribute), _usings, _xmlDoc);
+        return new FieldBuilder(_name, _type, _accessibility, _isStatic, _isReadonly, _isConst, _initializer,
+            _attributes.Add(attribute), _usings, _xmlDoc);
     }
 
     /// <summary>
@@ -208,7 +222,8 @@ public readonly struct FieldBuilder
     /// </summary>
     public FieldBuilder WithAttribute(AttributeBuilder attribute)
     {
-        return new FieldBuilder(_name, _type, _accessibility, _isStatic, _isReadonly, _isConst, _initializer, _attributes.Add(attribute), _usings, _xmlDoc);
+        return new FieldBuilder(_name, _type, _accessibility, _isStatic, _isReadonly, _isConst, _initializer,
+            _attributes.Add(attribute), _usings, _xmlDoc);
     }
 
     #endregion
@@ -221,7 +236,8 @@ public readonly struct FieldBuilder
     /// <param name="namespace">The namespace to add (e.g., "System.Linq", "static System.Math").</param>
     public FieldBuilder AddUsing(string @namespace)
     {
-        return new FieldBuilder(_name, _type, _accessibility, _isStatic, _isReadonly, _isConst, _initializer, _attributes, _usings.Add(@namespace), _xmlDoc);
+        return new FieldBuilder(_name, _type, _accessibility, _isStatic, _isReadonly, _isConst, _initializer,
+            _attributes, _usings.Add(@namespace), _xmlDoc);
     }
 
     /// <summary>
@@ -242,14 +258,12 @@ public readonly struct FieldBuilder
 
         // Add initializer if specified
         if (_initializer != null)
-        {
             variable = variable.WithInitializer(
                 SyntaxFactory.EqualsValueClause(
                     SyntaxFactory.ParseExpression(_initializer)));
-        }
 
         var declaration = SyntaxFactory.VariableDeclaration(
-            SyntaxFactory.ParseTypeName(_type))
+                SyntaxFactory.ParseTypeName(_type))
             .WithVariables(SyntaxFactory.SingletonSeparatedList(variable));
 
         var field = SyntaxFactory.FieldDeclaration(declaration);
@@ -281,8 +295,9 @@ public readonly struct FieldBuilder
         return field;
     }
 
-    private static SyntaxKind AccessibilityToSyntaxKind(Accessibility accessibility) =>
-        accessibility switch
+    private static SyntaxKind AccessibilityToSyntaxKind(Accessibility accessibility)
+    {
+        return accessibility switch
         {
             Accessibility.Public => SyntaxKind.PublicKeyword,
             Accessibility.Private => SyntaxKind.PrivateKeyword,
@@ -290,6 +305,7 @@ public readonly struct FieldBuilder
             Accessibility.Internal => SyntaxKind.InternalKeyword,
             _ => SyntaxKind.PrivateKeyword
         };
+    }
 
     /// <summary>
     /// Gets the field name.

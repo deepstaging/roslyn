@@ -14,13 +14,13 @@
 
     <ItemGroup>
         <PackageReference Include="TUnit"/>
-        <PackageReference Include="TUnit.Engine" />
+        <PackageReference Include="TUnit.Engine"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Deepstaging.Roslyn.Workspace\Deepstaging.Roslyn.Workspace.csproj" />
-        <ProjectReference Include="..\Deepstaging.Roslyn.Testing\Deepstaging.Roslyn.Testing.csproj" />
-        <ProjectReference Include="..\Deepstaging.Roslyn\Deepstaging.Roslyn.csproj" />
+        <ProjectReference Include="..\Deepstaging.Roslyn.Workspace\Deepstaging.Roslyn.Workspace.csproj"/>
+        <ProjectReference Include="..\Deepstaging.Roslyn.Testing\Deepstaging.Roslyn.Testing.csproj"/>
+        <ProjectReference Include="..\Deepstaging.Roslyn\Deepstaging.Roslyn.csproj"/>
     </ItemGroup>
 
 </Project>

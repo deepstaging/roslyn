@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Tests.Projections.Extensions;
 
 public class ValidSymbolQueriesTests : RoslynTestBase
@@ -8,12 +9,12 @@ public class ValidSymbolQueriesTests : RoslynTestBase
     public async Task Can_query_methods_from_valid_symbol()
     {
         var code = """
-            public class TestClass
-            {
-                public void Method1() { }
-                public void Method2() { }
-            }
-            """;
+                   public class TestClass
+                   {
+                       public void Method1() { }
+                       public void Method2() { }
+                   }
+                   """;
 
         var methods = SymbolsFor(code)
             .RequireNamedType("TestClass")
@@ -27,12 +28,12 @@ public class ValidSymbolQueriesTests : RoslynTestBase
     public async Task Can_query_properties_from_valid_symbol()
     {
         var code = """
-            public class TestClass
-            {
-                public int Prop1 { get; set; }
-                public string Prop2 { get; set; }
-            }
-            """;
+                   public class TestClass
+                   {
+                       public int Prop1 { get; set; }
+                       public string Prop2 { get; set; }
+                   }
+                   """;
 
         var properties = SymbolsFor(code)
             .RequireNamedType("TestClass")
@@ -46,11 +47,11 @@ public class ValidSymbolQueriesTests : RoslynTestBase
     public async Task Can_query_parameters_from_valid_method()
     {
         var code = """
-            public class TestClass
-            {
-                public void Method(int x, string y) { }
-            }
-            """;
+                   public class TestClass
+                   {
+                       public void Method(int x, string y) { }
+                   }
+                   """;
 
         var parameters = SymbolsFor(code)
             .RequireNamedType("TestClass")

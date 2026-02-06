@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 using Access = Microsoft.CodeAnalysis.Accessibility;
 
 namespace Deepstaging.Roslyn;
@@ -25,17 +26,26 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
     /// <summary>
     /// Creates an optional symbol with a value.
     /// </summary>
-    public static OptionalSymbol<TSymbol> WithValue(TSymbol symbol) => new(symbol);
-    
+    public static OptionalSymbol<TSymbol> WithValue(TSymbol symbol)
+    {
+        return new OptionalSymbol<TSymbol>(symbol);
+    }
+
     /// <summary>
     /// Creates an empty optional symbol without a value.
     /// </summary>
-    public static OptionalSymbol<TSymbol> Empty() => new(null);
-    
+    public static OptionalSymbol<TSymbol> Empty()
+    {
+        return new OptionalSymbol<TSymbol>(null);
+    }
+
     /// <summary>
     /// Creates an optional symbol from a nullable symbol reference.
     /// </summary>
-    public static OptionalSymbol<TSymbol> FromNullable(TSymbol? symbol) => symbol != null ? WithValue(symbol) : Empty();
+    public static OptionalSymbol<TSymbol> FromNullable(TSymbol? symbol)
+    {
+        return symbol != null ? WithValue(symbol) : Empty();
+    }
 
     #endregion
 
@@ -54,7 +64,7 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
     /// Gets a value indicating whether the symbol is present.
     /// </summary>
     public bool HasValue => _symbol != null;
-    
+
     /// <summary>
     /// Gets a value indicating whether the symbol is absent.
     /// </summary>
@@ -81,7 +91,10 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
     /// <summary>
     /// Returns the symbol or null if absent.
     /// </summary>
-    public TSymbol? OrNull() => _symbol;
+    public TSymbol? OrNull()
+    {
+        return _symbol;
+    }
 
     /// <summary>
     /// Validates the optional symbol to a ValidSymbol with guaranteed non-null, non-error access.
@@ -126,12 +139,18 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
     /// <summary>
     /// Checks if the optional symbol is not valid (empty). Returns true if invalid.
     /// </summary>
-    public bool IsNotValid(out ValidSymbol<TSymbol> validated) => !IsValid(out validated);
-    
+    public bool IsNotValid(out ValidSymbol<TSymbol> validated)
+    {
+        return !IsValid(out validated);
+    }
+
     /// <summary>
     /// Checks if the optional symbol is valid (has value). Returns true if valid.
     /// </summary>
-    public bool IsValid(out ValidSymbol<TSymbol> validated) => TryValidate(out validated);
+    public bool IsValid(out ValidSymbol<TSymbol> validated)
+    {
+        return TryValidate(out validated);
+    }
 
     #endregion
 
@@ -150,7 +169,10 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
     /// <summary>
     /// Alias for Map. Maps the symbol to a different type.
     /// </summary>
-    public OptionalValue<TResult> Select<TResult>(Func<ValidSymbol<TSymbol>, TResult> selector) => Map(selector);
+    public OptionalValue<TResult> Select<TResult>(Func<ValidSymbol<TSymbol>, TResult> selector)
+    {
+        return Map(selector);
+    }
 
     /// <summary>
     /// Filters the symbol based on a predicate.
@@ -185,27 +207,42 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
     /// <summary>
     /// Checks if the symbol does not equal another symbol.
     /// </summary>
-    public bool DoesNotEqual(TSymbol? other) => !Equals(other);
+    public bool DoesNotEqual(TSymbol? other)
+    {
+        return !Equals(other);
+    }
 
     /// <summary>
     /// Enables equality checks: optional == symbol
     /// </summary>
-    public static bool operator ==(OptionalSymbol<TSymbol> left, TSymbol? right) => left.Equals(right);
-    
+    public static bool operator ==(OptionalSymbol<TSymbol> left, TSymbol? right)
+    {
+        return left.Equals(right);
+    }
+
     /// <summary>
     /// Enables inequality checks: optional != symbol
     /// </summary>
-    public static bool operator !=(OptionalSymbol<TSymbol> left, TSymbol? right) => !left.Equals(right);
+    public static bool operator !=(OptionalSymbol<TSymbol> left, TSymbol? right)
+    {
+        return !left.Equals(right);
+    }
 
     /// <summary>
     /// Determines whether the current instance equals the specified object (always returns false).
     /// </summary>
-    public override bool Equals(object? obj) => false;
-    
+    public override bool Equals(object? obj)
+    {
+        return false;
+    }
+
     /// <summary>
     /// Returns the hash code for this instance.
     /// </summary>
-    public override int GetHashCode() => _symbol?.GetHashCode() ?? 0;
+    public override int GetHashCode()
+    {
+        return _symbol?.GetHashCode() ?? 0;
+    }
 
     #endregion
 
@@ -215,7 +252,7 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
     /// Gets the name of the symbol, or null if absent.
     /// </summary>
     public string? Name => _symbol?.Name;
-    
+
     /// <summary>
     /// Gets the containing namespace of the symbol, or null if absent or in global namespace.
     /// </summary>
@@ -235,13 +272,19 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
         SymbolDisplayGlobalNamespaceStyle.Omitted,
         SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces,
         SymbolDisplayGenericsOptions.IncludeTypeParameters,
-        miscellaneousOptions: SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier);
+        miscellaneousOptions: SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier |
+                              SymbolDisplayMiscellaneousOptions.AllowDefaultLiteral |
+                              SymbolDisplayMiscellaneousOptions.IncludeNotNullableReferenceTypeModifier |
+                              SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
 
     private static readonly SymbolDisplayFormat GloballyQualifiedFormatWithNullability = new(
         SymbolDisplayGlobalNamespaceStyle.Included,
         SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces,
         SymbolDisplayGenericsOptions.IncludeTypeParameters,
-        miscellaneousOptions: SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier);
+        miscellaneousOptions: SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier |
+                              SymbolDisplayMiscellaneousOptions.AllowDefaultLiteral |
+                              SymbolDisplayMiscellaneousOptions.IncludeNotNullableReferenceTypeModifier |
+                              SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
 
     /// <summary>
     /// Gets the fully qualified name of the symbol without global namespace prefix.
@@ -295,7 +338,7 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
     /// Gets a suggested parameter name derived from the property name.
     /// </summary>
     public string? ParameterName => PropertyName?.ToCamelCase();
-    
+
     /// <summary>
     /// Gets the primary location of the symbol.
     /// </summary>
@@ -309,22 +352,22 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
     /// Gets the declared accessibility of the symbol.
     /// </summary>
     public Accessibility? Accessibility => _symbol?.DeclaredAccessibility;
-    
+
     /// <summary>
     /// Gets a value indicating whether the symbol is public.
     /// </summary>
     public bool IsPublic => _symbol?.DeclaredAccessibility == Access.Public;
-    
+
     /// <summary>
     /// Gets a value indicating whether the symbol is internal.
     /// </summary>
     public bool IsInternal => _symbol?.DeclaredAccessibility == Access.Internal;
-    
+
     /// <summary>
     /// Gets a value indicating whether the symbol is private.
     /// </summary>
     public bool IsPrivate => _symbol?.DeclaredAccessibility == Access.Private;
-    
+
     /// <summary>
     /// Gets a value indicating whether the symbol is protected.
     /// </summary>
@@ -334,16 +377,18 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
     /// Gets the accessibility as a string keyword.
     /// </summary>
     public string? AccessibilityString =>
-        _symbol == null ? null : _symbol.DeclaredAccessibility switch
-        {
-            Access.Public => "public",
-            Access.Internal => "internal",
-            Access.Private => "private",
-            Access.Protected => "protected",
-            Access.ProtectedAndInternal => "private protected",
-            Access.ProtectedOrInternal => "protected internal",
-            _ => null
-        };
+        _symbol == null
+            ? null
+            : _symbol.DeclaredAccessibility switch
+            {
+                Access.Public => "public",
+                Access.Internal => "internal",
+                Access.Private => "private",
+                Access.Protected => "protected",
+                Access.ProtectedAndInternal => "private protected",
+                Access.ProtectedOrInternal => "protected internal",
+                _ => null
+            };
 
     #endregion
 
@@ -353,32 +398,32 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
     /// Gets a value indicating whether the symbol is static.
     /// </summary>
     public bool IsStatic => _symbol?.IsStatic ?? false;
-    
+
     /// <summary>
     /// Gets a value indicating whether the symbol is abstract.
     /// </summary>
     public bool IsAbstract => _symbol?.IsAbstract ?? false;
-    
+
     /// <summary>
     /// Gets a value indicating whether the symbol is sealed.
     /// </summary>
     public bool IsSealed => _symbol?.IsSealed ?? false;
-    
+
     /// <summary>
     /// Gets a value indicating whether the symbol is virtual.
     /// </summary>
     public bool IsVirtual => _symbol?.IsVirtual ?? false;
-    
+
     /// <summary>
     /// Gets a value indicating whether the symbol is an override.
     /// </summary>
     public bool IsOverride => _symbol?.IsOverride ?? false;
-    
+
     /// <summary>
     /// Gets a value indicating whether the symbol is implicitly declared.
     /// </summary>
     public bool IsImplicitlyDeclared => _symbol?.IsImplicitlyDeclared ?? false;
-    
+
     /// <summary>
     /// Gets a value indicating whether the symbol is extern.
     /// </summary>
@@ -419,47 +464,47 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
     /// Gets a value indicating whether the symbol is a generic type.
     /// </summary>
     public bool IsGenericType => _symbol is INamedTypeSymbol { IsGenericType: true };
-    
+
     /// <summary>
     /// Gets a value indicating whether the symbol is a value type.
     /// </summary>
     public bool IsValueType => _symbol is ITypeSymbol { IsValueType: true };
-    
+
     /// <summary>
     /// Gets a value indicating whether the symbol is a reference type.
     /// </summary>
     public bool IsReferenceType => _symbol is ITypeSymbol { IsReferenceType: true };
-    
+
     /// <summary>
     /// Gets a value indicating whether the symbol is an interface.
     /// </summary>
     public bool IsInterface => _symbol is INamedTypeSymbol { TypeKind: TypeKind.Interface };
-    
+
     /// <summary>
     /// Gets a value indicating whether the symbol is a class.
     /// </summary>
     public bool IsClass => _symbol is INamedTypeSymbol { TypeKind: TypeKind.Class };
-    
+
     /// <summary>
     /// Gets a value indicating whether the symbol is a struct.
     /// </summary>
     public bool IsStruct => _symbol is INamedTypeSymbol { TypeKind: TypeKind.Struct };
-    
+
     /// <summary>
     /// Gets a value indicating whether the symbol is a record.
     /// </summary>
     public bool IsRecord => _symbol is INamedTypeSymbol { IsRecord: true };
-    
+
     /// <summary>
     /// Gets a value indicating whether the symbol is an enum.
     /// </summary>
     public bool IsEnum => _symbol is INamedTypeSymbol { TypeKind: TypeKind.Enum };
-    
+
     /// <summary>
     /// Gets a value indicating whether the symbol is a delegate.
     /// </summary>
     public bool IsDelegate => _symbol is INamedTypeSymbol { TypeKind: TypeKind.Delegate };
-    
+
     /// <summary>
     /// Gets a value indicating whether the symbol has nullable annotation.
     /// </summary>
@@ -469,7 +514,7 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
     /// Gets the type kind of the symbol.
     /// </summary>
     public TypeKind? SymbolTypeKind => _symbol is ITypeSymbol typeSymbol ? typeSymbol.TypeKind : null;
-    
+
     /// <summary>
     /// Gets the special type classification of the symbol.
     /// </summary>
@@ -479,15 +524,17 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
     /// Gets the kind of the symbol as a string keyword (class, struct, interface, etc.).
     /// </summary>
     public string? Kind =>
-        _symbol is not INamedTypeSymbol namedType ? null : namedType.TypeKind switch
-        {
-            TypeKind.Class => namedType.IsRecord ? "record" : "class",
-            TypeKind.Struct => namedType.IsRecord ? "record struct" : "struct",
-            TypeKind.Interface => "interface",
-            TypeKind.Enum => "enum",
-            TypeKind.Delegate => "delegate",
-            _ => namedType.TypeKind.ToString().ToLowerInvariant()
-        };
+        _symbol is not INamedTypeSymbol namedType
+            ? null
+            : namedType.TypeKind switch
+            {
+                TypeKind.Class => namedType.IsRecord ? "record" : "class",
+                TypeKind.Struct => namedType.IsRecord ? "record struct" : "struct",
+                TypeKind.Interface => "interface",
+                TypeKind.Enum => "enum",
+                TypeKind.Delegate => "delegate",
+                _ => namedType.TypeKind.ToString().ToLowerInvariant()
+            };
 
     #endregion
 
@@ -497,7 +544,7 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
     /// Gets a value indicating whether the symbol is an async method.
     /// </summary>
     public bool IsAsync => _symbol is IMethodSymbol { IsAsync: true };
-    
+
     /// <summary>
     /// Gets a value indicating whether the symbol is an extension method.
     /// </summary>

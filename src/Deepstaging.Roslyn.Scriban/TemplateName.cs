@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 using System.Reflection;
 
 // ReSharper disable UnusedMember.Global
@@ -16,7 +17,7 @@ public readonly struct TemplateName : IEquatable<TemplateName>
     /// Gets the fully qualified name of the template (e.g., "Namespace.Templates.TemplateName.scriban-cs").
     /// </summary>
     public string Value { get; }
-    
+
     /// <summary>
     /// Gets the assembly containing the embedded template resource.
     /// </summary>
@@ -31,29 +32,50 @@ public readonly struct TemplateName : IEquatable<TemplateName>
     /// <summary>
     /// Implicitly converts a TemplateName to its string value.
     /// </summary>
-    public static implicit operator string(TemplateName templateName) => templateName.Value;
-    
+    public static implicit operator string(TemplateName templateName)
+    {
+        return templateName.Value;
+    }
+
     /// <inheritdoc />
-    public bool Equals(TemplateName other) => Value == other.Value && Assembly == other.Assembly;
-    
+    public bool Equals(TemplateName other)
+    {
+        return Value == other.Value && Assembly == other.Assembly;
+    }
+
     /// <inheritdoc />
-    public override bool Equals(object? obj) => obj is TemplateName other && Equals(other);
-    
+    public override bool Equals(object? obj)
+    {
+        return obj is TemplateName other && Equals(other);
+    }
+
     /// <inheritdoc />
-    public override int GetHashCode() => (Value, Assembly).GetHashCode();
-    
+    public override int GetHashCode()
+    {
+        return (Value, Assembly).GetHashCode();
+    }
+
     /// <inheritdoc />
-    public override string ToString() => Value;
-    
+    public override string ToString()
+    {
+        return Value;
+    }
+
     /// <summary>
     /// Equality operator for TemplateName comparison.
     /// </summary>
-    public static bool operator ==(TemplateName left, TemplateName right) => left.Equals(right);
-    
+    public static bool operator ==(TemplateName left, TemplateName right)
+    {
+        return left.Equals(right);
+    }
+
     /// <summary>
     /// Inequality operator for TemplateName comparison.
     /// </summary>
-    public static bool operator !=(TemplateName left, TemplateName right) => !left.Equals(right);
+    public static bool operator !=(TemplateName left, TemplateName right)
+    {
+        return !left.Equals(right);
+    }
 
     /// <summary>
     /// Creates a template name factory for a specific generator type.

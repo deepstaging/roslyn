@@ -5,8 +5,8 @@
 // defined for netstandard2.0 targeting.
 
 
-
 // ReSharper disable once CheckNamespace
+
 namespace System
 {
     using ComponentModel;

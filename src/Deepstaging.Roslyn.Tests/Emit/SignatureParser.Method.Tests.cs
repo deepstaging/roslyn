@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Tests.Emit;
 
 public class SignatureParserMethodTests : RoslynTestBase
@@ -283,21 +284,21 @@ public class SignatureParserMethodTests : RoslynTestBase
     [Test]
     public async Task Parse_InvalidSignature_ThrowsArgumentException()
     {
-        await Assert.ThrowsAsync<ArgumentException>(() => 
+        await Assert.ThrowsAsync<ArgumentException>(() =>
             Task.FromResult(MethodBuilder.Parse("this is not valid c#")));
     }
 
     [Test]
     public async Task Parse_EmptySignature_ThrowsArgumentException()
     {
-        await Assert.ThrowsAsync<ArgumentException>(() => 
+        await Assert.ThrowsAsync<ArgumentException>(() =>
             Task.FromResult(MethodBuilder.Parse("")));
     }
 
     [Test]
     public async Task Parse_NullSignature_ThrowsArgumentException()
     {
-        await Assert.ThrowsAsync<ArgumentException>(() => 
+        await Assert.ThrowsAsync<ArgumentException>(() =>
             Task.FromResult(MethodBuilder.Parse(null!)));
     }
 
@@ -359,7 +360,8 @@ public class SignatureParserMethodTests : RoslynTestBase
     [Test]
     public async Task Parse_ExtensionMethod_ExposesExtensionTargetType()
     {
-        var builder = MethodBuilder.Parse("public static IServiceCollection AddMyService(this IServiceCollection services)");
+        var builder =
+            MethodBuilder.Parse("public static IServiceCollection AddMyService(this IServiceCollection services)");
 
         await Assert.That(builder.ExtensionTargetType).IsEqualTo("IServiceCollection");
     }

@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Tests.Projections.Extensions;
 
 public class OptionalSymbolMethodsTests : RoslynTestBase
@@ -8,12 +9,12 @@ public class OptionalSymbolMethodsTests : RoslynTestBase
     public async Task GetReturnType_returns_method_return_type()
     {
         var code = """
-            public class TestClass
-            {
-                public int GetNumber() => 42;
-                public void DoNothing() { }
-            }
-            """;
+                   public class TestClass
+                   {
+                       public int GetNumber() => 42;
+                       public void DoNothing() { }
+                   }
+                   """;
 
         var getNumber = SymbolsFor(code)
             .GetNamedType("TestClass")
@@ -31,15 +32,15 @@ public class OptionalSymbolMethodsTests : RoslynTestBase
     public async Task GetAsyncKind_detects_async_methods()
     {
         var code = """
-            using System.Threading.Tasks;
-            
-            public class TestClass
-            {
-                public async Task AsyncVoid() { }
-                public async Task<int> AsyncValue() => 42;
-                public void Sync() { }
-            }
-            """;
+                   using System.Threading.Tasks;
+
+                   public class TestClass
+                   {
+                       public async Task AsyncVoid() { }
+                       public async Task<int> AsyncValue() => 42;
+                       public void Sync() { }
+                   }
+                   """;
 
         var context = SymbolsFor(code);
 
@@ -56,13 +57,13 @@ public class OptionalSymbolMethodsTests : RoslynTestBase
     public async Task GetAsyncReturnType_extracts_type_from_task()
     {
         var code = """
-            using System.Threading.Tasks;
-            
-            public class TestClass
-            {
-                public async Task<string> GetTextAsync() => "hello";
-            }
-            """;
+                   using System.Threading.Tasks;
+
+                   public class TestClass
+                   {
+                       public async Task<string> GetTextAsync() => "hello";
+                   }
+                   """;
 
         var method = SymbolsFor(code)
             .GetNamedType("TestClass")
@@ -80,16 +81,16 @@ public class OptionalSymbolMethodsTests : RoslynTestBase
     public async Task GetOverriddenMethod_returns_base_method()
     {
         var code = """
-            public class BaseClass
-            {
-                public virtual void Method() { }
-            }
-            
-            public class DerivedClass : BaseClass
-            {
-                public override void Method() { }
-            }
-            """;
+                   public class BaseClass
+                   {
+                       public virtual void Method() { }
+                   }
+
+                   public class DerivedClass : BaseClass
+                   {
+                       public override void Method() { }
+                   }
+                   """;
 
         var overrideMethod = SymbolsFor(code)
             .GetNamedType("DerivedClass")
@@ -106,16 +107,16 @@ public class OptionalSymbolMethodsTests : RoslynTestBase
     public async Task GetPartialImplementation_returns_impl_part()
     {
         var code = """
-            public partial class TestClass
-            {
-                partial void Method();
-            }
-            
-            public partial class TestClass
-            {
-                partial void Method() { }
-            }
-            """;
+                   public partial class TestClass
+                   {
+                       partial void Method();
+                   }
+
+                   public partial class TestClass
+                   {
+                       partial void Method() { }
+                   }
+                   """;
 
         var definition = SymbolsFor(code)
             .GetNamedType("TestClass")
@@ -132,11 +133,11 @@ public class OptionalSymbolMethodsTests : RoslynTestBase
     public async Task GetAssociatedSymbol_returns_property_for_accessor()
     {
         var code = """
-            public class TestClass
-            {
-                public int Property { get; set; }
-            }
-            """;
+                   public class TestClass
+                   {
+                       public int Property { get; set; }
+                   }
+                   """;
 
         var property = SymbolsFor(code)
             .GetNamedType("TestClass")

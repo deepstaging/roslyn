@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Emit;
 
 /// <summary>
@@ -23,7 +24,7 @@ public static class BuilderExtensions
     {
         return items.Aggregate(builder, folder);
     }
-    
+
     /// <summary>
     /// Conditionally applies a transformation when the condition is true.
     /// </summary>

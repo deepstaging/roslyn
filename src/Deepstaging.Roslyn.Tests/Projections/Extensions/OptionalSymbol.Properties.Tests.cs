@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Tests.Projections.Extensions;
 
 public class OptionalSymbolPropertiesTests : RoslynTestBase
@@ -8,12 +9,12 @@ public class OptionalSymbolPropertiesTests : RoslynTestBase
     public async Task GetReturnType_returns_property_type()
     {
         var code = """
-            public class TestClass
-            {
-                public int Number { get; set; }
-                public string Text { get; set; }
-            }
-            """;
+                   public class TestClass
+                   {
+                       public int Number { get; set; }
+                       public string Text { get; set; }
+                   }
+                   """;
 
         var numberProp = SymbolsFor(code)
             .GetNamedType("TestClass")
@@ -31,12 +32,12 @@ public class OptionalSymbolPropertiesTests : RoslynTestBase
     public async Task GetGetMethod_returns_getter()
     {
         var code = """
-            public class TestClass
-            {
-                public int ReadWrite { get; set; }
-                public int ReadOnly { get; }
-            }
-            """;
+                   public class TestClass
+                   {
+                       public int ReadWrite { get; set; }
+                       public int ReadOnly { get; }
+                   }
+                   """;
 
         var context = SymbolsFor(code);
 
@@ -51,12 +52,12 @@ public class OptionalSymbolPropertiesTests : RoslynTestBase
     public async Task GetSetMethod_returns_setter_or_empty()
     {
         var code = """
-            public class TestClass
-            {
-                public int ReadWrite { get; set; }
-                public int ReadOnly { get; }
-            }
-            """;
+                   public class TestClass
+                   {
+                       public int ReadWrite { get; set; }
+                       public int ReadOnly { get; }
+                   }
+                   """;
 
         var context = SymbolsFor(code);
 
@@ -71,16 +72,16 @@ public class OptionalSymbolPropertiesTests : RoslynTestBase
     public async Task GetOverriddenProperty_returns_base_property()
     {
         var code = """
-            public class BaseClass
-            {
-                public virtual int Property { get; set; }
-            }
-            
-            public class DerivedClass : BaseClass
-            {
-                public override int Property { get; set; }
-            }
-            """;
+                   public class BaseClass
+                   {
+                       public virtual int Property { get; set; }
+                   }
+
+                   public class DerivedClass : BaseClass
+                   {
+                       public override int Property { get; set; }
+                   }
+                   """;
 
         var overrideProperty = SymbolsFor(code)
             .GetNamedType("DerivedClass")

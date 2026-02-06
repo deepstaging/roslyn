@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Generators;
 
 /// <summary>
@@ -10,6 +11,18 @@ namespace Deepstaging.Roslyn.Generators;
 /// <param name="extension">The file extension for generated files (default is ".cs").</param>
 public sealed class HintName(string root, string extension = ".cs")
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="root"></param>
+    /// <param name="name"></param>
+    /// <param name="extension"></param>
+    /// <returns></returns>
+    public static string From(string root, string name, string extension = ".cs")
+    {
+        return new HintName(root, extension).Filename(name);
+    }
+
     /// <summary>
     /// Creates a hint name by appending ".g.cs" to the name and prefixing with the root.
     /// </summary>

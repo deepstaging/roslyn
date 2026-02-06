@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 using System.Collections.Concurrent;
 using System.Reflection;
 
@@ -17,28 +18,28 @@ namespace Deepstaging.Roslyn.Scriban;
 public sealed record Template(TemplateName Name, object? Context = null)
 {
     #region Caching Infrastructure
-    
+
     // Cache embedded resource text by (Assembly, ResourceName)
     // Avoids re-reading streams for the same template
     private static readonly ConcurrentDictionary<(Assembly, string), string> TemplateTextCache = new();
-    
+
     // Cache parsed Scriban templates by template text
     // Avoids re-parsing the same template multiple times (5-10ms saved per parse)
     // Key is the template text itself (string.GetHashCode is fast and collision-resistant for code)
     private static readonly ConcurrentDictionary<string, global::Scriban.Template> ParsedTemplateCache = new();
-    
+
     #endregion
 
     /// <summary>
     /// Gets the name of the template.
     /// </summary>
     public TemplateName Name { get; } = Name;
-    
+
     /// <summary>
     /// Gets the optional context object to be used during template rendering.
     /// </summary>
     public object? Context { get; } = Context;
-    
+
     /// <summary>
     /// Gets the template text, using cache if available
     /// </summary>
@@ -90,7 +91,8 @@ public sealed record Template(TemplateName Name, object? Context = null)
                 return CreateParseErrorResult(name, scribanTemplate);
 
             var scriptObject = DeepstagingTemplateObject.From(context);
-            return new RenderResult.Success(scribanTemplate.Render(scriptObject), context) { TemplateName = name.Value };
+            return new RenderResult.Success(scribanTemplate.Render(scriptObject), context)
+                { TemplateName = name.Value };
         }
         catch (Exception e)
         {

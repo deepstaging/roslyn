@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Tests.Projections.Extensions;
 
 public class OptionalAttributeTests : RoslynTestBase
@@ -8,15 +9,15 @@ public class OptionalAttributeTests : RoslynTestBase
     public async Task Can_create_with_value()
     {
         var code = """
-            using System;
-            
-            [Obsolete("Old class")]
-            public class TestClass { }
-            """;
+                   using System;
+
+                   [Obsolete("Old class")]
+                   public class TestClass { }
+                   """;
 
         var type = SymbolsFor(code).RequireNamedType("TestClass").Value;
         var attributeData = type.GetAttributes().First();
-        
+
         var optional = OptionalAttribute.WithValue(attributeData);
 
         await Assert.That(optional.HasValue).IsTrue();
@@ -36,15 +37,15 @@ public class OptionalAttributeTests : RoslynTestBase
     public async Task OrNull_returns_attribute_or_null()
     {
         var code = """
-            using System;
-            
-            [Obsolete]
-            public class TestClass { }
-            """;
+                   using System;
+
+                   [Obsolete]
+                   public class TestClass { }
+                   """;
 
         var type = SymbolsFor(code).RequireNamedType("TestClass").Value;
         var attributeData = type.GetAttributes().First();
-        
+
         var withValue = OptionalAttribute.WithValue(attributeData);
         var empty = OptionalAttribute.Empty();
 
@@ -56,11 +57,11 @@ public class OptionalAttributeTests : RoslynTestBase
     public async Task Name_returns_attribute_class_name()
     {
         var code = """
-            using System;
-            
-            [Obsolete]
-            public class TestClass { }
-            """;
+                   using System;
+
+                   [Obsolete]
+                   public class TestClass { }
+                   """;
 
         var type = SymbolsFor(code).RequireNamedType("TestClass").Value;
         var attributeData = type.GetAttributes().First();
@@ -73,14 +74,14 @@ public class OptionalAttributeTests : RoslynTestBase
     public async Task HasConstructorArguments_detects_arguments()
     {
         var code = """
-            using System;
-            
-            [Obsolete("Message")]
-            public class WithArgs { }
-            
-            [Obsolete]
-            public class WithoutArgs { }
-            """;
+                   using System;
+
+                   [Obsolete("Message")]
+                   public class WithArgs { }
+
+                   [Obsolete]
+                   public class WithoutArgs { }
+                   """;
 
         var context = SymbolsFor(code);
 
@@ -97,11 +98,11 @@ public class OptionalAttributeTests : RoslynTestBase
     public async Task GetConstructorArguments_returns_arguments()
     {
         var code = """
-            using System;
-            
-            [Obsolete("Old message", true)]
-            public class TestClass { }
-            """;
+                   using System;
+
+                   [Obsolete("Old message", true)]
+                   public class TestClass { }
+                   """;
 
         var attributeData = SymbolsFor(code).RequireNamedType("TestClass").Value.GetAttributes().First();
         var attribute = OptionalAttribute.WithValue(attributeData);
@@ -113,11 +114,11 @@ public class OptionalAttributeTests : RoslynTestBase
     public async Task GetFirstConstructorArgument_returns_first_arg()
     {
         var code = """
-            using System;
-            
-            [Obsolete("Message")]
-            public class TestClass { }
-            """;
+                   using System;
+
+                   [Obsolete("Message")]
+                   public class TestClass { }
+                   """;
 
         var attributeData = SymbolsFor(code).RequireNamedType("TestClass").Value.GetAttributes().First();
         var attribute = OptionalAttribute.WithValue(attributeData);

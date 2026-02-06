@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Tests;
 
 public class ParameterQueryTests : RoslynTestBase
@@ -8,11 +9,11 @@ public class ParameterQueryTests : RoslynTestBase
     public async Task Can_query_method_parameters()
     {
         var code = """
-            public class TestClass
-            {
-                public void Method(int x, string y) { }
-            }
-            """;
+                   public class TestClass
+                   {
+                       public void Method(int x, string y) { }
+                   }
+                   """;
 
         var parameters = SymbolsFor(code)
             .RequireNamedType("TestClass")
@@ -29,11 +30,11 @@ public class ParameterQueryTests : RoslynTestBase
     public async Task Can_filter_ref_parameters()
     {
         var code = """
-            public class TestClass
-            {
-                public void Method(ref int x, int y) { }
-            }
-            """;
+                   public class TestClass
+                   {
+                       public void Method(ref int x, int y) { }
+                   }
+                   """;
 
         var refParams = SymbolsFor(code)
             .RequireNamedType("TestClass")

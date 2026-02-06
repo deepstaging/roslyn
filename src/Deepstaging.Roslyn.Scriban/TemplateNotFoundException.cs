@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 using System.Reflection;
 using System.Text;
 
@@ -41,30 +42,29 @@ public sealed class TemplateNotFoundException(string name) : Exception
     private string BuildErrorMessage()
     {
         var availableTemplates = FindAvailableTemplates();
-        
+
         var message = new StringBuilder()
             .Append($"Template '{name}' not found as an embedded resource. ");
-        
+
         if (availableTemplates.Length > 0)
-        {
             message.Append($"Available templates ({availableTemplates.Length}): ")
-                   .Append(string.Join(", ", availableTemplates));
-        }
+                .Append(string.Join(", ", availableTemplates));
         else
-        {
             message.Append("No Scriban templates found in loaded assemblies. ")
-                   .Append("Ensure templates are marked as EmbeddedResource in your .csproj.");
-        }
+                .Append("Ensure templates are marked as EmbeddedResource in your .csproj.");
 
         return message.ToString();
     }
 
-    private static string[] FindAvailableTemplates() =>
-    [
-        ..AppDomain.CurrentDomain.GetAssemblies()
-            .SelectMany(GetTemplateResourcesFromAssembly)
-            .OrderBy(resourceName => resourceName)
-    ];
+    private static string[] FindAvailableTemplates()
+    {
+        return
+        [
+            ..AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(GetTemplateResourcesFromAssembly)
+                .OrderBy(resourceName => resourceName)
+        ];
+    }
 
     private static IEnumerable<string> GetTemplateResourcesFromAssembly(Assembly assembly)
     {
@@ -80,6 +80,8 @@ public sealed class TemplateNotFoundException(string name) : Exception
         }
     }
 
-    private static bool IsTemplateResource(string resourceName) =>
-        TemplateExtensions.Any(ext => resourceName.EndsWith(ext, StringComparison.OrdinalIgnoreCase));
+    private static bool IsTemplateResource(string resourceName)
+    {
+        return TemplateExtensions.Any(ext => resourceName.EndsWith(ext, StringComparison.OrdinalIgnoreCase));
+    }
 }

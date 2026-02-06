@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Testing;
 
 /// <summary>
@@ -67,10 +68,7 @@ public class TemplateRenderContext
     /// </summary>
     private async Task<RenderResult> GetResultAsync()
     {
-        if (_result != null)
-        {
-            return _result;
-        }
+        if (_result != null) return _result;
 
         await Task.CompletedTask; // Make this async-compatible
         _result = Template.RenderTemplate(_templateName, _context);
@@ -82,7 +80,7 @@ public class TemplateRenderContext
     /// </summary>
     public TemplateRenderAssertions ShouldRender()
     {
-        return new TemplateRenderAssertions(this, shouldSucceed: true);
+        return new TemplateRenderAssertions(this, true);
     }
 
     /// <summary>
@@ -93,12 +91,13 @@ public class TemplateRenderContext
         var result = await GetResultAsync();
 
         if (result is RenderResult.Success)
-        {
             Assert.Fail($"Expected template '{_templateName}' to fail, but it rendered successfully.");
-        }
     }
 
-    internal Task<RenderResult> GetRenderResultAsync() => GetResultAsync();
+    internal Task<RenderResult> GetRenderResultAsync()
+    {
+        return GetResultAsync();
+    }
 }
 
 /// <summary>
@@ -169,21 +168,17 @@ public class TemplateRenderAssertions
             if (result is not RenderResult.Success success)
             {
                 var failure = (RenderResult.Failure)result;
-                Assert.Fail($"Expected template to render successfully, but got error: {failure.Diagnostic.GetMessage()}");
+                Assert.Fail(
+                    $"Expected template to render successfully, but got error: {failure.Diagnostic.GetMessage()}");
                 return; // Unreachable but helps compiler
             }
 
             if (_expectedContent != null && !success.Text.Contains(_expectedContent))
-            {
                 Assert.Fail($"Expected rendered template to contain: {_expectedContent}");
-            }
         }
         else
         {
-            if (result is RenderResult.Success)
-            {
-                Assert.Fail("Expected template to fail, but it rendered successfully.");
-            }
+            if (result is RenderResult.Success) Assert.Fail("Expected template to fail, but it rendered successfully.");
         }
     }
 }

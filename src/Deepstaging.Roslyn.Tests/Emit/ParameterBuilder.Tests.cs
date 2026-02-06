@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Tests.Emit;
 
 public class ParameterBuilderTests : RoslynTestBase
@@ -8,7 +9,7 @@ public class ParameterBuilderTests : RoslynTestBase
     public async Task Can_emit_simple_parameter()
     {
         var param = ParameterBuilder.For("value", "int");
-        
+
         var method = MethodBuilder
             .For("Process")
             .AddParameter(param)
@@ -77,9 +78,9 @@ public class ParameterBuilderTests : RoslynTestBase
             .AddParameter("input", "string")
             .AddParameter(param)
             .WithBody(b => b.AddStatements("""
-                result = true;
-                return 42;
-                """));
+                                           result = true;
+                                           return 42;
+                                           """));
 
         var result = TypeBuilder
             .Class("Parser")

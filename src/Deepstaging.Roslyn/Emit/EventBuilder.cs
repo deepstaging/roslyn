@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Emit;
 
 /// <summary>
@@ -62,13 +63,13 @@ public readonly struct EventBuilder
             name,
             type,
             Accessibility.Public,
-            isStatic: false,
-            isVirtual: false,
-            isOverride: false,
-            isAbstract: false,
+            false,
+            false,
+            false,
+            false,
             ImmutableArray<AttributeBuilder>.Empty,
             ImmutableArray<string>.Empty,
-            xmlDoc: null);
+            null);
     }
 
     #endregion
@@ -80,7 +81,8 @@ public readonly struct EventBuilder
     /// </summary>
     public EventBuilder WithAccessibility(Accessibility accessibility)
     {
-        return new EventBuilder(_name, _type, accessibility, _isStatic, _isVirtual, _isOverride, _isAbstract, _attributes, _usings, _xmlDoc);
+        return new EventBuilder(_name, _type, accessibility, _isStatic, _isVirtual, _isOverride, _isAbstract,
+            _attributes, _usings, _xmlDoc);
     }
 
     /// <summary>
@@ -88,7 +90,8 @@ public readonly struct EventBuilder
     /// </summary>
     public EventBuilder AsStatic()
     {
-        return new EventBuilder(_name, _type, _accessibility, true, _isVirtual, _isOverride, _isAbstract, _attributes, _usings, _xmlDoc);
+        return new EventBuilder(_name, _type, _accessibility, true, _isVirtual, _isOverride, _isAbstract, _attributes,
+            _usings, _xmlDoc);
     }
 
     /// <summary>
@@ -96,7 +99,8 @@ public readonly struct EventBuilder
     /// </summary>
     public EventBuilder AsVirtual()
     {
-        return new EventBuilder(_name, _type, _accessibility, _isStatic, true, _isOverride, _isAbstract, _attributes, _usings, _xmlDoc);
+        return new EventBuilder(_name, _type, _accessibility, _isStatic, true, _isOverride, _isAbstract, _attributes,
+            _usings, _xmlDoc);
     }
 
     /// <summary>
@@ -104,7 +108,8 @@ public readonly struct EventBuilder
     /// </summary>
     public EventBuilder AsOverride()
     {
-        return new EventBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, true, _isAbstract, _attributes, _usings, _xmlDoc);
+        return new EventBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, true, _isAbstract, _attributes,
+            _usings, _xmlDoc);
     }
 
     /// <summary>
@@ -112,7 +117,8 @@ public readonly struct EventBuilder
     /// </summary>
     public EventBuilder AsAbstract()
     {
-        return new EventBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride, true, _attributes, _usings, _xmlDoc);
+        return new EventBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride, true, _attributes,
+            _usings, _xmlDoc);
     }
 
     #endregion
@@ -126,7 +132,8 @@ public readonly struct EventBuilder
     public EventBuilder WithXmlDoc(Func<XmlDocumentationBuilder, XmlDocumentationBuilder> configure)
     {
         var xmlDoc = configure(XmlDocumentationBuilder.Create());
-        return new EventBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride, _isAbstract, _attributes, _usings, xmlDoc);
+        return new EventBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride, _isAbstract,
+            _attributes, _usings, xmlDoc);
     }
 
     /// <summary>
@@ -136,7 +143,8 @@ public readonly struct EventBuilder
     public EventBuilder WithXmlDoc(string summary)
     {
         var xmlDoc = XmlDocumentationBuilder.WithSummary(summary);
-        return new EventBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride, _isAbstract, _attributes, _usings, xmlDoc);
+        return new EventBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride, _isAbstract,
+            _attributes, _usings, xmlDoc);
     }
 
     /// <summary>
@@ -149,7 +157,8 @@ public readonly struct EventBuilder
             return this;
 
         var xmlDoc = XmlDocumentationBuilder.From(documentation);
-        return new EventBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride, _isAbstract, _attributes, _usings, xmlDoc);
+        return new EventBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride, _isAbstract,
+            _attributes, _usings, xmlDoc);
     }
 
     #endregion
@@ -163,7 +172,8 @@ public readonly struct EventBuilder
     public EventBuilder WithAttribute(string name)
     {
         var attribute = AttributeBuilder.For(name);
-        return new EventBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride, _isAbstract, _attributes.Add(attribute), _usings, _xmlDoc);
+        return new EventBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride, _isAbstract,
+            _attributes.Add(attribute), _usings, _xmlDoc);
     }
 
     /// <summary>
@@ -174,7 +184,8 @@ public readonly struct EventBuilder
     public EventBuilder WithAttribute(string name, Func<AttributeBuilder, AttributeBuilder> configure)
     {
         var attribute = configure(AttributeBuilder.For(name));
-        return new EventBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride, _isAbstract, _attributes.Add(attribute), _usings, _xmlDoc);
+        return new EventBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride, _isAbstract,
+            _attributes.Add(attribute), _usings, _xmlDoc);
     }
 
     /// <summary>
@@ -182,7 +193,8 @@ public readonly struct EventBuilder
     /// </summary>
     public EventBuilder WithAttribute(AttributeBuilder attribute)
     {
-        return new EventBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride, _isAbstract, _attributes.Add(attribute), _usings, _xmlDoc);
+        return new EventBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride, _isAbstract,
+            _attributes.Add(attribute), _usings, _xmlDoc);
     }
 
     #endregion
@@ -195,7 +207,8 @@ public readonly struct EventBuilder
     /// <param name="namespace">The namespace to add (e.g., "System.ComponentModel").</param>
     public EventBuilder AddUsing(string @namespace)
     {
-        return new EventBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride, _isAbstract, _attributes, _usings.Add(@namespace), _xmlDoc);
+        return new EventBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride, _isAbstract,
+            _attributes, _usings.Add(@namespace), _xmlDoc);
     }
 
     /// <summary>
@@ -215,7 +228,7 @@ public readonly struct EventBuilder
         var variable = SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier(_name));
 
         var declaration = SyntaxFactory.VariableDeclaration(
-            SyntaxFactory.ParseTypeName(_type))
+                SyntaxFactory.ParseTypeName(_type))
             .WithVariables(SyntaxFactory.SingletonSeparatedList(variable));
 
         var eventDecl = SyntaxFactory.EventFieldDeclaration(declaration);
@@ -248,8 +261,9 @@ public readonly struct EventBuilder
         return eventDecl;
     }
 
-    private static SyntaxKind AccessibilityToSyntaxKind(Accessibility accessibility) =>
-        accessibility switch
+    private static SyntaxKind AccessibilityToSyntaxKind(Accessibility accessibility)
+    {
+        return accessibility switch
         {
             Accessibility.Public => SyntaxKind.PublicKeyword,
             Accessibility.Private => SyntaxKind.PrivateKeyword,
@@ -257,6 +271,7 @@ public readonly struct EventBuilder
             Accessibility.Internal => SyntaxKind.InternalKeyword,
             _ => SyntaxKind.PublicKeyword
         };
+    }
 
     /// <summary>
     /// Gets the event name.

@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
 // ReSharper disable MemberCanBePrivate.Global
+
 namespace Deepstaging.Roslyn;
 
 /// <summary>
@@ -27,10 +28,8 @@ public static class ImmutableArrayValidSymbolExtensions
         public OptionalSymbol<T> First(Func<ValidSymbol<T>, bool> predicate)
         {
             foreach (var item in source)
-            {
                 if (predicate(item))
                     return OptionalSymbol<T>.WithValue(item.Value);
-            }
             return OptionalSymbol<T>.Empty();
         }
 
@@ -50,19 +49,17 @@ public static class ImmutableArrayValidSymbolExtensions
         public OptionalSymbol<T> Single(Func<ValidSymbol<T>, bool> predicate)
         {
             var result = OptionalSymbol<T>.Empty();
-            bool found = false;
+            var found = false;
 
             foreach (var item in source)
-            {
                 if (predicate(item))
                 {
                     if (found)
                         return OptionalSymbol<T>.Empty(); // More than one match
-                
+
                     result = OptionalSymbol<T>.WithValue(item.Value);
                     found = true;
                 }
-            }
 
             return result;
         }
@@ -82,11 +79,9 @@ public static class ImmutableArrayValidSymbolExtensions
         /// </summary>
         public OptionalSymbol<T> Last(Func<ValidSymbol<T>, bool> predicate)
         {
-            for (int i = source.Length - 1; i >= 0; i--)
-            {
+            for (var i = source.Length - 1; i >= 0; i--)
                 if (predicate(source[i]))
                     return OptionalSymbol<T>.WithValue(source[i].Value);
-            }
             return OptionalSymbol<T>.Empty();
         }
 
@@ -193,19 +188,17 @@ public readonly struct SymbolNameIndexer<T> where T : class, ISymbol
         get
         {
             var result = OptionalSymbol<T>.Empty();
-            bool found = false;
+            var found = false;
 
             foreach (var item in _source)
-            {
                 if (item.Value.Name == name)
                 {
                     if (found)
                         return OptionalSymbol<T>.Empty(); // Multiple matches
-                    
+
                     result = OptionalSymbol<T>.WithValue(item.Value);
                     found = true;
                 }
-            }
 
             return result;
         }

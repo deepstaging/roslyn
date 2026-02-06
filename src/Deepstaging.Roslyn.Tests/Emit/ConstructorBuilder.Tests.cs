@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Tests.Emit;
 
 public class ConstructorBuilderTests : RoslynTestBase
@@ -30,9 +31,9 @@ public class ConstructorBuilderTests : RoslynTestBase
             .AddParameter("name", "string")
             .AddParameter("age", "int")
             .WithBody(b => b.AddStatements("""
-                Name = name;
-                Age = age;
-                """));
+                                           Name = name;
+                                           Age = age;
+                                           """));
 
         var result = TypeBuilder
             .Class("Person")

@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 using Assembly = System.Reflection.Assembly;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
@@ -32,7 +33,7 @@ public class GeneratorTestContext
     /// </summary>
     public GeneratorAssertions ShouldGenerate()
     {
-        return new GeneratorAssertions(this, shouldGenerate: true);
+        return new GeneratorAssertions(this, true);
     }
 
     /// <summary>
@@ -43,10 +44,8 @@ public class GeneratorTestContext
         var result = await GetResultAsync();
 
         if (result.GeneratedTrees.Length > 0)
-        {
             Assert.Fail(
                 $"Expected no generated files, but found {result.GeneratedTrees.Length} file(s).");
-        }
     }
 
     /// <summary>
@@ -54,10 +53,7 @@ public class GeneratorTestContext
     /// </summary>
     internal async Task<GeneratorDriverRunResult> GetResultAsync()
     {
-        if (_hasResult)
-        {
-            return _result;
-        }
+        if (_hasResult) return _result;
 
         await Task.CompletedTask; // Make this async-compatible
 
@@ -67,15 +63,11 @@ public class GeneratorTestContext
         // All generators now implement IIncrementalGenerator directly
         GeneratorDriver driver;
         if (_generator is IIncrementalGenerator incrementalGenerator)
-        {
             // Standard incremental generator
             driver = CSharpGeneratorDriver.Create(incrementalGenerator);
-        }
         else
-        {
             throw new InvalidOperationException(
                 $"Generator type {_generatorType.Name} must implement IIncrementalGenerator.");
-        }
 
         driver = driver.RunGenerators(compilation);
         _result = driver.GetRunResult();
@@ -285,24 +277,17 @@ public class GeneratorAssertions
     {
         await Task.CompletedTask; // Make async
 
-        if (_shouldHaveNoDiagnostics)
-        {
-            VerifyNoDiagnostics(result);
-        }
+        if (_shouldHaveNoDiagnostics) VerifyNoDiagnostics(result);
 
         if (_shouldGenerate && result.GeneratedTrees.Length == 0)
-        {
             Assert.Fail("Expected generated files, but none were produced.");
-        }
 
         if (_expectedFileCount.HasValue)
         {
             var actualCount = result.GeneratedTrees.Length;
             if (actualCount != _expectedFileCount.Value)
-            {
                 Assert.Fail(
                     $"Expected {_expectedFileCount.Value} generated file(s), but found {actualCount}.");
-            }
         }
 
         if (_expectedFileName != null)
@@ -312,33 +297,23 @@ public class GeneratorAssertions
                 .ToArray();
 
             if (!fileNames.Contains(_expectedFileName))
-            {
                 Assert.Fail(
                     $"Expected file '{_expectedFileName}' was not generated. " +
                     $"Generated files: {string.Join(", ", fileNames)}");
-            }
         }
 
         var allContent = string.Join("\n",
             result.GeneratedTrees.Select(t => t.GetText().ToString()));
 
         if (_expectedContent != null)
-        {
             if (!allContent.Contains(_expectedContent))
-            {
                 Assert.Fail(
                     $"Expected generated code to contain: {_expectedContent}\n\nReceived: {allContent}");
-            }
-        }
 
         if (_unexpectedContent != null)
-        {
             if (allContent.Contains(_unexpectedContent))
-            {
                 Assert.Fail(
                     $"Expected generated code to NOT contain: {_unexpectedContent}\n\nReceived: {allContent}");
-            }
-        }
     }
 
     private void VerifyNoDiagnostics(GeneratorDriverRunResult result)
@@ -346,15 +321,9 @@ public class GeneratorAssertions
         var diagnostics = result.Diagnostics;
 
         // Apply filter if provided
-        if (_diagnosticFilter != null)
-        {
-            diagnostics = _diagnosticFilter.Apply(diagnostics);
-        }
+        if (_diagnosticFilter != null) diagnostics = _diagnosticFilter.Apply(diagnostics);
 
-        if (diagnostics.Length == 0)
-        {
-            return;
-        }
+        if (diagnostics.Length == 0) return;
 
         // Build detailed error message
         var filterDescription = _diagnosticFilter?.GetDescription() ?? "any";
@@ -416,25 +385,14 @@ public class DiagnosticFilter
     {
         var filtered = diagnostics.AsEnumerable();
 
-        if (_severity.HasValue)
-        {
-            filtered = filtered.Where(d => d.Severity == _severity.Value);
-        }
+        if (_severity.HasValue) filtered = filtered.Where(d => d.Severity == _severity.Value);
 
-        if (_id != null)
-        {
-            filtered = filtered.Where(d => d.Id == _id);
-        }
+        if (_id != null) filtered = filtered.Where(d => d.Id == _id);
 
-        if (_ids.Count > 0)
-        {
-            filtered = filtered.Where(d => _ids.Contains(d.Id));
-        }
+        if (_ids.Count > 0) filtered = filtered.Where(d => _ids.Contains(d.Id));
 
         if (_messageContains != null)
-        {
             filtered = filtered.Where(d => d.GetMessage().Contains(_messageContains, StringComparison.Ordinal));
-        }
 
         return [..filtered];
     }
@@ -443,25 +401,13 @@ public class DiagnosticFilter
     {
         var parts = new List<string>();
 
-        if (_severity.HasValue)
-        {
-            parts.Add($"severity={_severity.Value}");
-        }
+        if (_severity.HasValue) parts.Add($"severity={_severity.Value}");
 
-        if (_id != null)
-        {
-            parts.Add($"id={_id}");
-        }
+        if (_id != null) parts.Add($"id={_id}");
 
-        if (_ids.Count > 0)
-        {
-            parts.Add($"ids=[{string.Join(", ", _ids)}]");
-        }
+        if (_ids.Count > 0) parts.Add($"ids=[{string.Join(", ", _ids)}]");
 
-        if (_messageContains != null)
-        {
-            parts.Add($"message contains '{_messageContains}'");
-        }
+        if (_messageContains != null) parts.Add($"message contains '{_messageContains}'");
 
         return parts.Count > 0 ? string.Join(", ", parts) : "any diagnostics";
     }

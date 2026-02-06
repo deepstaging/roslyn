@@ -8,22 +8,22 @@
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        
+
         <!-- Package metadata -->
         <IsPackable>true</IsPackable>
         <PackageId>Deepstaging.Roslyn.Workspace</PackageId>
         <Title>Deepstaging.Roslyn.Workspace</Title>
         <Description>Roslyn Workspace utilities for code fixes and refactoring.</Description>
         <PackageTags>deepstaging;roslyn;workspace;codefix</PackageTags>
-        
+
     </PropertyGroup>
 
     <ItemGroup>
-        <None Include="README.md" Pack="true" PackagePath="\" />
+        <None Include="README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" />
+        <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common"/>
         <PackageReference Include="Microsoft.CodeAnalysis.Analyzers">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -31,7 +31,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="../Deepstaging.Roslyn/Deepstaging.Roslyn.csproj" />
+        <ProjectReference Include="../Deepstaging.Roslyn/Deepstaging.Roslyn.csproj"/>
     </ItemGroup>
 
 </Project>

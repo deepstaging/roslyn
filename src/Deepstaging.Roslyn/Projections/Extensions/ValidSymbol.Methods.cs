@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn;
 
 /// <summary>
@@ -189,7 +190,7 @@ public static class ValidMethodSymbolExtensions
         /// <summary>
         /// Gets the parameters of the method as validated symbols.
         /// </summary>
-        public ImmutableArray<ValidSymbol<IParameterSymbol>> Parameters => 
+        public ImmutableArray<ValidSymbol<IParameterSymbol>> Parameters =>
             method.Value.Parameters.Select(p => ValidSymbol<IParameterSymbol>.From(p)).ToImmutableArray();
 
         /// <summary>

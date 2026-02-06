@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Emit;
 
 /// <summary>
@@ -49,15 +50,15 @@ public readonly struct XmlDocumentationBuilder
     public static XmlDocumentationBuilder Create()
     {
         return new XmlDocumentationBuilder(
-            summary: null,
-            remarks: null,
-            returns: null,
-            value: null,
+            null,
+            null,
+            null,
+            null,
             ImmutableArray<(string, string)>.Empty,
             ImmutableArray<(string, string)>.Empty,
             ImmutableArray<(string, string)>.Empty,
             ImmutableArray<string>.Empty,
-            example: null);
+            null);
     }
 
     /// <summary>
@@ -120,7 +121,8 @@ public readonly struct XmlDocumentationBuilder
     /// <param name="text">The summary text.</param>
     public XmlDocumentationBuilder Summary(string text)
     {
-        return new XmlDocumentationBuilder(text, _remarks, _returns, _value, _params, _typeParams, _exceptions, _seeAlso, _example);
+        return new XmlDocumentationBuilder(text, _remarks, _returns, _value, _params, _typeParams, _exceptions,
+            _seeAlso, _example);
     }
 
     /// <summary>
@@ -129,7 +131,8 @@ public readonly struct XmlDocumentationBuilder
     /// <param name="text">The remarks text.</param>
     public XmlDocumentationBuilder Remarks(string text)
     {
-        return new XmlDocumentationBuilder(_summary, text, _returns, _value, _params, _typeParams, _exceptions, _seeAlso, _example);
+        return new XmlDocumentationBuilder(_summary, text, _returns, _value, _params, _typeParams, _exceptions,
+            _seeAlso, _example);
     }
 
     /// <summary>
@@ -138,7 +141,8 @@ public readonly struct XmlDocumentationBuilder
     /// <param name="text">The returns description.</param>
     public XmlDocumentationBuilder Returns(string text)
     {
-        return new XmlDocumentationBuilder(_summary, _remarks, text, _value, _params, _typeParams, _exceptions, _seeAlso, _example);
+        return new XmlDocumentationBuilder(_summary, _remarks, text, _value, _params, _typeParams, _exceptions,
+            _seeAlso, _example);
     }
 
     /// <summary>
@@ -147,7 +151,8 @@ public readonly struct XmlDocumentationBuilder
     /// <param name="text">The value description.</param>
     public XmlDocumentationBuilder Value(string text)
     {
-        return new XmlDocumentationBuilder(_summary, _remarks, _returns, text, _params, _typeParams, _exceptions, _seeAlso, _example);
+        return new XmlDocumentationBuilder(_summary, _remarks, _returns, text, _params, _typeParams, _exceptions,
+            _seeAlso, _example);
     }
 
     /// <summary>
@@ -157,7 +162,8 @@ public readonly struct XmlDocumentationBuilder
     /// <param name="description">The parameter description.</param>
     public XmlDocumentationBuilder Param(string name, string description)
     {
-        return new XmlDocumentationBuilder(_summary, _remarks, _returns, _value, _params.Add((name, description)), _typeParams, _exceptions, _seeAlso, _example);
+        return new XmlDocumentationBuilder(_summary, _remarks, _returns, _value, _params.Add((name, description)),
+            _typeParams, _exceptions, _seeAlso, _example);
     }
 
     /// <summary>
@@ -167,7 +173,8 @@ public readonly struct XmlDocumentationBuilder
     /// <param name="description">The type parameter description.</param>
     public XmlDocumentationBuilder TypeParam(string name, string description)
     {
-        return new XmlDocumentationBuilder(_summary, _remarks, _returns, _value, _params, _typeParams.Add((name, description)), _exceptions, _seeAlso, _example);
+        return new XmlDocumentationBuilder(_summary, _remarks, _returns, _value, _params,
+            _typeParams.Add((name, description)), _exceptions, _seeAlso, _example);
     }
 
     /// <summary>
@@ -177,7 +184,8 @@ public readonly struct XmlDocumentationBuilder
     /// <param name="description">When the exception is thrown.</param>
     public XmlDocumentationBuilder Exception(string exceptionType, string description)
     {
-        return new XmlDocumentationBuilder(_summary, _remarks, _returns, _value, _params, _typeParams, _exceptions.Add((exceptionType, description)), _seeAlso, _example);
+        return new XmlDocumentationBuilder(_summary, _remarks, _returns, _value, _params, _typeParams,
+            _exceptions.Add((exceptionType, description)), _seeAlso, _example);
     }
 
     /// <summary>
@@ -186,7 +194,8 @@ public readonly struct XmlDocumentationBuilder
     /// <param name="cref">The cref reference (e.g., "MyClass", "MyMethod").</param>
     public XmlDocumentationBuilder SeeAlso(string cref)
     {
-        return new XmlDocumentationBuilder(_summary, _remarks, _returns, _value, _params, _typeParams, _exceptions, _seeAlso.Add(cref), _example);
+        return new XmlDocumentationBuilder(_summary, _remarks, _returns, _value, _params, _typeParams, _exceptions,
+            _seeAlso.Add(cref), _example);
     }
 
     /// <summary>
@@ -195,7 +204,8 @@ public readonly struct XmlDocumentationBuilder
     /// <param name="code">The example code.</param>
     public XmlDocumentationBuilder Example(string code)
     {
-        return new XmlDocumentationBuilder(_summary, _remarks, _returns, _value, _params, _typeParams, _exceptions, _seeAlso, code);
+        return new XmlDocumentationBuilder(_summary, _remarks, _returns, _value, _params, _typeParams, _exceptions,
+            _seeAlso, code);
     }
 
     #endregion
@@ -230,51 +240,33 @@ public readonly struct XmlDocumentationBuilder
         if (_summary != null)
         {
             lines.Add("/// <summary>");
-            foreach (var line in SplitLines(_summary))
-            {
-                lines.Add($"/// {line}");
-            }
+            foreach (var line in SplitLines(_summary)) lines.Add($"/// {line}");
             lines.Add("/// </summary>");
         }
 
         // Type params
         foreach (var (name, description) in _typeParams)
-        {
             lines.Add($"/// <typeparam name=\"{EscapeXml(name)}\">{EscapeXml(description)}</typeparam>");
-        }
 
         // Params
         foreach (var (name, description) in _params)
-        {
             lines.Add($"/// <param name=\"{EscapeXml(name)}\">{EscapeXml(description)}</param>");
-        }
 
         // Returns
-        if (_returns != null)
-        {
-            lines.Add($"/// <returns>{EscapeXml(_returns)}</returns>");
-        }
+        if (_returns != null) lines.Add($"/// <returns>{EscapeXml(_returns)}</returns>");
 
         // Value
-        if (_value != null)
-        {
-            lines.Add($"/// <value>{EscapeXml(_value)}</value>");
-        }
+        if (_value != null) lines.Add($"/// <value>{EscapeXml(_value)}</value>");
 
         // Exceptions
         foreach (var (type, description) in _exceptions)
-        {
             lines.Add($"/// <exception cref=\"{EscapeXml(type)}\">{EscapeXml(description)}</exception>");
-        }
 
         // Remarks
         if (_remarks != null)
         {
             lines.Add("/// <remarks>");
-            foreach (var line in SplitLines(_remarks))
-            {
-                lines.Add($"/// {line}");
-            }
+            foreach (var line in SplitLines(_remarks)) lines.Add($"/// {line}");
             lines.Add("/// </remarks>");
         }
 
@@ -283,19 +275,13 @@ public readonly struct XmlDocumentationBuilder
         {
             lines.Add("/// <example>");
             lines.Add("/// <code>");
-            foreach (var line in SplitLines(_example))
-            {
-                lines.Add($"/// {line}");
-            }
+            foreach (var line in SplitLines(_example)) lines.Add($"/// {line}");
             lines.Add("/// </code>");
             lines.Add("/// </example>");
         }
 
         // SeeAlso
-        foreach (var cref in _seeAlso)
-        {
-            lines.Add($"/// <seealso cref=\"{EscapeXml(cref)}\"/>");
-        }
+        foreach (var cref in _seeAlso) lines.Add($"/// <seealso cref=\"{EscapeXml(cref)}\"/>");
 
         // Build trivia
         var triviaList = new List<SyntaxTrivia>();

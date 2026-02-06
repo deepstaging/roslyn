@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 using Basic.Reference.Assemblies;
 
 namespace Deepstaging.Roslyn.Testing;
@@ -38,10 +39,13 @@ internal static class CompilationHelper
     /// Includes references to common types, generator-related assemblies, and any
     /// configured references from ReferenceConfiguration.
     /// </summary>
-    private static ImmutableArray<MetadataReference> GetDefaultReferences() =>
-    [
-        ..Net100.ReferenceInfos.All
-            .Select(x => x.Reference)
-            .Concat(ReferenceConfiguration.GetAdditionalReferences())
-    ];
+    private static ImmutableArray<MetadataReference> GetDefaultReferences()
+    {
+        return
+        [
+            ..Net100.ReferenceInfos.All
+                .Select(x => x.Reference)
+                .Concat(ReferenceConfiguration.GetAdditionalReferences())
+        ];
+    }
 }

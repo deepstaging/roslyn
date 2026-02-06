@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 using System.ComponentModel;
 using TUnit.Assertions.Attributes;
 
@@ -152,8 +153,8 @@ public static partial class ValidSymbolAssertions
     [GenerateAssertion(ExpectationMessage = "to have attribute '{attributeName}'")]
     public static bool HasAttribute<T>(this ValidSymbol<T> symbol, string attributeName) where T : class, ISymbol
     {
-        return symbol.GetAttributes().Any(attr => 
-            attr.AttributeClass?.Name == attributeName || 
+        return symbol.GetAttributes().Any(attr =>
+            attr.AttributeClass?.Name == attributeName ||
             attr.AttributeClass?.Name == attributeName + "Attribute");
     }
 
@@ -162,10 +163,11 @@ public static partial class ValidSymbolAssertions
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [GenerateAssertion(ExpectationMessage = "to not have attribute '{attributeName}'")]
-    public static bool DoesNotHaveAttribute<T>(this ValidSymbol<T> symbol, string attributeName) where T : class, ISymbol
+    public static bool DoesNotHaveAttribute<T>(this ValidSymbol<T> symbol, string attributeName)
+        where T : class, ISymbol
     {
-        return !symbol.GetAttributes().Any(attr => 
-            attr.AttributeClass?.Name == attributeName || 
+        return !symbol.GetAttributes().Any(attr =>
+            attr.AttributeClass?.Name == attributeName ||
             attr.AttributeClass?.Name == attributeName + "Attribute");
     }
 

@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Tests.Emit;
 
 public class MethodBuilderTests : RoslynTestBase
@@ -189,14 +190,14 @@ public class MethodBuilderTests : RoslynTestBase
             .WithReturnType("bool")
             .AddParameter("input", "string")
             .WithBody(b => b.AddStatements("""
-                if (string.IsNullOrEmpty(input))
-                    return false;
-                
-                if (input.Length < 3)
-                    return false;
-                
-                return true;
-                """));
+                                           if (string.IsNullOrEmpty(input))
+                                               return false;
+
+                                           if (input.Length < 3)
+                                               return false;
+
+                                           return true;
+                                           """));
 
         var result = TypeBuilder
             .Class("Validator")

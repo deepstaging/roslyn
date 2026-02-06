@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Emit;
 
 /// <summary>
@@ -38,11 +39,11 @@ public sealed class EmitOptions
     /// Default is RPL-1.5 (Reciprocal Public License).
     /// </summary>
     public string? LicenseHeader { get; set; } = """
-        // SPDX-License-Identifier: RPL-1.5
-        // Copyright (c) Deepstaging contributors. All rights reserved.
-        // Licensed under the Reciprocal Public License 1.5 (RPL-1.5).
-        // See LICENSE file in the project root for full license information.
-        """;
+                                                 // SPDX-License-Identifier: RPL-1.5
+                                                 // Copyright (c) Deepstaging contributors. All rights reserved.
+                                                 // Licensed under the Reciprocal Public License 1.5 (RPL-1.5).
+                                                 // See LICENSE file in the project root for full license information.
+                                                 """;
 
     /// <summary>
     /// Creates default emit options with syntax validation and standard formatting.

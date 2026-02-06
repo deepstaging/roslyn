@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Reflection;
@@ -55,7 +56,8 @@ public static class ScriptObjectExtensions
     /// <param name="scriptObject">The target ScriptObject</param>
     /// <param name="obj">The object to import</param>
     /// <param name="renamer">Optional member renamer (defaults to preserving original names)</param>
-    public static ScriptObject ImportDeep(this ScriptObject scriptObject, object? obj, MemberRenamerDelegate? renamer = null)
+    public static ScriptObject ImportDeep(this ScriptObject scriptObject, object? obj,
+        MemberRenamerDelegate? renamer = null)
     {
         if (obj == null)
             return scriptObject;
@@ -63,11 +65,10 @@ public static class ScriptObjectExtensions
         renamer ??= member => member.Name;
 
         // Get cached properties for this type (avoids repeated reflection)
-        var properties = PropertyCache.GetOrAdd(obj.GetType(), t => 
+        var properties = PropertyCache.GetOrAdd(obj.GetType(), t =>
             t.GetProperties(BindingFlags.Public | BindingFlags.Instance));
-        
+
         foreach (var property in properties)
-        {
             try
             {
                 if (!property.CanRead)
@@ -79,7 +80,7 @@ public static class ScriptObjectExtensions
 
                 var name = renamer(property);
                 var value = property.GetValue(obj);
-                
+
                 scriptObject[name] = ConvertValue(value, renamer);
             }
             catch
@@ -87,8 +88,7 @@ public static class ScriptObjectExtensions
                 // Skip properties that can't be accessed
                 continue;
             }
-        }
-        
+
         return scriptObject;
     }
 
@@ -115,10 +115,7 @@ public static class ScriptObjectExtensions
         if (value is IEnumerable enumerable and not string)
         {
             var array = new ScriptArray();
-            foreach (var item in enumerable)
-            {
-                array.Add(ConvertValue(item, renamer));
-            }
+            foreach (var item in enumerable) array.Add(ConvertValue(item, renamer));
             return array;
         }
 

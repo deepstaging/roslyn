@@ -4,11 +4,14 @@ Scriban template infrastructure for Roslyn incremental source generators.
 
 📚 **[Full Documentation](https://deepstaging.github.io/roslyn)**
 
-> **See also:** [Roslyn Toolkit](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/README.md) | [Testing](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/README.md)
+> **See also:
+** [Roslyn Toolkit](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/README.md) | [Testing](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/README.md)
 
 ## What is this?
 
-This library provides a convenient way to use [Scriban](https://github.com/scriban/scriban) templates in Roslyn source generators. Instead of building C# strings manually, you write `.scriban-cs` templates and render them with model objects.
+This library provides a convenient way to use [Scriban](https://github.com/scriban/scriban) templates in Roslyn source
+generators. Instead of building C# strings manually, you write `.scriban-cs` templates and render them with model
+objects.
 
 ## Quick Start
 
@@ -146,6 +149,7 @@ record MyModel(string FullName, int MaxRetries);
 ## Performance
 
 Templates are cached at two levels:
+
 1. **Text cache** - Embedded resource text is cached by (Assembly, ResourceName)
 2. **Parse cache** - Parsed Scriban templates are cached by template text
 
@@ -155,26 +159,30 @@ This avoids repeated I/O and parsing during incremental generation, which is cri
 
 Template errors produce Roslyn diagnostics with ID `DEEPCORE001`:
 
-| Scenario | Message Format |
-|----------|----------------|
-| Parse error | `ParsingError occurred while rendering a template: {errors}` |
+| Scenario     | Message Format                                                   |
+|--------------|------------------------------------------------------------------|
+| Parse error  | `ParsingError occurred while rendering a template: {errors}`     |
 | Render error | `{ExceptionType} occurred while rendering a template: {message}` |
 
 Errors are reported via `SourceProductionContext.ReportDiagnostic()` so they appear in the IDE.
 
 ## Related Documentation
 
-- **[Roslyn Toolkit](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/README.md)** - Query builders, projections, and emit API
-- **[Testing](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/README.md)** - Test infrastructure for generators
+- **[Roslyn Toolkit](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/README.md)** - Query
+  builders, projections, and emit API
+- **[Testing](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/README.md)** - Test
+  infrastructure for generators
 - **[Main README](https://github.com/deepstaging/roslyn/blob/main/README.md)** - Project overview
 
 ## License
 
 **RPL-1.5** (Reciprocal Public License) — Real reciprocity, no loopholes.
 
-You can use this code, modify it, and share it freely. But when you deploy it — internally or externally, as a service or within your company — you share your improvements back under the same license.
+You can use this code, modify it, and share it freely. But when you deploy it — internally or externally, as a service
+or within your company — you share your improvements back under the same license.
 
-Why? We believe if you benefit from this code, the community should benefit from your improvements. That's the deal we think is fair.
+Why? We believe if you benefit from this code, the community should benefit from your improvements. That's the deal we
+think is fair.
 
 **Personal research and experimentation? No obligations.** Go learn, explore, and build.
 

@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Emit;
 
 /// <summary>
@@ -141,7 +142,7 @@ public readonly struct ParameterBuilder
     internal ParameterSyntax Build()
     {
         var parameter = SyntaxFactory.Parameter(
-            SyntaxFactory.Identifier(_name))
+                SyntaxFactory.Identifier(_name))
             .WithType(SyntaxFactory.ParseTypeName(_type));
 
         // Add attributes
@@ -169,11 +170,9 @@ public readonly struct ParameterBuilder
 
         // Add default value if specified
         if (_defaultValue != null)
-        {
             parameter = parameter.WithDefault(
                 SyntaxFactory.EqualsValueClause(
                     SyntaxFactory.ParseExpression(_defaultValue)));
-        }
 
         return parameter;
     }

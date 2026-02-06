@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
@@ -245,22 +246,34 @@ public readonly struct ValidSyntax<TSyntax> : IProjection<TSyntax>
     /// <summary>
     /// Enables equality checks: validated == node
     /// </summary>
-    public static bool operator ==(ValidSyntax<TSyntax> left, TSyntax? right) => left.Equals(right);
+    public static bool operator ==(ValidSyntax<TSyntax> left, TSyntax? right)
+    {
+        return left.Equals(right);
+    }
 
     /// <summary>
     /// Enables inequality checks: validated != node
     /// </summary>
-    public static bool operator !=(ValidSyntax<TSyntax> left, TSyntax? right) => !left.Equals(right);
+    public static bool operator !=(ValidSyntax<TSyntax> left, TSyntax? right)
+    {
+        return !left.Equals(right);
+    }
 
     /// <summary>
     /// Determines whether the current instance equals the specified object (always returns false).
     /// </summary>
-    public override bool Equals(object? obj) => false;
+    public override bool Equals(object? obj)
+    {
+        return false;
+    }
 
     /// <summary>
     /// Returns the hash code for this instance.
     /// </summary>
-    public override int GetHashCode() => _node.GetHashCode();
+    public override int GetHashCode()
+    {
+        return _node.GetHashCode();
+    }
 
     #endregion
 
@@ -269,7 +282,10 @@ public readonly struct ValidSyntax<TSyntax> : IProjection<TSyntax>
     /// <summary>
     /// Implicitly converts to the underlying syntax node for seamless interop with Roslyn APIs.
     /// </summary>
-    public static implicit operator TSyntax(ValidSyntax<TSyntax> valid) => valid._node;
+    public static implicit operator TSyntax(ValidSyntax<TSyntax> valid)
+    {
+        return valid._node;
+    }
 
     #endregion
 }

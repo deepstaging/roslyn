@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Tests.Projections.Extensions;
 
 public class OptionalSymbolEventsTests : RoslynTestBase
@@ -8,13 +9,13 @@ public class OptionalSymbolEventsTests : RoslynTestBase
     public async Task GetEventType_returns_event_handler_type()
     {
         var code = """
-            using System;
-            
-            public class TestClass
-            {
-                public event EventHandler MyEvent;
-            }
-            """;
+                   using System;
+
+                   public class TestClass
+                   {
+                       public event EventHandler MyEvent;
+                   }
+                   """;
 
         var myEvent = SymbolsFor(code)
             .GetNamedType("TestClass")
@@ -32,14 +33,14 @@ public class OptionalSymbolEventsTests : RoslynTestBase
     public async Task IsStaticEvent_detects_static_events()
     {
         var code = """
-            using System;
-            
-            public class TestClass
-            {
-                public static event EventHandler StaticEvent;
-                public event EventHandler InstanceEvent;
-            }
-            """;
+                   using System;
+
+                   public class TestClass
+                   {
+                       public static event EventHandler StaticEvent;
+                       public event EventHandler InstanceEvent;
+                   }
+                   """;
 
         var context = SymbolsFor(code);
 
@@ -54,13 +55,13 @@ public class OptionalSymbolEventsTests : RoslynTestBase
     public async Task GetAddMethod_returns_add_accessor()
     {
         var code = """
-            using System;
-            
-            public class TestClass
-            {
-                public event EventHandler MyEvent;
-            }
-            """;
+                   using System;
+
+                   public class TestClass
+                   {
+                       public event EventHandler MyEvent;
+                   }
+                   """;
 
         var myEvent = SymbolsFor(code).GetNamedType("TestClass").QueryEvents().WithName("MyEvent").FirstOrDefault();
         var addMethod = myEvent.GetAddMethod();
@@ -72,13 +73,13 @@ public class OptionalSymbolEventsTests : RoslynTestBase
     public async Task GetRemoveMethod_returns_remove_accessor()
     {
         var code = """
-            using System;
-            
-            public class TestClass
-            {
-                public event EventHandler MyEvent;
-            }
-            """;
+                   using System;
+
+                   public class TestClass
+                   {
+                       public event EventHandler MyEvent;
+                   }
+                   """;
 
         var myEvent = SymbolsFor(code).GetNamedType("TestClass").QueryEvents().WithName("MyEvent").FirstOrDefault();
         var removeMethod = myEvent.GetRemoveMethod();

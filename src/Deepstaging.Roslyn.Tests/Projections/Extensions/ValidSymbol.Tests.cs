@@ -1,5 +1,8 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
+using System.Collections.Immutable;
+
 namespace Deepstaging.Roslyn.Tests.Projections.Extensions;
 
 public class ValidSymbolTests : RoslynTestBase
@@ -9,7 +12,7 @@ public class ValidSymbolTests : RoslynTestBase
     {
         var code = "public class TestClass { }";
         var type = SymbolsFor(code).RequireNamedType("TestClass").Value;
-        
+
         var valid = ValidSymbol<INamedTypeSymbol>.From(type);
 
         await Assert.That(valid.HasValue).IsTrue();
@@ -38,7 +41,7 @@ public class ValidSymbolTests : RoslynTestBase
     {
         var code = "public class TestClass { }";
         var type = SymbolsFor(code).RequireNamedType("TestClass").Value;
-        
+
         var valid = ValidSymbol<INamedTypeSymbol>.TryFrom(type);
 
         await Assert.That(valid).IsNotNull();
@@ -68,7 +71,7 @@ public class ValidSymbolTests : RoslynTestBase
     {
         var code = "public class TestClass { }";
         var valid = SymbolsFor(code).RequireNamedType("TestClass");
-        
+
         var name = valid.Map(s => s.Name);
 
         await Assert.That(name).IsEqualTo("TestClass");
@@ -79,7 +82,7 @@ public class ValidSymbolTests : RoslynTestBase
     {
         var code = "public class TestClass { }";
         var valid = SymbolsFor(code).RequireNamedType("TestClass");
-        
+
         var filtered = valid.Where(s => s.Name == "OtherClass");
 
         await Assert.That(filtered).IsNull();
@@ -90,7 +93,7 @@ public class ValidSymbolTests : RoslynTestBase
     {
         var code = "public class TestClass { }";
         var valid = SymbolsFor(code).RequireNamedType("TestClass");
-        
+
         var filtered = valid.Where(s => s.Name == "TestClass");
 
         await Assert.That(filtered).IsNotNull();
@@ -102,7 +105,7 @@ public class ValidSymbolTests : RoslynTestBase
     {
         var code = "public class TestClass { }";
         var symbol = SymbolsFor(code).RequireNamedType("TestClass").Value;
-        
+
         var asSymbol = ValidSymbol<ISymbol>.From(symbol);
         var asNamed = asSymbol.OfType<INamedTypeSymbol>();
 
@@ -123,12 +126,12 @@ public class ValidSymbolTests : RoslynTestBase
     public async Task FullyQualifiedName_includes_namespace()
     {
         var code = """
-            namespace MyApp
-            {
-                public class TestClass { }
-            }
-            """;
-        
+                   namespace MyApp
+                   {
+                       public class TestClass { }
+                   }
+                   """;
+
         var valid = SymbolsFor(code).RequireNamedType("TestClass");
 
         await Assert.That(valid.FullyQualifiedName).Contains("MyApp.TestClass");
@@ -138,10 +141,10 @@ public class ValidSymbolTests : RoslynTestBase
     public async Task IsPublic_checks_accessibility()
     {
         var code = """
-            public class PublicClass { }
-            internal class InternalClass { }
-            """;
-        
+                   public class PublicClass { }
+                   internal class InternalClass { }
+                   """;
+
         var context = SymbolsFor(code);
 
         var publicType = context.RequireNamedType("PublicClass");
@@ -155,10 +158,10 @@ public class ValidSymbolTests : RoslynTestBase
     public async Task IsClass_checks_type_kind()
     {
         var code = """
-            public class TestClass { }
-            public interface ITestInterface { }
-            """;
-        
+                   public class TestClass { }
+                   public interface ITestInterface { }
+                   """;
+
         var context = SymbolsFor(code);
 
         var classType = context.RequireNamedType("TestClass");
@@ -173,10 +176,10 @@ public class ValidSymbolTests : RoslynTestBase
     public async Task IsStatic_checks_static_modifier()
     {
         var code = """
-            public static class StaticClass { }
-            public class NormalClass { }
-            """;
-        
+                   public static class StaticClass { }
+                   public class NormalClass { }
+                   """;
+
         var context = SymbolsFor(code);
 
         var staticType = context.RequireNamedType("StaticClass");
@@ -184,5 +187,33 @@ public class ValidSymbolTests : RoslynTestBase
 
         await Assert.That(staticType.IsStatic).IsTrue();
         await Assert.That(normalType.IsStatic).IsFalse();
+    }
+
+    [Test]
+    public async Task CanReadGenericAttributes()
+    {
+        
+        var code = """
+                   namespace MyApp;
+                   
+                   [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+                    public class TestAttribute<T> : Attribute;
+                    
+                   [Test<string>]
+                   public class Target;
+                   """;
+
+        var type = SymbolsFor(code)
+            .RequireNamedType("Target");
+        
+        var attributes = type
+            .GetAttributes("TestAttribute")
+            .ToImmutableArray();
+        
+        await Assert.That(attributes.Length).IsEqualTo(1);
+
+        var symbol = attributes[0].GetTypeArgument(0);
+
+        Console.Out.WriteLine("");
     }
 }

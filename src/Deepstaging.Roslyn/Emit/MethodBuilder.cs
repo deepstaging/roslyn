@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Emit;
 
 /// <summary>
@@ -72,20 +73,20 @@ public readonly struct MethodBuilder
 
         return new MethodBuilder(
             name,
-            returnType: "void",
+            "void",
             Accessibility.Public,
-            isStatic: false,
-            isVirtual: false,
-            isOverride: false,
-            isAbstract: false,
-            isAsync: false,
+            false,
+            false,
+            false,
+            false,
+            false,
             ImmutableArray<TypeParameterBuilder>.Empty,
             ImmutableArray<ParameterBuilder>.Empty,
             ImmutableArray<AttributeBuilder>.Empty,
             ImmutableArray<string>.Empty,
-            body: null,
-            expressionBody: null,
-            xmlDoc: null);
+            null,
+            null,
+            null);
     }
 
     /// <summary>
@@ -106,7 +107,10 @@ public readonly struct MethodBuilder
     /// var builder = MethodBuilder.Parse("public T Convert&lt;T&gt;(object value) where T : class");
     /// </code>
     /// </example>
-    public static MethodBuilder Parse(string signature) => SignatureParser.ParseMethod(signature);
+    public static MethodBuilder Parse(string signature)
+    {
+        return SignatureParser.ParseMethod(signature);
+    }
 
     #endregion
 
@@ -460,9 +464,7 @@ public readonly struct MethodBuilder
                 .ToList();
 
             if (constraintClauses.Count > 0)
-            {
                 method = method.WithConstraintClauses(SyntaxFactory.List(constraintClauses));
-            }
         }
 
         // Add parameters
@@ -508,8 +510,9 @@ public readonly struct MethodBuilder
         return method;
     }
 
-    private static SyntaxKind AccessibilityToSyntaxKind(Accessibility accessibility) =>
-        accessibility switch
+    private static SyntaxKind AccessibilityToSyntaxKind(Accessibility accessibility)
+    {
+        return accessibility switch
         {
             Accessibility.Public => SyntaxKind.PublicKeyword,
             Accessibility.Private => SyntaxKind.PrivateKeyword,
@@ -517,6 +520,7 @@ public readonly struct MethodBuilder
             Accessibility.Internal => SyntaxKind.InternalKeyword,
             _ => SyntaxKind.PublicKeyword
         };
+    }
 
     /// <summary>
     /// Gets the method name.

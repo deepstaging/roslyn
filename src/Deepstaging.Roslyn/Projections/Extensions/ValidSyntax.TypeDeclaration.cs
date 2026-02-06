@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -37,43 +38,44 @@ public static class ValidSyntaxTypeDeclarationExtensions
         var priority = GetModifierPriority(kind);
 
         for (var i = 0; i < modifiers.Count; i++)
-        {
             if (GetModifierPriority(modifiers[i].Kind()) > priority)
                 return i;
-        }
 
         return modifiers.Count;
     }
 
-    private static int GetModifierPriority(SyntaxKind kind) => kind switch
+    private static int GetModifierPriority(SyntaxKind kind)
     {
-        // Accessibility modifiers come first
-        SyntaxKind.PublicKeyword => 0,
-        SyntaxKind.PrivateKeyword => 0,
-        SyntaxKind.ProtectedKeyword => 0,
-        SyntaxKind.InternalKeyword => 0,
+        return kind switch
+        {
+            // Accessibility modifiers come first
+            SyntaxKind.PublicKeyword => 0,
+            SyntaxKind.PrivateKeyword => 0,
+            SyntaxKind.ProtectedKeyword => 0,
+            SyntaxKind.InternalKeyword => 0,
 
-        // Then static/abstract/sealed/virtual/override/new/readonly
-        SyntaxKind.StaticKeyword => 1,
-        SyntaxKind.AbstractKeyword => 1,
-        SyntaxKind.SealedKeyword => 1,
-        SyntaxKind.VirtualKeyword => 1,
-        SyntaxKind.OverrideKeyword => 1,
-        SyntaxKind.NewKeyword => 1,
-        SyntaxKind.ReadOnlyKeyword => 1,
+            // Then static/abstract/sealed/virtual/override/new/readonly
+            SyntaxKind.StaticKeyword => 1,
+            SyntaxKind.AbstractKeyword => 1,
+            SyntaxKind.SealedKeyword => 1,
+            SyntaxKind.VirtualKeyword => 1,
+            SyntaxKind.OverrideKeyword => 1,
+            SyntaxKind.NewKeyword => 1,
+            SyntaxKind.ReadOnlyKeyword => 1,
 
-        // Then async/extern
-        SyntaxKind.AsyncKeyword => 2,
-        SyntaxKind.ExternKeyword => 2,
+            // Then async/extern
+            SyntaxKind.AsyncKeyword => 2,
+            SyntaxKind.ExternKeyword => 2,
 
-        // Then partial
-        SyntaxKind.PartialKeyword => 3,
+            // Then partial
+            SyntaxKind.PartialKeyword => 3,
 
-        // Then unsafe
-        SyntaxKind.UnsafeKeyword => 4,
+            // Then unsafe
+            SyntaxKind.UnsafeKeyword => 4,
 
-        _ => 5
-    };
+            _ => 5
+        };
+    }
 
     /// <summary>
     /// Removes a modifier from the type declaration.

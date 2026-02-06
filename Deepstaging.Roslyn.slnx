@@ -1,7 +1,7 @@
 <Solution>
-  <Project Path="src/Deepstaging.Roslyn/Deepstaging.Roslyn.csproj" />
-  <Project Path="src/Deepstaging.Roslyn.Scriban/Deepstaging.Roslyn.Scriban.csproj" />
-  <Project Path="src/Deepstaging.Roslyn.Workspace/Deepstaging.Roslyn.Workspace.csproj" />
-  <Project Path="src/Deepstaging.Roslyn.Testing/Deepstaging.Roslyn.Testing.csproj" />
-  <Project Path="src/Deepstaging.Roslyn.Tests/Deepstaging.Roslyn.Tests.csproj" />
+    <Project Path="src/Deepstaging.Roslyn/Deepstaging.Roslyn.csproj"/>
+    <Project Path="src/Deepstaging.Roslyn.Scriban/Deepstaging.Roslyn.Scriban.csproj"/>
+    <Project Path="src/Deepstaging.Roslyn.Workspace/Deepstaging.Roslyn.Workspace.csproj"/>
+    <Project Path="src/Deepstaging.Roslyn.Testing/Deepstaging.Roslyn.Testing.csproj"/>
+    <Project Path="src/Deepstaging.Roslyn.Tests/Deepstaging.Roslyn.Tests.csproj"/>
 </Solution>

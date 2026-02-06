@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Tests.Projections.Extensions;
 
 public class OptionalSymbolTests : RoslynTestBase
@@ -9,7 +10,7 @@ public class OptionalSymbolTests : RoslynTestBase
     {
         var code = "public class TestClass { }";
         var type = SymbolsFor(code).RequireNamedType("TestClass").Value;
-        
+
         var optional = OptionalSymbol<INamedTypeSymbol>.WithValue(type);
 
         await Assert.That(optional.HasValue).IsTrue();
@@ -30,7 +31,7 @@ public class OptionalSymbolTests : RoslynTestBase
     {
         var code = "public class TestClass { }";
         var type = SymbolsFor(code).RequireNamedType("TestClass").Value;
-        
+
         var withValue = OptionalSymbol<INamedTypeSymbol>.FromNullable(type);
         var withNull = OptionalSymbol<INamedTypeSymbol>.FromNullable(null);
 
@@ -43,7 +44,7 @@ public class OptionalSymbolTests : RoslynTestBase
     {
         var code = "public class TestClass { }";
         var type = SymbolsFor(code).RequireNamedType("TestClass").Value;
-        
+
         var withValue = OptionalSymbol<INamedTypeSymbol>.WithValue(type);
         var empty = OptionalSymbol<INamedTypeSymbol>.Empty();
 
@@ -56,7 +57,7 @@ public class OptionalSymbolTests : RoslynTestBase
     {
         var code = "public class TestClass { }";
         var type = SymbolsFor(code).RequireNamedType("TestClass").Value;
-        
+
         var withValue = OptionalSymbol<INamedTypeSymbol>.WithValue(type);
         var empty = OptionalSymbol<INamedTypeSymbol>.Empty();
 
@@ -69,7 +70,7 @@ public class OptionalSymbolTests : RoslynTestBase
     {
         var code = "public class TestClass { }";
         var type = SymbolsFor(code).RequireNamedType("TestClass").Value;
-        
+
         var withValue = OptionalSymbol<INamedTypeSymbol>.WithValue(type);
         var empty = OptionalSymbol<INamedTypeSymbol>.Empty();
 
@@ -82,7 +83,7 @@ public class OptionalSymbolTests : RoslynTestBase
     {
         var code = "public class TestClass { }";
         var type = SymbolsFor(code).RequireNamedType("TestClass").Value;
-        
+
         var withValue = OptionalSymbol<INamedTypeSymbol>.WithValue(type);
         var empty = OptionalSymbol<INamedTypeSymbol>.Empty();
 
@@ -95,7 +96,7 @@ public class OptionalSymbolTests : RoslynTestBase
     {
         var code = "public class TestClass { }";
         var type = SymbolsFor(code).RequireNamedType("TestClass").Value;
-        
+
         var optional = OptionalSymbol<INamedTypeSymbol>.WithValue(type);
         var mapped = optional.Map(s => s.Value.Name);
 
@@ -107,10 +108,10 @@ public class OptionalSymbolTests : RoslynTestBase
     public async Task Where_filters_value()
     {
         var code = """
-            public class PublicClass { }
-            internal class InternalClass { }
-            """;
-        
+                   public class PublicClass { }
+                   internal class InternalClass { }
+                   """;
+
         var publicType = SymbolsFor(code).GetNamedType("PublicClass");
         var filteredPublic = publicType.Where(t => t.DeclaredAccessibility == Accessibility.Public);
         var filteredInternal = publicType.Where(t => t.DeclaredAccessibility == Accessibility.Internal);
@@ -124,7 +125,7 @@ public class OptionalSymbolTests : RoslynTestBase
     {
         var code = "public class TestClass { }";
         var symbol = SymbolsFor(code).RequireNamedType("TestClass").Value;
-        
+
         var asType = OptionalSymbol<ISymbol>.WithValue(symbol);
         var asNamed = asType.OfType<INamedTypeSymbol>();
 
@@ -145,10 +146,10 @@ public class OptionalSymbolTests : RoslynTestBase
     public async Task IsPublic_checks_accessibility()
     {
         var code = """
-            public class PublicClass { }
-            internal class InternalClass { }
-            """;
-        
+                   public class PublicClass { }
+                   internal class InternalClass { }
+                   """;
+
         var context = SymbolsFor(code);
 
         var publicType = context.GetNamedType("PublicClass");
@@ -162,10 +163,10 @@ public class OptionalSymbolTests : RoslynTestBase
     public async Task IsClass_checks_type_kind()
     {
         var code = """
-            public class TestClass { }
-            public interface ITestInterface { }
-            """;
-        
+                   public class TestClass { }
+                   public interface ITestInterface { }
+                   """;
+
         var context = SymbolsFor(code);
 
         var classType = context.GetNamedType("TestClass");

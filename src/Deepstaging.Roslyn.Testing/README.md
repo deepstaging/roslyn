@@ -4,7 +4,8 @@ Test utilities for Roslyn analyzers, generators, and code fixes.
 
 📚 **[Full Documentation](https://deepstaging.github.io/roslyn)**
 
-> **See also:** [RoslynTestBase](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/RoslynTestBase.md) | [Reference Configuration](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/ReferenceConfiguration.md) | [Roslyn Toolkit](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/README.md)
+> **See also:
+** [RoslynTestBase](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/RoslynTestBase.md) | [Reference Configuration](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/ReferenceConfiguration.md) | [Roslyn Toolkit](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/README.md)
 
 ## Quick Start
 
@@ -59,15 +60,15 @@ public static void Init() =>
 
 ## Entry Points
 
-| Method | Description |
-|--------|-------------|
-| `SymbolsFor(source)` | Create compilation and query symbols |
-| `CompilationFor(source)` | Get the raw compilation |
-| `AnalyzeWith<T>(source)` | Run analyzer and assert diagnostics |
-| `GenerateWith<T>(source)` | Run generator and assert output |
-| `FixWith<T>(source)` | Test code fix for compiler diagnostics |
+| Method                                           | Description                            |
+|--------------------------------------------------|----------------------------------------|
+| `SymbolsFor(source)`                             | Create compilation and query symbols   |
+| `CompilationFor(source)`                         | Get the raw compilation                |
+| `AnalyzeWith<T>(source)`                         | Run analyzer and assert diagnostics    |
+| `GenerateWith<T>(source)`                        | Run generator and assert output        |
+| `FixWith<T>(source)`                             | Test code fix for compiler diagnostics |
 | `AnalyzeAndFixWith<TAnalyzer, TCodeFix>(source)` | Test code fix for analyzer diagnostics |
-| `RenderTemplateFrom<T>(source)` | Test Scriban template rendering |
+| `RenderTemplateFrom<T>(source)`                  | Test Scriban template rendering        |
 
 ---
 
@@ -77,16 +78,30 @@ public static void Init() =>
 
 Each entry point returns a test context with fluent assertions:
 
-- **[SymbolTestContext](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/SymbolTestContext.md)** — Query symbols from compiled source
-- **[AnalyzerTestContext](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/AnalyzerTestContext.md)** — Assert on analyzer diagnostics
-- **[GeneratorTestContext](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/GeneratorTestContext.md)** — Assert on generator output
-- **[CodeFixTestContext](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/CodeFixTestContext.md)** — Assert on code fix transformations
-- **[TemplateTestContext](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/TemplateTestContext.md)** — Assert on template rendering
+- *
+  *[SymbolTestContext](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/SymbolTestContext.md)
+  ** — Query symbols from compiled source
+- *
+  *[AnalyzerTestContext](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/AnalyzerTestContext.md)
+  ** — Assert on analyzer diagnostics
+- *
+  *[GeneratorTestContext](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/GeneratorTestContext.md)
+  ** — Assert on generator output
+- *
+  *[CodeFixTestContext](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/CodeFixTestContext.md)
+  ** — Assert on code fix transformations
+- *
+  *[TemplateTestContext](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/TemplateTestContext.md)
+  ** — Assert on template rendering
 
 ### Guides
 
-- **[RoslynTestBase](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/RoslynTestBase.md)** — Full API reference for the base class
-- **[Reference Configuration](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/ReferenceConfiguration.md)** — Configure assembly references for tests
+- *
+  *[RoslynTestBase](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/RoslynTestBase.md)
+  ** — Full API reference for the base class
+- *
+  *[Reference Configuration](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/ReferenceConfiguration.md)
+  ** — Configure assembly references for tests
 
 ---
 
@@ -145,9 +160,11 @@ await RenderTemplateFrom<MyGenerator>(source)
 
 **RPL-1.5** (Reciprocal Public License) — Real reciprocity, no loopholes.
 
-You can use this code, modify it, and share it freely. But when you deploy it — internally or externally, as a service or within your company — you share your improvements back under the same license.
+You can use this code, modify it, and share it freely. But when you deploy it — internally or externally, as a service
+or within your company — you share your improvements back under the same license.
 
-Why? We believe if you benefit from this code, the community should benefit from your improvements. That's the deal we think is fair.
+Why? We believe if you benefit from this code, the community should benefit from your improvements. That's the deal we
+think is fair.
 
 **Personal research and experimentation? No obligations.** Go learn, explore, and build.
 

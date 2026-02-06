@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn;
 
 /// <summary>
@@ -89,7 +90,7 @@ public static class TypeSymbolQueryExtensions
         {
             return typeSymbol is INamedTypeSymbol { Name: "ValueTask", IsGenericType: true, TypeArguments.Length: 1 };
         }
-        
+
         /// <summary>
         /// Checks if the type is Task (non-generic).
         /// </summary>
@@ -97,7 +98,7 @@ public static class TypeSymbolQueryExtensions
         {
             return typeSymbol is INamedTypeSymbol { Name: "Task", IsGenericType: false };
         }
-        
+
         /// <summary>
         /// Checks if the type is ValueTask (non-generic).
         /// </summary>

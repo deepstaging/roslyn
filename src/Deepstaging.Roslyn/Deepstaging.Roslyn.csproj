@@ -14,13 +14,13 @@
         <Title>Deepstaging.Roslyn</Title>
         <Description>Fluent query builders, projections, and emit API for Roslyn source generators.</Description>
         <PackageTags>deepstaging;roslyn;queries;projections;source-generator</PackageTags>
-        
+
         <!-- Generate XML documentation for IntelliSense -->
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>
-        <None Include="README.md" Pack="true" PackagePath="\" />
+        <None Include="README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
 
     <ItemGroup>

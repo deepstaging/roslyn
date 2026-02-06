@@ -4,11 +4,13 @@ Code fix infrastructure for Roslyn analyzers using the Workspace API.
 
 📚 **[Full Documentation](https://deepstaging.github.io/roslyn)**
 
-> **See also:** [Roslyn Toolkit](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/README.md) | [Testing](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/README.md)
+> **See also:
+** [Roslyn Toolkit](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/README.md) | [Testing](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/README.md)
 
 ## What is this?
 
-This library provides base classes and utilities for building Roslyn code fix providers. It simplifies the boilerplate of registering code fixes and working with syntax nodes.
+This library provides base classes and utilities for building Roslyn code fix providers. It simplifies the boilerplate
+of registering code fixes and working with syntax nodes.
 
 ## Quick Start
 
@@ -44,6 +46,7 @@ public class AddPartialModifierCodeFix : SyntaxCodeFix<TypeDeclarationSyntax>
 ### 2. That's it!
 
 The base class handles:
+
 - Reading `[CodeFix]` attributes to populate `FixableDiagnosticIds`
 - Finding the syntax node at the diagnostic location
 - Registering the code action with proper error handling
@@ -146,6 +149,7 @@ protected override CodeAction? CreateFix(Document document, ValidSyntax<TypeDecl
 ## Why Use This?
 
 Without this library:
+
 ```csharp
 public class MyCodeFix : CodeFixProvider
 {
@@ -173,6 +177,7 @@ public class MyCodeFix : CodeFixProvider
 ```
 
 With this library:
+
 ```csharp
 [CodeFix("MY001")]
 [CodeFix("MY002")]
@@ -187,17 +192,21 @@ public class MyCodeFix : SyntaxCodeFix<TypeDeclarationSyntax>
 
 ## Related Documentation
 
-- **[Roslyn Toolkit](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/README.md)** - Query builders, projections, and emit API
-- **[Testing](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/README.md)** - Test infrastructure including code fix testing
+- **[Roslyn Toolkit](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/README.md)** - Query
+  builders, projections, and emit API
+- **[Testing](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/README.md)** - Test
+  infrastructure including code fix testing
 - **[Main README](https://github.com/deepstaging/roslyn/blob/main/README.md)** - Project overview
 
 ## License
 
 **RPL-1.5** (Reciprocal Public License) — Real reciprocity, no loopholes.
 
-You can use this code, modify it, and share it freely. But when you deploy it — internally or externally, as a service or within your company — you share your improvements back under the same license.
+You can use this code, modify it, and share it freely. But when you deploy it — internally or externally, as a service
+or within your company — you share your improvements back under the same license.
 
-Why? We believe if you benefit from this code, the community should benefit from your improvements. That's the deal we think is fair.
+Why? We believe if you benefit from this code, the community should benefit from your improvements. That's the deal we
+think is fair.
 
 **Personal research and experimentation? No obligations.** Go learn, explore, and build.
 

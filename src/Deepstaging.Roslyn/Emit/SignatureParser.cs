@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Emit;
 
 /// <summary>
@@ -38,7 +39,8 @@ internal static class SignatureParser
         var methodDecl = classDecl?.Members.OfType<MethodDeclarationSyntax>().FirstOrDefault();
 
         if (methodDecl == null)
-            throw new ArgumentException($"Could not find method declaration in signature: {signature}", nameof(signature));
+            throw new ArgumentException($"Could not find method declaration in signature: {signature}",
+                nameof(signature));
 
         return BuildMethodFromSyntax(methodDecl);
     }
@@ -56,19 +58,14 @@ internal static class SignatureParser
 
         // Add type parameters
         if (method.TypeParameterList != null)
-        {
             foreach (var typeParam in method.TypeParameterList.Parameters)
             {
                 var constraint = FindConstraintClause(method.ConstraintClauses, typeParam.Identifier.Text);
                 builder = AddTypeParameter(builder, typeParam, constraint);
             }
-        }
 
         // Add parameters
-        foreach (var param in method.ParameterList.Parameters)
-        {
-            builder = AddParameter(builder, param);
-        }
+        foreach (var param in method.ParameterList.Parameters) builder = AddParameter(builder, param);
 
         return builder;
     }
@@ -76,7 +73,6 @@ internal static class SignatureParser
     private static MethodBuilder ApplyMethodModifiers(MethodBuilder builder, SyntaxTokenList modifiers)
     {
         foreach (var modifier in modifiers)
-        {
             builder = modifier.Kind() switch
             {
                 SyntaxKind.PublicKeyword => builder.WithAccessibility(Accessibility.Public),
@@ -90,7 +86,6 @@ internal static class SignatureParser
                 SyntaxKind.AbstractKeyword => builder.AsAbstract(),
                 _ => builder
             };
-        }
         return builder;
     }
 
@@ -106,28 +101,23 @@ internal static class SignatureParser
         TypeParameterSyntax typeParam,
         TypeParameterConstraintClauseSyntax? constraint)
     {
-        if (constraint == null)
-        {
-            return builder.AddTypeParameter(typeParam.Identifier.Text);
-        }
+        if (constraint == null) return builder.AddTypeParameter(typeParam.Identifier.Text);
 
         return builder.AddTypeParameter(typeParam.Identifier.Text, tp =>
         {
             foreach (var c in constraint.Constraints)
-            {
                 tp = c switch
                 {
-                    ClassOrStructConstraintSyntax { ClassOrStructKeyword.RawKind: (int)SyntaxKind.ClassKeyword } 
+                    ClassOrStructConstraintSyntax { ClassOrStructKeyword.RawKind: (int)SyntaxKind.ClassKeyword }
                         => tp.AsClass(),
-                    ClassOrStructConstraintSyntax { ClassOrStructKeyword.RawKind: (int)SyntaxKind.StructKeyword } 
+                    ClassOrStructConstraintSyntax { ClassOrStructKeyword.RawKind: (int)SyntaxKind.StructKeyword }
                         => tp.AsStruct(),
-                    ConstructorConstraintSyntax 
+                    ConstructorConstraintSyntax
                         => tp.WithNewConstraint(),
-                    TypeConstraintSyntax typeConstraint 
+                    TypeConstraintSyntax typeConstraint
                         => tp.WithConstraint(typeConstraint.Type.ToString()),
                     _ => tp
                 };
-            }
             return tp;
         });
     }
@@ -148,9 +138,7 @@ internal static class SignatureParser
         var hasDefault = param.Default != null;
 
         if (!hasRef && !hasOut && !hasIn && !hasParams && !hasThis && !hasDefault)
-        {
             return builder.AddParameter(paramName, paramType);
-        }
 
         return builder.AddParameter(paramName, paramType, p =>
         {
@@ -181,13 +169,10 @@ internal static class SignatureParser
 
         // Normalize the signature - properties with initializers or expression bodies need semicolons
         var normalizedSignature = signature.Trim();
-        
+
         // If the signature doesn't end with } or ; it likely needs a semicolon
         // (e.g., "public string Name => value" or "public int Count { get; } = 0")
-        if (!normalizedSignature.EndsWith("}") && !normalizedSignature.EndsWith(";"))
-        {
-            normalizedSignature += ";";
-        }
+        if (!normalizedSignature.EndsWith("}") && !normalizedSignature.EndsWith(";")) normalizedSignature += ";";
 
         // Wrap in a class context so Roslyn can parse it as a member
         var wrappedCode = $"class __Wrapper__ {{ {normalizedSignature} }}";
@@ -207,7 +192,8 @@ internal static class SignatureParser
         var propertyDecl = classDecl?.Members.OfType<PropertyDeclarationSyntax>().FirstOrDefault();
 
         if (propertyDecl == null)
-            throw new ArgumentException($"Could not find property declaration in signature: {signature}", nameof(signature));
+            throw new ArgumentException($"Could not find property declaration in signature: {signature}",
+                nameof(signature));
 
         return BuildPropertyFromSyntax(propertyDecl);
     }
@@ -229,10 +215,7 @@ internal static class SignatureParser
             if (hasGetter && (hasSetter || hasInit))
             {
                 builder = builder.WithAutoPropertyAccessors();
-                if (hasInit)
-                {
-                    builder = builder.WithInitOnlySetter();
-                }
+                if (hasInit) builder = builder.WithInitOnlySetter();
             }
             else if (hasGetter && !hasSetter && !hasInit)
             {
@@ -246,10 +229,7 @@ internal static class SignatureParser
         }
 
         // Handle initializer
-        if (property.Initializer != null)
-        {
-            builder = builder.WithInitializer(property.Initializer.Value.ToString());
-        }
+        if (property.Initializer != null) builder = builder.WithInitializer(property.Initializer.Value.ToString());
 
         return builder;
     }
@@ -257,7 +237,6 @@ internal static class SignatureParser
     private static PropertyBuilder ApplyPropertyModifiers(PropertyBuilder builder, SyntaxTokenList modifiers)
     {
         foreach (var modifier in modifiers)
-        {
             builder = modifier.Kind() switch
             {
                 SyntaxKind.PublicKeyword => builder.WithAccessibility(Accessibility.Public),
@@ -272,7 +251,6 @@ internal static class SignatureParser
                 SyntaxKind.RequiredKeyword => builder.AsRequired(),
                 _ => builder
             };
-        }
         return builder;
     }
 
@@ -314,7 +292,8 @@ internal static class SignatureParser
         var fieldDecl = classDecl?.Members.OfType<FieldDeclarationSyntax>().FirstOrDefault();
 
         if (fieldDecl == null)
-            throw new ArgumentException($"Could not find field declaration in signature: {signature}", nameof(signature));
+            throw new ArgumentException($"Could not find field declaration in signature: {signature}",
+                nameof(signature));
 
         return BuildFieldFromSyntax(fieldDecl);
     }
@@ -331,10 +310,7 @@ internal static class SignatureParser
         builder = ApplyFieldModifiers(builder, field.Modifiers);
 
         // Handle initializer
-        if (variable.Initializer != null)
-        {
-            builder = builder.WithInitializer(variable.Initializer.Value.ToString());
-        }
+        if (variable.Initializer != null) builder = builder.WithInitializer(variable.Initializer.Value.ToString());
 
         return builder;
     }
@@ -342,7 +318,6 @@ internal static class SignatureParser
     private static FieldBuilder ApplyFieldModifiers(FieldBuilder builder, SyntaxTokenList modifiers)
     {
         foreach (var modifier in modifiers)
-        {
             builder = modifier.Kind() switch
             {
                 SyntaxKind.PublicKeyword => builder.WithAccessibility(Accessibility.Public),
@@ -354,7 +329,6 @@ internal static class SignatureParser
                 SyntaxKind.ConstKeyword => builder.AsConst(),
                 _ => builder
             };
-        }
         return builder;
     }
 
@@ -375,12 +349,9 @@ internal static class SignatureParser
 
         // Parse directly - type declarations are top-level
         var normalizedSignature = signature.Trim();
-        
+
         // Add empty body if not present
-        if (!normalizedSignature.Contains("{"))
-        {
-            normalizedSignature += " { }";
-        }
+        if (!normalizedSignature.Contains("{")) normalizedSignature += " { }";
 
         var tree = CSharpSyntaxTree.ParseText(normalizedSignature);
         var root = tree.GetCompilationUnitRoot();
@@ -397,7 +368,8 @@ internal static class SignatureParser
         var typeDecl = root.DescendantNodes().OfType<TypeDeclarationSyntax>().FirstOrDefault();
 
         if (typeDecl == null)
-            throw new ArgumentException($"Could not find type declaration in signature: {signature}", nameof(signature));
+            throw new ArgumentException($"Could not find type declaration in signature: {signature}",
+                nameof(signature));
 
         return BuildTypeFromSyntax(typeDecl);
     }
@@ -419,12 +391,8 @@ internal static class SignatureParser
 
         // Add base types (interfaces and base class)
         if (type.BaseList != null)
-        {
             foreach (var baseType in type.BaseList.Types)
-            {
                 builder = builder.Implements(baseType.Type.ToString());
-            }
-        }
 
         return builder;
     }
@@ -432,7 +400,6 @@ internal static class SignatureParser
     private static TypeBuilder ApplyTypeModifiers(TypeBuilder builder, SyntaxTokenList modifiers)
     {
         foreach (var modifier in modifiers)
-        {
             builder = modifier.Kind() switch
             {
                 SyntaxKind.PublicKeyword => builder.WithAccessibility(Accessibility.Public),
@@ -445,7 +412,6 @@ internal static class SignatureParser
                 SyntaxKind.PartialKeyword => builder.AsPartial(),
                 _ => builder
             };
-        }
         return builder;
     }
 

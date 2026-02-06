@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 using System.ComponentModel;
 using TUnit.Assertions.Attributes;
 
@@ -78,8 +79,8 @@ public static partial class OptionalSymbolMethodAssertions
     [GenerateAssertion(ExpectationMessage = "to be an operator")]
     public static bool IsOperator(this OptionalSymbol<IMethodSymbol> symbol)
     {
-        return (symbol.MethodKind == MethodKind.UserDefinedOperator ||
-                symbol.MethodKind == MethodKind.BuiltinOperator);
+        return symbol.MethodKind == MethodKind.UserDefinedOperator ||
+               symbol.MethodKind == MethodKind.BuiltinOperator;
     }
 
     /// <summary>

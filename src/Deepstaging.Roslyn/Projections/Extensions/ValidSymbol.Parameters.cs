@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn;
 
 /// <summary>
@@ -24,7 +25,7 @@ public static class ValidParameterSymbolExtensions
             parameter is { Value.HasExplicitDefaultValue: true }
                 ? OptionalValue<object?>.WithValue(parameter.Value.ExplicitDefaultValue)
                 : OptionalValue<object?>.Empty();
-        
+
         /// <summary>
         /// 
         /// </summary>

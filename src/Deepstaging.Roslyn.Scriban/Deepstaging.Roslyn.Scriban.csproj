@@ -7,26 +7,26 @@
         <RootNamespace>Deepstaging.Roslyn.Scriban</RootNamespace>
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
-        
+
         <!-- Generate XML documentation for IntelliSense -->
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        
+
         <!-- This project is published as a separate package -->
         <IsPackable>true</IsPackable>
         <PackageId>Deepstaging.Roslyn.Scriban</PackageId>
         <Title>Deepstaging.Roslyn.Scriban</Title>
         <Description>Scriban template infrastructure for Roslyn source generators.</Description>
         <PackageTags>deepstaging;roslyn;scriban;source-generator</PackageTags>
-        
+
     </PropertyGroup>
 
     <ItemGroup>
-        <None Include="README.md" Pack="true" PackagePath="\" />
+        <None Include="README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="Deepstaging.Roslyn.Testing" />
-        <InternalsVisibleTo Include="Deepstaging.Generators" />
+        <InternalsVisibleTo Include="Deepstaging.Roslyn.Testing"/>
+        <InternalsVisibleTo Include="Deepstaging.Generators"/>
     </ItemGroup>
 
     <ItemGroup>

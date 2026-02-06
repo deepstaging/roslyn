@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Tests.Emit;
 
 public class CompleteExampleTests : RoslynTestBase
@@ -25,12 +26,12 @@ public class CompleteExampleTests : RoslynTestBase
             .WithReturnType("Task<Customer>")
             .AddParameter("id", "Guid")
             .WithBody(b => b.AddStatements("""
-                if (id == Guid.Empty)
-                    throw new ArgumentException("Invalid ID");
-                
-                var customer = await _repository.FindAsync(id);
-                return customer;
-                """));
+                                           if (id == Guid.Empty)
+                                               throw new ArgumentException("Invalid ID");
+
+                                           var customer = await _repository.FindAsync(id);
+                                           return customer;
+                                           """));
 
         var result = TypeBuilder
             .Class("CustomerService")
@@ -53,11 +54,11 @@ public class CompleteExampleTests : RoslynTestBase
         await Assert.That(validEmit.Code).Contains("private readonly ICustomerRepository _repository");
         await Assert.That(validEmit.Code).Contains("public CustomerService(ICustomerRepository repository)");
         await Assert.That(validEmit.Code).Contains("public async Task<Customer> GetByIdAsync(Guid id)");
-        
+
         // Note: We don't validate compilation here because Customer and ICustomerRepository
         // are not defined - this test validates structure generation, not semantic correctness
     }
-    
+
     [Test]
     public async Task Can_emit_complete_entity_that_compiles()
     {
@@ -78,12 +79,12 @@ public class CompleteExampleTests : RoslynTestBase
                 .WithAccessibility(Accessibility.Public)
                 .WithReturnType("bool")
                 .WithBody(b => b.AddStatements("""
-                    if (string.IsNullOrEmpty(Name))
-                        return false;
-                    if (string.IsNullOrEmpty(Email))
-                        return false;
-                    return true;
-                    """)))
+                                               if (string.IsNullOrEmpty(Name))
+                                                   return false;
+                                               if (string.IsNullOrEmpty(Email))
+                                                   return false;
+                                               return true;
+                                               """)))
             .Emit();
 
         await Assert.That(result.Success).IsTrue();

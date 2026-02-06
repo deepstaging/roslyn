@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Tests.Projections.Extensions;
 
 public class OptionalNamedTypeSymbolTests : RoslynTestBase
@@ -8,9 +9,9 @@ public class OptionalNamedTypeSymbolTests : RoslynTestBase
     public async Task BaseType_returns_base_type()
     {
         var code = """
-            public class BaseClass { }
-            public class DerivedClass : BaseClass { }
-            """;
+                   public class BaseClass { }
+                   public class DerivedClass : BaseClass { }
+                   """;
 
         var derived = SymbolsFor(code).GetNamedType("DerivedClass");
         var baseType = derived.BaseType;
@@ -43,10 +44,10 @@ public class OptionalNamedTypeSymbolTests : RoslynTestBase
     public async Task GetBaseTypes_returns_inheritance_hierarchy()
     {
         var code = """
-            public class GrandParent { }
-            public class Parent : GrandParent { }
-            public class Child : Parent { }
-            """;
+                   public class GrandParent { }
+                   public class Parent : GrandParent { }
+                   public class Child : Parent { }
+                   """;
 
         var child = SymbolsFor(code).GetNamedType("Child");
         var baseTypes = child.GetBaseTypes().Select(t => t.Name).ToList();
@@ -68,10 +69,10 @@ public class OptionalNamedTypeSymbolTests : RoslynTestBase
     public async Task GetInterfaces_returns_direct_interfaces()
     {
         var code = """
-            public interface IFirst { }
-            public interface ISecond { }
-            public class TestClass : IFirst, ISecond { }
-            """;
+                   public interface IFirst { }
+                   public interface ISecond { }
+                   public class TestClass : IFirst, ISecond { }
+                   """;
 
         var type = SymbolsFor(code).GetNamedType("TestClass");
         var interfaces = type.GetInterfaces().Select(i => i.Name).ToList();
@@ -93,10 +94,10 @@ public class OptionalNamedTypeSymbolTests : RoslynTestBase
     public async Task GetAllInterfaces_includes_inherited_interfaces()
     {
         var code = """
-            public interface IBase { }
-            public interface IDerived : IBase { }
-            public class TestClass : IDerived { }
-            """;
+                   public interface IBase { }
+                   public interface IDerived : IBase { }
+                   public class TestClass : IDerived { }
+                   """;
 
         var type = SymbolsFor(code).GetNamedType("TestClass");
         var allInterfaces = type.GetAllInterfaces().Select(i => i.Name).ToList();
@@ -118,9 +119,9 @@ public class OptionalNamedTypeSymbolTests : RoslynTestBase
     public async Task ImplementsInterface_returns_true_for_direct_interface()
     {
         var code = """
-            public interface IMyInterface { }
-            public class TestClass : IMyInterface { }
-            """;
+                   public interface IMyInterface { }
+                   public class TestClass : IMyInterface { }
+                   """;
 
         var type = SymbolsFor(code).GetNamedType("TestClass");
 
@@ -132,10 +133,10 @@ public class OptionalNamedTypeSymbolTests : RoslynTestBase
     public async Task ImplementsInterface_returns_true_for_inherited_interface()
     {
         var code = """
-            public interface IBase { }
-            public interface IDerived : IBase { }
-            public class TestClass : IDerived { }
-            """;
+                   public interface IBase { }
+                   public interface IDerived : IBase { }
+                   public class TestClass : IDerived { }
+                   """;
 
         var type = SymbolsFor(code).GetNamedType("TestClass");
 
@@ -155,9 +156,9 @@ public class OptionalNamedTypeSymbolTests : RoslynTestBase
     public async Task InheritsFrom_returns_true_for_direct_base()
     {
         var code = """
-            public class BaseClass { }
-            public class DerivedClass : BaseClass { }
-            """;
+                   public class BaseClass { }
+                   public class DerivedClass : BaseClass { }
+                   """;
 
         var derived = SymbolsFor(code).GetNamedType("DerivedClass");
 
@@ -169,10 +170,10 @@ public class OptionalNamedTypeSymbolTests : RoslynTestBase
     public async Task InheritsFrom_returns_true_for_ancestor()
     {
         var code = """
-            public class GrandParent { }
-            public class Parent : GrandParent { }
-            public class Child : Parent { }
-            """;
+                   public class GrandParent { }
+                   public class Parent : GrandParent { }
+                   public class Child : Parent { }
+                   """;
 
         var child = SymbolsFor(code).GetNamedType("Child");
 

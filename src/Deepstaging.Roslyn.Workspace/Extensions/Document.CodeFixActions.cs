@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CSharp;
@@ -58,12 +59,12 @@ public static class CodeFixActionExtensions
             where T : TypeDeclarationSyntax
         {
             return CodeAction.Create(
-                title: title,
-                createChangedDocument: ct => document.ReplaceNode(
+                title,
+                ct => document.ReplaceNode(
                     typeDecl.Node,
                     typeDecl.AddModifier(modifier),
                     ct),
-                equivalenceKey: title);
+                title);
         }
 
         /// <summary>
@@ -79,12 +80,12 @@ public static class CodeFixActionExtensions
             where T : TypeDeclarationSyntax
         {
             return CodeAction.Create(
-                title: title,
-                createChangedDocument: ct => document.ReplaceNode(
+                title,
+                ct => document.ReplaceNode(
                     typeDecl.Node,
                     typeDecl.RemoveModifier(modifier),
                     ct),
-                equivalenceKey: title);
+                title);
         }
 
         #endregion
@@ -101,12 +102,12 @@ public static class CodeFixActionExtensions
             string title = "Make field private")
         {
             return CodeAction.Create(
-                title: title,
-                createChangedDocument: ct => document.ReplaceNode(
+                title,
+                ct => document.ReplaceNode(
                     fieldDecl.Node,
                     MakeFieldPrivate(fieldDecl.Node),
                     ct),
-                equivalenceKey: title);
+                title);
         }
 
         #endregion
@@ -121,9 +122,9 @@ public static class CodeFixActionExtensions
         {
             var title = $"Add 'using {namespaceName};'";
             return CodeAction.Create(
-                title: title,
-                createChangedDocument: ct => AddUsingDirectiveAsync(document, namespaceName, ct),
-                equivalenceKey: title);
+                title,
+                ct => AddUsingDirectiveAsync(document, namespaceName, ct),
+                title);
         }
 
         #endregion
@@ -142,9 +143,9 @@ public static class CodeFixActionExtensions
         {
             var title = $"Add '{baseTypeName}'";
             return CodeAction.Create(
-                title: title,
-                createChangedDocument: ct => AddBaseTypeAsync(document, typeDecl, baseTypeName, ct),
-                equivalenceKey: title);
+                title,
+                ct => AddBaseTypeAsync(document, typeDecl, baseTypeName, ct),
+                title);
         }
 
         /// <summary>
@@ -157,9 +158,9 @@ public static class CodeFixActionExtensions
         {
             var title = $"Implement '{interfaceName}'";
             return CodeAction.Create(
-                title: title,
-                createChangedDocument: ct => AddBaseTypeAsync(document, typeDecl, interfaceName, ct),
-                equivalenceKey: title);
+                title,
+                ct => AddBaseTypeAsync(document, typeDecl, interfaceName, ct),
+                title);
         }
 
         #endregion
@@ -181,9 +182,9 @@ public static class CodeFixActionExtensions
                 : attributeName;
             var title = $"Add [{shortName}] attribute";
             return CodeAction.Create(
-                title: title,
-                createChangedDocument: ct => AddAttributeAsync(document, typeDecl, attributeName, ct),
-                equivalenceKey: title);
+                title,
+                ct => AddAttributeAsync(document, typeDecl, attributeName, ct),
+                title);
         }
 
         #endregion
@@ -198,9 +199,9 @@ public static class CodeFixActionExtensions
         {
             var title = $"Suppress '{diagnostic.Id}' with #pragma";
             return CodeAction.Create(
-                title: title,
-                createChangedDocument: ct => SuppressWithPragmaAsync(document, diagnostic, ct),
-                equivalenceKey: title);
+                title,
+                ct => SuppressWithPragmaAsync(document, diagnostic, ct),
+                title);
         }
 
         #endregion
@@ -237,7 +238,7 @@ public static class CodeFixActionExtensions
             return document;
 
         var usingDirective = SyntaxFactory.UsingDirective(
-            SyntaxFactory.ParseName(namespaceName))
+                SyntaxFactory.ParseName(namespaceName))
             .WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed);
 
         // Check if using already exists
@@ -266,7 +267,7 @@ public static class CodeFixActionExtensions
         if (node.BaseList is null)
         {
             var baseList = SyntaxFactory.BaseList(
-                SyntaxFactory.SingletonSeparatedList<BaseTypeSyntax>(baseType))
+                    SyntaxFactory.SingletonSeparatedList<BaseTypeSyntax>(baseType))
                 .WithLeadingTrivia(SyntaxFactory.Space);
             newNode = node.WithBaseList(baseList);
         }

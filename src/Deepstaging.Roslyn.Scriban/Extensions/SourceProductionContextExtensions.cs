@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 using Microsoft.CodeAnalysis.CSharp;
 
 namespace Deepstaging.Roslyn.Scriban;
@@ -83,7 +84,7 @@ public static class SourceProductionContextExtensions
             return CSharpSyntaxTree
                 .ParseText(code)
                 .GetRoot()
-                .NormalizeWhitespace(indentation: "    ", eol: "\n")
+                .NormalizeWhitespace("    ", "\n")
                 .ToFullString();
         }
         catch

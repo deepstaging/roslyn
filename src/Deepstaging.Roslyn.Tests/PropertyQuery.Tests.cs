@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Tests;
 
 public class PropertyQueryTests : RoslynTestBase
@@ -8,12 +9,12 @@ public class PropertyQueryTests : RoslynTestBase
     public async Task Can_filter_public_properties()
     {
         var code = """
-            public class TestClass
-            {
-                public int PublicProp { get; set; }
-                private int PrivateProp { get; set; }
-            }
-            """;
+                   public class TestClass
+                   {
+                       public int PublicProp { get; set; }
+                       private int PrivateProp { get; set; }
+                   }
+                   """;
 
         var properties = SymbolsFor(code)
             .RequireNamedType("TestClass")
@@ -28,12 +29,12 @@ public class PropertyQueryTests : RoslynTestBase
     public async Task Can_filter_readonly_properties()
     {
         var code = """
-            public class TestClass
-            {
-                public int ReadOnlyProp { get; }
-                public int ReadWriteProp { get; set; }
-            }
-            """;
+                   public class TestClass
+                   {
+                       public int ReadOnlyProp { get; }
+                       public int ReadWriteProp { get; set; }
+                   }
+                   """;
 
         var readonlyProps = SymbolsFor(code)
             .RequireNamedType("TestClass")
@@ -48,12 +49,12 @@ public class PropertyQueryTests : RoslynTestBase
     public async Task Can_filter_readable_properties()
     {
         var code = """
-            public class TestClass
-            {
-                public int ReadableProp { get; set; }
-                public int WriteOnlyProp { set { } }
-            }
-            """;
+                   public class TestClass
+                   {
+                       public int ReadableProp { get; set; }
+                       public int WriteOnlyProp { set { } }
+                   }
+                   """;
 
         var readableProps = SymbolsFor(code)
             .RequireNamedType("TestClass")
@@ -69,13 +70,13 @@ public class PropertyQueryTests : RoslynTestBase
     public async Task Can_filter_writable_properties()
     {
         var code = """
-            public class TestClass
-            {
-                public int WritableProp { get; set; }
-                public int InitOnlyProp { get; init; }
-                public int ReadOnlyProp { get; }
-            }
-            """;
+                   public class TestClass
+                   {
+                       public int WritableProp { get; set; }
+                       public int InitOnlyProp { get; init; }
+                       public int ReadOnlyProp { get; }
+                   }
+                   """;
 
         var writableProps = SymbolsFor(code)
             .RequireNamedType("TestClass")

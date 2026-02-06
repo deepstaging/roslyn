@@ -2,7 +2,8 @@
 
 Fluent builders for finding types, methods, properties, fields, constructors, events, and parameters.
 
-> **See also:** [Projections](Projections.md) | [Emit](Emit.md) | [Extensions](Extensions.md) | [Roslyn Toolkit README](../README.md)
+> **See also:
+** [Projections](Projections.md) | [Emit](Emit.md) | [Extensions](Extensions.md) | [Roslyn Toolkit README](../README.md)
 
 ## Overview
 
@@ -55,86 +56,86 @@ var types = compilation.QueryTypes()
 
 ### Factory Methods
 
-| Method | Description |
-|--------|-------------|
-| `From(Compilation)` | Query all types in the compilation |
+| Method                   | Description                           |
+|--------------------------|---------------------------------------|
+| `From(Compilation)`      | Query all types in the compilation    |
 | `From(INamespaceSymbol)` | Query types from a specific namespace |
 
 ### Accessibility Filters
 
-| Method | Description |
-|--------|-------------|
-| `ThatArePublic()` | Public types |
-| `ThatAreInternal()` | Internal types |
-| `ThatArePrivate()` | Private types (nested only) |
+| Method               | Description                   |
+|----------------------|-------------------------------|
+| `ThatArePublic()`    | Public types                  |
+| `ThatAreInternal()`  | Internal types                |
+| `ThatArePrivate()`   | Private types (nested only)   |
 | `ThatAreProtected()` | Protected types (nested only) |
 
 ### Type Kind Filters
 
-| Method | Description |
-|--------|-------------|
-| `ThatAreClasses()` | Class types |
-| `ThatAreInterfaces()` | Interface types |
-| `ThatAreStructs()` | Struct types |
-| `ThatAreEnums()` | Enum types |
-| `ThatAreDelegates()` | Delegate types |
-| `ThatAreRecords()` | Record types (class or struct) |
+| Method                | Description                    |
+|-----------------------|--------------------------------|
+| `ThatAreClasses()`    | Class types                    |
+| `ThatAreInterfaces()` | Interface types                |
+| `ThatAreStructs()`    | Struct types                   |
+| `ThatAreEnums()`      | Enum types                     |
+| `ThatAreDelegates()`  | Delegate types                 |
+| `ThatAreRecords()`    | Record types (class or struct) |
 
 ### Modifier Filters
 
-| Method | Description |
-|--------|-------------|
-| `ThatAreStatic()` | Static types |
-| `ThatAreAbstract()` | Abstract types |
-| `ThatAreSealed()` | Sealed types |
-| `ThatAreGeneric()` | Generic types |
-| `ThatArePartial()` | Partial types |
-| `ThatAreRefStructs()` | Ref struct types |
+| Method                     | Description           |
+|----------------------------|-----------------------|
+| `ThatAreStatic()`          | Static types          |
+| `ThatAreAbstract()`        | Abstract types        |
+| `ThatAreSealed()`          | Sealed types          |
+| `ThatAreGeneric()`         | Generic types         |
+| `ThatArePartial()`         | Partial types         |
+| `ThatAreRefStructs()`      | Ref struct types      |
 | `ThatAreReadOnlyStructs()` | Readonly struct types |
 
 ### Name Filters
 
-| Method | Description |
-|--------|-------------|
-| `WithName(string)` | Exact name match |
+| Method                         | Description             |
+|--------------------------------|-------------------------|
+| `WithName(string)`             | Exact name match        |
 | `WithNameStartingWith(string)` | Name starts with prefix |
-| `WithNameContaining(string)` | Name contains substring |
-| `WithNameEndingWith(string)` | Name ends with suffix |
+| `WithNameContaining(string)`   | Name contains substring |
+| `WithNameEndingWith(string)`   | Name ends with suffix   |
 
 ### Inheritance Filters
 
-| Method | Description |
-|--------|-------------|
-| `InheritingFrom(INamedTypeSymbol)` | Types inheriting from base type |
-| `ImplementingInterface(INamedTypeSymbol)` | Types implementing interface |
-| `ImplementingInterface(string)` | Types implementing interface by name |
+| Method                                    | Description                          |
+|-------------------------------------------|--------------------------------------|
+| `InheritingFrom(INamedTypeSymbol)`        | Types inheriting from base type      |
+| `ImplementingInterface(INamedTypeSymbol)` | Types implementing interface         |
+| `ImplementingInterface(string)`           | Types implementing interface by name |
 
 ### Namespace Filters
 
-| Method | Description |
-|--------|-------------|
-| `InNamespace(string)` | Exact namespace match |
-| `InNamespaceStartingWith(string)` | Namespace starts with prefix |
-| `IncludeNestedNamespaces()` | Include types in nested namespaces |
+| Method                            | Description                        |
+|-----------------------------------|------------------------------------|
+| `InNamespace(string)`             | Exact namespace match              |
+| `InNamespaceStartingWith(string)` | Namespace starts with prefix       |
+| `IncludeNestedNamespaces()`       | Include types in nested namespaces |
 
 ### Attribute Filters
 
-| Method | Description |
-|--------|-------------|
+| Method                  | Description                                               |
+|-------------------------|-----------------------------------------------------------|
 | `WithAttribute(string)` | Types with attribute (with or without "Attribute" suffix) |
 
 ### Materialization
 
-| Method | Returns | Description |
-|--------|---------|-------------|
-| `GetAll()` | `ImmutableArray<ValidSymbol<INamedTypeSymbol>>` | All matches as validated wrappers |
-| `GetAllSymbols()` | `ImmutableArray<INamedTypeSymbol>` | Raw symbols |
-| `Select<T>(Func)` | `ImmutableArray<T>` | Project each to a model |
-| `SelectMany<T>(Func)` | `ImmutableArray<T>` | Project and flatten |
-| `FirstOrDefault()` | `OptionalSymbol<INamedTypeSymbol>` | First match or empty |
-| `First()` | `ValidSymbol<INamedTypeSymbol>` | First match (throws if none) |
-| `Any()` | `bool` | True if any match |
-| `Count()` | `int` | Count of matches |
+| Method                | Returns                                         | Description                       |
+|-----------------------|-------------------------------------------------|-----------------------------------|
+| `GetAll()`            | `ImmutableArray<ValidSymbol<INamedTypeSymbol>>` | All matches as validated wrappers |
+| `GetAllSymbols()`     | `ImmutableArray<INamedTypeSymbol>`              | Raw symbols                       |
+| `Select<T>(Func)`     | `ImmutableArray<T>`                             | Project each to a model           |
+| `SelectMany<T>(Func)` | `ImmutableArray<T>`                             | Project and flatten               |
+| `FirstOrDefault()`    | `OptionalSymbol<INamedTypeSymbol>`              | First match or empty              |
+| `First()`             | `ValidSymbol<INamedTypeSymbol>`                 | First match (throws if none)      |
+| `Any()`               | `bool`                                          | True if any match                 |
+| `Count()`             | `int`                                           | Count of matches                  |
 
 ---
 
@@ -159,74 +160,75 @@ var handlers = typeSymbol.QueryMethods()
 
 ### Factory Methods
 
-| Method | Description |
-|--------|-------------|
+| Method              | Description             |
+|---------------------|-------------------------|
 | `From(ITypeSymbol)` | Query methods on a type |
 
 ### Accessibility Filters
 
-| Method | Description |
-|--------|-------------|
-| `ThatArePublic()` | Public methods |
-| `ThatArePrivate()` | Private methods |
-| `ThatAreProtected()` | Protected methods |
-| `ThatAreInternal()` | Internal methods |
+| Method                         | Description                |
+|--------------------------------|----------------------------|
+| `ThatArePublic()`              | Public methods             |
+| `ThatArePrivate()`             | Private methods            |
+| `ThatAreProtected()`           | Protected methods          |
+| `ThatAreInternal()`            | Internal methods           |
 | `ThatAreProtectedOrInternal()` | Protected internal methods |
 
 ### Modifier Filters
 
-| Method | Description |
-|--------|-------------|
-| `ThatAreStatic()` | Static methods |
-| `ThatAreInstance()` | Instance methods |
-| `ThatAreAsync()` | Async methods |
-| `ThatAreGeneric()` | Generic methods |
-| `ThatAreVirtual()` | Virtual methods |
-| `ThatAreAbstract()` | Abstract methods |
+| Method               | Description      |
+|----------------------|------------------|
+| `ThatAreStatic()`    | Static methods   |
+| `ThatAreInstance()`  | Instance methods |
+| `ThatAreAsync()`     | Async methods    |
+| `ThatAreGeneric()`   | Generic methods  |
+| `ThatAreVirtual()`   | Virtual methods  |
+| `ThatAreAbstract()`  | Abstract methods |
 | `ThatAreOverrides()` | Override methods |
-| `ThatAreSealed()` | Sealed methods |
+| `ThatAreSealed()`    | Sealed methods   |
 
 ### Name Filters
 
-| Method | Description |
-|--------|-------------|
-| `WithName(string)` | Exact name match |
+| Method                         | Description             |
+|--------------------------------|-------------------------|
+| `WithName(string)`             | Exact name match        |
 | `WithNameStartingWith(string)` | Name starts with prefix |
-| `WithNameEndingWith(string)` | Name ends with suffix |
-| `WithNameContaining(string)` | Name contains substring |
+| `WithNameEndingWith(string)`   | Name ends with suffix   |
+| `WithNameContaining(string)`   | Name contains substring |
 
 ### Parameter Filters
 
-| Method | Description |
-|--------|-------------|
-| `WithParameterCount(int)` | Exact parameter count |
-| `WithNoParameters()` | No parameters |
-| `WithParameters()` | At least one parameter |
-| `WithFirstParameterOfType(string)` | First parameter matches type name |
-| `WithParameters(Func<ImmutableArray<IParameterSymbol>, bool>)` | Custom parameter predicate |
+| Method                                                         | Description                       |
+|----------------------------------------------------------------|-----------------------------------|
+| `WithParameterCount(int)`                                      | Exact parameter count             |
+| `WithNoParameters()`                                           | No parameters                     |
+| `WithParameters()`                                             | At least one parameter            |
+| `WithFirstParameterOfType(string)`                             | First parameter matches type name |
+| `WithParameters(Func<ImmutableArray<IParameterSymbol>, bool>)` | Custom parameter predicate        |
 
 ### Return Type Filters
 
-| Method | Description |
-|--------|-------------|
-| `WithReturnType(string)` | Return type name match |
-| `WithReturnType(Func<ITypeSymbol, bool>)` | Custom return type predicate |
-| `ReturningVoid()` | Returns void |
-| `ReturningTask()` | Returns Task or ValueTask |
-| `ReturningValueTask()` | Returns ValueTask |
-| `ReturningGenericTask()` | Returns Task<T> or ValueTask<T> |
+| Method                                    | Description                     |
+|-------------------------------------------|---------------------------------|
+| `WithReturnType(string)`                  | Return type name match          |
+| `WithReturnType(Func<ITypeSymbol, bool>)` | Custom return type predicate    |
+| `ReturningVoid()`                         | Returns void                    |
+| `ReturningTask()`                         | Returns Task or ValueTask       |
+| `ReturningValueTask()`                    | Returns ValueTask               |
+| `ReturningGenericTask()`                  | Returns Task<T> or ValueTask<T> |
 
 ### Attribute Filters
 
-| Method | Description |
-|--------|-------------|
-| `WithAttribute<TAttribute>()` | Has attribute type |
-| `WithAttribute(string)` | Has attribute by name |
-| `WithoutAttribute<TAttribute>()` | Lacks attribute type |
+| Method                           | Description           |
+|----------------------------------|-----------------------|
+| `WithAttribute<TAttribute>()`    | Has attribute type    |
+| `WithAttribute(string)`          | Has attribute by name |
+| `WithoutAttribute<TAttribute>()` | Lacks attribute type  |
 
 ### Materialization
 
-Same as TypeQuery: `GetAll()`, `GetAllSymbols()`, `Select<T>()`, `SelectMany<T>()`, `FirstOrDefault()`, `First()`, `Any()`, `Count()`
+Same as TypeQuery: `GetAll()`, `GetAllSymbols()`, `Select<T>()`, `SelectMany<T>()`, `FirstOrDefault()`, `First()`,
+`Any()`, `Count()`
 
 ---
 
@@ -248,54 +250,54 @@ var readOnlyProps = typeSymbol.QueryProperties()
 
 ### Accessibility Filters
 
-| Method | Description |
-|--------|-------------|
-| `ThatArePublic()` | Public properties |
-| `ThatArePrivate()` | Private properties |
-| `ThatAreProtected()` | Protected properties |
-| `ThatAreInternal()` | Internal properties |
+| Method                         | Description                   |
+|--------------------------------|-------------------------------|
+| `ThatArePublic()`              | Public properties             |
+| `ThatArePrivate()`             | Private properties            |
+| `ThatAreProtected()`           | Protected properties          |
+| `ThatAreInternal()`            | Internal properties           |
 | `ThatAreProtectedOrInternal()` | Protected internal properties |
 
 ### Modifier Filters
 
-| Method | Description |
-|--------|-------------|
-| `ThatAreStatic()` | Static properties |
-| `ThatAreInstance()` | Instance properties |
-| `ThatAreVirtual()` | Virtual properties |
-| `ThatAreAbstract()` | Abstract properties |
-| `ThatAreOverride()` | Override properties |
-| `ThatAreSealed()` | Sealed properties |
-| `ThatAreReadOnly()` | Read-only (no setter) |
-| `ThatAreWriteOnly()` | Write-only (no getter) |
-| `ThatAreReadWrite()` | Has getter and setter |
-| `WithInitOnlySetter()` | Init-only setter |
-| `ThatAreRequired()` | Required properties |
+| Method                 | Description            |
+|------------------------|------------------------|
+| `ThatAreStatic()`      | Static properties      |
+| `ThatAreInstance()`    | Instance properties    |
+| `ThatAreVirtual()`     | Virtual properties     |
+| `ThatAreAbstract()`    | Abstract properties    |
+| `ThatAreOverride()`    | Override properties    |
+| `ThatAreSealed()`      | Sealed properties      |
+| `ThatAreReadOnly()`    | Read-only (no setter)  |
+| `ThatAreWriteOnly()`   | Write-only (no getter) |
+| `ThatAreReadWrite()`   | Has getter and setter  |
+| `WithInitOnlySetter()` | Init-only setter       |
+| `ThatAreRequired()`    | Required properties    |
 
 ### Name Filters
 
-| Method | Description |
-|--------|-------------|
-| `WithName(string)` | Exact name match |
+| Method                         | Description             |
+|--------------------------------|-------------------------|
+| `WithName(string)`             | Exact name match        |
 | `WithNameStartingWith(string)` | Name starts with prefix |
-| `WithNameContaining(string)` | Name contains substring |
-| `WithNameEndingWith(string)` | Name ends with suffix |
+| `WithNameContaining(string)`   | Name contains substring |
+| `WithNameEndingWith(string)`   | Name ends with suffix   |
 
 ### Type Filters
 
-| Method | Description |
-|--------|-------------|
-| `OfType(ITypeSymbol)` | Exact type match |
-| `OfTypeName(string)` | Type name match |
+| Method                            | Description           |
+|-----------------------------------|-----------------------|
+| `OfType(ITypeSymbol)`             | Exact type match      |
+| `OfTypeName(string)`              | Type name match       |
 | `OfType(Func<ITypeSymbol, bool>)` | Custom type predicate |
 
 ### Attribute Filters
 
-| Method | Description |
-|--------|-------------|
-| `WithAttribute<TAttribute>()` | Has attribute type |
-| `WithAttribute(string)` | Has attribute by name |
-| `WithoutAttribute<TAttribute>()` | Lacks attribute type |
+| Method                           | Description           |
+|----------------------------------|-----------------------|
+| `WithAttribute<TAttribute>()`    | Has attribute type    |
+| `WithAttribute(string)`          | Has attribute by name |
+| `WithoutAttribute<TAttribute>()` | Lacks attribute type  |
 
 ---
 
@@ -317,48 +319,48 @@ var injectableFields = typeSymbol.QueryFields()
 
 ### Accessibility Filters
 
-| Method | Description |
-|--------|-------------|
-| `ThatArePublic()` | Public fields |
-| `ThatArePrivate()` | Private fields |
+| Method               | Description      |
+|----------------------|------------------|
+| `ThatArePublic()`    | Public fields    |
+| `ThatArePrivate()`   | Private fields   |
 | `ThatAreProtected()` | Protected fields |
-| `ThatAreInternal()` | Internal fields |
+| `ThatAreInternal()`  | Internal fields  |
 
 ### Modifier Filters
 
-| Method | Description |
-|--------|-------------|
-| `ThatAreStatic()` | Static fields |
+| Method              | Description     |
+|---------------------|-----------------|
+| `ThatAreStatic()`   | Static fields   |
 | `ThatAreInstance()` | Instance fields |
 | `ThatAreReadOnly()` | Readonly fields |
-| `ThatAreConst()` | Const fields |
+| `ThatAreConst()`    | Const fields    |
 | `ThatAreVolatile()` | Volatile fields |
 
 ### Name Filters
 
-| Method | Description |
-|--------|-------------|
-| `WithName(string)` | Exact name match |
-| `WithNamePrefix(string)` | Name starts with prefix |
-| `WithNameSuffix(string)` | Name ends with suffix |
-| `WithNameMatching(Func<string, bool>)` | Custom name predicate |
+| Method                                 | Description             |
+|----------------------------------------|-------------------------|
+| `WithName(string)`                     | Exact name match        |
+| `WithNamePrefix(string)`               | Name starts with prefix |
+| `WithNameSuffix(string)`               | Name ends with suffix   |
+| `WithNameMatching(Func<string, bool>)` | Custom name predicate   |
 
 ### Type Filters
 
-| Method | Description |
-|--------|-------------|
-| `WithType<T>()` | Fields of type T |
-| `WithType(string)` | Fields with type name |
-| `ThatAreGenericType()` | Fields with generic types |
-| `ThatAreNullable()` | Fields with nullable annotation |
+| Method                 | Description                     |
+|------------------------|---------------------------------|
+| `WithType<T>()`        | Fields of type T                |
+| `WithType(string)`     | Fields with type name           |
+| `ThatAreGenericType()` | Fields with generic types       |
+| `ThatAreNullable()`    | Fields with nullable annotation |
 
 ### Attribute Filters
 
-| Method | Description |
-|--------|-------------|
-| `WithAttribute<TAttribute>()` | Has attribute type |
-| `WithAttribute(string)` | Has attribute by name |
-| `WithoutAttribute<TAttribute>()` | Lacks attribute type |
+| Method                           | Description           |
+|----------------------------------|-----------------------|
+| `WithAttribute<TAttribute>()`    | Has attribute type    |
+| `WithAttribute(string)`          | Has attribute by name |
+| `WithoutAttribute<TAttribute>()` | Lacks attribute type  |
 
 ---
 
@@ -379,36 +381,36 @@ var parameterless = typeSymbol.QueryConstructors()
 
 ### Accessibility Filters
 
-| Method | Description |
-|--------|-------------|
-| `ThatArePublic()` | Public constructors |
-| `ThatArePrivate()` | Private constructors |
-| `ThatAreProtected()` | Protected constructors |
-| `ThatAreInternal()` | Internal constructors |
+| Method                         | Description                     |
+|--------------------------------|---------------------------------|
+| `ThatArePublic()`              | Public constructors             |
+| `ThatArePrivate()`             | Private constructors            |
+| `ThatAreProtected()`           | Protected constructors          |
+| `ThatAreInternal()`            | Internal constructors           |
 | `ThatAreProtectedOrInternal()` | Protected internal constructors |
 
 ### Modifier Filters
 
-| Method | Description |
-|--------|-------------|
-| `ThatAreStatic()` | Static constructors |
+| Method              | Description           |
+|---------------------|-----------------------|
+| `ThatAreStatic()`   | Static constructors   |
 | `ThatAreInstance()` | Instance constructors |
 
 ### Parameter Filters
 
-| Method | Description |
-|--------|-------------|
-| `WithParameterCount(int)` | Exact parameter count |
-| `WithNoParameters()` | Parameterless constructor |
-| `WithAtLeastParameters(int)` | Minimum parameter count |
-| `WithFirstParameterOfType(ITypeSymbol)` | First parameter matches type |
-| `WithParameter(Func<IParameterSymbol, bool>)` | Any parameter matches predicate |
-| `WhereAllParameters(Func<IParameterSymbol, bool>)` | All parameters match predicate |
+| Method                                             | Description                     |
+|----------------------------------------------------|---------------------------------|
+| `WithParameterCount(int)`                          | Exact parameter count           |
+| `WithNoParameters()`                               | Parameterless constructor       |
+| `WithAtLeastParameters(int)`                       | Minimum parameter count         |
+| `WithFirstParameterOfType(ITypeSymbol)`            | First parameter matches type    |
+| `WithParameter(Func<IParameterSymbol, bool>)`      | Any parameter matches predicate |
+| `WhereAllParameters(Func<IParameterSymbol, bool>)` | All parameters match predicate  |
 
 ### Attribute Filters
 
-| Method | Description |
-|--------|-------------|
+| Method                  | Description           |
+|-------------------------|-----------------------|
 | `WithAttribute(string)` | Has attribute by name |
 
 ---
@@ -426,47 +428,47 @@ var publicEvents = typeSymbol.QueryEvents()
 
 ### Accessibility Filters
 
-| Method | Description |
-|--------|-------------|
-| `ThatArePublic()` | Public events |
-| `ThatArePrivate()` | Private events |
+| Method               | Description      |
+|----------------------|------------------|
+| `ThatArePublic()`    | Public events    |
+| `ThatArePrivate()`   | Private events   |
 | `ThatAreProtected()` | Protected events |
-| `ThatAreInternal()` | Internal events |
+| `ThatAreInternal()`  | Internal events  |
 
 ### Modifier Filters
 
-| Method | Description |
-|--------|-------------|
-| `ThatAreStatic()` | Static events |
+| Method              | Description     |
+|---------------------|-----------------|
+| `ThatAreStatic()`   | Static events   |
 | `ThatAreInstance()` | Instance events |
 | `ThatAreAbstract()` | Abstract events |
-| `ThatAreVirtual()` | Virtual events |
-| `ThatAreSealed()` | Sealed events |
+| `ThatAreVirtual()`  | Virtual events  |
+| `ThatAreSealed()`   | Sealed events   |
 | `ThatAreOverride()` | Override events |
 
 ### Name Filters
 
-| Method | Description |
-|--------|-------------|
-| `WithName(string)` | Exact name match |
-| `WithNamePrefix(string)` | Name starts with prefix |
-| `WithNameSuffix(string)` | Name ends with suffix |
-| `WithNameMatching(Func<string, bool>)` | Custom name predicate |
+| Method                                 | Description             |
+|----------------------------------------|-------------------------|
+| `WithName(string)`                     | Exact name match        |
+| `WithNamePrefix(string)`               | Name starts with prefix |
+| `WithNameSuffix(string)`               | Name ends with suffix   |
+| `WithNameMatching(Func<string, bool>)` | Custom name predicate   |
 
 ### Type Filters
 
-| Method | Description |
-|--------|-------------|
-| `WithType<T>()` | Events of type T |
+| Method             | Description           |
+|--------------------|-----------------------|
+| `WithType<T>()`    | Events of type T      |
 | `WithType(string)` | Events with type name |
 
 ### Attribute Filters
 
-| Method | Description |
-|--------|-------------|
-| `WithAttribute<TAttribute>()` | Has attribute type |
-| `WithAttribute(string)` | Has attribute by name |
-| `WithoutAttribute<TAttribute>()` | Lacks attribute type |
+| Method                           | Description           |
+|----------------------------------|-----------------------|
+| `WithAttribute<TAttribute>()`    | Has attribute type    |
+| `WithAttribute(string)`          | Has attribute by name |
+| `WithoutAttribute<TAttribute>()` | Lacks attribute type  |
 
 ---
 
@@ -486,56 +488,56 @@ var refParams = methodSymbol.QueryParameters()
 
 ### Factory Methods
 
-| Method | Description |
-|--------|-------------|
+| Method                | Description                  |
+|-----------------------|------------------------------|
 | `From(IMethodSymbol)` | Query parameters on a method |
 
 ### Modifier Filters
 
-| Method | Description |
-|--------|-------------|
-| `ThatAreRef()` | Ref parameters |
-| `ThatAreOut()` | Out parameters |
-| `ThatAreIn()` | In parameters |
-| `ThatAreParams()` | Params array parameters |
+| Method              | Description                         |
+|---------------------|-------------------------------------|
+| `ThatAreRef()`      | Ref parameters                      |
+| `ThatAreOut()`      | Out parameters                      |
+| `ThatAreIn()`       | In parameters                       |
+| `ThatAreParams()`   | Params array parameters             |
 | `ThatAreOptional()` | Optional parameters (with defaults) |
-| `ThatAreRequired()` | Required parameters |
-| `ThatAreThis()` | Extension method 'this' parameter |
-| `ThatAreDiscards()` | Discard parameters (named `_`) |
+| `ThatAreRequired()` | Required parameters                 |
+| `ThatAreThis()`     | Extension method 'this' parameter   |
+| `ThatAreDiscards()` | Discard parameters (named `_`)      |
 
 ### Name Filters
 
-| Method | Description |
-|--------|-------------|
-| `WithName(string)` | Exact name match |
-| `WithNamePrefix(string)` | Name starts with prefix |
-| `WithNameSuffix(string)` | Name ends with suffix |
-| `WithNameMatching(Func<string, bool>)` | Custom name predicate |
+| Method                                 | Description             |
+|----------------------------------------|-------------------------|
+| `WithName(string)`                     | Exact name match        |
+| `WithNamePrefix(string)`               | Name starts with prefix |
+| `WithNameSuffix(string)`               | Name ends with suffix   |
+| `WithNameMatching(Func<string, bool>)` | Custom name predicate   |
 
 ### Type Filters
 
-| Method | Description |
-|--------|-------------|
-| `WithType<T>()` | Parameters of type T |
-| `WithType(string)` | Parameters with type name |
-| `ThatAreGenericType()` | Parameters with generic types |
-| `ThatAreNullable()` | Parameters with nullable annotation |
+| Method                 | Description                         |
+|------------------------|-------------------------------------|
+| `WithType<T>()`        | Parameters of type T                |
+| `WithType(string)`     | Parameters with type name           |
+| `ThatAreGenericType()` | Parameters with generic types       |
+| `ThatAreNullable()`    | Parameters with nullable annotation |
 
 ### Position Filters
 
-| Method | Description |
-|--------|-------------|
+| Method            | Description                 |
+|-------------------|-----------------------------|
 | `AtPosition(int)` | Parameter at specific index |
-| `ThatAreFirst()` | First parameter |
-| `ThatAreLast()` | Last parameter |
+| `ThatAreFirst()`  | First parameter             |
+| `ThatAreLast()`   | Last parameter              |
 
 ### Attribute Filters
 
-| Method | Description |
-|--------|-------------|
-| `WithAttribute<TAttribute>()` | Has attribute type |
-| `WithAttribute(string)` | Has attribute by name |
-| `WithoutAttribute<TAttribute>()` | Lacks attribute type |
+| Method                           | Description           |
+|----------------------------------|-----------------------|
+| `WithAttribute<TAttribute>()`    | Has attribute type    |
+| `WithAttribute(string)`          | Has attribute by name |
+| `WithoutAttribute<TAttribute>()` | Lacks attribute type  |
 
 ---
 
@@ -595,9 +597,11 @@ var targetMethods = new HashSet<string>(
 
 **RPL-1.5** (Reciprocal Public License) — Real reciprocity, no loopholes.
 
-You can use this code, modify it, and share it freely. But when you deploy it — internally or externally, as a service or within your company — you share your improvements back under the same license.
+You can use this code, modify it, and share it freely. But when you deploy it — internally or externally, as a service
+or within your company — you share your improvements back under the same license.
 
-Why? We believe if you benefit from this code, the community should benefit from your improvements. That's the deal we think is fair.
+Why? We believe if you benefit from this code, the community should benefit from your improvements. That's the deal we
+think is fair.
 
 **Personal research and experimentation? No obligations.** Go learn, explore, and build.
 

@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 using Deepstaging.Roslyn.Emit;
 
 namespace Deepstaging.Roslyn.Generators;
@@ -9,14 +10,34 @@ namespace Deepstaging.Roslyn.Generators;
 /// </summary>
 public static class SourceProductionContextExtensions
 {
+    extension(OptionalEmit emit)
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="filename"></param>
+        public void RegisterSourceWith(SourceProductionContext ctx, string filename)
+        {
+            if (emit.IsNotValid(out var validCode))
+            {
+                foreach (var diagnostic in emit.Diagnostics)
+                    ctx.ReportDiagnostic(diagnostic);
+                return;
+            }
+
+            ctx.AddSource(filename, validCode.Code);
+        }
+    }
+
     extension(SourceProductionContext ctx)
     {
         /// <summary>
         /// Adds generated source from an OptionalEmit result, reporting any diagnostics.
         /// </summary>
-        /// <param name="hintName">Unique hint name for the generated file.</param>
         /// <param name="emit">The emit result containing code or diagnostics.</param>
-        public void AddFromEmit(string hintName, OptionalEmit emit)
+        /// <param name="hintName">Unique hint name for the generated file.</param>
+        public void AddEmit(OptionalEmit emit, string hintName)
         {
             if (emit.IsNotValid(out var validCode))
             {

@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Tests.Emit;
 
 public class TypeBuilderTests : RoslynTestBase
@@ -259,7 +260,7 @@ public class TypeBuilderTests : RoslynTestBase
 
         await Assert.That(result.Success).IsTrue();
         await Assert.That(result.Code).Contains("using System.Collections.Generic;");
-        
+
         // Verify the using is at the top, not inside the class
         var code = result.Code!;
         var usingIndex = code.IndexOf("using System.Collections.Generic;");

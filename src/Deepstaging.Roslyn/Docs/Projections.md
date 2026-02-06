@@ -2,24 +2,26 @@
 
 Optional and validated wrappers that make null-checking less painful.
 
-> **See also:** [Queries](Queries.md) | [Emit](Emit.md) | [Extensions](Extensions.md) | [Roslyn Toolkit README](../README.md)
+> **See also:
+** [Queries](Queries.md) | [Emit](Emit.md) | [Extensions](Extensions.md) | [Roslyn Toolkit README](../README.md)
 
 ## Overview
 
-Roslyn symbols are often nullable, requiring constant null checks. Projections wrap these nullable values in types that provide safe access and fluent transformations:
+Roslyn symbols are often nullable, requiring constant null checks. Projections wrap these nullable values in types that
+provide safe access and fluent transformations:
 
-| Type | Purpose |
-|------|---------|
-| `OptionalSymbol<T>` | A symbol that may or may not be present |
-| `ValidSymbol<T>` | A symbol guaranteed to be non-null |
-| `OptionalAttribute` | An attribute that may or may not be present |
-| `ValidAttribute` | An attribute guaranteed to be non-null |
+| Type                  | Purpose                                         |
+|-----------------------|-------------------------------------------------|
+| `OptionalSymbol<T>`   | A symbol that may or may not be present         |
+| `ValidSymbol<T>`      | A symbol guaranteed to be non-null              |
+| `OptionalAttribute`   | An attribute that may or may not be present     |
+| `ValidAttribute`      | An attribute guaranteed to be non-null          |
 | `OptionalArgument<T>` | An attribute argument that may or may not exist |
-| `OptionalValue<T>` | A general-purpose optional wrapper |
-| `OptionalSyntax<T>` | A syntax node that may or may not be present |
-| `ValidSyntax<T>` | A syntax node guaranteed to be non-null |
-| `ValidTypeSyntax<T>` | A type declaration syntax with rich helpers |
-| `XmlDocumentation` | Parsed XML documentation from a symbol |
+| `OptionalValue<T>`    | A general-purpose optional wrapper              |
+| `OptionalSyntax<T>`   | A syntax node that may or may not be present    |
+| `ValidSyntax<T>`      | A syntax node guaranteed to be non-null         |
+| `ValidTypeSyntax<T>`  | A type declaration syntax with rich helpers     |
+| `XmlDocumentation`    | Parsed XML documentation from a symbol          |
 
 ## The Pattern
 
@@ -506,7 +508,8 @@ ClassDeclarationSyntax node = valid;
 
 ## ValidTypeSyntax<T>
 
-Specialized wrapper for type declaration syntax (`ClassDeclarationSyntax`, `RecordDeclarationSyntax`, etc.) with rich helpers.
+Specialized wrapper for type declaration syntax (`ClassDeclarationSyntax`, `RecordDeclarationSyntax`, etc.) with rich
+helpers.
 
 ```csharp
 ValidTypeSyntax<ClassDeclarationSyntax>.From(classDecl)
@@ -712,9 +715,11 @@ var allInterfaces = typeSymbol.GetAllInterfaces()
 
 **RPL-1.5** (Reciprocal Public License) — Real reciprocity, no loopholes.
 
-You can use this code, modify it, and share it freely. But when you deploy it — internally or externally, as a service or within your company — you share your improvements back under the same license.
+You can use this code, modify it, and share it freely. But when you deploy it — internally or externally, as a service
+or within your company — you share your improvements back under the same license.
 
-Why? We believe if you benefit from this code, the community should benefit from your improvements. That's the deal we think is fair.
+Why? We believe if you benefit from this code, the community should benefit from your improvements. That's the deal we
+think is fair.
 
 **Personal research and experimentation? No obligations.** Go learn, explore, and build.
 

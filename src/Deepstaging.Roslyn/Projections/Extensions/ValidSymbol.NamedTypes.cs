@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn;
 
 /// <summary>
@@ -110,7 +111,7 @@ public static class ValidNamedTypeSymbolExtensions
         /// </summary>
         public OptionalSymbol<INamedTypeSymbol> ConstructedFrom =>
             type.Value.ConstructedFrom is { } constructed &&
-                   !SymbolEqualityComparer.Default.Equals(constructed, type.Value)
+            !SymbolEqualityComparer.Default.Equals(constructed, type.Value)
                 ? OptionalSymbol<INamedTypeSymbol>.WithValue(constructed)
                 : OptionalSymbol<INamedTypeSymbol>.Empty();
 
@@ -121,7 +122,7 @@ public static class ValidNamedTypeSymbolExtensions
         /// </summary>
         public OptionalSymbol<INamedTypeSymbol> OriginalDefinition =>
             type.Value.OriginalDefinition is { } original &&
-                   !SymbolEqualityComparer.Default.Equals(original, type.Value)
+            !SymbolEqualityComparer.Default.Equals(original, type.Value)
                 ? OptionalSymbol<INamedTypeSymbol>.WithValue(original)
                 : OptionalSymbol<INamedTypeSymbol>.Empty();
 

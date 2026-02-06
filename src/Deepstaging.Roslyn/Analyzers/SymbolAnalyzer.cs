@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 using System.Reflection;
 using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -29,8 +30,8 @@ public abstract class SymbolAnalyzer<TSymbol> : DiagnosticAnalyzer
     protected SymbolAnalyzer()
     {
         var reportsAttr = GetType().GetCustomAttribute<ReportsAttribute>()
-            ?? throw new InvalidOperationException(
-                $"Analyzer {GetType().Name} must have a [Reports] attribute.");
+                          ?? throw new InvalidOperationException(
+                              $"Analyzer {GetType().Name} must have a [Reports] attribute.");
 
         _rule = reportsAttr.ToDescriptor();
         _symbolKind = InferSymbolKind();
@@ -72,7 +73,10 @@ public abstract class SymbolAnalyzer<TSymbol> : DiagnosticAnalyzer
     /// </summary>
     /// <param name="symbol">The validated symbol.</param>
     /// <returns>The message format arguments.</returns>
-    protected virtual object[] GetMessageArgs(ValidSymbol<TSymbol> symbol) => [symbol.Name];
+    protected virtual object[] GetMessageArgs(ValidSymbol<TSymbol> symbol)
+    {
+        return [symbol.Name];
+    }
 
     /// <summary>
     /// Gets the location for the diagnostic.
@@ -80,7 +84,10 @@ public abstract class SymbolAnalyzer<TSymbol> : DiagnosticAnalyzer
     /// </summary>
     /// <param name="symbol">The validated symbol.</param>
     /// <returns>The diagnostic location.</returns>
-    protected virtual Location GetLocation(ValidSymbol<TSymbol> symbol) => symbol.Location;
+    protected virtual Location GetLocation(ValidSymbol<TSymbol> symbol)
+    {
+        return symbol.Location;
+    }
 
     private static SymbolKind InferSymbolKind()
     {

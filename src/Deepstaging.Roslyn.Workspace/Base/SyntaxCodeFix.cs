@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 using System;
 using System.Collections.Immutable;
 using System.Linq;
@@ -22,7 +23,10 @@ public abstract class SyntaxCodeFix<TSyntax> : CodeFixProvider
     public sealed override ImmutableArray<string> FixableDiagnosticIds { get; }
 
     /// <inheritdoc />
-    public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
+    public override FixAllProvider GetFixAllProvider()
+    {
+        return WellKnownFixAllProviders.BatchFixer;
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SyntaxCodeFix{TSyntax}"/> class.

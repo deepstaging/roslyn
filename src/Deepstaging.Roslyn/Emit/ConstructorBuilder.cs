@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Emit;
 
 /// <summary>
@@ -58,14 +59,14 @@ public readonly struct ConstructorBuilder
         return new ConstructorBuilder(
             typeName,
             Accessibility.Public,
-            isStatic: false,
-            isPrimary: false,
+            false,
+            false,
             ImmutableArray<ParameterBuilder>.Empty,
             ImmutableArray<AttributeBuilder>.Empty,
             ImmutableArray<string>.Empty,
-            body: null,
-            initializer: null,
-            xmlDoc: null);
+            null,
+            null,
+            null);
     }
 
     #endregion
@@ -77,7 +78,8 @@ public readonly struct ConstructorBuilder
     /// </summary>
     public ConstructorBuilder WithAccessibility(Accessibility accessibility)
     {
-        return new ConstructorBuilder(_typeName, accessibility, _isStatic, _isPrimary, _parameters, _attributes, _usings, _body, _initializer, _xmlDoc);
+        return new ConstructorBuilder(_typeName, accessibility, _isStatic, _isPrimary, _parameters, _attributes,
+            _usings, _body, _initializer, _xmlDoc);
     }
 
     /// <summary>
@@ -86,7 +88,8 @@ public readonly struct ConstructorBuilder
     /// </summary>
     public ConstructorBuilder AsStatic()
     {
-        return new ConstructorBuilder(_typeName, Accessibility.NotApplicable, true, _isPrimary, _parameters, _attributes, _usings, _body, _initializer, _xmlDoc);
+        return new ConstructorBuilder(_typeName, Accessibility.NotApplicable, true, _isPrimary, _parameters,
+            _attributes, _usings, _body, _initializer, _xmlDoc);
     }
 
     /// <summary>
@@ -96,7 +99,8 @@ public readonly struct ConstructorBuilder
     /// </summary>
     public ConstructorBuilder AsPrimary()
     {
-        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, true, _parameters, _attributes, _usings, body: null, initializer: null, _xmlDoc);
+        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, true, _parameters, _attributes, _usings,
+            null, null, _xmlDoc);
     }
 
     #endregion
@@ -111,7 +115,8 @@ public readonly struct ConstructorBuilder
     public ConstructorBuilder AddParameter(string name, string type)
     {
         var parameter = ParameterBuilder.For(name, type);
-        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters.Add(parameter), _attributes, _usings, _body, _initializer, _xmlDoc);
+        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters.Add(parameter),
+            _attributes, _usings, _body, _initializer, _xmlDoc);
     }
 
     /// <summary>
@@ -123,7 +128,8 @@ public readonly struct ConstructorBuilder
     public ConstructorBuilder AddParameter(string name, string type, Func<ParameterBuilder, ParameterBuilder> configure)
     {
         var parameter = configure(ParameterBuilder.For(name, type));
-        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters.Add(parameter), _attributes, _usings, _body, _initializer, _xmlDoc);
+        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters.Add(parameter),
+            _attributes, _usings, _body, _initializer, _xmlDoc);
     }
 
     /// <summary>
@@ -131,7 +137,8 @@ public readonly struct ConstructorBuilder
     /// </summary>
     public ConstructorBuilder AddParameter(ParameterBuilder parameter)
     {
-        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters.Add(parameter), _attributes, _usings, _body, _initializer, _xmlDoc);
+        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters.Add(parameter),
+            _attributes, _usings, _body, _initializer, _xmlDoc);
     }
 
     #endregion
@@ -144,7 +151,8 @@ public readonly struct ConstructorBuilder
     public ConstructorBuilder WithBody(Func<BodyBuilder, BodyBuilder> configure)
     {
         var body = configure(BodyBuilder.Empty());
-        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters, _attributes, _usings, body, _initializer, _xmlDoc);
+        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters, _attributes,
+            _usings, body, _initializer, _xmlDoc);
     }
 
     #endregion
@@ -158,7 +166,8 @@ public readonly struct ConstructorBuilder
     public ConstructorBuilder CallsThis(params string[] arguments)
     {
         var initializer = new ConstructorInitializer(ConstructorInitializerKind.This, arguments);
-        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters, _attributes, _usings, _body, initializer, _xmlDoc);
+        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters, _attributes,
+            _usings, _body, initializer, _xmlDoc);
     }
 
     /// <summary>
@@ -168,7 +177,8 @@ public readonly struct ConstructorBuilder
     public ConstructorBuilder CallsBase(params string[] arguments)
     {
         var initializer = new ConstructorInitializer(ConstructorInitializerKind.Base, arguments);
-        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters, _attributes, _usings, _body, initializer, _xmlDoc);
+        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters, _attributes,
+            _usings, _body, initializer, _xmlDoc);
     }
 
     #endregion
@@ -182,7 +192,8 @@ public readonly struct ConstructorBuilder
     public ConstructorBuilder WithXmlDoc(Func<XmlDocumentationBuilder, XmlDocumentationBuilder> configure)
     {
         var xmlDoc = configure(XmlDocumentationBuilder.Create());
-        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters, _attributes, _usings, _body, _initializer, xmlDoc);
+        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters, _attributes,
+            _usings, _body, _initializer, xmlDoc);
     }
 
     /// <summary>
@@ -192,7 +203,8 @@ public readonly struct ConstructorBuilder
     public ConstructorBuilder WithXmlDoc(string summary)
     {
         var xmlDoc = XmlDocumentationBuilder.WithSummary(summary);
-        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters, _attributes, _usings, _body, _initializer, xmlDoc);
+        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters, _attributes,
+            _usings, _body, _initializer, xmlDoc);
     }
 
     /// <summary>
@@ -205,7 +217,8 @@ public readonly struct ConstructorBuilder
             return this;
 
         var xmlDoc = XmlDocumentationBuilder.From(documentation);
-        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters, _attributes, _usings, _body, _initializer, xmlDoc);
+        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters, _attributes,
+            _usings, _body, _initializer, xmlDoc);
     }
 
     #endregion
@@ -219,7 +232,8 @@ public readonly struct ConstructorBuilder
     public ConstructorBuilder WithAttribute(string name)
     {
         var attribute = AttributeBuilder.For(name);
-        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters, _attributes.Add(attribute), _usings, _body, _initializer, _xmlDoc);
+        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters,
+            _attributes.Add(attribute), _usings, _body, _initializer, _xmlDoc);
     }
 
     /// <summary>
@@ -230,7 +244,8 @@ public readonly struct ConstructorBuilder
     public ConstructorBuilder WithAttribute(string name, Func<AttributeBuilder, AttributeBuilder> configure)
     {
         var attribute = configure(AttributeBuilder.For(name));
-        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters, _attributes.Add(attribute), _usings, _body, _initializer, _xmlDoc);
+        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters,
+            _attributes.Add(attribute), _usings, _body, _initializer, _xmlDoc);
     }
 
     /// <summary>
@@ -238,7 +253,8 @@ public readonly struct ConstructorBuilder
     /// </summary>
     public ConstructorBuilder WithAttribute(AttributeBuilder attribute)
     {
-        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters, _attributes.Add(attribute), _usings, _body, _initializer, _xmlDoc);
+        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters,
+            _attributes.Add(attribute), _usings, _body, _initializer, _xmlDoc);
     }
 
     #endregion
@@ -251,7 +267,8 @@ public readonly struct ConstructorBuilder
     /// <param name="namespace">The namespace to add (e.g., "System.Linq", "static System.Math").</param>
     public ConstructorBuilder AddUsing(string @namespace)
     {
-        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters, _attributes, _usings.Add(@namespace), _body, _initializer, _xmlDoc);
+        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters, _attributes,
+            _usings.Add(@namespace), _body, _initializer, _xmlDoc);
     }
 
     /// <summary>
@@ -292,16 +309,11 @@ public readonly struct ConstructorBuilder
         if (!_isStatic)
         {
             var modifiers = new List<SyntaxKind>();
-            if (_accessibility != Accessibility.NotApplicable)
-            {
-                modifiers.Add(AccessibilityToSyntaxKind(_accessibility));
-            }
+            if (_accessibility != Accessibility.NotApplicable) modifiers.Add(AccessibilityToSyntaxKind(_accessibility));
 
             if (modifiers.Any())
-            {
                 constructor = constructor.WithModifiers(
                     SyntaxFactory.TokenList(modifiers.Select(SyntaxFactory.Token)));
-            }
         }
         else
         {
@@ -341,14 +353,10 @@ public readonly struct ConstructorBuilder
 
         // Add body
         if (_body.HasValue)
-        {
             constructor = constructor.WithBody(_body.Value.Build());
-        }
         else
-        {
             // Empty body
             constructor = constructor.WithBody(SyntaxFactory.Block());
-        }
 
         // Add XML documentation
         if (_xmlDoc.HasValue && _xmlDoc.Value.HasContent)
@@ -360,8 +368,9 @@ public readonly struct ConstructorBuilder
         return constructor;
     }
 
-    private static SyntaxKind AccessibilityToSyntaxKind(Accessibility accessibility) =>
-        accessibility switch
+    private static SyntaxKind AccessibilityToSyntaxKind(Accessibility accessibility)
+    {
+        return accessibility switch
         {
             Accessibility.Public => SyntaxKind.PublicKeyword,
             Accessibility.Private => SyntaxKind.PrivateKeyword,
@@ -369,6 +378,7 @@ public readonly struct ConstructorBuilder
             Accessibility.Internal => SyntaxKind.InternalKeyword,
             _ => SyntaxKind.PublicKeyword
         };
+    }
 
     #endregion
 }

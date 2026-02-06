@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Testing;
 
 /// <summary>
@@ -17,12 +18,12 @@ internal static class ExampleTestInitializer
         //     typeof(MyFeature),
         //     typeof(MyOtherFeature)
         // );
-        
+
         // Example 2: Add references from assemblies
         // ReferenceConfiguration.AddReferences(
         //     typeof(MyFeature).Assembly
         // );
-        
+
         // Example 3: Add references from file paths
         // ReferenceConfiguration.AddReferencesFromPaths(
         //     "path/to/MyAssembly.dll"

@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 using System.ComponentModel;
 using TUnit.Assertions.Attributes;
 
@@ -78,7 +79,7 @@ public static partial class ValidSymbolMethodAssertions
     [GenerateAssertion(ExpectationMessage = "to be an operator")]
     public static bool IsOperator(this ValidSymbol<IMethodSymbol> symbol)
     {
-        return symbol.Value.MethodKind == MethodKind.UserDefinedOperator || 
+        return symbol.Value.MethodKind == MethodKind.UserDefinedOperator ||
                symbol.Value.MethodKind == MethodKind.BuiltinOperator;
     }
 

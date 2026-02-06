@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Tests.Emit;
 
 public class ProjectionsTests : RoslynTestBase
@@ -121,7 +122,7 @@ public class ProjectionsTests : RoslynTestBase
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
-        
+
         if (result.IsValid(out var validEmit))
         {
             // Try to compile the generated code
@@ -161,7 +162,7 @@ public class ProjectionsTests : RoslynTestBase
 
         await Assert.That(result.Success).IsFalse();
         await Assert.That(result.Diagnostics).IsNotEmpty();
-        
+
         // Should have detailed diagnostic information
         var firstDiagnostic = result.Diagnostics.First();
         await Assert.That(firstDiagnostic.Severity).IsEqualTo(DiagnosticSeverity.Error);

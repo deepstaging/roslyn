@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Generators;
 
 /// <summary>
@@ -15,7 +16,9 @@ public static class IncrementalGeneratorContextExtensions
         /// <typeparam name="TAttribute">The attribute type to map</typeparam>
         /// <returns>A fluent mapping builder</returns>
         public AttributeMapper ForAttribute<TAttribute>() where TAttribute : Attribute
-            => new(context, typeof(TAttribute).FullName!);
+        {
+            return new AttributeMapper(context, typeof(TAttribute).FullName!);
+        }
 
         /// <summary>
         /// Starts a fluent mapping chain for an attribute by name. The model type is inferred from the builder.
@@ -23,7 +26,9 @@ public static class IncrementalGeneratorContextExtensions
         /// <param name="fullyQualifiedAttributeName">Fully qualified name of the attribute (e.g., "MyApp.MyAttribute")</param>
         /// <returns>A fluent mapping builder</returns>
         public AttributeMapper ForAttribute(string fullyQualifiedAttributeName)
-            => new(context, fullyQualifiedAttributeName);
+        {
+            return new AttributeMapper(context, fullyQualifiedAttributeName);
+        }
 
         /// <summary>
         /// Maps types from the compilation using a query builder pattern.
@@ -52,7 +57,6 @@ public static class IncrementalGeneratorContextExtensions
             context.RegisterImplementationSourceOutput(models.Collect(), (ctx, array) =>
             {
                 foreach (var model in array)
-                {
                     try
                     {
                         produce(ctx, model);
@@ -64,7 +68,6 @@ public static class IncrementalGeneratorContextExtensions
                         else
                             ReportDefaultError(ctx, model, ex);
                     }
-                }
             });
         }
     }
@@ -88,7 +91,9 @@ public static class IncrementalGeneratorContextExtensions
         /// </summary>
         public IncrementalValuesProvider<TModel> Map<TModel>(
             Func<GeneratorAttributeSyntaxContext, CancellationToken, TModel?> builder)
-            => MapAttribute(_attributeName, builder);
+        {
+            return MapAttribute(_attributeName, builder);
+        }
 
         /// <summary>
         /// Maps to models using the builder function, with a custom syntax predicate.
@@ -96,32 +101,41 @@ public static class IncrementalGeneratorContextExtensions
         public IncrementalValuesProvider<TModel> Where<TModel>(
             Func<SyntaxNode, CancellationToken, bool> syntaxPredicate,
             Func<GeneratorAttributeSyntaxContext, CancellationToken, TModel?> builder)
-            => MapAttribute(_attributeName, builder, syntaxPredicate);
-        
+        {
+            return MapAttribute(_attributeName, builder, syntaxPredicate);
+        }
+
         private IncrementalValuesProvider<TModel> MapAttribute<TModel>(string fullyQualifiedAttributeName,
             Func<GeneratorAttributeSyntaxContext, CancellationToken, TModel?> builder,
             Func<SyntaxNode, CancellationToken, bool>? syntaxPredicate = null)
         {
             return _context.SyntaxProvider
                 .ForAttributeWithMetadataName(
-                    fullyQualifiedMetadataName: fullyQualifiedAttributeName,
-                    predicate: syntaxPredicate ?? (static (_, _) => true),
-                    transform: builder)
+                    fullyQualifiedAttributeName,
+                    syntaxPredicate ?? (static (_, _) => true),
+                    builder)
                 .Where(static model => model is not null)
                 .Select(static (model, _) => model!);
         }
     }
 
-    private static void ReportDefaultError<TModel>(SourceProductionContext context, TModel model,
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="model"></param>
+    /// <param name="exception"></param>
+    /// <typeparam name="TModel"></typeparam>
+    public static void ReportDefaultError<TModel>(this SourceProductionContext context, TModel model,
         Exception exception)
     {
         var descriptor = new DiagnosticDescriptor(
-            id: "DEEPGEN001",
-            title: "Code generation error",
-            messageFormat: "Error generating code for {0}: {1}",
-            category: "Deepstaging.CodeGeneration",
+            "DEEPGEN001",
+            "Code generation error",
+            "Error generating code for {0}: {1}",
+            "Deepstaging.CodeGeneration",
             DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+            true);
 
         context.ReportDiagnostic(Diagnostic.Create(
             descriptor,

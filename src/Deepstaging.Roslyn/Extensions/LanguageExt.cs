@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn;
 
 /// <summary>
@@ -14,15 +15,19 @@ public static class LanguageExtExtensions
     /// 
     /// </summary>
     /// <returns></returns>
-    public static MethodQuery ReturningLanguageExtEff(this MethodQuery query) => 
-        query.WithReturnType(IsLanguageExtEff);
+    public static MethodQuery ReturningLanguageExtEff(this MethodQuery query)
+    {
+        return query.WithReturnType(IsLanguageExtEff);
+    }
 
     /// <summary>
     /// 
     /// </summary>
     /// <param name="symbol"></param>
     /// <returns></returns>
-    public static bool IsLanguageExtEff(this ISymbol symbol) =>
-        symbol is INamedTypeSymbol { Name: "Eff", TypeArguments.Length: 2 } type &&
-        type.ContainingNamespace?.ToDisplayString() == LangExtNamespace;
+    public static bool IsLanguageExtEff(this ISymbol symbol)
+    {
+        return symbol is INamedTypeSymbol { Name: "Eff", TypeArguments.Length: 2 } type &&
+               type.ContainingNamespace?.ToDisplayString() == LangExtNamespace;
+    }
 }

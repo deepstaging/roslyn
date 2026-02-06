@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn;
 
 /// <summary>
@@ -101,8 +102,8 @@ public static class ProjectedMethodSymbolExtensions
         /// Gets the parameters of the method as valid symbols (empty array if method symbol is not present).
         /// Parameters are always valid when the method exists, so they're returned as ValidSymbol.
         /// </summary>
-        public ImmutableArray<ValidSymbol<IParameterSymbol>> Parameters => 
-            method.HasValue 
+        public ImmutableArray<ValidSymbol<IParameterSymbol>> Parameters =>
+            method.HasValue
                 ? method.Symbol!.Parameters.Select(p => ValidSymbol<IParameterSymbol>.From(p)).ToImmutableArray()
                 : ImmutableArray<ValidSymbol<IParameterSymbol>>.Empty;
 

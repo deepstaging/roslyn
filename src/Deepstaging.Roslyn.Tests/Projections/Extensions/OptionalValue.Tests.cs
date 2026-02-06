@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Tests.Projections.Extensions;
 
 public class OptionalValueTests : RoslynTestBase
@@ -56,7 +57,7 @@ public class OptionalValueTests : RoslynTestBase
     public async Task ToEnum_converts_int_to_enum()
     {
         var optional = OptionalValue<int>.WithValue(1);
-        
+
         var asEnum = optional.ToEnum<DayOfWeek>();
 
         await Assert.That(asEnum.HasValue).IsTrue();

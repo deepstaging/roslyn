@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Emit;
 
 /// <summary>
@@ -21,7 +22,10 @@ public readonly struct BodyBuilder
     /// <summary>
     /// Creates an empty body builder.
     /// </summary>
-    public static BodyBuilder Empty() => new(ImmutableArray<StatementSyntax>.Empty);
+    public static BodyBuilder Empty()
+    {
+        return new BodyBuilder(ImmutableArray<StatementSyntax>.Empty);
+    }
 
     #endregion
 
@@ -38,11 +42,11 @@ public readonly struct BodyBuilder
             return this;
 
         var trimmed = statement.Trim();
-        
+
         // Don't add semicolon for block statements (if, for, while, etc.) or statements that already have one
         var needsSemicolon = !trimmed.EndsWith(";") &&
-                            !trimmed.EndsWith("}") &&
-                            !trimmed.EndsWith("{");
+                             !trimmed.EndsWith("}") &&
+                             !trimmed.EndsWith("{");
 
         var code = needsSemicolon ? trimmed + ";" : trimmed;
         var statementSyntax = SyntaxFactory.ParseStatement(code);
@@ -124,7 +128,8 @@ public readonly struct BodyBuilder
     /// <param name="condition">The condition expression (e.g., "x > 0", "value != null").</param>
     /// <param name="configureIfBody">Configuration callback for the if body.</param>
     /// <param name="configureElseBody">Configuration callback for the else body.</param>
-    public BodyBuilder AddIfElse(string condition, Func<BodyBuilder, BodyBuilder> configureIfBody, Func<BodyBuilder, BodyBuilder> configureElseBody)
+    public BodyBuilder AddIfElse(string condition, Func<BodyBuilder, BodyBuilder> configureIfBody,
+        Func<BodyBuilder, BodyBuilder> configureElseBody)
     {
         var ifBody = configureIfBody(Empty());
         var elseBody = configureElseBody(Empty());
@@ -142,7 +147,8 @@ public readonly struct BodyBuilder
     /// <param name="variableName">The name of the loop variable (e.g., "item", "x").</param>
     /// <param name="collection">The collection expression (e.g., "items", "GetValues()").</param>
     /// <param name="configureBody">Configuration callback for the loop body.</param>
-    public BodyBuilder AddForEach(string variableType, string variableName, string collection, Func<BodyBuilder, BodyBuilder> configureBody)
+    public BodyBuilder AddForEach(string variableType, string variableName, string collection,
+        Func<BodyBuilder, BodyBuilder> configureBody)
     {
         var body = configureBody(Empty());
         var forEachStatement = SyntaxFactory.ForEachStatement(

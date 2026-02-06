@@ -2,24 +2,26 @@
 
 Fluent builders for generating compilable C# code.
 
-> **See also:** [Queries](Queries.md) | [Projections](Projections.md) | [Extensions](Extensions.md) | [Roslyn Toolkit README](../README.md)
+> **See also:
+** [Queries](Queries.md) | [Projections](Projections.md) | [Extensions](Extensions.md) | [Roslyn Toolkit README](../README.md)
 
 ## Overview
 
-Emit builders construct Roslyn syntax trees using a fluent, immutable API. Where queries find code, emit builders create it.
+Emit builders construct Roslyn syntax trees using a fluent, immutable API. Where queries find code, emit builders create
+it.
 
-| Builder | Purpose |
-|---------|---------|
-| `TypeBuilder` | Create classes, interfaces, structs, records |
-| `MethodBuilder` | Create methods |
-| `PropertyBuilder` | Create properties |
-| `FieldBuilder` | Create fields |
-| `ConstructorBuilder` | Create constructors |
-| `ParameterBuilder` | Create parameters |
-| `TypeParameterBuilder` | Create generic type parameters |
-| `BodyBuilder` | Create method/property bodies |
-| `AttributeBuilder` | Create attributes |
-| `XmlDocumentationBuilder` | Create XML doc comments |
+| Builder                   | Purpose                                      |
+|---------------------------|----------------------------------------------|
+| `TypeBuilder`             | Create classes, interfaces, structs, records |
+| `MethodBuilder`           | Create methods                               |
+| `PropertyBuilder`         | Create properties                            |
+| `FieldBuilder`            | Create fields                                |
+| `ConstructorBuilder`      | Create constructors                          |
+| `ParameterBuilder`        | Create parameters                            |
+| `TypeParameterBuilder`    | Create generic type parameters               |
+| `BodyBuilder`             | Create method/property bodies                |
+| `AttributeBuilder`        | Create attributes                            |
+| `XmlDocumentationBuilder` | Create XML doc comments                      |
 
 All builders are **immutable** — each method returns a new instance.
 
@@ -48,12 +50,12 @@ Create type declarations.
 
 ### Factory Methods
 
-| Method | Description |
-|--------|-------------|
-| `Class(string name)` | Create a class |
-| `Interface(string name)` | Create an interface |
-| `Struct(string name)` | Create a struct |
-| `Record(string name)` | Create a record |
+| Method                    | Description                                                   |
+|---------------------------|---------------------------------------------------------------|
+| `Class(string name)`      | Create a class                                                |
+| `Interface(string name)`  | Create an interface                                           |
+| `Struct(string name)`     | Create a struct                                               |
+| `Record(string name)`     | Create a record                                               |
 | `Parse(string signature)` | Parse from signature (e.g., `"public partial class MyClass"`) |
 
 ### Namespace & Usings
@@ -168,9 +170,9 @@ Create method declarations.
 
 ### Factory Methods
 
-| Method | Description |
-|--------|-------------|
-| `For(string name)` | Create a method with the given name |
+| Method                    | Description                                                        |
+|---------------------------|--------------------------------------------------------------------|
+| `For(string name)`        | Create a method with the given name                                |
 | `Parse(string signature)` | Parse from signature (e.g., `"public async Task<int> GetCount()"`) |
 
 ### Return Type
@@ -263,10 +265,10 @@ Create property declarations.
 
 ### Factory Methods
 
-| Method | Description |
-|--------|-------------|
-| `For(string name, string type)` | Create a property |
-| `Parse(string signature)` | Parse from signature (e.g., `"public string Name { get; set; }"`) |
+| Method                          | Description                                                       |
+|---------------------------------|-------------------------------------------------------------------|
+| `For(string name, string type)` | Create a property                                                 |
+| `Parse(string signature)`       | Parse from signature (e.g., `"public string Name { get; set; }"`) |
 
 ### Accessor Styles
 
@@ -340,10 +342,10 @@ Create field declarations.
 
 ### Factory Methods
 
-| Method | Description |
-|--------|-------------|
-| `For(string name, string type)` | Create a field |
-| `Parse(string signature)` | Parse from signature |
+| Method                          | Description          |
+|---------------------------------|----------------------|
+| `For(string name, string type)` | Create a field       |
+| `Parse(string signature)`       | Parse from signature |
 
 ### Modifiers
 
@@ -389,8 +391,8 @@ Create constructor declarations.
 
 ### Factory Methods
 
-| Method | Description |
-|--------|-------------|
+| Method                 | Description                             |
+|------------------------|-----------------------------------------|
 | `For(string typeName)` | Create a constructor for the given type |
 
 ### Modifiers
@@ -447,8 +449,8 @@ Create parameter declarations.
 
 ### Factory Methods
 
-| Method | Description |
-|--------|-------------|
+| Method                          | Description        |
+|---------------------------------|--------------------|
 | `For(string name, string type)` | Create a parameter |
 
 ### Configuration
@@ -479,8 +481,8 @@ Create generic type parameter declarations.
 
 ### Factory Methods
 
-| Method | Description |
-|--------|-------------|
+| Method             | Description             |
+|--------------------|-------------------------|
 | `For(string name)` | Create a type parameter |
 
 ### Constraints
@@ -508,8 +510,8 @@ Build method and property bodies.
 
 ### Factory Methods
 
-| Method | Description |
-|--------|-------------|
+| Method    | Description          |
+|-----------|----------------------|
 | `Empty()` | Create an empty body |
 
 ### Adding Statements
@@ -537,8 +539,8 @@ Create attribute declarations.
 
 ### Factory Methods
 
-| Method | Description |
-|--------|-------------|
+| Method             | Description         |
+|--------------------|---------------------|
 | `For(string name)` | Create an attribute |
 
 ### Arguments
@@ -570,10 +572,10 @@ Create XML documentation comments.
 
 ### Factory Methods
 
-| Method | Description |
-|--------|-------------|
-| `Create()` | Create empty documentation |
-| `WithSummary(string)` | Create with just a summary |
+| Method                   | Description                               |
+|--------------------------|-------------------------------------------|
+| `Create()`               | Create empty documentation                |
+| `WithSummary(string)`    | Create with just a summary                |
 | `From(XmlDocumentation)` | Create from existing parsed documentation |
 
 ### Content
@@ -604,13 +606,13 @@ Configure code emission.
 
 ### Properties
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `ValidationLevel` | `ValidationLevel` | None, Syntax, Semantic, Full |
-| `Indentation` | `string` | Indentation string (default: 4 spaces) |
-| `EndOfLine` | `string` | Line ending (default: `\n`) |
-| `HeaderComment` | `string` | Comment at top of file |
-| `LicenseHeader` | `string?` | License header text |
+| Property          | Type              | Description                            |
+|-------------------|-------------------|----------------------------------------|
+| `ValidationLevel` | `ValidationLevel` | None, Syntax, Semantic, Full           |
+| `Indentation`     | `string`          | Indentation string (default: 4 spaces) |
+| `EndOfLine`       | `string`          | Line ending (default: `\n`)            |
+| `HeaderComment`   | `string`          | Comment at top of file                 |
+| `LicenseHeader`   | `string?`         | License header text                    |
 
 ### Static Instances
 
@@ -633,12 +635,12 @@ var result = builder.Emit(options);
 
 ### ValidationLevel Enum
 
-| Value | Description |
-|-------|-------------|
-| `None` | No validation |
-| `Syntax` | Syntax validation only (default) |
+| Value      | Description                                |
+|------------|--------------------------------------------|
+| `None`     | No validation                              |
+| `Syntax`   | Syntax validation only (default)           |
 | `Semantic` | Semantic validation (requires compilation) |
-| `Full` | Full validation |
+| `Full`     | Full validation                            |
 
 ---
 
@@ -756,9 +758,11 @@ var method = MethodBuilder.Parse("public async Task<IEnumerable<Customer>> GetAl
 
 **RPL-1.5** (Reciprocal Public License) — Real reciprocity, no loopholes.
 
-You can use this code, modify it, and share it freely. But when you deploy it — internally or externally, as a service or within your company — you share your improvements back under the same license.
+You can use this code, modify it, and share it freely. But when you deploy it — internally or externally, as a service
+or within your company — you share your improvements back under the same license.
 
-Why? We believe if you benefit from this code, the community should benefit from your improvements. That's the deal we think is fair.
+Why? We believe if you benefit from this code, the community should benefit from your improvements. That's the deal we
+think is fair.
 
 **Personal research and experimentation? No obligations.** Go learn, explore, and build.
 

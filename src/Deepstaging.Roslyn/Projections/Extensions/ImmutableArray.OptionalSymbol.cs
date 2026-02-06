@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn;
 
 /// <summary>
@@ -15,10 +16,7 @@ public static class ImmutableArrayOptionalSymbolExtensions
         /// </summary>
         public OptionalSymbol<T> First()
         {
-            foreach (var item in source.Where(item => item.HasValue))
-            {
-                return item;
-            }
+            foreach (var item in source.Where(item => item.HasValue)) return item;
 
             return OptionalSymbol<T>.Empty();
         }
@@ -28,10 +26,7 @@ public static class ImmutableArrayOptionalSymbolExtensions
         /// </summary>
         public OptionalSymbol<T> First(Func<OptionalSymbol<T>, bool> predicate)
         {
-            foreach (var item in source.Where(item => item.HasValue && predicate(item)))
-            {
-                return item;
-            }
+            foreach (var item in source.Where(item => item.HasValue && predicate(item))) return item;
 
             return OptionalSymbol<T>.Empty();
         }
@@ -42,19 +37,17 @@ public static class ImmutableArrayOptionalSymbolExtensions
         public OptionalSymbol<T> Single()
         {
             var result = OptionalSymbol<T>.Empty();
-            bool found = false;
+            var found = false;
 
             foreach (var item in source)
-            {
                 if (item.HasValue)
                 {
                     if (found)
                         return OptionalSymbol<T>.Empty(); // More than one
-                    
+
                     result = item;
                     found = true;
                 }
-            }
 
             return result;
         }
@@ -65,19 +58,17 @@ public static class ImmutableArrayOptionalSymbolExtensions
         public OptionalSymbol<T> Single(Func<OptionalSymbol<T>, bool> predicate)
         {
             var result = OptionalSymbol<T>.Empty();
-            bool found = false;
+            var found = false;
 
             foreach (var item in source)
-            {
                 if (item.HasValue && predicate(item))
                 {
                     if (found)
                         return OptionalSymbol<T>.Empty(); // More than one match
-                    
+
                     result = item;
                     found = true;
                 }
-            }
 
             return result;
         }
@@ -87,11 +78,9 @@ public static class ImmutableArrayOptionalSymbolExtensions
         /// </summary>
         public OptionalSymbol<T> Last()
         {
-            for (int i = source.Length - 1; i >= 0; i--)
-            {
+            for (var i = source.Length - 1; i >= 0; i--)
                 if (source[i].HasValue)
                     return source[i];
-            }
             return OptionalSymbol<T>.Empty();
         }
 
@@ -100,11 +89,9 @@ public static class ImmutableArrayOptionalSymbolExtensions
         /// </summary>
         public OptionalSymbol<T> Last(Func<OptionalSymbol<T>, bool> predicate)
         {
-            for (int i = source.Length - 1; i >= 0; i--)
-            {
+            for (var i = source.Length - 1; i >= 0; i--)
                 if (source[i].HasValue && predicate(source[i]))
                     return source[i];
-            }
             return OptionalSymbol<T>.Empty();
         }
 
@@ -214,19 +201,17 @@ public readonly struct SymbolNameIndexerForOptional<T> where T : class, ISymbol
         get
         {
             var result = OptionalSymbol<T>.Empty();
-            bool found = false;
+            var found = false;
 
             foreach (var item in _source)
-            {
                 if (item.HasValue && item.Name == name)
                 {
                     if (found)
                         return OptionalSymbol<T>.Empty(); // Multiple matches
-                    
+
                     result = item;
                     found = true;
                 }
-            }
 
             return result;
         }

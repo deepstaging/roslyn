@@ -4,7 +4,8 @@ Test suite for the Deepstaging.Roslyn library, covering symbol querying, code em
 
 ## Overview
 
-Uses **TUnit** testing framework with fluent assertions. All tests extend `RoslynTestBase` which provides the `SymbolsFor()` helper for compiling inline C# code and querying symbols.
+Uses **TUnit** testing framework with fluent assertions. All tests extend `RoslynTestBase` which provides the
+`SymbolsFor()` helper for compiling inline C# code and querying symbols.
 
 ## Test Categories
 
@@ -21,22 +22,22 @@ var methods = SymbolsFor(code)
     .GetAll();
 ```
 
-| Test File | Coverage |
-|-----------|----------|
-| `MethodQuery.Tests.cs` | Method filtering (public, async, static) |
-| `PropertyQuery.Tests.cs` | Property queries and accessors |
-| `FieldQuery.Tests.cs` | Field symbol queries |
-| `ConstructorQuery.Tests.cs` | Constructor discovery |
-| `EventQuery.Tests.cs` | Event member queries |
-| `TypeQuery.Tests.cs` | Named type queries |
-| `ParameterQuery.Tests.cs` | Parameter inspection |
+| Test File                   | Coverage                                 |
+|-----------------------------|------------------------------------------|
+| `MethodQuery.Tests.cs`      | Method filtering (public, async, static) |
+| `PropertyQuery.Tests.cs`    | Property queries and accessors           |
+| `FieldQuery.Tests.cs`       | Field symbol queries                     |
+| `ConstructorQuery.Tests.cs` | Constructor discovery                    |
+| `EventQuery.Tests.cs`       | Event member queries                     |
+| `TypeQuery.Tests.cs`        | Named type queries                       |
+| `ParameterQuery.Tests.cs`   | Parameter inspection                     |
 
 ### Code Emission
 
 Tests in `Emit/` directory cover code generation builders:
 
 - Type builders
-- Method builders  
+- Method builders
 - Property builders
 - Field builders
 - Parameter options
@@ -76,8 +77,8 @@ public class MyTests : RoslynTestBase
 
 - **[Main README](../../README.md)** — Project overview
 - **[Core Toolkit](../Deepstaging.Roslyn/README.md)** — Library being tested
-  - [Queries](../Deepstaging.Roslyn/Docs/Queries.md) — Query API documentation
-  - [Projections](../Deepstaging.Roslyn/Docs/Projections.md) — Projection API documentation
-  - [Emit](../Deepstaging.Roslyn/Docs/Emit.md) — Emit API documentation
+    - [Queries](../Deepstaging.Roslyn/Docs/Queries.md) — Query API documentation
+    - [Projections](../Deepstaging.Roslyn/Docs/Projections.md) — Projection API documentation
+    - [Emit](../Deepstaging.Roslyn/Docs/Emit.md) — Emit API documentation
 - **[Testing Infrastructure](../Deepstaging.Roslyn.Testing/README.md)** — Test base classes and utilities
-  - [RoslynTestBase](../Deepstaging.Roslyn.Testing/Docs/RoslynTestBase.md) — Base class documentation
+    - [RoslynTestBase](../Deepstaging.Roslyn.Testing/Docs/RoslynTestBase.md) — Base class documentation

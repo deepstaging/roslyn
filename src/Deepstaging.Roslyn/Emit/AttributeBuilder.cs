@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Emit;
 
 /// <summary>
@@ -67,10 +68,7 @@ public readonly struct AttributeBuilder
     public AttributeBuilder WithArguments(params string[] values)
     {
         var builder = this;
-        foreach (var value in values)
-        {
-            builder = builder.WithArgument(value);
-        }
+        foreach (var value in values) builder = builder.WithArgument(value);
         return builder;
     }
 
@@ -122,25 +120,19 @@ public readonly struct AttributeBuilder
 
         // Add positional arguments
         foreach (var arg in _arguments)
-        {
             allArguments.Add(
                 SyntaxFactory.AttributeArgument(SyntaxFactory.ParseExpression(arg)));
-        }
 
         // Add named arguments
         foreach (var (name, value) in _namedArguments)
-        {
             allArguments.Add(
                 SyntaxFactory.AttributeArgument(SyntaxFactory.ParseExpression(value))
                     .WithNameEquals(SyntaxFactory.NameEquals(SyntaxFactory.IdentifierName(name))));
-        }
 
         if (allArguments.Count > 0)
-        {
             attribute = attribute.WithArgumentList(
                 SyntaxFactory.AttributeArgumentList(
                     SyntaxFactory.SeparatedList(allArguments)));
-        }
 
         return attribute;
     }

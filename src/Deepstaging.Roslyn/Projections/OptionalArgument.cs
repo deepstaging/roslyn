@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn;
 
 /// <summary>
@@ -187,7 +188,9 @@ public readonly struct OptionalArgument<TSource> : IProjection<TSource?>, IEquat
     /// Use this when you've already verified HasValue or within a Match/Map callback.
     /// </summary>
     /// <exception cref="InvalidOperationException">Thrown when value is not present.</exception>
-    public TSource Value => _hasValue && _value != null ? _value : throw new InvalidOperationException("Argument value is empty");
+    public TSource Value => _hasValue && _value != null
+        ? _value
+        : throw new InvalidOperationException("Argument value is empty");
 
     /// <summary>
     /// Pattern matching with discriminated union semantics.

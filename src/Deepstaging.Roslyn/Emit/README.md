@@ -2,7 +2,8 @@
 
 Fluent builders for generating C# code using Roslyn's SyntaxFactory.
 
-> **See also:** [Full Emit Documentation](../Docs/Emit.md) | [Queries](../Docs/Queries.md) | [Projections](../Docs/Projections.md) | [Roslyn Toolkit README](../README.md)
+> **See also:
+** [Full Emit Documentation](../Docs/Emit.md) | [Queries](../Docs/Queries.md) | [Projections](../Docs/Projections.md) | [Roslyn Toolkit README](../README.md)
 
 ## Quick Start
 
@@ -52,18 +53,19 @@ var service = TypeBuilder.Parse("public sealed class CustomerService : ICustomer
 
 ### What Parse Handles
 
-| Parsed from Signature | Added via Builder Methods |
-|-----------------------|---------------------------|
-| Name, type, return type | Method/property bodies |
-| Accessibility (public, private, etc.) | Attributes |
-| Modifiers (static, async, virtual, etc.) | XML documentation |
-| Parameters with modifiers and defaults | Namespace and usings |
-| Generic type parameters and constraints | Additional members |
-| Base types and interfaces | |
+| Parsed from Signature                    | Added via Builder Methods |
+|------------------------------------------|---------------------------|
+| Name, type, return type                  | Method/property bodies    |
+| Accessibility (public, private, etc.)    | Attributes                |
+| Modifiers (static, async, virtual, etc.) | XML documentation         |
+| Parameters with modifiers and defaults   | Namespace and usings      |
+| Generic type parameters and constraints  | Additional members        |
+| Base types and interfaces                |                           |
 
 ## Components
 
 ### Builders
+
 - **TypeBuilder** - Classes, interfaces, structs, records
 - **PropertyBuilder** - Auto-properties, expression-bodied, block-bodied
 - **MethodBuilder** - Instance, static, async methods
@@ -73,21 +75,25 @@ var service = TypeBuilder.Parse("public sealed class CustomerService : ICustomer
 - **BodyBuilder** - String-based statement composition
 
 ### Projections
+
 - **ValidEmit** - Guaranteed successful emission (non-null code & syntax)
 - **OptionalEmit** - May contain diagnostics or errors
 
 ### Configuration
+
 - **EmitOptions** - Formatting (indentation, line endings) and validation levels
 
 ## Three Builder Patterns
 
 ### 1. Parse + Customize (Natural syntax)
+
 ```csharp
 MethodBuilder.Parse("public async Task<string> FetchAsync(int id)")
     .WithBody(b => b.AddReturn("await _client.GetAsync(id)"))
 ```
 
 ### 2. Lambda Configuration (Concise)
+
 ```csharp
 .AddMethod("Process", method => method
     .WithReturnType("bool")
@@ -96,6 +102,7 @@ MethodBuilder.Parse("public async Task<string> FetchAsync(int id)")
 ```
 
 ### 3. Separate Builders (Composable)
+
 ```csharp
 var processMethod = MethodBuilder
     .For("Process")
@@ -110,11 +117,11 @@ typeBuilder.AddMethod(processMethod)
 
 The Emit API is the **write counterpart** to the read API:
 
-| Reading | Writing |
-|---------|---------|
-| TypeQuery | TypeBuilder |
-| ValidSymbol | ValidEmit |
-| String filters | String types |
+| Reading           | Writing           |
+|-------------------|-------------------|
+| TypeQuery         | TypeBuilder       |
+| ValidSymbol       | ValidEmit         |
+| String filters    | String types      |
 | Fluent, immutable | Fluent, immutable |
 
 ## Complete Documentation
@@ -132,29 +139,34 @@ See **[Emit.md](../Docs/Emit.md)** for comprehensive documentation with examples
 ✅ String-based body building (simple, maintainable)  
 ✅ Syntax validation (default, opt-out)  
 ✅ Generates valid, compilable C# code  
-✅ **Parse API** - Build from C# signature strings  
+✅ **Parse API** - Build from C# signature strings
 
 ## Status
 
-**Phase 1: MVP Complete** ✅  
+**Phase 1: MVP Complete** ✅
+
 - String-based type references
 - All core builders implemented
 - Tested and validated
 
-**Phase 1.5: Parse API** ✅  
+**Phase 1.5: Parse API** ✅
+
 - Parse C# signatures into builders
 - MethodBuilder.Parse(), PropertyBuilder.Parse(), FieldBuilder.Parse(), TypeBuilder.Parse()
 
-**Phase 2: Future**  
+**Phase 2: Future**
+
 - Symbol-based type references (TypeReference struct)
 - Compilation context support
 - Semantic validation
 
-**Phase 3: Future**  
+**Phase 3: Future**
+
 - Expression builder API (if needed)
 - Control flow helpers
 
-**Phase 4: Future**  
+**Phase 4: Future**
+
 - Auto-import inference
 - EditorConfig integration
 - Full C# feature coverage
@@ -163,9 +175,11 @@ See **[Emit.md](../Docs/Emit.md)** for comprehensive documentation with examples
 
 **RPL-1.5** (Reciprocal Public License) — Real reciprocity, no loopholes.
 
-You can use this code, modify it, and share it freely. But when you deploy it — internally or externally, as a service or within your company — you share your improvements back under the same license.
+You can use this code, modify it, and share it freely. But when you deploy it — internally or externally, as a service
+or within your company — you share your improvements back under the same license.
 
-Why? We believe if you benefit from this code, the community should benefit from your improvements. That's the deal we think is fair.
+Why? We believe if you benefit from this code, the community should benefit from your improvements. That's the deal we
+think is fair.
 
 **Personal research and experimentation? No obligations.** Go learn, explore, and build.
 

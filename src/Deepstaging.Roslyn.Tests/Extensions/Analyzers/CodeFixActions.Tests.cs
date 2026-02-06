@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Deepstaging.Roslyn.Tests.Extensions.Analyzers;
@@ -52,8 +53,8 @@ public class CodeFixActionsTests : RoslynTestBase
 
         var result = await ApplyCodeFixAction(source, expected,
             (document, typeDecl) => document.RemoveModifierAction(
-                typeDecl, 
-                Microsoft.CodeAnalysis.CSharp.SyntaxKind.PublicKeyword, 
+                typeDecl,
+                Microsoft.CodeAnalysis.CSharp.SyntaxKind.PublicKeyword,
                 "Remove 'public' modifier"));
 
         await Assert.That(result).IsTrue();
@@ -67,19 +68,19 @@ public class CodeFixActionsTests : RoslynTestBase
     public async Task AddUsingAction_AddsUsingDirective()
     {
         const string source = """
-            namespace TestApp
-            {
-                public class MyClass { }
-            }
-            """;
+                              namespace TestApp
+                              {
+                                  public class MyClass { }
+                              }
+                              """;
 
         const string expected = """
-            using System.Linq;
-            namespace TestApp
-            {
-                public class MyClass { }
-            }
-            """;
+                                using System.Linq;
+                                namespace TestApp
+                                {
+                                    public class MyClass { }
+                                }
+                                """;
 
         var result = await ApplyUsingCodeFixAction(source, expected, "System.Linq");
         await Assert.That(result).IsTrue();
@@ -89,12 +90,12 @@ public class CodeFixActionsTests : RoslynTestBase
     public async Task AddUsingAction_DoesNotDuplicateExistingUsing()
     {
         const string source = """
-            using System.Linq;
-            namespace TestApp
-            {
-                public class MyClass { }
-            }
-            """;
+                              using System.Linq;
+                              namespace TestApp
+                              {
+                                  public class MyClass { }
+                              }
+                              """;
 
         // Should remain unchanged
         var result = await ApplyUsingCodeFixAction(source, source, "System.Linq");
@@ -148,7 +149,7 @@ public class CodeFixActionsTests : RoslynTestBase
     private static async Task<bool> ApplyCodeFixAction(
         string source,
         string expected,
-        Func<Microsoft.CodeAnalysis.Document, ValidSyntax<ClassDeclarationSyntax>, Microsoft.CodeAnalysis.CodeActions.CodeAction> createAction)
+        Func<Document, ValidSyntax<ClassDeclarationSyntax>, Microsoft.CodeAnalysis.CodeActions.CodeAction> createAction)
     {
         var document = CreateDocument(source);
         var root = await document.GetSyntaxRootAsync();
@@ -210,27 +211,29 @@ public class CodeFixActionsTests : RoslynTestBase
         return actualText == expectedText;
     }
 
-    private static Microsoft.CodeAnalysis.Document CreateDocument(string source)
+    private static Document CreateDocument(string source)
     {
-        var projectId = Microsoft.CodeAnalysis.ProjectId.CreateNewId();
-        var documentId = Microsoft.CodeAnalysis.DocumentId.CreateNewId(projectId);
+        var projectId = ProjectId.CreateNewId();
+        var documentId = DocumentId.CreateNewId(projectId);
 
-        var solution = new Microsoft.CodeAnalysis.AdhocWorkspace()
+        var solution = new AdhocWorkspace()
             .CurrentSolution
             .AddProject(projectId, "TestProject", "TestProject", LanguageNames.CSharp)
-            .WithProjectParseOptions(projectId, 
+            .WithProjectParseOptions(projectId,
                 new Microsoft.CodeAnalysis.CSharp.CSharpParseOptions(
                     Microsoft.CodeAnalysis.CSharp.LanguageVersion.CSharp14))
-            .AddMetadataReference(projectId, 
-                Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(object).Assembly.Location))
-            .AddDocument(documentId, "Test.cs", 
+            .AddMetadataReference(projectId,
+                MetadataReference.CreateFromFile(typeof(object).Assembly.Location))
+            .AddDocument(documentId, "Test.cs",
                 Microsoft.CodeAnalysis.Text.SourceText.From(source));
 
         return solution.GetDocument(documentId)!;
     }
 
-    private static string Normalize(string text) => 
-        text.Replace("\r\n", "\n").Replace("\r", "\n").Trim();
+    private static string Normalize(string text)
+    {
+        return text.Replace("\r\n", "\n").Replace("\r", "\n").Trim();
+    }
 
     #endregion
 }

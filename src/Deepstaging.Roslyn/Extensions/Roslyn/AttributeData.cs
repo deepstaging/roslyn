@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn;
 
 /// <summary>
@@ -23,18 +24,22 @@ public static class AttributeDataExtensions
         /// </summary>
         /// <typeparam name="TAttribute"></typeparam>
         /// <returns></returns>
-        public bool Is<TAttribute>() where TAttribute : Attribute =>
-            attr.AttributeClass?.ToDisplayString() == typeof(TAttribute).FullName;
+        public bool Is<TAttribute>() where TAttribute : Attribute
+        {
+            return attr.AttributeClass?.ToDisplayString() == typeof(TAttribute).FullName;
+        }
 
         /// <summary>
         /// 
         /// </summary>
         /// <typeparam name="TAttribute"></typeparam>
         /// <returns></returns>
-        public OptionalAttribute As<TAttribute>() where TAttribute : Attribute =>
-            attr.Is<TAttribute>()
+        public OptionalAttribute As<TAttribute>() where TAttribute : Attribute
+        {
+            return attr.Is<TAttribute>()
                 ? OptionalAttribute.WithValue(attr)
                 : OptionalAttribute.Empty();
+        }
 
         /// <summary>
         /// Gets a named argument value from an attribute.
@@ -43,8 +48,10 @@ public static class AttributeDataExtensions
         /// </summary>
         /// <typeparam name="T">The type to convert the value to.</typeparam>
         /// <param name="name">The name of the named argument.</param>
-        public OptionalArgument<T> GetNamedArgument<T>(string name) =>
-            GetArgument<T>(attr.NamedArguments.FirstOrDefault(kvp => kvp.Key == name).Value);
+        public OptionalArgument<T> GetNamedArgument<T>(string name)
+        {
+            return GetArgument<T>(attr.NamedArguments.FirstOrDefault(kvp => kvp.Key == name).Value);
+        }
 
         /// <summary>
         /// Gets a constructor argument value at the specified index.
@@ -52,10 +59,12 @@ public static class AttributeDataExtensions
         /// </summary>
         /// <typeparam name="T">The type to convert the value to.</typeparam>
         /// <param name="index">The zero-based index of the constructor argument.</param>
-        public OptionalArgument<T> GetConstructorArgument<T>(int index) =>
-            attr.ConstructorArguments.Length > index
+        public OptionalArgument<T> GetConstructorArgument<T>(int index)
+        {
+            return attr.ConstructorArguments.Length > index
                 ? GetArgument<T>(attr.ConstructorArguments[index])
                 : OptionalArgument<T>.Empty();
+        }
     }
 
     private static OptionalArgument<T> GetArgument<T>(TypedConstant typedConstant)
@@ -76,7 +85,7 @@ public static class AttributeDataExtensions
                 .ToArray();
 
             var typedArray = Array.CreateInstance(elementType, values.Length);
-            for (int i = 0; i < values.Length; i++)
+            for (var i = 0; i < values.Length; i++)
                 typedArray.SetValue(values[i], i);
 
             if (typedArray is T result)

@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn;
 
 /// <summary>
@@ -17,7 +18,7 @@ public static class ProjectedNamespaceSymbolExtensions
         {
             if (!ns.HasValue)
                 yield break;
-            
+
             foreach (var type in ns.Symbol!.GetTypeMembers())
                 yield return OptionalSymbol<INamedTypeSymbol>.WithValue(type);
         }
@@ -30,7 +31,7 @@ public static class ProjectedNamespaceSymbolExtensions
         {
             if (!ns.HasValue)
                 return OptionalSymbol<INamedTypeSymbol>.Empty();
-            
+
             var types = ns.Symbol!.GetTypeMembers(typeName).ToArray();
             return types.Length == 1
                 ? OptionalSymbol<INamedTypeSymbol>.WithValue(types[0])
@@ -41,8 +42,10 @@ public static class ProjectedNamespaceSymbolExtensions
         /// Gets a named type by name from this namespace.
         /// Throws if namespace is empty or type not found.
         /// </summary>
-        public ValidSymbol<INamedTypeSymbol> RequireNamedType(string typeName) =>
-            ns.GetNamedType(typeName).ValidateOrThrow();
+        public ValidSymbol<INamedTypeSymbol> RequireNamedType(string typeName)
+        {
+            return ns.GetNamedType(typeName).ValidateOrThrow();
+        }
 
         /// <summary>
         /// Gets all child namespaces declared within this namespace (non-recursive).
@@ -52,7 +55,7 @@ public static class ProjectedNamespaceSymbolExtensions
         {
             if (!ns.HasValue)
                 yield break;
-            
+
             foreach (var childNs in ns.Symbol!.GetNamespaceMembers())
                 yield return OptionalSymbol<INamespaceSymbol>.WithValue(childNs);
         }
@@ -65,11 +68,11 @@ public static class ProjectedNamespaceSymbolExtensions
         {
             if (!ns.HasValue)
                 return OptionalSymbol<INamespaceSymbol>.Empty();
-            
+
             var namespaces = ns.Symbol!.GetNamespaceMembers()
                 .Where(n => n.Name == namespaceName)
                 .ToArray();
-            
+
             return namespaces.Length == 1
                 ? OptionalSymbol<INamespaceSymbol>.WithValue(namespaces[0])
                 : OptionalSymbol<INamespaceSymbol>.Empty();
@@ -79,15 +82,19 @@ public static class ProjectedNamespaceSymbolExtensions
         /// Gets a child namespace by name.
         /// Throws if namespace is empty or child not found.
         /// </summary>
-        public ValidSymbol<INamespaceSymbol> RequireNamespace(string namespaceName) =>
-            ns.GetNamespace(namespaceName).ValidateOrThrow();
+        public ValidSymbol<INamespaceSymbol> RequireNamespace(string namespaceName)
+        {
+            return ns.GetNamespace(namespaceName).ValidateOrThrow();
+        }
 
         /// <summary>
         /// Checks if this is the global namespace.
         /// Returns false if namespace is empty.
         /// </summary>
-        public bool IsGlobalNamespace() =>
-            ns.HasValue && ns.Symbol!.IsGlobalNamespace;
+        public bool IsGlobalNamespace()
+        {
+            return ns.HasValue && ns.Symbol!.IsGlobalNamespace;
+        }
 
         /// <summary>
         /// Gets the containing namespace if not the global namespace.
