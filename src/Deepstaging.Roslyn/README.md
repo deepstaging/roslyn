@@ -41,14 +41,10 @@ TypeBuilder
 
 ## Features
 
-- **[Queries](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/Docs/Queries.md)** - Fluent
-  builders for finding types, methods, properties, fields, constructors, events, and parameters
-- **[Projections](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/Docs/Projections.md)** -
-  Optional/validated wrappers that make null-checking less painful
-- **[Emit](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/Docs/Emit.md)** - Fluent builders for
-  generating compilable C# code
-- **[Extensions](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/Docs/Extensions.md)** -
-  Convenience methods for common Roslyn operations
+- **[Queries](https://deepstaging.github.io/roslyn/api/queries/)** - Fluent builders for finding types, methods, properties, fields, constructors, events, and parameters
+- **[Projections](https://deepstaging.github.io/roslyn/api/projections/)** - Optional/validated wrappers that make null-checking less painful
+- **[Emit](https://deepstaging.github.io/roslyn/api/emit/)** - Fluent builders for generating compilable C# code
+- **[Extensions](https://deepstaging.github.io/roslyn/api/extensions/)** - Convenience methods for common Roslyn operations
 
 ## Why?
 
@@ -116,16 +112,7 @@ if (result.IsValid(out var validEmit))
 
 ## Documentation
 
-Each feature has its own doc file with examples:
-
-- **[Queries.md](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/Docs/Queries.md)** - How to use
-  each query builder
-- **[Projections.md](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/Docs/Projections.md)** -
-  OptionalSymbol, ValidSymbol, and friends
-- **[Emit.md](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/Docs/Emit.md)** - Fluent builders
-  for generating C# code
-- **[Extensions.md](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/Docs/Extensions.md)** -
-  Helper methods for common tasks
+See the **[full documentation site](https://deepstaging.github.io/roslyn)** for detailed guides and API reference.
 
 The test project is also useful documentation - every test shows real usage.
 
@@ -144,17 +131,11 @@ get valid CompilationUnitSyntax you can use with Roslyn's APIs.
 - String-based filters → String-based type references
 - Fluent, immutable → Fluent, immutable
 
-## Related Documentation
+## Related Packages
 
-- **[Main README](https://github.com/deepstaging/roslyn/blob/main/README.md)** - Project overview and effects system
-- **[Testing](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/README.md)** - Test
-  infrastructure for Roslyn components
-- **[Scriban Templates](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Scriban/README.md)** -
-  Template infrastructure for source generators
-- **[Workspace / Code Fixes](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Workspace/README.md)
-  ** - Code fix provider infrastructure
-- **[Emit API Overview](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/Emit/README.md)** - Quick
-  reference for the Emit API
+- **[Testing](https://deepstaging.github.io/roslyn/packages/testing/)** - Test infrastructure for Roslyn components
+- **[Scriban Templates](https://deepstaging.github.io/roslyn/packages/scriban/)** - Template infrastructure for source generators
+- **[Workspace / Code Fixes](https://deepstaging.github.io/roslyn/packages/workspace/)** - Code fix provider infrastructure
 
 ## License
 

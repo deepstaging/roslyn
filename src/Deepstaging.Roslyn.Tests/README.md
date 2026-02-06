@@ -75,10 +75,6 @@ public class MyTests : RoslynTestBase
 
 ## Related Documentation
 
-- **[Main README](../../README.md)** — Project overview
+- **[Documentation Site](https://deepstaging.github.io/roslyn/)** — Full API reference
 - **[Core Toolkit](../Deepstaging.Roslyn/README.md)** — Library being tested
-    - [Queries](../Deepstaging.Roslyn/Docs/Queries.md) — Query API documentation
-    - [Projections](../Deepstaging.Roslyn/Docs/Projections.md) — Projection API documentation
-    - [Emit](../Deepstaging.Roslyn/Docs/Emit.md) — Emit API documentation
 - **[Testing Infrastructure](../Deepstaging.Roslyn.Testing/README.md)** — Test base classes and utilities
-    - [RoslynTestBase](../Deepstaging.Roslyn.Testing/Docs/RoslynTestBase.md) — Base class documentation

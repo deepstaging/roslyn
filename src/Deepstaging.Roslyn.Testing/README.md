@@ -2,10 +2,9 @@
 
 Test utilities for Roslyn analyzers, generators, and code fixes.
 
-📚 **[Full Documentation](https://deepstaging.github.io/roslyn)**
+📚 **[Full Documentation](https://deepstaging.github.io/roslyn/packages/testing/)**
 
-> **See also:
-** [RoslynTestBase](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/RoslynTestBase.md) | [Reference Configuration](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/ReferenceConfiguration.md) | [Roslyn Toolkit](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn/README.md)
+> **See also:** [RoslynTestBase](https://deepstaging.github.io/roslyn/testing/roslyn-test-base/) | [Reference Configuration](https://deepstaging.github.io/roslyn/testing/reference-configuration/) | [Roslyn Toolkit](https://deepstaging.github.io/roslyn/)
 
 ## Quick Start
 
@@ -78,30 +77,16 @@ public static void Init() =>
 
 Each entry point returns a test context with fluent assertions:
 
-- *
-  *[SymbolTestContext](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/SymbolTestContext.md)
-  ** — Query symbols from compiled source
-- *
-  *[AnalyzerTestContext](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/AnalyzerTestContext.md)
-  ** — Assert on analyzer diagnostics
-- *
-  *[GeneratorTestContext](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/GeneratorTestContext.md)
-  ** — Assert on generator output
-- *
-  *[CodeFixTestContext](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/CodeFixTestContext.md)
-  ** — Assert on code fix transformations
-- *
-  *[TemplateTestContext](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/TemplateTestContext.md)
-  ** — Assert on template rendering
+- **[SymbolTestContext](https://deepstaging.github.io/roslyn/testing/symbol-test-context/)** — Query symbols from compiled source
+- **[AnalyzerTestContext](https://deepstaging.github.io/roslyn/testing/analyzer-test-context/)** — Assert on analyzer diagnostics
+- **[GeneratorTestContext](https://deepstaging.github.io/roslyn/testing/generator-test-context/)** — Assert on generator output
+- **[CodeFixTestContext](https://deepstaging.github.io/roslyn/testing/codefix-test-context/)** — Assert on code fix transformations
+- **[TemplateTestContext](https://deepstaging.github.io/roslyn/testing/template-test-context/)** — Assert on template rendering
 
 ### Guides
 
-- *
-  *[RoslynTestBase](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/RoslynTestBase.md)
-  ** — Full API reference for the base class
-- *
-  *[Reference Configuration](https://github.com/deepstaging/roslyn/blob/main/src/Deepstaging.Roslyn.Testing/Docs/ReferenceConfiguration.md)
-  ** — Configure assembly references for tests
+- **[RoslynTestBase](https://deepstaging.github.io/roslyn/testing/roslyn-test-base/)** — Full API reference for the base class
+- **[Reference Configuration](https://deepstaging.github.io/roslyn/testing/reference-configuration/)** — Configure assembly references for tests
 
 ---
 
