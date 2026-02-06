@@ -38,7 +38,7 @@ public static class SourceProductionContextExtensions
         /// </summary>
         /// <param name="emit">The emit result containing code or diagnostics.</param>
         /// <param name="hintName">Unique hint name for the generated file.</param>
-        public void AddEmit(OptionalEmit emit, string hintName)
+        public void AddSourceFrom(OptionalEmit emit, string hintName)
         {
             if (emit.IsNotValid(out var validCode))
             {
