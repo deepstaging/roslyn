@@ -21,138 +21,18 @@ Your `.csproj` should target `netstandard2.0` for Roslyn compatibility:
 
 ## Your First Generator
 
-Here's an incremental generator that finds classes with `[AutoNotify]` and generates property change notifications. This example follows the recommended **Projection Pattern** with separate model, projection, and writer layers.
-
-### The Attribute
+Here's a complete incremental generator that finds classes with `[AutoNotify]` and generates property change notifications:
 
 ```csharp
+using Deepstaging.Roslyn;
+using Deepstaging.Roslyn.Emit;
+using Deepstaging.Roslyn.Generators;
+using Microsoft.CodeAnalysis;
+
 namespace MyProject;
 
 [AttributeUsage(AttributeTargets.Class)]
 public class AutoNotifyAttribute : Attribute;
-```
-
-### The Model
-
-Models are simple records that capture the data needed for code generation:
-
-```csharp
-namespace MyProject.Projection.Models;
-
-public sealed record AutoNotifyModel
-{
-    public required string Namespace { get; init; }
-    public required string TypeName { get; init; }
-    public required Accessibility Accessibility { get; init; }
-    public required ImmutableArray<NotifyPropertyModel> Properties { get; init; }
-}
-
-public sealed record NotifyPropertyModel
-{
-    public required string PropertyName { get; init; }
-    public required string FieldName { get; init; }
-    public required string TypeName { get; init; }
-}
-```
-
-### The Projection
-
-Projections query symbols and build models. This layer is the single source of truth for interpreting attributes:
-
-```csharp
-using Deepstaging.Roslyn;
-
-namespace MyProject.Projection;
-
-public static class AutoNotify
-{
-    extension(ValidSymbol<INamedTypeSymbol> symbol)
-    {
-        public AutoNotifyModel? QueryAutoNotify()
-        {
-            var properties = symbol.QueryNotifyProperties();
-            if (properties.IsEmpty)
-                return null;
-
-            return new AutoNotifyModel
-            {
-                Namespace = symbol.Namespace ?? "",
-                TypeName = symbol.Name,
-                Accessibility = symbol.Accessibility,
-                Properties = properties
-            };
-        }
-    }
-
-    private static ImmutableArray<NotifyPropertyModel> QueryNotifyProperties(
-        this ValidSymbol<INamedTypeSymbol> symbol)
-    {
-        return symbol.QueryFields()
-            .ThatAreInstance()
-            .ThatArePrivate()
-            .Where(f => f.Name.StartsWith("_"))
-            .Select(field => new NotifyPropertyModel
-            {
-                PropertyName = field.Name.TrimStart('_').ToPascalCase(),
-                FieldName = field.Name,
-                TypeName = field.Type?.FullyQualifiedName!
-            });
-    }
-}
-```
-
-### The Writer
-
-Writers use the Emit API to generate code from models:
-
-```csharp
-using Deepstaging.Roslyn.Emit;
-
-namespace MyProject.Generators.Writers;
-
-public static class AutoNotifyWriter
-{
-    extension(AutoNotifyModel model)
-    {
-        public OptionalEmit WriteAutoNotifyClass()
-        {
-            return TypeBuilder
-                .Class(model.TypeName)
-                .AsPartial()
-                .InNamespace(model.Namespace)
-                .WithAccessibility(model.Accessibility)
-                .AddUsing("System.ComponentModel")
-                .Implements("INotifyPropertyChanged")
-                .AddEvent("PropertyChanged", "PropertyChangedEventHandler?")
-                .AddMethod(MethodBuilder.Parse("protected void OnPropertyChanged(string name)")
-                    .WithBody(b => b.AddStatement(
-                        "PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name))")))
-                .WithEach(model.Properties, AddProperty)
-                .Emit();
-        }
-    }
-
-    private static TypeBuilder AddProperty(TypeBuilder type, NotifyPropertyModel prop)
-    {
-        return type.AddProperty(prop.PropertyName, prop.TypeName, p => p
-            .WithGetter(b => b.AddStatement($"return {prop.FieldName}"))
-            .WithSetter(b => b
-                .AddStatement($"{prop.FieldName} = value")
-                .AddStatement($"OnPropertyChanged(nameof({prop.PropertyName}))")));
-    }
-}
-```
-
-### The Generator
-
-The generator ties it all together with minimal code:
-
-```csharp
-using Deepstaging.Roslyn.Generators;
-using MyProject.Projection;
-using MyProject.Generators.Writers;
-
-namespace MyProject.Generators;
 
 [Generator]
 public sealed class AutoNotifyGenerator : IIncrementalGenerator
@@ -165,6 +45,50 @@ public sealed class AutoNotifyGenerator : IIncrementalGenerator
         context.RegisterSourceOutput(models, static (ctx, model) => model
             .WriteAutoNotifyClass()
             .RegisterSourceWith(ctx, HintName.From(model.Namespace, model.TypeName)));
+    }
+}
+
+internal record AutoNotifyModel(string Namespace, string TypeName, ImmutableArray<FieldModel> Fields);
+internal record FieldModel(string FieldName, string PropertyName, string TypeName);
+
+file static class AutoNotifyExtensions
+{
+    extension(ValidSymbol<INamedTypeSymbol> symbol)
+    {
+        public AutoNotifyModel QueryAutoNotify() => new(
+            symbol.Namespace ?? "Global",
+            symbol.Name,
+            symbol.QueryFields()
+                .ThatArePrivate()
+                .ThatAreInstance()
+                .Where(f => f.Name.StartsWith("_"))
+                .Select(f => new FieldModel(
+                    f.Name,
+                    f.Name.TrimStart('_').ToPascalCase(),
+                    f.Type?.FullyQualifiedName ?? "object")));
+    }
+
+    extension(AutoNotifyModel model)
+    {
+        public OptionalEmit WriteAutoNotifyClass() => TypeBuilder
+            .Class(model.TypeName)
+            .AsPartial()
+            .InNamespace(model.Namespace)
+            .AddUsing("System.ComponentModel")
+            .Implements("INotifyPropertyChanged")
+            .AddEvent("PropertyChanged", "PropertyChangedEventHandler?")
+            .AddMethod("OnPropertyChanged", "void", m => m
+                .AsProtected()
+                .AddParameter("name", "string")
+                .WithBody(b => b.AddStatement(
+                    "PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name))")))
+            .WithEach(model.Fields, (type, field) => type
+                .AddProperty(field.PropertyName, field.TypeName, p => p
+                    .WithGetter(b => b.AddStatement($"return {field.FieldName}"))
+                    .WithSetter(b => b
+                        .AddStatement($"{field.FieldName} = value")
+                        .AddStatement($"OnPropertyChanged(nameof({field.PropertyName}))"))))
+            .Emit();
     }
 }
 ```
