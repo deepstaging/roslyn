@@ -6,6 +6,8 @@ on:
       - main
     tags:
       - 'v*'
+    paths:
+      - 'src/**'
   workflow_dispatch:
     inputs:
       version-suffix:
