@@ -5,6 +5,8 @@ namespace Deepstaging.Roslyn.Tests.Extensions.Roslyn;
 
 public class ISymbolTests : RoslynTestBase
 {
+    #region Accessibility Checks
+
     [Test]
     public async Task Can_check_if_symbol_is_public()
     {
@@ -58,6 +60,10 @@ public class ISymbolTests : RoslynTestBase
         await Assert.That(instanceMethod.IsStatic()).IsFalse();
     }
 
+    #endregion
+
+    #region Attribute Access
+
     [Test]
     public async Task Can_get_attributes_by_name()
     {
@@ -101,4 +107,6 @@ public class ISymbolTests : RoslynTestBase
         await Assert.That(oldClass.IsObsolete()).IsTrue();
         await Assert.That(newClass.IsObsolete()).IsFalse();
     }
+
+    #endregion
 }

@@ -5,6 +5,8 @@ namespace Deepstaging.Roslyn.Tests.Emit;
 
 public class MethodBuilderTests : RoslynTestBase
 {
+    #region Basic Method Emission
+
     [Test]
     public async Task Can_emit_simple_method()
     {
@@ -61,6 +63,10 @@ public class MethodBuilderTests : RoslynTestBase
         await Assert.That(result.Success).IsTrue();
         await Assert.That(result.Code).Contains("public async Task<string> FetchDataAsync()");
     }
+
+    #endregion
+
+    #region Method Modifiers
 
     [Test]
     public async Task Can_emit_static_method()
@@ -138,6 +144,10 @@ public class MethodBuilderTests : RoslynTestBase
         await Assert.That(result.Code).Contains("public abstract void DoWork();");
     }
 
+    #endregion
+
+    #region Parameters
+
     [Test]
     public async Task Can_emit_method_with_parameters()
     {
@@ -180,6 +190,10 @@ public class MethodBuilderTests : RoslynTestBase
         await Assert.That(result.Success).IsTrue();
         await Assert.That(result.Code).Contains("public void Process(string value = null)");
     }
+
+    #endregion
+
+    #region Method Bodies
 
     [Test]
     public async Task Can_emit_method_with_multiline_body()
@@ -224,6 +238,10 @@ public class MethodBuilderTests : RoslynTestBase
         await Assert.That(result.Code).Contains("public void Execute()");
     }
 
+    #endregion
+
+    #region Expression Body
+
     [Test]
     public async Task Can_append_to_expression_body()
     {
@@ -265,4 +283,35 @@ public class MethodBuilderTests : RoslynTestBase
         await Assert.That(result.Success).IsTrue();
         await Assert.That(result.Code).Contains("=> liftEff(() => 42).WithActivity()");
     }
+
+    [Test]
+    public async Task WithExpressionBody_auto_strips_trailing_semicolon()
+    {
+        var result = TypeBuilder
+            .Class("Service")
+            .AddMethod("GetValue", method => method
+                .WithReturnType("int")
+                .WithExpressionBody("42;"))  // With trailing semicolon
+            .Emit();
+
+        await Assert.That(result.Success).IsTrue();
+        await Assert.That(result.Code).Contains("=> 42;");  // Should have exactly one semicolon
+        await Assert.That(result.Code).DoesNotContain("=> 42;;");  // Should NOT have double semicolon
+    }
+
+    [Test]
+    public async Task WithExpressionBody_handles_expression_without_semicolon()
+    {
+        var result = TypeBuilder
+            .Class("Service")
+            .AddMethod("GetValue", method => method
+                .WithReturnType("int")
+                .WithExpressionBody("42"))  // Without trailing semicolon
+            .Emit();
+
+        await Assert.That(result.Success).IsTrue();
+        await Assert.That(result.Code).Contains("=> 42;");
+    }
+
+    #endregion
 }

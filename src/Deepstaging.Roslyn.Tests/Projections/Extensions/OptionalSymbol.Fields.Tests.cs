@@ -5,6 +5,8 @@ namespace Deepstaging.Roslyn.Tests.Projections.Extensions;
 
 public class OptionalSymbolFieldsTests : RoslynTestBase
 {
+    #region Field Type Access
+
     [Test]
     public async Task GetFieldType_returns_field_type()
     {
@@ -26,6 +28,10 @@ public class OptionalSymbolFieldsTests : RoslynTestBase
         await Assert.That(fieldType.HasValue).IsTrue();
         await Assert.That(fieldType.Name).IsEqualTo("Int32");
     }
+
+    #endregion
+
+    #region Field Modifier Checks
 
     [Test]
     public async Task IsConstField_detects_const_fields()
@@ -88,4 +94,6 @@ public class OptionalSymbolFieldsTests : RoslynTestBase
         await Assert.That(staticField.IsStatic).IsTrue();
         await Assert.That(instanceField.IsStatic).IsFalse();
     }
+
+    #endregion
 }

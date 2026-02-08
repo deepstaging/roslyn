@@ -8,24 +8,20 @@ namespace Deepstaging.Roslyn.Emit;
 /// Supports string-based statement composition with escape hatches for complex scenarios.
 /// Immutable - each method returns a new instance.
 /// </summary>
-public readonly struct BodyBuilder
+public record struct BodyBuilder
 {
-    private readonly ImmutableArray<StatementSyntax> _statements;
+    /// <summary>Gets the statements in the body.</summary>
+    public ImmutableArray<StatementSyntax> Statements { get; init; }
 
-    private BodyBuilder(ImmutableArray<StatementSyntax> statements)
-    {
-        _statements = statements.IsDefault ? ImmutableArray<StatementSyntax>.Empty : statements;
-    }
+    /// <summary>Initializes a new instance of the BodyBuilder.</summary>
+    public BodyBuilder() { }
 
     #region Factory Methods
 
     /// <summary>
     /// Creates an empty body builder.
     /// </summary>
-    public static BodyBuilder Empty()
-    {
-        return new BodyBuilder(ImmutableArray<StatementSyntax>.Empty);
-    }
+    public static BodyBuilder Empty() => new();
 
     #endregion
 
@@ -51,7 +47,8 @@ public readonly struct BodyBuilder
         var code = needsSemicolon ? trimmed + ";" : trimmed;
         var statementSyntax = SyntaxFactory.ParseStatement(code);
 
-        return new BodyBuilder(_statements.Add(statementSyntax));
+        var statements = Statements.IsDefault ? [] : Statements;
+        return this with { Statements = statements.Add(statementSyntax) };
     }
 
     /// <summary>
@@ -74,7 +71,8 @@ public readonly struct BodyBuilder
         if (block == null)
             return this;
 
-        return new BodyBuilder(_statements.AddRange(block.Statements));
+        var stmts = Statements.IsDefault ? [] : Statements;
+        return this with { Statements = stmts.AddRange(block.Statements) };
     }
 
     /// <summary>
@@ -85,7 +83,8 @@ public readonly struct BodyBuilder
     {
         var returnStatement = SyntaxFactory.ReturnStatement(
             SyntaxFactory.ParseExpression(expression));
-        return new BodyBuilder(_statements.Add(returnStatement));
+        var statements = Statements.IsDefault ? [] : Statements;
+        return this with { Statements = statements.Add(returnStatement) };
     }
 
     /// <summary>
@@ -94,7 +93,8 @@ public readonly struct BodyBuilder
     public BodyBuilder AddReturn()
     {
         var returnStatement = SyntaxFactory.ReturnStatement();
-        return new BodyBuilder(_statements.Add(returnStatement));
+        var statements = Statements.IsDefault ? [] : Statements;
+        return this with { Statements = statements.Add(returnStatement) };
     }
 
     /// <summary>
@@ -105,7 +105,8 @@ public readonly struct BodyBuilder
     {
         var throwStatement = SyntaxFactory.ThrowStatement(
             SyntaxFactory.ParseExpression(expression));
-        return new BodyBuilder(_statements.Add(throwStatement));
+        var statements = Statements.IsDefault ? [] : Statements;
+        return this with { Statements = statements.Add(throwStatement) };
     }
 
     /// <summary>
@@ -119,7 +120,8 @@ public readonly struct BodyBuilder
         var ifStatement = SyntaxFactory.IfStatement(
             SyntaxFactory.ParseExpression(condition),
             body.Build());
-        return new BodyBuilder(_statements.Add(ifStatement));
+        var statements = Statements.IsDefault ? [] : Statements;
+        return this with { Statements = statements.Add(ifStatement) };
     }
 
     /// <summary>
@@ -137,7 +139,8 @@ public readonly struct BodyBuilder
             SyntaxFactory.ParseExpression(condition),
             ifBody.Build(),
             SyntaxFactory.ElseClause(elseBody.Build()));
-        return new BodyBuilder(_statements.Add(ifStatement));
+        var statements = Statements.IsDefault ? [] : Statements;
+        return this with { Statements = statements.Add(ifStatement) };
     }
 
     /// <summary>
@@ -156,7 +159,8 @@ public readonly struct BodyBuilder
             SyntaxFactory.Identifier(variableName),
             SyntaxFactory.ParseExpression(collection),
             body.Build());
-        return new BodyBuilder(_statements.Add(forEachStatement));
+        var statements = Statements.IsDefault ? [] : Statements;
+        return this with { Statements = statements.Add(forEachStatement) };
     }
 
     /// <summary>
@@ -166,7 +170,36 @@ public readonly struct BodyBuilder
     /// <param name="statement">The statement syntax to add.</param>
     public BodyBuilder AddCustom(StatementSyntax statement)
     {
-        return new BodyBuilder(_statements.Add(statement));
+        var statements = Statements.IsDefault ? [] : Statements;
+        return this with { Statements = statements.Add(statement) };
+    }
+
+    /// <summary>
+    /// Adds statements wrapped in a preprocessor directive (#if/#endif).
+    /// </summary>
+    /// <param name="directive">The directive condition (e.g., Directives.Net6OrGreater).</param>
+    /// <param name="configureBody">Configuration callback for the conditional statements.</param>
+    /// <example>
+    /// <code>
+    /// BodyBuilder.Empty()
+    ///     .AddStatement("DoSomething()")
+    ///     .When(Directives.Net6OrGreater, b => b
+    ///         .AddStatement("DoNet6Thing()"))
+    ///     .AddStatement("DoSomethingElse()");
+    /// </code>
+    /// </example>
+    public BodyBuilder When(Directive directive, Func<BodyBuilder, BodyBuilder> configureBody)
+    {
+        var conditionalBody = configureBody(Empty());
+        if (conditionalBody.IsEmpty)
+            return this;
+
+        var wrappedStatements = DirectiveHelper.WrapStatementsInDirective(
+            conditionalBody.Statements,
+            directive);
+
+        var statements = Statements.IsDefault ? [] : Statements;
+        return this with { Statements = statements.AddRange(wrappedStatements) };
     }
 
     #endregion
@@ -179,13 +212,13 @@ public readonly struct BodyBuilder
     /// </summary>
     internal BlockSyntax Build()
     {
-        return SyntaxFactory.Block(_statements);
+        return SyntaxFactory.Block(Statements.IsDefault ? [] : Statements);
     }
 
     /// <summary>
     /// Gets a value indicating whether the body is empty (no statements).
     /// </summary>
-    public bool IsEmpty => _statements.IsEmpty;
+    public readonly bool IsEmpty => Statements.IsDefault || Statements.IsEmpty;
 
     #endregion
 }

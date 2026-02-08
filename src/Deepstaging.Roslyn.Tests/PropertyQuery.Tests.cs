@@ -5,6 +5,8 @@ namespace Deepstaging.Roslyn.Tests;
 
 public class PropertyQueryTests : RoslynTestBase
 {
+    #region Accessibility Filtering
+
     [Test]
     public async Task Can_filter_public_properties()
     {
@@ -25,6 +27,10 @@ public class PropertyQueryTests : RoslynTestBase
         await Assert.That(properties.Any(p => p.Value.Name == "PublicProp")).IsTrue();
     }
 
+    #endregion
+
+    #region Read-Only Filtering
+
     [Test]
     public async Task Can_filter_readonly_properties()
     {
@@ -44,6 +50,10 @@ public class PropertyQueryTests : RoslynTestBase
 
         await Assert.That(readonlyProps.Any(p => p.Value.Name == "ReadOnlyProp")).IsTrue();
     }
+
+    #endregion
+
+    #region Readability and Writability
 
     [Test]
     public async Task Can_filter_readable_properties()
@@ -88,4 +98,6 @@ public class PropertyQueryTests : RoslynTestBase
         await Assert.That(writableProps.Any(p => p.Value.Name == "WritableProp")).IsTrue();
         await Assert.That(writableProps.Any(p => p.Value.Name == "InitOnlyProp")).IsTrue();
     }
+
+    #endregion
 }

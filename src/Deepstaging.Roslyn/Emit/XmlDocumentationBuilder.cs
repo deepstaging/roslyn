@@ -8,67 +8,56 @@ namespace Deepstaging.Roslyn.Emit;
 /// Supports summary, remarks, params, returns, exceptions, and more.
 /// Immutable - each method returns a new instance.
 /// </summary>
-public readonly struct XmlDocumentationBuilder
+public record struct XmlDocumentationBuilder
 {
-    private readonly string? _summary;
-    private readonly string? _remarks;
-    private readonly string? _returns;
-    private readonly string? _value;
-    private readonly ImmutableArray<(string Name, string Description)> _params;
-    private readonly ImmutableArray<(string Name, string Description)> _typeParams;
-    private readonly ImmutableArray<(string Type, string Description)> _exceptions;
-    private readonly ImmutableArray<string> _seeAlso;
-    private readonly string? _example;
+    /// <summary>The summary text.</summary>
+    public string? Summary { get; init; }
 
-    private XmlDocumentationBuilder(
-        string? summary,
-        string? remarks,
-        string? returns,
-        string? value,
-        ImmutableArray<(string Name, string Description)> @params,
-        ImmutableArray<(string Name, string Description)> typeParams,
-        ImmutableArray<(string Type, string Description)> exceptions,
-        ImmutableArray<string> seeAlso,
-        string? example)
-    {
-        _summary = summary;
-        _remarks = remarks;
-        _returns = returns;
-        _value = value;
-        _params = @params.IsDefault ? ImmutableArray<(string, string)>.Empty : @params;
-        _typeParams = typeParams.IsDefault ? ImmutableArray<(string, string)>.Empty : typeParams;
-        _exceptions = exceptions.IsDefault ? ImmutableArray<(string, string)>.Empty : exceptions;
-        _seeAlso = seeAlso.IsDefault ? ImmutableArray<string>.Empty : seeAlso;
-        _example = example;
-    }
+    /// <summary>The remarks text.</summary>
+    public string? Remarks { get; init; }
+
+    /// <summary>The returns description.</summary>
+    public string? Returns { get; init; }
+
+    /// <summary>The value description (for properties).</summary>
+    public string? Value { get; init; }
+
+    /// <summary>The example code.</summary>
+    public string? Example { get; init; }
+
+    /// <summary>The parameter documentation entries.</summary>
+    public ImmutableArray<(string Name, string Description)> Params { get; init; }
+
+    /// <summary>The type parameter documentation entries.</summary>
+    public ImmutableArray<(string Name, string Description)> TypeParams { get; init; }
+
+    /// <summary>The exception documentation entries.</summary>
+    public ImmutableArray<(string Type, string Description)> Exceptions { get; init; }
+
+    /// <summary>The seealso cref references.</summary>
+    public ImmutableArray<string> SeeAlso { get; init; }
+
+    /// <summary>The inheritdoc cref reference (null = no inheritdoc, empty = inheritdoc without cref).</summary>
+    public string? InheritDoc { get; init; }
 
     #region Factory Methods
 
     /// <summary>
     /// Creates an empty XML documentation builder.
     /// </summary>
-    public static XmlDocumentationBuilder Create()
-    {
-        return new XmlDocumentationBuilder(
-            null,
-            null,
-            null,
-            null,
-            ImmutableArray<(string, string)>.Empty,
-            ImmutableArray<(string, string)>.Empty,
-            ImmutableArray<(string, string)>.Empty,
-            ImmutableArray<string>.Empty,
-            null);
-    }
+    public static XmlDocumentationBuilder Create() => new();
 
     /// <summary>
     /// Creates an XML documentation builder with a summary.
     /// </summary>
     /// <param name="summary">The summary text.</param>
-    public static XmlDocumentationBuilder WithSummary(string summary)
-    {
-        return Create().Summary(summary);
-    }
+    public static XmlDocumentationBuilder ForSummary(string summary) => new() { Summary = summary };
+
+    /// <summary>
+    /// Creates an XML documentation builder with an inheritdoc element.
+    /// </summary>
+    /// <param name="cref">Optional cref attribute for the inheritdoc element.</param>
+    public static XmlDocumentationBuilder ForInheritDoc(string? cref = null) => new() { InheritDoc = cref ?? string.Empty };
 
     /// <summary>
     /// Creates an XML documentation builder from parsed XmlDocumentation.
@@ -77,38 +66,20 @@ public readonly struct XmlDocumentationBuilder
     public static XmlDocumentationBuilder From(XmlDocumentation documentation)
     {
         if (documentation.IsEmpty)
-            return Create();
+            return new();
 
-        var builder = Create();
-
-        if (documentation.Summary != null)
-            builder = builder.Summary(documentation.Summary);
-
-        if (documentation.Remarks != null)
-            builder = builder.Remarks(documentation.Remarks);
-
-        if (documentation.Returns != null)
-            builder = builder.Returns(documentation.Returns);
-
-        if (documentation.Value != null)
-            builder = builder.Value(documentation.Value);
-
-        if (documentation.Example != null)
-            builder = builder.Example(documentation.Example);
-
-        foreach (var (name, description) in documentation.Params)
-            builder = builder.Param(name, description);
-
-        foreach (var (name, description) in documentation.TypeParams)
-            builder = builder.TypeParam(name, description);
-
-        foreach (var (type, description) in documentation.Exceptions)
-            builder = builder.Exception(type, description);
-
-        foreach (var cref in documentation.SeeAlso)
-            builder = builder.SeeAlso(cref);
-
-        return builder;
+        return new()
+        {
+            Summary = documentation.Summary,
+            Remarks = documentation.Remarks,
+            Returns = documentation.Returns,
+            Value = documentation.Value,
+            Example = documentation.Example,
+            Params = [..documentation.Params],
+            TypeParams = [..documentation.TypeParams],
+            Exceptions = [..documentation.Exceptions],
+            SeeAlso = [..documentation.SeeAlso],
+        };
     }
 
     #endregion
@@ -119,51 +90,35 @@ public readonly struct XmlDocumentationBuilder
     /// Sets the summary element.
     /// </summary>
     /// <param name="text">The summary text.</param>
-    public XmlDocumentationBuilder Summary(string text)
-    {
-        return new XmlDocumentationBuilder(text, _remarks, _returns, _value, _params, _typeParams, _exceptions,
-            _seeAlso, _example);
-    }
+    public readonly XmlDocumentationBuilder WithSummary(string text) => this with { Summary = text };
 
     /// <summary>
     /// Sets the remarks element.
     /// </summary>
     /// <param name="text">The remarks text.</param>
-    public XmlDocumentationBuilder Remarks(string text)
-    {
-        return new XmlDocumentationBuilder(_summary, text, _returns, _value, _params, _typeParams, _exceptions,
-            _seeAlso, _example);
-    }
+    public readonly XmlDocumentationBuilder WithRemarks(string text) => this with { Remarks = text };
 
     /// <summary>
     /// Sets the returns element.
     /// </summary>
     /// <param name="text">The returns description.</param>
-    public XmlDocumentationBuilder Returns(string text)
-    {
-        return new XmlDocumentationBuilder(_summary, _remarks, text, _value, _params, _typeParams, _exceptions,
-            _seeAlso, _example);
-    }
+    public readonly XmlDocumentationBuilder WithReturns(string text) => this with { Returns = text };
 
     /// <summary>
     /// Sets the value element (for properties).
     /// </summary>
     /// <param name="text">The value description.</param>
-    public XmlDocumentationBuilder Value(string text)
-    {
-        return new XmlDocumentationBuilder(_summary, _remarks, _returns, text, _params, _typeParams, _exceptions,
-            _seeAlso, _example);
-    }
+    public readonly XmlDocumentationBuilder WithValue(string text) => this with { Value = text };
 
     /// <summary>
     /// Adds a param element.
     /// </summary>
     /// <param name="name">The parameter name.</param>
     /// <param name="description">The parameter description.</param>
-    public XmlDocumentationBuilder Param(string name, string description)
+    public readonly XmlDocumentationBuilder AddParam(string name, string description)
     {
-        return new XmlDocumentationBuilder(_summary, _remarks, _returns, _value, _params.Add((name, description)),
-            _typeParams, _exceptions, _seeAlso, _example);
+        var @params = Params.IsDefault ? [] : Params;
+        return this with { Params = @params.Add((name, description)) };
     }
 
     /// <summary>
@@ -171,10 +126,10 @@ public readonly struct XmlDocumentationBuilder
     /// </summary>
     /// <param name="name">The type parameter name.</param>
     /// <param name="description">The type parameter description.</param>
-    public XmlDocumentationBuilder TypeParam(string name, string description)
+    public readonly XmlDocumentationBuilder AddTypeParam(string name, string description)
     {
-        return new XmlDocumentationBuilder(_summary, _remarks, _returns, _value, _params,
-            _typeParams.Add((name, description)), _exceptions, _seeAlso, _example);
+        var typeParams = TypeParams.IsDefault ? [] : TypeParams;
+        return this with { TypeParams = typeParams.Add((name, description)) };
     }
 
     /// <summary>
@@ -182,31 +137,33 @@ public readonly struct XmlDocumentationBuilder
     /// </summary>
     /// <param name="exceptionType">The exception type (e.g., "ArgumentNullException").</param>
     /// <param name="description">When the exception is thrown.</param>
-    public XmlDocumentationBuilder Exception(string exceptionType, string description)
+    public readonly XmlDocumentationBuilder AddException(string exceptionType, string description)
     {
-        return new XmlDocumentationBuilder(_summary, _remarks, _returns, _value, _params, _typeParams,
-            _exceptions.Add((exceptionType, description)), _seeAlso, _example);
+        var exceptions = Exceptions.IsDefault ? [] : Exceptions;
+        return this with { Exceptions = exceptions.Add((exceptionType, description)) };
     }
 
     /// <summary>
     /// Adds a seealso element.
     /// </summary>
     /// <param name="cref">The cref reference (e.g., "MyClass", "MyMethod").</param>
-    public XmlDocumentationBuilder SeeAlso(string cref)
+    public readonly XmlDocumentationBuilder AddSeeAlso(string cref)
     {
-        return new XmlDocumentationBuilder(_summary, _remarks, _returns, _value, _params, _typeParams, _exceptions,
-            _seeAlso.Add(cref), _example);
+        var seeAlso = SeeAlso.IsDefault ? [] : SeeAlso;
+        return this with { SeeAlso = seeAlso.Add(cref) };
     }
 
     /// <summary>
     /// Sets the example element.
     /// </summary>
     /// <param name="code">The example code.</param>
-    public XmlDocumentationBuilder Example(string code)
-    {
-        return new XmlDocumentationBuilder(_summary, _remarks, _returns, _value, _params, _typeParams, _exceptions,
-            _seeAlso, code);
-    }
+    public readonly XmlDocumentationBuilder WithExample(string code) => this with { Example = code };
+
+    /// <summary>
+    /// Sets the inheritdoc element. When set, this replaces the summary.
+    /// </summary>
+    /// <param name="cref">Optional cref attribute for the inheritdoc element.</param>
+    public readonly XmlDocumentationBuilder WithInheritDoc(string? cref = null) => this with { InheritDoc = cref ?? string.Empty };
 
     #endregion
 
@@ -215,73 +172,94 @@ public readonly struct XmlDocumentationBuilder
     /// <summary>
     /// Returns true if the builder has any content.
     /// </summary>
-    public bool HasContent =>
-        _summary != null ||
-        _remarks != null ||
-        _returns != null ||
-        _value != null ||
-        _params.Length > 0 ||
-        _typeParams.Length > 0 ||
-        _exceptions.Length > 0 ||
-        _seeAlso.Length > 0 ||
-        _example != null;
+    public readonly bool HasContent
+    {
+        get
+        {
+            var @params = Params.IsDefault ? [] : Params;
+            var typeParams = TypeParams.IsDefault ? [] : TypeParams;
+            var exceptions = Exceptions.IsDefault ? [] : Exceptions;
+            var seeAlso = SeeAlso.IsDefault ? [] : SeeAlso;
+            return Summary != null ||
+                   InheritDoc != null ||
+                   Remarks != null ||
+                   Returns != null ||
+                   Value != null ||
+                   @params.Length > 0 ||
+                   typeParams.Length > 0 ||
+                   exceptions.Length > 0 ||
+                   seeAlso.Length > 0 ||
+                   Example != null;
+        }
+    }
 
     /// <summary>
     /// Builds the XML documentation as a documentation comment trivia.
     /// </summary>
-    internal SyntaxTriviaList Build()
+    internal readonly SyntaxTriviaList Build()
     {
         if (!HasContent)
             return SyntaxTriviaList.Empty;
 
         var lines = new List<string>();
 
-        // Summary
-        if (_summary != null)
+        // InheritDoc takes precedence over Summary when both are set
+        if (InheritDoc != null)
+        {
+            if (string.IsNullOrEmpty(InheritDoc))
+                lines.Add("/// <inheritdoc/>");
+            else
+                lines.Add($"/// <inheritdoc cref=\"{InheritDoc}\"/>");
+        }
+        else if (Summary != null)
         {
             lines.Add("/// <summary>");
-            foreach (var line in SplitLines(_summary)) lines.Add($"/// {line}");
+            foreach (var line in SplitLines(Summary)) lines.Add($"/// {line}");
             lines.Add("/// </summary>");
         }
 
         // Type params
-        foreach (var (name, description) in _typeParams)
+        var typeParams = TypeParams.IsDefault ? [] : TypeParams;
+        foreach (var (name, description) in typeParams)
             lines.Add($"/// <typeparam name=\"{EscapeXml(name)}\">{EscapeXml(description)}</typeparam>");
 
         // Params
-        foreach (var (name, description) in _params)
+        var @params = Params.IsDefault ? [] : Params;
+        foreach (var (name, description) in @params)
             lines.Add($"/// <param name=\"{EscapeXml(name)}\">{EscapeXml(description)}</param>");
 
         // Returns
-        if (_returns != null) lines.Add($"/// <returns>{EscapeXml(_returns)}</returns>");
+        if (Returns != null) lines.Add($"/// <returns>{EscapeXml(Returns)}</returns>");
 
         // Value
-        if (_value != null) lines.Add($"/// <value>{EscapeXml(_value)}</value>");
+        if (Value != null) lines.Add($"/// <value>{EscapeXml(Value)}</value>");
 
         // Exceptions
-        foreach (var (type, description) in _exceptions)
+        var exceptions = Exceptions.IsDefault ? [] : Exceptions;
+        foreach (var (type, description) in exceptions)
             lines.Add($"/// <exception cref=\"{EscapeXml(type)}\">{EscapeXml(description)}</exception>");
 
         // Remarks
-        if (_remarks != null)
+        if (Remarks != null)
         {
             lines.Add("/// <remarks>");
-            foreach (var line in SplitLines(_remarks)) lines.Add($"/// {line}");
+            foreach (var line in SplitLines(Remarks)) lines.Add($"/// {line}");
             lines.Add("/// </remarks>");
         }
 
         // Example
-        if (_example != null)
+        if (Example != null)
         {
             lines.Add("/// <example>");
             lines.Add("/// <code>");
-            foreach (var line in SplitLines(_example)) lines.Add($"/// {line}");
+            foreach (var line in SplitLines(Example)) lines.Add($"/// {line}");
             lines.Add("/// </code>");
             lines.Add("/// </example>");
         }
 
         // SeeAlso
-        foreach (var cref in _seeAlso) lines.Add($"/// <seealso cref=\"{EscapeXml(cref)}\"/>");
+        var seeAlso = SeeAlso.IsDefault ? [] : SeeAlso;
+        foreach (var cref in seeAlso) lines.Add($"/// <seealso cref=\"{EscapeXml(cref)}\"/>");
 
         // Build trivia
         var triviaList = new List<SyntaxTrivia>();

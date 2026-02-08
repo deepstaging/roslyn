@@ -8,24 +8,19 @@ namespace Deepstaging.Roslyn.Emit;
 /// Supports named and positional arguments.
 /// Immutable - each method returns a new instance.
 /// </summary>
-public readonly struct AttributeBuilder
+public record struct AttributeBuilder
 {
-    private readonly string _name;
-    private readonly ImmutableArray<string> _arguments;
-    private readonly ImmutableArray<(string Name, string Value)> _namedArguments;
-    private readonly ImmutableArray<string> _usings;
+    /// <summary>Gets or sets the attribute name.</summary>
+    public string Name { get; init; }
 
-    private AttributeBuilder(
-        string name,
-        ImmutableArray<string> arguments,
-        ImmutableArray<(string Name, string Value)> namedArguments,
-        ImmutableArray<string> usings)
-    {
-        _name = name;
-        _arguments = arguments.IsDefault ? ImmutableArray<string>.Empty : arguments;
-        _namedArguments = namedArguments.IsDefault ? ImmutableArray<(string, string)>.Empty : namedArguments;
-        _usings = usings.IsDefault ? ImmutableArray<string>.Empty : usings;
-    }
+    /// <summary>Gets or sets the positional arguments.</summary>
+    public ImmutableArray<string> Arguments { get; init; }
+
+    /// <summary>Gets or sets the named arguments.</summary>
+    public ImmutableArray<(string Name, string Value)> NamedArguments { get; init; }
+
+    /// <summary>Gets or sets the using directives.</summary>
+    public ImmutableArray<string> Usings { get; init; }
 
     #region Factory Methods
 
@@ -38,11 +33,7 @@ public readonly struct AttributeBuilder
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Attribute name cannot be null or empty.", nameof(name));
 
-        return new AttributeBuilder(
-            name,
-            ImmutableArray<string>.Empty,
-            ImmutableArray<(string, string)>.Empty,
-            ImmutableArray<string>.Empty);
+        return new AttributeBuilder { Name = name };
     }
 
     #endregion
@@ -53,19 +44,20 @@ public readonly struct AttributeBuilder
     /// Adds a positional argument to the attribute.
     /// </summary>
     /// <param name="value">The argument value as a code expression (e.g., "\"message\"", "typeof(int)", "42").</param>
-    public AttributeBuilder WithArgument(string value)
+    public readonly AttributeBuilder WithArgument(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
             throw new ArgumentException("Argument value cannot be null or empty.", nameof(value));
 
-        return new AttributeBuilder(_name, _arguments.Add(value), _namedArguments, _usings);
+        var args = Arguments.IsDefault ? [] : Arguments;
+        return this with { Arguments = args.Add(value) };
     }
 
     /// <summary>
     /// Adds multiple positional arguments to the attribute.
     /// </summary>
     /// <param name="values">The argument values as code expressions.</param>
-    public AttributeBuilder WithArguments(params string[] values)
+    public readonly AttributeBuilder WithArguments(params string[] values)
     {
         var builder = this;
         foreach (var value in values) builder = builder.WithArgument(value);
@@ -77,14 +69,15 @@ public readonly struct AttributeBuilder
     /// </summary>
     /// <param name="name">The argument name (e.g., "ErrorMessage", "AllowMultiple").</param>
     /// <param name="value">The argument value as a code expression (e.g., "\"message\"", "true").</param>
-    public AttributeBuilder WithNamedArgument(string name, string value)
+    public readonly AttributeBuilder WithNamedArgument(string name, string value)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Argument name cannot be null or empty.", nameof(name));
         if (string.IsNullOrWhiteSpace(value))
             throw new ArgumentException("Argument value cannot be null or empty.", nameof(value));
 
-        return new AttributeBuilder(_name, _arguments, _namedArguments.Add((name, value)), _usings);
+        var namedArgs = NamedArguments.IsDefault ? [] : NamedArguments;
+        return this with { NamedArguments = namedArgs.Add((name, value)) };
     }
 
     #endregion
@@ -95,15 +88,11 @@ public readonly struct AttributeBuilder
     /// Adds a using directive that will be collected by the containing TypeBuilder.
     /// </summary>
     /// <param name="namespace">The namespace to add (e.g., "System.Linq", "static System.Math").</param>
-    public AttributeBuilder AddUsing(string @namespace)
+    public readonly AttributeBuilder AddUsing(string @namespace)
     {
-        return new AttributeBuilder(_name, _arguments, _namedArguments, _usings.Add(@namespace));
+        var usings = Usings.IsDefault ? [] : Usings;
+        return this with { Usings = usings.Add(@namespace) };
     }
-
-    /// <summary>
-    /// Gets the using directives for this attribute.
-    /// </summary>
-    internal ImmutableArray<string> Usings => _usings;
 
     #endregion
 
@@ -112,19 +101,19 @@ public readonly struct AttributeBuilder
     /// <summary>
     /// Builds the attribute as an attribute syntax node.
     /// </summary>
-    internal AttributeSyntax Build()
+    internal readonly AttributeSyntax Build()
     {
-        var attribute = SyntaxFactory.Attribute(SyntaxFactory.ParseName(_name));
+        var attribute = SyntaxFactory.Attribute(SyntaxFactory.ParseName(Name));
 
         var allArguments = new List<AttributeArgumentSyntax>();
 
         // Add positional arguments
-        foreach (var arg in _arguments)
+        foreach (var arg in Arguments.IsDefault ? [] : Arguments)
             allArguments.Add(
                 SyntaxFactory.AttributeArgument(SyntaxFactory.ParseExpression(arg)));
 
         // Add named arguments
-        foreach (var (name, value) in _namedArguments)
+        foreach (var (name, value) in NamedArguments.IsDefault ? [] : NamedArguments)
             allArguments.Add(
                 SyntaxFactory.AttributeArgument(SyntaxFactory.ParseExpression(value))
                     .WithNameEquals(SyntaxFactory.NameEquals(SyntaxFactory.IdentifierName(name))));
@@ -140,15 +129,10 @@ public readonly struct AttributeBuilder
     /// <summary>
     /// Builds the attribute as an attribute list syntax node.
     /// </summary>
-    internal AttributeListSyntax BuildList()
+    internal readonly AttributeListSyntax BuildList()
     {
         return SyntaxFactory.AttributeList(SyntaxFactory.SingletonSeparatedList(Build()));
     }
-
-    /// <summary>
-    /// Gets the attribute name.
-    /// </summary>
-    public string Name => _name;
 
     #endregion
 }

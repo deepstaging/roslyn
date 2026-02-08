@@ -11,12 +11,15 @@ Emit builders construct Roslyn syntax trees using a fluent, immutable API. Where
 | Builder | Description |
 |---------|-------------|
 | [TypeBuilder](type-builder.md) | Create classes, interfaces, structs, records |
+| [TypeBuilder Extensions](type-builder-extensions.md) | Interface and operator implementations |
 | [MethodBuilder](method-builder.md) | Create methods |
 | [PropertyBuilder](property-builder.md) | Create properties |
 | [FieldBuilder](field-builder.md) | Create fields |
 | [ConstructorBuilder](constructor-builder.md) | Create constructors |
 | [Other Builders](other-builders.md) | Events, indexers, parameters, type parameters |
 | [BodyBuilder](body-builder.md) | Create method/property bodies |
+| [Patterns](patterns.md) | Builder, Singleton, ToString extensions |
+| [Directives](directives.md) | Preprocessor directives for conditional compilation |
 | [Support Types](support-types.md) | AttributeBuilder, XmlDocumentationBuilder, EmitOptions |
 
 All builders are **immutable** — each method returns a new instance.
@@ -168,6 +171,23 @@ if (result.IsValid(out var valid))
 {
     context.AddSource("CustomerRepository.g.cs", valid.Code);
 }
+```
+
+---
+
+## Conditional Compilation
+
+Use [Directives](directives.md) to generate framework-specific code:
+
+```csharp
+TypeBuilder.Struct("UserId")
+    .Implements("IEquatable<UserId>")
+    .Implements("ISpanFormattable", Directives.Net6OrGreater)
+    .Implements("IParsable<UserId>", Directives.Net7OrGreater)
+    .AddMethod("TryFormat", m => m
+        .When(Directives.Net6OrGreater)
+        .WithReturnType("bool")
+        .WithBody(...));
 ```
 
 ---

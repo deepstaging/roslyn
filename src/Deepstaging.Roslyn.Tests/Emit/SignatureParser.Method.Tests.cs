@@ -5,6 +5,8 @@ namespace Deepstaging.Roslyn.Tests.Emit;
 
 public class SignatureParserMethodTests : RoslynTestBase
 {
+    #region Basic Method Parsing
+
     [Test]
     public async Task Parse_SimpleMethod_ExtractsNameAndReturnType()
     {
@@ -32,6 +34,10 @@ public class SignatureParserMethodTests : RoslynTestBase
         await Assert.That(result.Success).IsTrue();
         await Assert.That(result.Code).Contains("public string Format(string name, int age)");
     }
+
+    #endregion
+
+    #region Modifier Parsing
 
     [Test]
     public async Task Parse_AsyncMethod_SetsAsyncModifier()
@@ -110,6 +116,10 @@ public class SignatureParserMethodTests : RoslynTestBase
         await Assert.That(result.Code).Contains("internal void Process()");
     }
 
+    #endregion
+
+    #region Parameter Modifier Parsing
+
     [Test]
     public async Task Parse_RefParameter_SetsRefModifier()
     {
@@ -175,6 +185,10 @@ public class SignatureParserMethodTests : RoslynTestBase
         await Assert.That(result.Success).IsTrue();
         await Assert.That(result.Code).Contains("CancellationToken ct = default");
     }
+
+    #endregion
+
+    #region Generic Method Parsing
 
     [Test]
     public async Task Parse_GenericMethod_AddsTypeParameter()
@@ -257,6 +271,10 @@ public class SignatureParserMethodTests : RoslynTestBase
         await Assert.That(result.Code).Contains("where TResult : class");
     }
 
+    #endregion
+
+    #region Post-Parse Configuration
+
     [Test]
     public async Task Parse_CanAddBodyAfterParsing()
     {
@@ -281,6 +299,10 @@ public class SignatureParserMethodTests : RoslynTestBase
         await Assert.That(result.Code).Contains("[Obsolete]");
     }
 
+    #endregion
+
+    #region Error Handling
+
     [Test]
     public async Task Parse_InvalidSignature_ThrowsArgumentException()
     {
@@ -301,6 +323,10 @@ public class SignatureParserMethodTests : RoslynTestBase
         await Assert.ThrowsAsync<ArgumentException>(() =>
             Task.FromResult(MethodBuilder.Parse(null!)));
     }
+
+    #endregion
+
+    #region Nullable Types
 
     [Test]
     public async Task Parse_NullableReturnType_PreservesNullability()
@@ -329,6 +355,10 @@ public class SignatureParserMethodTests : RoslynTestBase
         await Assert.That(builder.ReturnType).IsEqualTo("Dictionary<string, List<int>>");
     }
 
+    #endregion
+
+    #region Edge Cases
+
     [Test]
     public async Task Parse_TrailingSemicolon_HandlesGracefully()
     {
@@ -345,6 +375,10 @@ public class SignatureParserMethodTests : RoslynTestBase
         await Assert.That(builder.Name).IsEqualTo("GetName");
         await Assert.That(builder.ReturnType).IsEqualTo("string");
     }
+
+    #endregion
+
+    #region Extension Methods
 
     [Test]
     public async Task Parse_ExtensionMethod_SetsThisModifier()
@@ -381,4 +415,6 @@ public class SignatureParserMethodTests : RoslynTestBase
 
         await Assert.That(builder.ExtensionTargetType).IsEqualTo("string");
     }
+
+    #endregion
 }

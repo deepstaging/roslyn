@@ -7,6 +7,8 @@ namespace Deepstaging.Roslyn.Tests.Projections.Extensions;
 
 public class ValidSymbolTests : RoslynTestBase
 {
+    #region Factory Methods
+
     [Test]
     public async Task Can_create_from_non_null()
     {
@@ -47,6 +49,10 @@ public class ValidSymbolTests : RoslynTestBase
         await Assert.That(valid).IsNotNull();
         await Assert.That(valid!.Value.Value).IsNotNull();
     }
+
+    #endregion
+
+    #region Value Extraction
 
     [Test]
     public async Task OrNull_always_returns_value()
@@ -112,6 +118,10 @@ public class ValidSymbolTests : RoslynTestBase
         await Assert.That(asNamed).IsNotNull();
         await Assert.That(asNamed!.Value.Name).IsEqualTo("TestClass");
     }
+
+    #endregion
+
+    #region Property Access
 
     [Test]
     public async Task Name_property_returns_symbol_name()
@@ -189,6 +199,10 @@ public class ValidSymbolTests : RoslynTestBase
         await Assert.That(normalType.IsStatic).IsFalse();
     }
 
+    #endregion
+
+    #region Generic Attribute Access
+
     [Test]
     public async Task CanReadGenericAttributes()
     {
@@ -216,4 +230,6 @@ public class ValidSymbolTests : RoslynTestBase
 
         Console.Out.WriteLine("");
     }
+
+    #endregion
 }

@@ -5,6 +5,8 @@ namespace Deepstaging.Roslyn.Tests.Projections.Extensions;
 
 public class OptionalSymbolPropertiesTests : RoslynTestBase
 {
+    #region Property Type Access
+
     [Test]
     public async Task GetReturnType_returns_property_type()
     {
@@ -27,6 +29,10 @@ public class OptionalSymbolPropertiesTests : RoslynTestBase
         await Assert.That(returnType.HasValue).IsTrue();
         await Assert.That(returnType.Name).IsEqualTo("Int32");
     }
+
+    #endregion
+
+    #region Accessor Access
 
     [Test]
     public async Task GetGetMethod_returns_getter()
@@ -68,6 +74,10 @@ public class OptionalSymbolPropertiesTests : RoslynTestBase
         await Assert.That(readOnly.SetMethod.HasValue).IsFalse();
     }
 
+    #endregion
+
+    #region Overridden Property Access
+
     [Test]
     public async Task GetOverriddenProperty_returns_base_property()
     {
@@ -93,4 +103,6 @@ public class OptionalSymbolPropertiesTests : RoslynTestBase
 
         await Assert.That(overridden.HasValue).IsTrue();
     }
+
+    #endregion
 }

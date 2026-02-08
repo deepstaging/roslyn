@@ -5,6 +5,8 @@ namespace Deepstaging.Roslyn.Tests.Emit;
 
 public class ProjectionsTests : RoslynTestBase
 {
+    #region OptionalEmit Success Cases
+
     [Test]
     public async Task OptionalEmit_Success_returns_valid_code()
     {
@@ -27,6 +29,10 @@ public class ProjectionsTests : RoslynTestBase
         await Assert.That(result.Success).IsTrue();
         await Assert.That(result.Diagnostics).IsEmpty();
     }
+
+    #endregion
+
+    #region OptionalEmit Failure Cases
 
     [Test]
     public async Task OptionalEmit_Failure_has_null_code()
@@ -59,6 +65,10 @@ public class ProjectionsTests : RoslynTestBase
         await Assert.That(result.Success).IsFalse();
         await Assert.That(result.Diagnostics).IsNotEmpty();
     }
+
+    #endregion
+
+    #region IsValid Validation
 
     [Test]
     public async Task OptionalEmit_IsValid_returns_true_on_success()
@@ -94,6 +104,10 @@ public class ProjectionsTests : RoslynTestBase
             await Assert.That(result.Success).IsTrue();
         }
     }
+
+    #endregion
+
+    #region ValidEmit Guarantees
 
     [Test]
     public async Task ValidEmit_has_guaranteed_code()
@@ -134,6 +148,10 @@ public class ProjectionsTests : RoslynTestBase
         }
     }
 
+    #endregion
+
+    #region Pattern Matching
+
     [Test]
     public async Task Can_use_pattern_matching_with_OptionalEmit()
     {
@@ -147,6 +165,10 @@ public class ProjectionsTests : RoslynTestBase
             await Assert.That(code).Contains("class MyClass");
         }
     }
+
+    #endregion
+
+    #region Diagnostics Preservation
 
     [Test]
     public async Task OptionalEmit_preserves_all_diagnostics()
@@ -167,4 +189,6 @@ public class ProjectionsTests : RoslynTestBase
         var firstDiagnostic = result.Diagnostics.First();
         await Assert.That(firstDiagnostic.Severity).IsEqualTo(DiagnosticSeverity.Error);
     }
+
+    #endregion
 }

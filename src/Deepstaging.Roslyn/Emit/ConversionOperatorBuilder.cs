@@ -18,39 +18,37 @@ namespace Deepstaging.Roslyn.Emit;
 ///     .WithExpressionBody("source.Value");
 /// </code>
 /// </example>
-public readonly struct ConversionOperatorBuilder
+public record struct ConversionOperatorBuilder
 {
-    private readonly bool _isExplicit;
-    private readonly string _targetType;
-    private readonly string _sourceType;
-    private readonly string _parameterName;
-    private readonly ImmutableArray<AttributeBuilder> _attributes;
-    private readonly ImmutableArray<string> _usings;
-    private readonly BodyBuilder? _body;
-    private readonly string? _expressionBody;
-    private readonly XmlDocumentationBuilder? _xmlDoc;
+    /// <summary>Gets whether this is an explicit conversion (true) or implicit (false).</summary>
+    public bool IsExplicit { get; init; }
 
-    private ConversionOperatorBuilder(
-        bool isExplicit,
-        string targetType,
-        string sourceType,
-        string parameterName,
-        ImmutableArray<AttributeBuilder> attributes,
-        ImmutableArray<string> usings,
-        BodyBuilder? body,
-        string? expressionBody,
-        XmlDocumentationBuilder? xmlDoc)
-    {
-        _isExplicit = isExplicit;
-        _targetType = targetType;
-        _sourceType = sourceType;
-        _parameterName = parameterName;
-        _attributes = attributes.IsDefault ? ImmutableArray<AttributeBuilder>.Empty : attributes;
-        _usings = usings.IsDefault ? ImmutableArray<string>.Empty : usings;
-        _body = body;
-        _expressionBody = expressionBody;
-        _xmlDoc = xmlDoc;
-    }
+    /// <summary>Gets the target type.</summary>
+    public string TargetType { get; init; }
+
+    /// <summary>Gets the source type.</summary>
+    public string SourceType { get; init; }
+
+    /// <summary>Gets the parameter name.</summary>
+    public string ParameterName { get; init; }
+
+    /// <summary>Gets the attributes applied to the operator.</summary>
+    public ImmutableArray<AttributeBuilder> Attributes { get; init; }
+
+    /// <summary>Gets the using directives.</summary>
+    public ImmutableArray<string> Usings { get; init; }
+
+    /// <summary>Gets the body builder.</summary>
+    public BodyBuilder? Body { get; init; }
+
+    /// <summary>Gets the expression body.</summary>
+    public string? ExpressionBody { get; init; }
+
+    /// <summary>Gets the XML documentation builder.</summary>
+    public XmlDocumentationBuilder? XmlDoc { get; init; }
+
+    /// <summary>Gets the preprocessor directive condition for conditional compilation.</summary>
+    public Directive? Condition { get; init; }
 
     #region Factory Methods
 
@@ -67,16 +65,13 @@ public readonly struct ConversionOperatorBuilder
         if (string.IsNullOrWhiteSpace(sourceType))
             throw new ArgumentException("Source type cannot be null or empty.", nameof(sourceType));
 
-        return new ConversionOperatorBuilder(
-            true,
-            targetType,
-            sourceType,
-            parameterName,
-            ImmutableArray<AttributeBuilder>.Empty,
-            ImmutableArray<string>.Empty,
-            null,
-            null,
-            null);
+        return new ConversionOperatorBuilder
+        {
+            IsExplicit = true,
+            TargetType = targetType,
+            SourceType = sourceType,
+            ParameterName = parameterName,
+        };
     }
 
     /// <summary>
@@ -92,16 +87,13 @@ public readonly struct ConversionOperatorBuilder
         if (string.IsNullOrWhiteSpace(sourceType))
             throw new ArgumentException("Source type cannot be null or empty.", nameof(sourceType));
 
-        return new ConversionOperatorBuilder(
-            false,
-            targetType,
-            sourceType,
-            parameterName,
-            ImmutableArray<AttributeBuilder>.Empty,
-            ImmutableArray<string>.Empty,
-            null,
-            null,
-            null);
+        return new ConversionOperatorBuilder
+        {
+            IsExplicit = false,
+            TargetType = targetType,
+            SourceType = sourceType,
+            ParameterName = parameterName,
+        };
     }
 
     #endregion
@@ -114,8 +106,7 @@ public readonly struct ConversionOperatorBuilder
     public ConversionOperatorBuilder WithBody(Func<BodyBuilder, BodyBuilder> configure)
     {
         var body = configure(BodyBuilder.Empty());
-        return new ConversionOperatorBuilder(_isExplicit, _targetType, _sourceType, _parameterName,
-            _attributes, _usings, body, null, _xmlDoc);
+        return this with { Body = body, ExpressionBody = null };
     }
 
     /// <summary>
@@ -124,9 +115,15 @@ public readonly struct ConversionOperatorBuilder
     /// <param name="expression">The expression (e.g., "new MyType(value)", "source.Value").</param>
     public ConversionOperatorBuilder WithExpressionBody(string expression)
     {
-        return new ConversionOperatorBuilder(_isExplicit, _targetType, _sourceType, _parameterName,
-            _attributes, _usings, null, expression, _xmlDoc);
+        return this with { ExpressionBody = expression, Body = null };
     }
+
+    /// <summary>
+    /// Wraps this conversion operator in a preprocessor directive (#if/#endif).
+    /// </summary>
+    /// <param name="directive">The directive condition (e.g., Directives.Net6OrGreater).</param>
+    public ConversionOperatorBuilder When(Directive directive) =>
+        this with { Condition = directive };
 
     #endregion
 
@@ -138,8 +135,7 @@ public readonly struct ConversionOperatorBuilder
     public ConversionOperatorBuilder WithXmlDoc(Func<XmlDocumentationBuilder, XmlDocumentationBuilder> configure)
     {
         var xmlDoc = configure(XmlDocumentationBuilder.Create());
-        return new ConversionOperatorBuilder(_isExplicit, _targetType, _sourceType, _parameterName,
-            _attributes, _usings, _body, _expressionBody, xmlDoc);
+        return this with { XmlDoc = xmlDoc };
     }
 
     /// <summary>
@@ -147,9 +143,8 @@ public readonly struct ConversionOperatorBuilder
     /// </summary>
     public ConversionOperatorBuilder WithXmlDoc(string summary)
     {
-        var xmlDoc = XmlDocumentationBuilder.WithSummary(summary);
-        return new ConversionOperatorBuilder(_isExplicit, _targetType, _sourceType, _parameterName,
-            _attributes, _usings, _body, _expressionBody, xmlDoc);
+        var xmlDoc = XmlDocumentationBuilder.ForSummary(summary);
+        return this with { XmlDoc = xmlDoc };
     }
 
     #endregion
@@ -162,8 +157,8 @@ public readonly struct ConversionOperatorBuilder
     public ConversionOperatorBuilder WithAttribute(string name)
     {
         var attribute = AttributeBuilder.For(name);
-        return new ConversionOperatorBuilder(_isExplicit, _targetType, _sourceType, _parameterName,
-            _attributes.Add(attribute), _usings, _body, _expressionBody, _xmlDoc);
+        var attributes = Attributes.IsDefault ? [] : Attributes;
+        return this with { Attributes = attributes.Add(attribute) };
     }
 
     /// <summary>
@@ -172,8 +167,8 @@ public readonly struct ConversionOperatorBuilder
     public ConversionOperatorBuilder WithAttribute(string name, Func<AttributeBuilder, AttributeBuilder> configure)
     {
         var attribute = configure(AttributeBuilder.For(name));
-        return new ConversionOperatorBuilder(_isExplicit, _targetType, _sourceType, _parameterName,
-            _attributes.Add(attribute), _usings, _body, _expressionBody, _xmlDoc);
+        var attributes = Attributes.IsDefault ? [] : Attributes;
+        return this with { Attributes = attributes.Add(attribute) };
     }
 
     #endregion
@@ -185,14 +180,9 @@ public readonly struct ConversionOperatorBuilder
     /// </summary>
     public ConversionOperatorBuilder AddUsing(string @namespace)
     {
-        return new ConversionOperatorBuilder(_isExplicit, _targetType, _sourceType, _parameterName,
-            _attributes, _usings.Add(@namespace), _body, _expressionBody, _xmlDoc);
+        var usings = Usings.IsDefault ? [] : Usings;
+        return this with { Usings = usings.Add(@namespace) };
     }
-
-    /// <summary>
-    /// Gets the using directives for this operator.
-    /// </summary>
-    internal ImmutableArray<string> Usings => _usings;
 
     #endregion
 
@@ -203,13 +193,13 @@ public readonly struct ConversionOperatorBuilder
     /// </summary>
     internal ConversionOperatorDeclarationSyntax Build()
     {
-        var implicitOrExplicit = _isExplicit
+        var implicitOrExplicit = IsExplicit
             ? SyntaxFactory.Token(SyntaxKind.ExplicitKeyword)
             : SyntaxFactory.Token(SyntaxKind.ImplicitKeyword);
 
         var op = SyntaxFactory.ConversionOperatorDeclaration(
             implicitOrExplicit,
-            SyntaxFactory.ParseTypeName(_targetType));
+            SyntaxFactory.ParseTypeName(TargetType));
 
         // Add modifiers (public static)
         op = op.WithModifiers(SyntaxFactory.TokenList(
@@ -217,30 +207,31 @@ public readonly struct ConversionOperatorBuilder
             SyntaxFactory.Token(SyntaxKind.StaticKeyword)));
 
         // Add parameter
-        var parameter = SyntaxFactory.Parameter(SyntaxFactory.Identifier(_parameterName))
-            .WithType(SyntaxFactory.ParseTypeName(_sourceType));
+        var parameter = SyntaxFactory.Parameter(SyntaxFactory.Identifier(ParameterName))
+            .WithType(SyntaxFactory.ParseTypeName(SourceType));
         op = op.WithParameterList(SyntaxFactory.ParameterList(
             SyntaxFactory.SingletonSeparatedList(parameter)));
 
         // Add attributes
-        if (_attributes.Length > 0)
+        var attributes = Attributes.IsDefault ? [] : Attributes;
+        if (attributes.Length > 0)
         {
-            var attributeLists = _attributes.Select(a => a.BuildList()).ToArray();
+            var attributeLists = attributes.Select(a => a.BuildList()).ToArray();
             op = op.WithAttributeLists(SyntaxFactory.List(attributeLists));
         }
 
         // Add body or expression body
-        if (_expressionBody != null)
+        if (ExpressionBody != null)
         {
             var arrowExpression = SyntaxFactory.ArrowExpressionClause(
-                SyntaxFactory.ParseExpression(_expressionBody));
+                SyntaxFactory.ParseExpression(ExpressionBody));
             op = op
                 .WithExpressionBody(arrowExpression)
                 .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
         }
-        else if (_body.HasValue)
+        else if (Body.HasValue)
         {
-            op = op.WithBody(_body.Value.Build());
+            op = op.WithBody(Body.Value.Build());
         }
         else
         {
@@ -249,29 +240,20 @@ public readonly struct ConversionOperatorBuilder
         }
 
         // Add XML documentation
-        if (_xmlDoc.HasValue && _xmlDoc.Value.HasContent)
+        if (XmlDoc.HasValue && XmlDoc.Value.HasContent)
         {
-            var trivia = _xmlDoc.Value.Build();
+            var trivia = XmlDoc.Value.Build();
             op = op.WithLeadingTrivia(trivia);
+        }
+
+        // Wrap in preprocessor directive if specified
+        if (Condition.HasValue)
+        {
+            op = DirectiveHelper.WrapInDirective(op, Condition.Value);
         }
 
         return op;
     }
-
-    /// <summary>
-    /// Gets whether this is an explicit conversion (true) or implicit (false).
-    /// </summary>
-    public bool IsExplicit => _isExplicit;
-
-    /// <summary>
-    /// Gets the target type.
-    /// </summary>
-    public string TargetType => _targetType;
-
-    /// <summary>
-    /// Gets the source type.
-    /// </summary>
-    public string SourceType => _sourceType;
 
     #endregion
 }

@@ -5,6 +5,8 @@ namespace Deepstaging.Roslyn.Tests.Emit;
 
 public class BodyBuilderTests : RoslynTestBase
 {
+    #region Single Statements
+
     [Test]
     public async Task Can_emit_single_statement()
     {
@@ -38,6 +40,10 @@ public class BodyBuilderTests : RoslynTestBase
         await Assert.That(result.Code).Contains("Console.WriteLine(x + y);");
     }
 
+    #endregion
+
+    #region Multiline Statements
+
     [Test]
     public async Task Can_emit_multiline_statements()
     {
@@ -64,6 +70,10 @@ public class BodyBuilderTests : RoslynTestBase
         await Assert.That(result.Code).Contains("if (value > 100)");
         await Assert.That(result.Code).Contains("return true;");
     }
+
+    #endregion
+
+    #region Special Statement Types
 
     [Test]
     public async Task Can_emit_return_statement()
@@ -117,6 +127,10 @@ public class BodyBuilderTests : RoslynTestBase
         await Assert.That(result.Code).Contains("var scope = BeginScope();");
     }
 
+    #endregion
+
+    #region Mixed Statement Types
+
     [Test]
     public async Task Can_mix_different_statement_types()
     {
@@ -143,6 +157,10 @@ public class BodyBuilderTests : RoslynTestBase
         await Assert.That(result.Code).Contains("return x * 2;");
     }
 
+    #endregion
+
+    #region Automatic Semicolons
+
     [Test]
     public async Task Statements_get_automatic_semicolons()
     {
@@ -163,4 +181,6 @@ public class BodyBuilderTests : RoslynTestBase
         await Assert.That(result.Code).Contains("var x = 10;");
         await Assert.That(result.Code).Contains("Console.WriteLine(x);");
     }
+
+    #endregion
 }

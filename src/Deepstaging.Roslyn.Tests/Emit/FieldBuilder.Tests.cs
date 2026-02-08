@@ -5,6 +5,8 @@ namespace Deepstaging.Roslyn.Tests.Emit;
 
 public class FieldBuilderTests : RoslynTestBase
 {
+    #region Basic Fields
+
     [Test]
     public async Task Can_emit_simple_field()
     {
@@ -37,6 +39,10 @@ public class FieldBuilderTests : RoslynTestBase
         await Assert.That(result.Success).IsTrue();
         await Assert.That(result.Code).Contains("private readonly Guid _id;");
     }
+
+    #endregion
+
+    #region Field Modifiers
 
     [Test]
     public async Task Can_emit_const_field()
@@ -92,6 +98,10 @@ public class FieldBuilderTests : RoslynTestBase
         await Assert.That(result.Code).Contains("private static readonly Singleton _instance = new();");
     }
 
+    #endregion
+
+    #region Field Initializers
+
     [Test]
     public async Task Can_emit_field_with_initializer()
     {
@@ -126,6 +136,10 @@ public class FieldBuilderTests : RoslynTestBase
         await Assert.That(result.Code).Contains("public string Name;");
     }
 
+    #endregion
+
+    #region Lambda Configuration
+
     [Test]
     public async Task Can_emit_field_with_lambda_configuration()
     {
@@ -139,4 +153,6 @@ public class FieldBuilderTests : RoslynTestBase
         await Assert.That(result.Success).IsTrue();
         await Assert.That(result.Code).Contains("private readonly IRepository _repository;");
     }
+
+    #endregion
 }

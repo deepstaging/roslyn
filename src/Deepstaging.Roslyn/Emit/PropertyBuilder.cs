@@ -8,66 +8,46 @@ namespace Deepstaging.Roslyn.Emit;
 /// Supports auto-properties, expression-bodied properties, and properties with backing fields.
 /// Immutable - each method returns a new instance.
 /// </summary>
-public readonly struct PropertyBuilder
+public record struct PropertyBuilder
 {
-    private readonly string _name;
-    private readonly string _type;
-    private readonly Accessibility _accessibility;
-    private readonly bool _isStatic;
-    private readonly bool _isVirtual;
-    private readonly bool _isOverride;
-    private readonly bool _isAbstract;
-    private readonly bool _isSealed;
-    private readonly bool _isRequired;
-    private readonly bool _hasInitSetter;
-    private readonly PropertyAccessorStyle _accessorStyle;
-    private readonly string? _getterBody;
-    private readonly string? _setterBody;
-    private readonly string? _initializer;
-    private readonly string? _backingFieldName;
-    private readonly ImmutableArray<AttributeBuilder> _attributes;
-    private readonly ImmutableArray<string> _usings;
-    private readonly XmlDocumentationBuilder? _xmlDoc;
-
-    private PropertyBuilder(
-        string name,
-        string type,
-        Accessibility accessibility,
-        bool isStatic,
-        bool isVirtual,
-        bool isOverride,
-        bool isAbstract,
-        bool isSealed,
-        bool isRequired,
-        bool hasInitSetter,
-        PropertyAccessorStyle accessorStyle,
-        string? getterBody,
-        string? setterBody,
-        string? initializer,
-        string? backingFieldName,
-        ImmutableArray<AttributeBuilder> attributes,
-        ImmutableArray<string> usings,
-        XmlDocumentationBuilder? xmlDoc)
-    {
-        _name = name;
-        _type = type;
-        _accessibility = accessibility;
-        _isStatic = isStatic;
-        _isVirtual = isVirtual;
-        _isOverride = isOverride;
-        _isAbstract = isAbstract;
-        _isSealed = isSealed;
-        _isRequired = isRequired;
-        _hasInitSetter = hasInitSetter;
-        _accessorStyle = accessorStyle;
-        _getterBody = getterBody;
-        _setterBody = setterBody;
-        _initializer = initializer;
-        _backingFieldName = backingFieldName;
-        _attributes = attributes.IsDefault ? ImmutableArray<AttributeBuilder>.Empty : attributes;
-        _usings = usings.IsDefault ? ImmutableArray<string>.Empty : usings;
-        _xmlDoc = xmlDoc;
-    }
+    /// <summary>Gets the property name.</summary>
+    public string Name { get; init; }
+    /// <summary>Gets the property type.</summary>
+    public string Type { get; init; }
+    /// <summary>Gets the accessibility level.</summary>
+    public Accessibility Accessibility { get; init; }
+    /// <summary>Gets whether the property is static.</summary>
+    public bool IsStatic { get; init; }
+    /// <summary>Gets whether the property is virtual.</summary>
+    public bool IsVirtual { get; init; }
+    /// <summary>Gets whether the property is an override.</summary>
+    public bool IsOverride { get; init; }
+    /// <summary>Gets whether the property is abstract.</summary>
+    public bool IsAbstract { get; init; }
+    /// <summary>Gets whether the property is sealed.</summary>
+    public bool IsSealed { get; init; }
+    /// <summary>Gets whether the property is required.</summary>
+    public bool IsRequired { get; init; }
+    /// <summary>Gets whether the property has an init-only setter.</summary>
+    public bool HasInitSetter { get; init; }
+    /// <summary>Gets the accessor style.</summary>
+    internal PropertyAccessorStyle AccessorStyle { get; init; }
+    /// <summary>Gets the getter body expression or statement.</summary>
+    public string? GetterBody { get; init; }
+    /// <summary>Gets the setter body statement.</summary>
+    public string? SetterBody { get; init; }
+    /// <summary>Gets the property initializer expression.</summary>
+    public string? Initializer { get; init; }
+    /// <summary>Gets the backing field name.</summary>
+    public string? BackingFieldName { get; init; }
+    /// <summary>Gets the attributes for this property.</summary>
+    public ImmutableArray<AttributeBuilder> Attributes { get; init; }
+    /// <summary>Gets the using directives for this property.</summary>
+    public ImmutableArray<string> Usings { get; init; }
+    /// <summary>Gets the XML documentation builder.</summary>
+    public XmlDocumentationBuilder? XmlDoc { get; init; }
+    /// <summary>Gets the preprocessor directive condition for conditional compilation.</summary>
+    public Directive? Condition { get; init; }
 
     #region Factory Methods
 
@@ -83,25 +63,12 @@ public readonly struct PropertyBuilder
         if (string.IsNullOrWhiteSpace(type))
             throw new ArgumentException("Property type cannot be null or empty.", nameof(type));
 
-        return new PropertyBuilder(
-            name,
-            type,
-            Accessibility.Public,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            PropertyAccessorStyle.None,
-            null,
-            null,
-            null,
-            null,
-            ImmutableArray<AttributeBuilder>.Empty,
-            ImmutableArray<string>.Empty,
-            null);
+        return new PropertyBuilder
+        {
+            Name = name,
+            Type = type,
+            Accessibility = Accessibility.Public
+        };
     }
 
     /// <summary>
@@ -134,72 +101,44 @@ public readonly struct PropertyBuilder
     /// <summary>
     /// Sets the accessibility of the property.
     /// </summary>
-    public PropertyBuilder WithAccessibility(Accessibility accessibility)
-    {
-        return new PropertyBuilder(_name, _type, accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, _isRequired, _hasInitSetter, _accessorStyle, _getterBody, _setterBody, _initializer,
-            _backingFieldName, _attributes, _usings, _xmlDoc);
-    }
+    public readonly PropertyBuilder WithAccessibility(Accessibility accessibility) =>
+        this with { Accessibility = accessibility };
 
     /// <summary>
     /// Marks the property as static.
     /// </summary>
-    public PropertyBuilder AsStatic()
-    {
-        return new PropertyBuilder(_name, _type, _accessibility, true, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, _isRequired, _hasInitSetter, _accessorStyle, _getterBody, _setterBody, _initializer,
-            _backingFieldName, _attributes, _usings, _xmlDoc);
-    }
+    public readonly PropertyBuilder AsStatic() =>
+        this with { IsStatic = true };
 
     /// <summary>
     /// Marks the property as virtual.
     /// </summary>
-    public PropertyBuilder AsVirtual()
-    {
-        return new PropertyBuilder(_name, _type, _accessibility, _isStatic, true, _isOverride,
-            _isAbstract, _isSealed, _isRequired, _hasInitSetter, _accessorStyle, _getterBody, _setterBody, _initializer,
-            _backingFieldName, _attributes, _usings, _xmlDoc);
-    }
+    public readonly PropertyBuilder AsVirtual() =>
+        this with { IsVirtual = true };
 
     /// <summary>
     /// Marks the property as override.
     /// </summary>
-    public PropertyBuilder AsOverride()
-    {
-        return new PropertyBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, true,
-            _isAbstract, _isSealed, _isRequired, _hasInitSetter, _accessorStyle, _getterBody, _setterBody, _initializer,
-            _backingFieldName, _attributes, _usings, _xmlDoc);
-    }
+    public readonly PropertyBuilder AsOverride() =>
+        this with { IsOverride = true };
 
     /// <summary>
     /// Marks the property as abstract.
     /// </summary>
-    public PropertyBuilder AsAbstract()
-    {
-        return new PropertyBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride,
-            true, _isSealed, _isRequired, _hasInitSetter, _accessorStyle, _getterBody, _setterBody, _initializer,
-            _backingFieldName, _attributes, _usings, _xmlDoc);
-    }
+    public readonly PropertyBuilder AsAbstract() =>
+        this with { IsAbstract = true };
 
     /// <summary>
     /// Marks the property as sealed. Only valid when used with override.
     /// </summary>
-    public PropertyBuilder AsSealed()
-    {
-        return new PropertyBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, true, _isRequired, _hasInitSetter, _accessorStyle, _getterBody, _setterBody, _initializer,
-            _backingFieldName, _attributes, _usings, _xmlDoc);
-    }
+    public readonly PropertyBuilder AsSealed() =>
+        this with { IsSealed = true };
 
     /// <summary>
     /// Marks the property as required (C# 11+). Requires an init or set accessor.
     /// </summary>
-    public PropertyBuilder AsRequired()
-    {
-        return new PropertyBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, true, _hasInitSetter, _accessorStyle, _getterBody, _setterBody, _initializer,
-            _backingFieldName, _attributes, _usings, _xmlDoc);
-    }
+    public readonly PropertyBuilder AsRequired() =>
+        this with { IsRequired = true };
 
     #endregion
 
@@ -209,74 +148,61 @@ public readonly struct PropertyBuilder
     /// Configures the property as an auto-property with get and set accessors.
     /// Example: public string Name { get; set; }
     /// </summary>
-    public PropertyBuilder WithAutoPropertyAccessors()
-    {
-        return new PropertyBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, _isRequired, _hasInitSetter, PropertyAccessorStyle.Auto, null, null, _initializer,
-            _backingFieldName, _attributes, _usings, _xmlDoc);
-    }
+    public readonly PropertyBuilder WithAutoPropertyAccessors() =>
+        this with { AccessorStyle = PropertyAccessorStyle.Auto, GetterBody = null, SetterBody = null };
 
     /// <summary>
     /// Configures the property with an expression-bodied getter.
     /// Example: public string Name => _name;
     /// </summary>
     /// <param name="expression">The getter expression (e.g., "=> _name", "_name").</param>
-    public PropertyBuilder WithGetter(string expression)
+    public readonly PropertyBuilder WithGetter(string expression)
     {
         var cleanExpression = expression.TrimStart().StartsWith("=>")
             ? expression.TrimStart().Substring(2).Trim()
             : expression.Trim();
 
-        return new PropertyBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, _isRequired, _hasInitSetter, PropertyAccessorStyle.ExpressionBodied,
-            cleanExpression, _setterBody,
-            _initializer, _backingFieldName, _attributes, _usings, _xmlDoc);
+        return this with { AccessorStyle = PropertyAccessorStyle.ExpressionBodied, GetterBody = cleanExpression };
     }
 
     /// <summary>
     /// Configures the property with a setter using a body builder.
     /// </summary>
-    public PropertyBuilder WithSetter(Func<BodyBuilder, BodyBuilder> configure)
+    public readonly PropertyBuilder WithSetter(Func<BodyBuilder, BodyBuilder> configure)
     {
         var body = configure(BodyBuilder.Empty());
-        return new PropertyBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, _isRequired, _hasInitSetter, PropertyAccessorStyle.BlockBodied, _getterBody,
-            body.Build().ToFullString(), _initializer, _backingFieldName, _attributes, _usings, _xmlDoc);
+        return this with { AccessorStyle = PropertyAccessorStyle.BlockBodied, SetterBody = body.Build().ToFullString() };
     }
 
     /// <summary>
     /// Configures the property with a getter body builder.
     /// </summary>
-    public PropertyBuilder WithGetter(Func<BodyBuilder, BodyBuilder> configure)
+    public readonly PropertyBuilder WithGetter(Func<BodyBuilder, BodyBuilder> configure)
     {
         var body = configure(BodyBuilder.Empty());
-        return new PropertyBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, _isRequired, _hasInitSetter, PropertyAccessorStyle.BlockBodied,
-            body.Build().ToFullString(),
-            _setterBody, _initializer, _backingFieldName, _attributes, _usings, _xmlDoc);
+        return this with { AccessorStyle = PropertyAccessorStyle.BlockBodied, GetterBody = body.Build().ToFullString() };
     }
 
     /// <summary>
     /// Marks the property as read-only (get accessor only).
     /// Must be used with WithGetter() or WithAutoPropertyAccessors().
     /// </summary>
-    public PropertyBuilder AsReadOnly()
-    {
-        return new PropertyBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, _isRequired, _hasInitSetter, PropertyAccessorStyle.GetterOnly, _getterBody, null,
-            _initializer, _backingFieldName, _attributes, _usings, _xmlDoc);
-    }
+    public readonly PropertyBuilder AsReadOnly() =>
+        this with { AccessorStyle = PropertyAccessorStyle.GetterOnly, SetterBody = null };
 
     /// <summary>
     /// Configures the property to use an init-only setter instead of a set accessor.
     /// Example: public string Name { get; init; }
     /// </summary>
-    public PropertyBuilder WithInitOnlySetter()
-    {
-        return new PropertyBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, _isRequired, true, _accessorStyle, _getterBody, _setterBody, _initializer,
-            _backingFieldName, _attributes, _usings, _xmlDoc);
-    }
+    public readonly PropertyBuilder WithInitOnlySetter() =>
+        this with { HasInitSetter = true };
+
+    /// <summary>
+    /// Wraps this property in a preprocessor directive (#if/#endif).
+    /// </summary>
+    /// <param name="directive">The directive condition (e.g., Directives.Net6OrGreater).</param>
+    public readonly PropertyBuilder When(Directive directive) =>
+        this with { Condition = directive };
 
     #endregion
 
@@ -287,24 +213,16 @@ public readonly struct PropertyBuilder
     /// Example: = new();
     /// </summary>
     /// <param name="initializer">The initializer expression (e.g., "new()", "default", "\"value\"").</param>
-    public PropertyBuilder WithInitializer(string initializer)
-    {
-        return new PropertyBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, _isRequired, _hasInitSetter, _accessorStyle, _getterBody, _setterBody, initializer,
-            _backingFieldName, _attributes, _usings, _xmlDoc);
-    }
+    public readonly PropertyBuilder WithInitializer(string initializer) =>
+        this with { Initializer = initializer };
 
     /// <summary>
     /// Specifies a backing field name for the property.
     /// Note: The backing field must be added separately via FieldBuilder.
     /// </summary>
     /// <param name="fieldName">The backing field name (e.g., "_name").</param>
-    public PropertyBuilder WithBackingField(string fieldName)
-    {
-        return new PropertyBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, _isRequired, _hasInitSetter, _accessorStyle, _getterBody, _setterBody, _initializer,
-            fieldName, _attributes, _usings, _xmlDoc);
-    }
+    public readonly PropertyBuilder WithBackingField(string fieldName) =>
+        this with { BackingFieldName = fieldName };
 
     #endregion
 
@@ -314,39 +232,43 @@ public readonly struct PropertyBuilder
     /// Sets the XML documentation for the property.
     /// </summary>
     /// <param name="configure">Configuration callback for the XML documentation.</param>
-    public PropertyBuilder WithXmlDoc(Func<XmlDocumentationBuilder, XmlDocumentationBuilder> configure)
+    public readonly PropertyBuilder WithXmlDoc(Func<XmlDocumentationBuilder, XmlDocumentationBuilder> configure)
     {
         var xmlDoc = configure(XmlDocumentationBuilder.Create());
-        return new PropertyBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, _isRequired, _hasInitSetter, _accessorStyle, _getterBody, _setterBody, _initializer,
-            _backingFieldName, _attributes, _usings, xmlDoc);
+        return this with { XmlDoc = xmlDoc };
     }
 
     /// <summary>
     /// Sets the XML documentation for the property with a simple summary.
     /// </summary>
     /// <param name="summary">The summary text.</param>
-    public PropertyBuilder WithXmlDoc(string summary)
+    public readonly PropertyBuilder WithXmlDoc(string summary)
     {
-        var xmlDoc = XmlDocumentationBuilder.WithSummary(summary);
-        return new PropertyBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, _isRequired, _hasInitSetter, _accessorStyle, _getterBody, _setterBody, _initializer,
-            _backingFieldName, _attributes, _usings, xmlDoc);
+        var xmlDoc = XmlDocumentationBuilder.ForSummary(summary);
+        return this with { XmlDoc = xmlDoc };
     }
 
     /// <summary>
     /// Sets the XML documentation for the property from parsed XmlDocumentation.
     /// </summary>
     /// <param name="documentation">The parsed XML documentation to copy.</param>
-    public PropertyBuilder WithXmlDoc(XmlDocumentation documentation)
+    public readonly PropertyBuilder WithXmlDoc(XmlDocumentation documentation)
     {
         if (documentation.IsEmpty)
             return this;
 
         var xmlDoc = XmlDocumentationBuilder.From(documentation);
-        return new PropertyBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, _isRequired, _hasInitSetter, _accessorStyle, _getterBody, _setterBody, _initializer,
-            _backingFieldName, _attributes, _usings, xmlDoc);
+        return this with { XmlDoc = xmlDoc };
+    }
+
+    /// <summary>
+    /// Sets the XML documentation for the property using inheritdoc.
+    /// </summary>
+    /// <param name="cref">Optional cref attribute for the inheritdoc element.</param>
+    public readonly PropertyBuilder WithInheritDoc(string? cref = null)
+    {
+        var xmlDoc = XmlDocumentationBuilder.ForInheritDoc(cref);
+        return this with { XmlDoc = xmlDoc };
     }
 
     #endregion
@@ -357,12 +279,11 @@ public readonly struct PropertyBuilder
     /// Adds an attribute to the property.
     /// </summary>
     /// <param name="name">The attribute name (e.g., "JsonProperty", "Required").</param>
-    public PropertyBuilder WithAttribute(string name)
+    public readonly PropertyBuilder WithAttribute(string name)
     {
         var attribute = AttributeBuilder.For(name);
-        return new PropertyBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, _isRequired, _hasInitSetter, _accessorStyle, _getterBody, _setterBody, _initializer,
-            _backingFieldName, _attributes.Add(attribute), _usings, _xmlDoc);
+        var attributes = Attributes.IsDefault ? [] : Attributes;
+        return this with { Attributes = attributes.Add(attribute) };
     }
 
     /// <summary>
@@ -370,22 +291,20 @@ public readonly struct PropertyBuilder
     /// </summary>
     /// <param name="name">The attribute name (e.g., "JsonProperty", "Required").</param>
     /// <param name="configure">Configuration callback for the attribute.</param>
-    public PropertyBuilder WithAttribute(string name, Func<AttributeBuilder, AttributeBuilder> configure)
+    public readonly PropertyBuilder WithAttribute(string name, Func<AttributeBuilder, AttributeBuilder> configure)
     {
         var attribute = configure(AttributeBuilder.For(name));
-        return new PropertyBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, _isRequired, _hasInitSetter, _accessorStyle, _getterBody, _setterBody, _initializer,
-            _backingFieldName, _attributes.Add(attribute), _usings, _xmlDoc);
+        var attributes = Attributes.IsDefault ? [] : Attributes;
+        return this with { Attributes = attributes.Add(attribute) };
     }
 
     /// <summary>
     /// Adds a pre-configured attribute to the property.
     /// </summary>
-    public PropertyBuilder WithAttribute(AttributeBuilder attribute)
+    public readonly PropertyBuilder WithAttribute(AttributeBuilder attribute)
     {
-        return new PropertyBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, _isRequired, _hasInitSetter, _accessorStyle, _getterBody, _setterBody, _initializer,
-            _backingFieldName, _attributes.Add(attribute), _usings, _xmlDoc);
+        var attributes = Attributes.IsDefault ? [] : Attributes;
+        return this with { Attributes = attributes.Add(attribute) };
     }
 
     #endregion
@@ -396,17 +315,11 @@ public readonly struct PropertyBuilder
     /// Adds a using directive that will be collected by the containing TypeBuilder.
     /// </summary>
     /// <param name="namespace">The namespace to add (e.g., "System.Linq", "static System.Math").</param>
-    public PropertyBuilder AddUsing(string @namespace)
+    public readonly PropertyBuilder AddUsing(string @namespace)
     {
-        return new PropertyBuilder(_name, _type, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, _isRequired, _hasInitSetter, _accessorStyle, _getterBody, _setterBody, _initializer,
-            _backingFieldName, _attributes, _usings.Add(@namespace), _xmlDoc);
+        var usings = Usings.IsDefault ? [] : Usings;
+        return this with { Usings = usings.Add(@namespace) };
     }
-
-    /// <summary>
-    /// Gets the using directives for this property.
-    /// </summary>
-    internal ImmutableArray<string> Usings => _usings;
 
     #endregion
 
@@ -415,34 +328,35 @@ public readonly struct PropertyBuilder
     /// <summary>
     /// Builds the property as a property declaration syntax node.
     /// </summary>
-    internal PropertyDeclarationSyntax Build()
+    internal readonly PropertyDeclarationSyntax Build()
     {
         var property = SyntaxFactory.PropertyDeclaration(
-            SyntaxFactory.ParseTypeName(_type),
-            SyntaxFactory.Identifier(_name));
+            SyntaxFactory.ParseTypeName(Type),
+            SyntaxFactory.Identifier(Name));
 
         // Add attributes
-        if (_attributes.Length > 0)
+        var attributes = Attributes.IsDefault ? [] : Attributes;
+        if (attributes.Length > 0)
         {
-            var attributeLists = _attributes.Select(a => a.BuildList()).ToArray();
+            var attributeLists = attributes.Select(a => a.BuildList()).ToArray();
             property = property.WithAttributeLists(SyntaxFactory.List(attributeLists));
         }
 
         // Add modifiers (order matters for valid C#)
         var modifiers = new List<SyntaxKind>();
-        modifiers.Add(AccessibilityToSyntaxKind(_accessibility));
-        if (_isStatic) modifiers.Add(SyntaxKind.StaticKeyword);
-        if (_isSealed) modifiers.Add(SyntaxKind.SealedKeyword);
-        if (_isVirtual) modifiers.Add(SyntaxKind.VirtualKeyword);
-        if (_isOverride) modifiers.Add(SyntaxKind.OverrideKeyword);
-        if (_isAbstract) modifiers.Add(SyntaxKind.AbstractKeyword);
-        if (_isRequired) modifiers.Add(SyntaxKind.RequiredKeyword);
+        modifiers.Add(AccessibilityToSyntaxKind(Accessibility));
+        if (IsStatic) modifiers.Add(SyntaxKind.StaticKeyword);
+        if (IsSealed) modifiers.Add(SyntaxKind.SealedKeyword);
+        if (IsVirtual) modifiers.Add(SyntaxKind.VirtualKeyword);
+        if (IsOverride) modifiers.Add(SyntaxKind.OverrideKeyword);
+        if (IsAbstract) modifiers.Add(SyntaxKind.AbstractKeyword);
+        if (IsRequired) modifiers.Add(SyntaxKind.RequiredKeyword);
 
         property = property.WithModifiers(
             SyntaxFactory.TokenList(modifiers.Select(SyntaxFactory.Token)));
 
         // Add accessors based on style
-        property = _accessorStyle switch
+        property = AccessorStyle switch
         {
             PropertyAccessorStyle.Auto => AddAutoAccessors(property),
             PropertyAccessorStyle.ExpressionBodied => AddExpressionBody(property),
@@ -452,25 +366,31 @@ public readonly struct PropertyBuilder
         };
 
         // Add initializer if specified
-        if (_initializer != null)
+        if (Initializer != null)
             property = property.WithInitializer(
                     SyntaxFactory.EqualsValueClause(
-                        SyntaxFactory.ParseExpression(_initializer)))
+                        SyntaxFactory.ParseExpression(Initializer)))
                 .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
 
         // Add XML documentation
-        if (_xmlDoc.HasValue && _xmlDoc.Value.HasContent)
+        if (XmlDoc.HasValue && XmlDoc.Value.HasContent)
         {
-            var trivia = _xmlDoc.Value.Build();
+            var trivia = XmlDoc.Value.Build();
             property = property.WithLeadingTrivia(trivia);
+        }
+
+        // Wrap in preprocessor directive if specified
+        if (Condition.HasValue)
+        {
+            property = DirectiveHelper.WrapInDirective(property, Condition.Value);
         }
 
         return property;
     }
 
-    private PropertyDeclarationSyntax AddAutoAccessors(PropertyDeclarationSyntax property)
+    private readonly PropertyDeclarationSyntax AddAutoAccessors(PropertyDeclarationSyntax property)
     {
-        var setterKind = _hasInitSetter ? SyntaxKind.InitAccessorDeclaration : SyntaxKind.SetAccessorDeclaration;
+        var setterKind = HasInitSetter ? SyntaxKind.InitAccessorDeclaration : SyntaxKind.SetAccessorDeclaration;
         return property.WithAccessorList(
             SyntaxFactory.AccessorList(
                 SyntaxFactory.List(new[]
@@ -482,7 +402,7 @@ public readonly struct PropertyBuilder
                 })));
     }
 
-    private PropertyDeclarationSyntax AddGetterOnly(PropertyDeclarationSyntax property)
+    private readonly PropertyDeclarationSyntax AddGetterOnly(PropertyDeclarationSyntax property)
     {
         return property.WithAccessorList(
             SyntaxFactory.AccessorList(
@@ -491,34 +411,34 @@ public readonly struct PropertyBuilder
                         .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)))));
     }
 
-    private PropertyDeclarationSyntax AddExpressionBody(PropertyDeclarationSyntax property)
+    private readonly PropertyDeclarationSyntax AddExpressionBody(PropertyDeclarationSyntax property)
     {
-        if (_getterBody == null)
+        if (GetterBody == null)
             return property;
 
         return property
             .WithExpressionBody(
                 SyntaxFactory.ArrowExpressionClause(
-                    SyntaxFactory.ParseExpression(_getterBody)))
+                    SyntaxFactory.ParseExpression(GetterBody)))
             .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
     }
 
-    private PropertyDeclarationSyntax AddBlockBodiedAccessors(PropertyDeclarationSyntax property)
+    private readonly PropertyDeclarationSyntax AddBlockBodiedAccessors(PropertyDeclarationSyntax property)
     {
         var accessors = new List<AccessorDeclarationSyntax>();
 
-        if (_getterBody != null)
+        if (GetterBody != null)
         {
             var getter = SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
-                .WithBody(SyntaxFactory.ParseStatement(_getterBody) as BlockSyntax);
+                .WithBody(SyntaxFactory.ParseStatement(GetterBody) as BlockSyntax);
             accessors.Add(getter);
         }
 
-        if (_setterBody != null)
+        if (SetterBody != null)
         {
-            var setterKind = _hasInitSetter ? SyntaxKind.InitAccessorDeclaration : SyntaxKind.SetAccessorDeclaration;
+            var setterKind = HasInitSetter ? SyntaxKind.InitAccessorDeclaration : SyntaxKind.SetAccessorDeclaration;
             var setter = SyntaxFactory.AccessorDeclaration(setterKind)
-                .WithBody(SyntaxFactory.ParseStatement(_setterBody) as BlockSyntax);
+                .WithBody(SyntaxFactory.ParseStatement(SetterBody) as BlockSyntax);
             accessors.Add(setter);
         }
 
@@ -538,19 +458,12 @@ public readonly struct PropertyBuilder
         };
     }
 
-    /// <summary>
-    /// Gets the property name.
-    /// </summary>
-    public string Name => _name;
-
-    /// <summary>
-    /// Gets the property type.
-    /// </summary>
-    public string Type => _type;
-
     #endregion
 }
 
+/// <summary>
+/// Specifies the accessor style for a property.
+/// </summary>
 internal enum PropertyAccessorStyle
 {
     None,

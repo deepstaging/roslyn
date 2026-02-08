@@ -1,0 +1,69 @@
+// SPDX-FileCopyrightText: 2024-present Deepstaging
+// SPDX-License-Identifier: RPL-1.5
+
+namespace Deepstaging.Roslyn.Emit.Operators.Arithmetic;
+
+/// <summary>
+/// TypeBuilder extensions for implementing the multiplication operator (*).
+/// Implements IMultiplyOperators&lt;TSelf, TSelf, TSelf&gt; (NET7+).
+/// </summary>
+public static class TypeBuilderMultiplyOperatorExtensions
+{
+    /// <summary>
+    /// Implements the multiplication operator (*) using semantic analysis of the backing type.
+    /// Generates IMultiplyOperators&lt;T, T, T&gt; interface implementation (NET7+).
+    /// </summary>
+    public static TypeBuilder ImplementsMultiplyOperator(
+        this TypeBuilder builder,
+        ValidSymbol<INamedTypeSymbol> backingType,
+        string valueAccessor)
+    {
+        var typeName = builder.Name;
+        var info = ArithmeticTypeInfo.From(backingType);
+
+        if (!info.SupportsArithmetic)
+            return builder;
+
+        return builder
+            .Implements($"global::System.Numerics.IMultiplyOperators<{typeName}, {typeName}, {typeName}>", Directives.Net7OrGreater)
+            .AddOperator(OperatorBuilder
+                .Multiplication(typeName)
+                .When(Directives.Net7OrGreater)
+                .WithExpressionBody($"new(left.{valueAccessor} * right.{valueAccessor})"));
+    }
+
+    /// <summary>
+    /// Implements the multiplication operator (*) using a custom expression.
+    /// </summary>
+    public static TypeBuilder ImplementsMultiplyOperator(
+        this TypeBuilder builder,
+        string multiplyExpression)
+    {
+        var typeName = builder.Name;
+
+        return builder
+            .Implements($"global::System.Numerics.IMultiplyOperators<{typeName}, {typeName}, {typeName}>", Directives.Net7OrGreater)
+            .AddOperator(OperatorBuilder
+                .Multiplication(typeName)
+                .When(Directives.Net7OrGreater)
+                .WithExpressionBody(multiplyExpression));
+    }
+
+    /// <summary>
+    /// Implements the multiplication operator (*) using a property as the backing value.
+    /// </summary>
+    public static TypeBuilder ImplementsMultiplyOperator(
+        this TypeBuilder builder,
+        ValidSymbol<INamedTypeSymbol> backingType,
+        PropertyBuilder property) =>
+        builder.ImplementsMultiplyOperator(backingType, property.Name);
+
+    /// <summary>
+    /// Implements the multiplication operator (*) using a field as the backing value.
+    /// </summary>
+    public static TypeBuilder ImplementsMultiplyOperator(
+        this TypeBuilder builder,
+        ValidSymbol<INamedTypeSymbol> backingType,
+        FieldBuilder field) =>
+        builder.ImplementsMultiplyOperator(backingType, field.Name);
+}

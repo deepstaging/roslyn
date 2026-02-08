@@ -5,6 +5,8 @@ namespace Deepstaging.Roslyn.Tests.Emit;
 
 public class PropertyBuilderTests : RoslynTestBase
 {
+    #region Auto Properties
+
     [Test]
     public async Task Can_emit_auto_property()
     {
@@ -76,6 +78,10 @@ public class PropertyBuilderTests : RoslynTestBase
         await Assert.That(result.Code).Contains("public List<string> Items { get; set; } = new();");
     }
 
+    #endregion
+
+    #region Expression-Bodied Properties
+
     [Test]
     public async Task Can_emit_expression_bodied_property()
     {
@@ -113,6 +119,10 @@ public class PropertyBuilderTests : RoslynTestBase
         await Assert.That(result.Code).Contains("set");
         await Assert.That(result.Code).Contains("_name = value?.Trim();");
     }
+
+    #endregion
+
+    #region Property Modifiers
 
     [Test]
     public async Task Can_emit_static_property()
@@ -168,6 +178,10 @@ public class PropertyBuilderTests : RoslynTestBase
         await Assert.That(result.Code).Contains("public override int Value { get; set; }");
     }
 
+    #endregion
+
+    #region Lambda Configuration
+
     [Test]
     public async Task Can_emit_property_with_lambda_configuration()
     {
@@ -181,4 +195,6 @@ public class PropertyBuilderTests : RoslynTestBase
         await Assert.That(result.Success).IsTrue();
         await Assert.That(result.Code).Contains("public int Age { get; set; }");
     }
+
+    #endregion
 }

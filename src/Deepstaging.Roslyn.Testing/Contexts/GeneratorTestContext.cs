@@ -29,6 +29,11 @@ public class GeneratorTestContext
     }
 
     /// <summary>
+    /// Gets the original source code.
+    /// </summary>
+    internal string Source => _source;
+
+    /// <summary>
     /// Assert that the generator should produce output.
     /// </summary>
     public GeneratorAssertions ShouldGenerate()
@@ -150,6 +155,7 @@ public class GeneratorAssertions
     private string? _expectedContent;
     private string? _unexpectedContent;
     private bool _shouldHaveNoDiagnostics;
+    private bool _shouldCompileSuccessfully;
     private DiagnosticFilter? _diagnosticFilter;
 
     internal GeneratorAssertions(GeneratorTestContext context, bool shouldGenerate)
@@ -242,6 +248,16 @@ public class GeneratorAssertions
     }
 
     /// <summary>
+    /// Assert that the generated code compiles successfully without errors.
+    /// This creates a new compilation including the generated sources and verifies no compilation errors.
+    /// </summary>
+    public GeneratorAssertions CompilesSuccessfully()
+    {
+        _shouldCompileSuccessfully = true;
+        return this;
+    }
+
+    /// <summary>
     /// Verify using snapshot testing.
     /// </summary>
     public async Task VerifySnapshot([CallerFilePath] string sourceFile = "")
@@ -314,6 +330,59 @@ public class GeneratorAssertions
             if (allContent.Contains(_unexpectedContent))
                 Assert.Fail(
                     $"Expected generated code to NOT contain: {_unexpectedContent}\n\nReceived: {allContent}");
+
+        if (_shouldCompileSuccessfully) VerifyCompilation(result);
+    }
+
+    private void VerifyCompilation(GeneratorDriverRunResult result)
+    {
+        // Parse original source
+        var parseOptions = CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.CSharp14);
+        var originalTree = CSharpSyntaxTree.ParseText(_context.Source, parseOptions);
+
+        // Combine original source with generated sources
+        var allTrees = new List<SyntaxTree> { originalTree };
+        allTrees.AddRange(result.GeneratedTrees);
+
+        // Create compilation with all sources
+        var compilation = CSharpCompilation.Create(
+            "TestAssembly",
+            allTrees,
+            GetCompilationReferences(),
+            new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+        // Get only errors (not warnings)
+        var errors = compilation.GetDiagnostics()
+            .Where(d => d.Severity == DiagnosticSeverity.Error)
+            .ToArray();
+
+        if (errors.Length > 0)
+        {
+            var errorDetails = string.Join("\n", errors.Select(d =>
+                $"  [{d.Id}] {d.GetMessage()} at {d.Location.GetLineSpan()}"));
+
+            Assert.Fail(
+                $"Generated code failed to compile with {errors.Length} error(s):\n{errorDetails}");
+        }
+    }
+
+    private static IEnumerable<MetadataReference> GetCompilationReferences()
+    {
+        var references = new List<MetadataReference>();
+
+        // Add runtime assemblies
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        var runtimeAssemblies = assemblies
+            .Where(a => !string.IsNullOrEmpty(a.Location))
+            .Distinct()
+            .Select(a => MetadataReference.CreateFromFile(a.Location));
+
+        references.AddRange(runtimeAssemblies);
+
+        // Add configured references
+        references.AddRange(ReferenceConfiguration.GetAdditionalReferences());
+
+        return references.DistinctBy(r => r.Display).OrderBy(x => x.Display).ToList();
     }
 
     private void VerifyNoDiagnostics(GeneratorDriverRunResult result)

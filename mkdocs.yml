@@ -90,12 +90,15 @@ nav:
     - Emit:
       - Overview: api/emit/index.md
       - TypeBuilder: api/emit/type-builder.md
+      - TypeBuilder Extensions: api/emit/type-builder-extensions.md
       - MethodBuilder: api/emit/method-builder.md
       - PropertyBuilder: api/emit/property-builder.md
       - FieldBuilder: api/emit/field-builder.md
       - ConstructorBuilder: api/emit/constructor-builder.md
       - Other Builders: api/emit/other-builders.md
       - BodyBuilder: api/emit/body-builder.md
+      - Patterns: api/emit/patterns.md
+      - Directives: api/emit/directives.md
       - Support Types: api/emit/support-types.md
     - Extensions:
       - Overview: api/extensions/index.md

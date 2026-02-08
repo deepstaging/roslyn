@@ -5,6 +5,8 @@ namespace Deepstaging.Roslyn.Tests.Projections.Extensions;
 
 public class OptionalAttributeTests : RoslynTestBase
 {
+    #region Factory Methods
+
     [Test]
     public async Task Can_create_with_value()
     {
@@ -53,6 +55,10 @@ public class OptionalAttributeTests : RoslynTestBase
         await Assert.That(empty.OrNull()).IsNull();
     }
 
+    #endregion
+
+    #region Attribute Class Access
+
     [Test]
     public async Task Name_returns_attribute_class_name()
     {
@@ -69,6 +75,10 @@ public class OptionalAttributeTests : RoslynTestBase
 
         await Assert.That(attribute.AttributeClass.Name).IsEqualTo("ObsoleteAttribute");
     }
+
+    #endregion
+
+    #region Constructor Arguments
 
     [Test]
     public async Task HasConstructorArguments_detects_arguments()
@@ -126,4 +136,6 @@ public class OptionalAttributeTests : RoslynTestBase
 
         await Assert.That(firstArg.HasValue).IsTrue();
     }
+
+    #endregion
 }

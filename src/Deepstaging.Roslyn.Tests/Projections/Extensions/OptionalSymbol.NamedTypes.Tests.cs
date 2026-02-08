@@ -5,6 +5,8 @@ namespace Deepstaging.Roslyn.Tests.Projections.Extensions;
 
 public class OptionalNamedTypeSymbolTests : RoslynTestBase
 {
+    #region Base Type Access
+
     [Test]
     public async Task BaseType_returns_base_type()
     {
@@ -65,6 +67,10 @@ public class OptionalNamedTypeSymbolTests : RoslynTestBase
         await Assert.That(baseTypes).IsEmpty();
     }
 
+    #endregion
+
+    #region Interface Access
+
     [Test]
     public async Task GetInterfaces_returns_direct_interfaces()
     {
@@ -115,6 +121,10 @@ public class OptionalNamedTypeSymbolTests : RoslynTestBase
         await Assert.That(interfaces).IsEmpty();
     }
 
+    #endregion
+
+    #region Interface Implementation Check
+
     [Test]
     public async Task ImplementsInterface_returns_true_for_direct_interface()
     {
@@ -151,6 +161,10 @@ public class OptionalNamedTypeSymbolTests : RoslynTestBase
 
         await Assert.That(empty.ImplementsInterface("IMyInterface")).IsFalse();
     }
+
+    #endregion
+
+    #region Inheritance Check
 
     [Test]
     public async Task InheritsFrom_returns_true_for_direct_base()
@@ -198,4 +212,6 @@ public class OptionalNamedTypeSymbolTests : RoslynTestBase
 
         await Assert.That(empty.InheritsFrom("BaseClass")).IsFalse();
     }
+
+    #endregion
 }

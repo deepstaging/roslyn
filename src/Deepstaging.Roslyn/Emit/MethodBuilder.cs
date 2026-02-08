@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
 
+using Deepstaging.Roslyn.Emit.Patterns;
+
 namespace Deepstaging.Roslyn.Emit;
 
 /// <summary>
@@ -8,57 +10,55 @@ namespace Deepstaging.Roslyn.Emit;
 /// Supports instance and static methods, async methods, and custom bodies.
 /// Immutable - each method returns a new instance.
 /// </summary>
-public readonly struct MethodBuilder
+public record struct MethodBuilder
 {
-    private readonly string _name;
-    private readonly string? _returnType;
-    private readonly Accessibility _accessibility;
-    private readonly bool _isStatic;
-    private readonly bool _isVirtual;
-    private readonly bool _isOverride;
-    private readonly bool _isAbstract;
-    private readonly bool _isAsync;
-    private readonly ImmutableArray<TypeParameterBuilder> _typeParameters;
-    private readonly ImmutableArray<ParameterBuilder> _parameters;
-    private readonly ImmutableArray<AttributeBuilder> _attributes;
-    private readonly ImmutableArray<string> _usings;
-    private readonly BodyBuilder? _body;
-    private readonly string? _expressionBody;
-    private readonly XmlDocumentationBuilder? _xmlDoc;
+    /// <summary>Gets the method name.</summary>
+    public string Name { get; init; }
 
-    private MethodBuilder(
-        string name,
-        string? returnType,
-        Accessibility accessibility,
-        bool isStatic,
-        bool isVirtual,
-        bool isOverride,
-        bool isAbstract,
-        bool isAsync,
-        ImmutableArray<TypeParameterBuilder> typeParameters,
-        ImmutableArray<ParameterBuilder> parameters,
-        ImmutableArray<AttributeBuilder> attributes,
-        ImmutableArray<string> usings,
-        BodyBuilder? body,
-        string? expressionBody,
-        XmlDocumentationBuilder? xmlDoc)
-    {
-        _name = name;
-        _returnType = returnType;
-        _accessibility = accessibility;
-        _isStatic = isStatic;
-        _isVirtual = isVirtual;
-        _isOverride = isOverride;
-        _isAbstract = isAbstract;
-        _isAsync = isAsync;
-        _typeParameters = typeParameters.IsDefault ? ImmutableArray<TypeParameterBuilder>.Empty : typeParameters;
-        _parameters = parameters.IsDefault ? ImmutableArray<ParameterBuilder>.Empty : parameters;
-        _attributes = attributes.IsDefault ? ImmutableArray<AttributeBuilder>.Empty : attributes;
-        _usings = usings.IsDefault ? ImmutableArray<string>.Empty : usings;
-        _body = body;
-        _expressionBody = expressionBody;
-        _xmlDoc = xmlDoc;
-    }
+    /// <summary>Gets the return type.</summary>
+    public string? ReturnType { get; init; }
+
+    /// <summary>Gets the accessibility level.</summary>
+    public Accessibility Accessibility { get; init; }
+
+    /// <summary>Gets whether the method is static.</summary>
+    public bool IsStatic { get; init; }
+
+    /// <summary>Gets whether the method is virtual.</summary>
+    public bool IsVirtual { get; init; }
+
+    /// <summary>Gets whether the method is an override.</summary>
+    public bool IsOverride { get; init; }
+
+    /// <summary>Gets whether the method is abstract.</summary>
+    public bool IsAbstract { get; init; }
+
+    /// <summary>Gets whether the method is async.</summary>
+    public bool IsAsync { get; init; }
+
+    /// <summary>Gets the type parameters for the method.</summary>
+    public ImmutableArray<TypeParameterBuilder> TypeParameters { get; init; }
+
+    /// <summary>Gets the parameters for the method.</summary>
+    public ImmutableArray<ParameterBuilder> Parameters { get; init; }
+
+    /// <summary>Gets the attributes applied to the method.</summary>
+    public ImmutableArray<AttributeBuilder> Attributes { get; init; }
+
+    /// <summary>Gets the using directives for this method.</summary>
+    public ImmutableArray<string> Usings { get; init; }
+
+    /// <summary>Gets the method body builder.</summary>
+    public BodyBuilder? Body { get; init; }
+
+    /// <summary>Gets the expression body.</summary>
+    public string? ExpressionBody { get; init; }
+
+    /// <summary>Gets the XML documentation builder.</summary>
+    public XmlDocumentationBuilder? XmlDoc { get; init; }
+
+    /// <summary>Gets the preprocessor directive condition for conditional compilation.</summary>
+    public Directive? Condition { get; init; }
 
     #region Factory Methods
 
@@ -71,22 +71,12 @@ public readonly struct MethodBuilder
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Method name cannot be null or empty.", nameof(name));
 
-        return new MethodBuilder(
-            name,
-            "void",
-            Accessibility.Public,
-            false,
-            false,
-            false,
-            false,
-            false,
-            ImmutableArray<TypeParameterBuilder>.Empty,
-            ImmutableArray<ParameterBuilder>.Empty,
-            ImmutableArray<AttributeBuilder>.Empty,
-            ImmutableArray<string>.Empty,
-            null,
-            null,
-            null);
+        return new MethodBuilder
+        {
+            Name = name,
+            ReturnType = "void",
+            Accessibility = Accessibility.Public
+        };
     }
 
     /// <summary>
@@ -122,8 +112,7 @@ public readonly struct MethodBuilder
     /// <param name="returnType">The return type (e.g., "void", "string", "Task&lt;int&gt;").</param>
     public MethodBuilder WithReturnType(string returnType)
     {
-        return new MethodBuilder(_name, returnType, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isAsync, _typeParameters, _parameters, _attributes, _usings, _body, _expressionBody, _xmlDoc);
+        return this with { ReturnType = returnType };
     }
 
     #endregion
@@ -135,8 +124,7 @@ public readonly struct MethodBuilder
     /// </summary>
     public MethodBuilder WithAccessibility(Accessibility accessibility)
     {
-        return new MethodBuilder(_name, _returnType, accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isAsync, _typeParameters, _parameters, _attributes, _usings, _body, _expressionBody, _xmlDoc);
+        return this with { Accessibility = accessibility };
     }
 
     /// <summary>
@@ -144,8 +132,7 @@ public readonly struct MethodBuilder
     /// </summary>
     public MethodBuilder AsStatic()
     {
-        return new MethodBuilder(_name, _returnType, _accessibility, true, _isVirtual, _isOverride,
-            _isAbstract, _isAsync, _typeParameters, _parameters, _attributes, _usings, _body, _expressionBody, _xmlDoc);
+        return this with { IsStatic = true };
     }
 
     /// <summary>
@@ -153,8 +140,7 @@ public readonly struct MethodBuilder
     /// </summary>
     public MethodBuilder AsVirtual()
     {
-        return new MethodBuilder(_name, _returnType, _accessibility, _isStatic, true, _isOverride,
-            _isAbstract, _isAsync, _typeParameters, _parameters, _attributes, _usings, _body, _expressionBody, _xmlDoc);
+        return this with { IsVirtual = true };
     }
 
     /// <summary>
@@ -162,8 +148,7 @@ public readonly struct MethodBuilder
     /// </summary>
     public MethodBuilder AsOverride()
     {
-        return new MethodBuilder(_name, _returnType, _accessibility, _isStatic, _isVirtual, true,
-            _isAbstract, _isAsync, _typeParameters, _parameters, _attributes, _usings, _body, _expressionBody, _xmlDoc);
+        return this with { IsOverride = true };
     }
 
     /// <summary>
@@ -171,8 +156,7 @@ public readonly struct MethodBuilder
     /// </summary>
     public MethodBuilder AsAbstract()
     {
-        return new MethodBuilder(_name, _returnType, _accessibility, _isStatic, _isVirtual, _isOverride,
-            true, _isAsync, _typeParameters, _parameters, _attributes, _usings, _body, _expressionBody, _xmlDoc);
+        return this with { IsAbstract = true };
     }
 
     /// <summary>
@@ -180,8 +164,24 @@ public readonly struct MethodBuilder
     /// </summary>
     public MethodBuilder Async()
     {
-        return new MethodBuilder(_name, _returnType, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, true, _typeParameters, _parameters, _attributes, _usings, _body, _expressionBody, _xmlDoc);
+        return this with { IsAsync = true };
+    }
+
+    /// <summary>
+    /// Wraps this method in a preprocessor directive (#if/#endif).
+    /// </summary>
+    /// <param name="directive">The directive condition (e.g., Directives.Net6OrGreater).</param>
+    /// <example>
+    /// <code>
+    /// builder.AddMethod("Parse", m => m
+    ///     .When(Directives.Net7OrGreater)
+    ///     .WithParameter("input", "string")
+    ///     .WithBody(b => b.AddReturn("new()")));
+    /// </code>
+    /// </example>
+    public MethodBuilder When(Directive directive)
+    {
+        return this with { Condition = directive };
     }
 
     #endregion
@@ -195,9 +195,8 @@ public readonly struct MethodBuilder
     public MethodBuilder AddTypeParameter(string name)
     {
         var typeParameter = TypeParameterBuilder.For(name);
-        return new MethodBuilder(_name, _returnType, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isAsync, _typeParameters.Add(typeParameter), _parameters, _attributes, _usings, _body,
-            _expressionBody, _xmlDoc);
+        var typeParams = TypeParameters.IsDefault ? [] : TypeParameters;
+        return this with { TypeParameters = typeParams.Add(typeParameter) };
     }
 
     /// <summary>
@@ -208,9 +207,8 @@ public readonly struct MethodBuilder
     public MethodBuilder AddTypeParameter(string name, Func<TypeParameterBuilder, TypeParameterBuilder> configure)
     {
         var typeParameter = configure(TypeParameterBuilder.For(name));
-        return new MethodBuilder(_name, _returnType, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isAsync, _typeParameters.Add(typeParameter), _parameters, _attributes, _usings, _body,
-            _expressionBody, _xmlDoc);
+        var typeParams = TypeParameters.IsDefault ? [] : TypeParameters;
+        return this with { TypeParameters = typeParams.Add(typeParameter) };
     }
 
     /// <summary>
@@ -218,9 +216,8 @@ public readonly struct MethodBuilder
     /// </summary>
     public MethodBuilder AddTypeParameter(TypeParameterBuilder typeParameter)
     {
-        return new MethodBuilder(_name, _returnType, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isAsync, _typeParameters.Add(typeParameter), _parameters, _attributes, _usings, _body,
-            _expressionBody, _xmlDoc);
+        var typeParams = TypeParameters.IsDefault ? [] : TypeParameters;
+        return this with { TypeParameters = typeParams.Add(typeParameter) };
     }
 
     #endregion
@@ -235,9 +232,8 @@ public readonly struct MethodBuilder
     public MethodBuilder AddParameter(string name, string type)
     {
         var parameter = ParameterBuilder.For(name, type);
-        return new MethodBuilder(_name, _returnType, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isAsync, _typeParameters, _parameters.Add(parameter), _attributes, _usings, _body,
-            _expressionBody, _xmlDoc);
+        var parameters = Parameters.IsDefault ? [] : Parameters;
+        return this with { Parameters = parameters.Add(parameter) };
     }
 
     /// <summary>
@@ -249,9 +245,8 @@ public readonly struct MethodBuilder
     public MethodBuilder AddParameter(string name, string type, Func<ParameterBuilder, ParameterBuilder> configure)
     {
         var parameter = configure(ParameterBuilder.For(name, type));
-        return new MethodBuilder(_name, _returnType, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isAsync, _typeParameters, _parameters.Add(parameter), _attributes, _usings, _body,
-            _expressionBody, _xmlDoc);
+        var parameters = Parameters.IsDefault ? [] : Parameters;
+        return this with { Parameters = parameters.Add(parameter) };
     }
 
     /// <summary>
@@ -259,9 +254,31 @@ public readonly struct MethodBuilder
     /// </summary>
     public MethodBuilder AddParameter(ParameterBuilder parameter)
     {
-        return new MethodBuilder(_name, _returnType, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isAsync, _typeParameters, _parameters.Add(parameter), _attributes, _usings, _body,
-            _expressionBody, _xmlDoc);
+        var parameters = Parameters.IsDefault ? [] : Parameters;
+        return this with { Parameters = parameters.Add(parameter) };
+    }
+
+    /// <summary>
+    /// Configures an existing parameter by name.
+    /// Useful for adding attributes to parameters created via <see cref="Parse"/>.
+    /// </summary>
+    /// <param name="name">The name of the parameter to configure.</param>
+    /// <param name="configure">Configuration callback for the parameter.</param>
+    /// <exception cref="ArgumentException">Thrown when no parameter with the specified name exists.</exception>
+    public MethodBuilder ConfigureParameter(string name, Func<ParameterBuilder, ParameterBuilder> configure)
+    {
+        var parameters = Parameters.IsDefault ? [] : Parameters;
+
+        for (var i = 0; i < parameters.Length; i++)
+        {
+            if (parameters[i].Name == name)
+            {
+                var updated = configure(parameters[i]);
+                return this with { Parameters = parameters.SetItem(i, updated) };
+            }
+        }
+
+        throw new ArgumentException($"Parameter '{name}' not found. Available parameters: {string.Join(", ", parameters.Select(p => p.Name))}", nameof(name));
     }
 
     #endregion
@@ -274,19 +291,23 @@ public readonly struct MethodBuilder
     public MethodBuilder WithBody(Func<BodyBuilder, BodyBuilder> configure)
     {
         var body = configure(BodyBuilder.Empty());
-        return new MethodBuilder(_name, _returnType, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isAsync, _typeParameters, _parameters, _attributes, _usings, body, null, _xmlDoc);
+        return this with { Body = body, ExpressionBody = null };
     }
 
     /// <summary>
     /// Sets the method body as an expression (arrow expression syntax).
     /// Use this for expression-bodied methods like: public int GetValue() => 42;
+    /// Trailing semicolons are automatically stripped.
     /// </summary>
     /// <param name="expression">The expression (e.g., "42", "x + y", "liftEff(...)").</param>
     public MethodBuilder WithExpressionBody(string expression)
     {
-        return new MethodBuilder(_name, _returnType, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isAsync, _typeParameters, _parameters, _attributes, _usings, null, expression, _xmlDoc);
+        // Auto-strip trailing semicolon - expression bodies don't need them
+        var trimmed = expression.TrimEnd();
+        if (trimmed.EndsWith(";"))
+            trimmed = trimmed[..^1].TrimEnd();
+
+        return this with { ExpressionBody = trimmed, Body = null };
     }
 
     /// <summary>
@@ -297,13 +318,11 @@ public readonly struct MethodBuilder
     /// <exception cref="InvalidOperationException">Thrown when no expression body has been set.</exception>
     public MethodBuilder AppendExpressionBody(string suffix)
     {
-        if (_expressionBody is null)
+        if (ExpressionBody is null)
             throw new InvalidOperationException(
                 "Cannot append to expression body when no expression body has been set.");
 
-        return new MethodBuilder(_name, _returnType, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isAsync, _typeParameters, _parameters, _attributes, _usings, null, _expressionBody + suffix,
-            _xmlDoc);
+        return this with { ExpressionBody = ExpressionBody + suffix, Body = null };
     }
 
     #endregion
@@ -317,8 +336,7 @@ public readonly struct MethodBuilder
     public MethodBuilder WithXmlDoc(Func<XmlDocumentationBuilder, XmlDocumentationBuilder> configure)
     {
         var xmlDoc = configure(XmlDocumentationBuilder.Create());
-        return new MethodBuilder(_name, _returnType, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isAsync, _typeParameters, _parameters, _attributes, _usings, _body, _expressionBody, xmlDoc);
+        return this with { XmlDoc = xmlDoc };
     }
 
     /// <summary>
@@ -327,9 +345,8 @@ public readonly struct MethodBuilder
     /// <param name="summary">The summary text.</param>
     public MethodBuilder WithXmlDoc(string summary)
     {
-        var xmlDoc = XmlDocumentationBuilder.WithSummary(summary);
-        return new MethodBuilder(_name, _returnType, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isAsync, _typeParameters, _parameters, _attributes, _usings, _body, _expressionBody, xmlDoc);
+        var xmlDoc = XmlDocumentationBuilder.ForSummary(summary);
+        return this with { XmlDoc = xmlDoc };
     }
 
     /// <summary>
@@ -342,8 +359,17 @@ public readonly struct MethodBuilder
             return this;
 
         var xmlDoc = XmlDocumentationBuilder.From(documentation);
-        return new MethodBuilder(_name, _returnType, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isAsync, _typeParameters, _parameters, _attributes, _usings, _body, _expressionBody, xmlDoc);
+        return this with { XmlDoc = xmlDoc };
+    }
+
+    /// <summary>
+    /// Sets the XML documentation for the method using inheritdoc.
+    /// </summary>
+    /// <param name="cref">Optional cref attribute for the inheritdoc element.</param>
+    public MethodBuilder WithInheritDoc(string? cref = null)
+    {
+        var xmlDoc = XmlDocumentationBuilder.ForInheritDoc(cref);
+        return this with { XmlDoc = xmlDoc };
     }
 
     #endregion
@@ -357,9 +383,8 @@ public readonly struct MethodBuilder
     public MethodBuilder WithAttribute(string name)
     {
         var attribute = AttributeBuilder.For(name);
-        return new MethodBuilder(_name, _returnType, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isAsync, _typeParameters, _parameters, _attributes.Add(attribute), _usings, _body,
-            _expressionBody, _xmlDoc);
+        var attributes = Attributes.IsDefault ? [] : Attributes;
+        return this with { Attributes = attributes.Add(attribute) };
     }
 
     /// <summary>
@@ -370,9 +395,8 @@ public readonly struct MethodBuilder
     public MethodBuilder WithAttribute(string name, Func<AttributeBuilder, AttributeBuilder> configure)
     {
         var attribute = configure(AttributeBuilder.For(name));
-        return new MethodBuilder(_name, _returnType, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isAsync, _typeParameters, _parameters, _attributes.Add(attribute), _usings, _body,
-            _expressionBody, _xmlDoc);
+        var attributes = Attributes.IsDefault ? [] : Attributes;
+        return this with { Attributes = attributes.Add(attribute) };
     }
 
     /// <summary>
@@ -380,9 +404,8 @@ public readonly struct MethodBuilder
     /// </summary>
     public MethodBuilder WithAttribute(AttributeBuilder attribute)
     {
-        return new MethodBuilder(_name, _returnType, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isAsync, _typeParameters, _parameters, _attributes.Add(attribute), _usings, _body,
-            _expressionBody, _xmlDoc);
+        var attributes = Attributes.IsDefault ? [] : Attributes;
+        return this with { Attributes = attributes.Add(attribute) };
     }
 
     #endregion
@@ -395,9 +418,8 @@ public readonly struct MethodBuilder
     /// <param name="namespace">The namespace to add (e.g., "System.Linq", "static System.Math").</param>
     public MethodBuilder AddUsing(string @namespace)
     {
-        return new MethodBuilder(_name, _returnType, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isAsync, _typeParameters, _parameters, _attributes, _usings.Add(@namespace), _body,
-            _expressionBody, _xmlDoc);
+        var usings = Usings.IsDefault ? [] : Usings;
+        return this with { Usings = usings.Add(@namespace) };
     }
 
     /// <summary>
@@ -407,15 +429,9 @@ public readonly struct MethodBuilder
     /// <returns></returns>
     public MethodBuilder AddUsings(params string[] namespaces)
     {
-        return new MethodBuilder(_name, _returnType, _accessibility, _isStatic, _isVirtual, _isOverride,
-            _isAbstract, _isAsync, _typeParameters, _parameters, _attributes, _usings.AddRange(namespaces), _body,
-            _expressionBody, _xmlDoc);
+        var usings = Usings.IsDefault ? [] : Usings;
+        return this with { Usings = usings.AddRange(namespaces) };
     }
-
-    /// <summary>
-    /// Gets the using directives for this method.
-    /// </summary>
-    internal ImmutableArray<string> Usings => _usings;
 
     #endregion
 
@@ -427,37 +443,39 @@ public readonly struct MethodBuilder
     internal MethodDeclarationSyntax Build()
     {
         var method = SyntaxFactory.MethodDeclaration(
-            SyntaxFactory.ParseTypeName(_returnType ?? "void"),
-            SyntaxFactory.Identifier(_name));
+            SyntaxFactory.ParseTypeName(ReturnType ?? "void"),
+            SyntaxFactory.Identifier(Name));
 
         // Add attributes
-        if (_attributes.Length > 0)
+        var attributes = Attributes.IsDefault ? [] : Attributes;
+        if (attributes.Length > 0)
         {
-            var attributeLists = _attributes.Select(a => a.BuildList()).ToArray();
+            var attributeLists = attributes.Select(a => a.BuildList()).ToArray();
             method = method.WithAttributeLists(SyntaxFactory.List(attributeLists));
         }
 
         // Add modifiers
         var modifiers = new List<SyntaxKind>();
-        modifiers.Add(AccessibilityToSyntaxKind(_accessibility));
-        if (_isStatic) modifiers.Add(SyntaxKind.StaticKeyword);
-        if (_isAsync) modifiers.Add(SyntaxKind.AsyncKeyword);
-        if (_isVirtual) modifiers.Add(SyntaxKind.VirtualKeyword);
-        if (_isOverride) modifiers.Add(SyntaxKind.OverrideKeyword);
-        if (_isAbstract) modifiers.Add(SyntaxKind.AbstractKeyword);
+        modifiers.Add(AccessibilityToSyntaxKind(Accessibility));
+        if (IsStatic) modifiers.Add(SyntaxKind.StaticKeyword);
+        if (IsAsync) modifiers.Add(SyntaxKind.AsyncKeyword);
+        if (IsVirtual) modifiers.Add(SyntaxKind.VirtualKeyword);
+        if (IsOverride) modifiers.Add(SyntaxKind.OverrideKeyword);
+        if (IsAbstract) modifiers.Add(SyntaxKind.AbstractKeyword);
 
         method = method.WithModifiers(
             SyntaxFactory.TokenList(modifiers.Select(SyntaxFactory.Token)));
 
         // Add type parameters
-        if (_typeParameters.Length > 0)
+        var typeParameters = TypeParameters.IsDefault ? [] : TypeParameters;
+        if (typeParameters.Length > 0)
         {
             var typeParameterList = SyntaxFactory.TypeParameterList(
-                SyntaxFactory.SeparatedList(_typeParameters.Select(tp => tp.Build())));
+                SyntaxFactory.SeparatedList(typeParameters.Select(tp => tp.Build())));
             method = method.WithTypeParameterList(typeParameterList);
 
             // Add constraint clauses
-            var constraintClauses = _typeParameters
+            var constraintClauses = typeParameters
                 .Select(tp => tp.BuildConstraintClause())
                 .Where(c => c != null)
                 .Cast<TypeParameterConstraintClauseSyntax>()
@@ -468,25 +486,26 @@ public readonly struct MethodBuilder
         }
 
         // Add parameters
+        var parameters = Parameters.IsDefault ? [] : Parameters;
         var parameterList = SyntaxFactory.ParameterList(
-            SyntaxFactory.SeparatedList(_parameters.Select(p => p.Build())));
+            SyntaxFactory.SeparatedList(parameters.Select(p => p.Build())));
         method = method.WithParameterList(parameterList);
 
         // Add body or expression body (if not abstract)
-        if (!_isAbstract)
+        if (!IsAbstract)
         {
-            if (_expressionBody != null)
+            if (ExpressionBody != null)
             {
                 // Expression-bodied method: => expression;
                 var arrowExpression = SyntaxFactory.ArrowExpressionClause(
-                    SyntaxFactory.ParseExpression(_expressionBody));
+                    SyntaxFactory.ParseExpression(ExpressionBody));
                 method = method
                     .WithExpressionBody(arrowExpression)
                     .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
             }
-            else if (_body.HasValue)
+            else if (Body.HasValue || HasParameterValidations())
             {
-                method = method.WithBody(_body.Value.Build());
+                method = method.WithBody(BuildBodyWithValidations());
             }
             else
             {
@@ -501,10 +520,16 @@ public readonly struct MethodBuilder
         }
 
         // Add XML documentation
-        if (_xmlDoc.HasValue && _xmlDoc.Value.HasContent)
+        if (XmlDoc.HasValue && XmlDoc.Value.HasContent)
         {
-            var trivia = _xmlDoc.Value.Build();
+            var trivia = XmlDoc.Value.Build();
             method = method.WithLeadingTrivia(trivia);
+        }
+
+        // Wrap in preprocessor directive if specified
+        if (Condition.HasValue)
+        {
+            method = DirectiveHelper.WrapInDirective(method, Condition.Value);
         }
 
         return method;
@@ -522,22 +547,62 @@ public readonly struct MethodBuilder
         };
     }
 
-    /// <summary>
-    /// Gets the method name.
-    /// </summary>
-    public string Name => _name;
+    private bool HasParameterValidations()
+    {
+        var parameters = Parameters.IsDefault ? [] : Parameters;
+        return parameters.Any(p => !p.Validations.IsDefaultOrEmpty || p.AssignsToMember is not null);
+    }
 
-    /// <summary>
-    /// Gets the return type.
-    /// </summary>
-    public string? ReturnType => _returnType;
+    private BlockSyntax BuildBodyWithValidations()
+    {
+        var bodyBuilder = BodyBuilder.Empty();
+        var parameters = Parameters.IsDefault ? [] : Parameters;
+
+        // 1. Add validation statements from parameters (at the start)
+        foreach (var param in parameters)
+        {
+            foreach (var statement in param.GetValidationStatements())
+            {
+                bodyBuilder = bodyBuilder.AddStatements(statement);
+            }
+        }
+
+        // 2. Add existing body statements
+        if (Body.HasValue)
+        {
+            var existingStatements = Body.Value.Statements.IsDefault ? [] : Body.Value.Statements;
+            foreach (var statement in existingStatements)
+            {
+                var statements = bodyBuilder.Statements.IsDefault ? [] : bodyBuilder.Statements;
+                bodyBuilder = bodyBuilder with { Statements = statements.Add(statement) };
+            }
+        }
+
+        // 3. Add assignment statements from parameters (at the end)
+        foreach (var param in parameters)
+        {
+            var assignment = param.GetAssignmentStatement();
+            if (assignment is not null)
+            {
+                bodyBuilder = bodyBuilder.AddStatement(assignment);
+            }
+        }
+
+        return bodyBuilder.Build();
+    }
 
     /// <summary>
     /// Gets the extension method target type, if this is an extension method.
     /// Returns null if the method is not an extension method.
     /// </summary>
-    public string? ExtensionTargetType =>
-        _parameters.FirstOrDefault(p => p.IsExtensionTarget) is { } param ? param.Type : null;
+    public string? ExtensionTargetType
+    {
+        get
+        {
+            var parameters = Parameters.IsDefault ? [] : Parameters;
+            return parameters.FirstOrDefault(p => p.IsExtensionTarget) is { } param ? param.Type : null;
+        }
+    }
 
     #endregion
 }

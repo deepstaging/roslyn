@@ -5,6 +5,8 @@ namespace Deepstaging.Roslyn.Tests.Emit;
 
 public class ConstructorBuilderTests : RoslynTestBase
 {
+    #region Basic Constructors
+
     [Test]
     public async Task Can_emit_parameterless_constructor()
     {
@@ -45,6 +47,10 @@ public class ConstructorBuilderTests : RoslynTestBase
         await Assert.That(result.Code).Contains("Name = name;");
     }
 
+    #endregion
+
+    #region Constructor Chaining
+
     [Test]
     public async Task Can_emit_constructor_with_this_chaining()
     {
@@ -82,6 +88,10 @@ public class ConstructorBuilderTests : RoslynTestBase
         await Assert.That(result.Code).Contains("public Derived(int value)");
         await Assert.That(result.Code).Contains(": base(value)");
     }
+
+    #endregion
+
+    #region Constructor Modifiers
 
     [Test]
     public async Task Can_emit_private_constructor()
@@ -139,6 +149,10 @@ public class ConstructorBuilderTests : RoslynTestBase
         await Assert.That(result.Code).Contains("public Service(IRepository repository = null)");
     }
 
+    #endregion
+
+    #region Lambda Configuration
+
     [Test]
     public async Task Can_emit_constructor_with_lambda_configuration()
     {
@@ -156,6 +170,10 @@ public class ConstructorBuilderTests : RoslynTestBase
         await Assert.That(result.Success).IsTrue();
         await Assert.That(result.Code).Contains("public Entity(Guid id)");
     }
+
+    #endregion
+
+    #region Primary Constructors
 
     [Test]
     public async Task Can_emit_class_with_primary_constructor()
@@ -215,4 +233,6 @@ public class ConstructorBuilderTests : RoslynTestBase
         await Assert.That(result.Success).IsTrue();
         await Assert.That(result.Code).Contains("public class Test(string value)");
     }
+
+    #endregion
 }

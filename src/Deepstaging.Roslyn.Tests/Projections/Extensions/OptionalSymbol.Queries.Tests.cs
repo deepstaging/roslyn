@@ -5,6 +5,8 @@ namespace Deepstaging.Roslyn.Tests.Projections.Extensions;
 
 public class OptionalSymbolQueriesTests : RoslynTestBase
 {
+    #region Method Queries
+
     [Test]
     public async Task Can_query_methods_from_optional_symbol()
     {
@@ -43,6 +45,10 @@ public class OptionalSymbolQueriesTests : RoslynTestBase
         await Assert.That(properties.Length).IsEqualTo(2);
     }
 
+    #endregion
+
+    #region Parameter Queries
+
     [Test]
     public async Task Can_query_parameters_from_optional_method()
     {
@@ -64,6 +70,10 @@ public class OptionalSymbolQueriesTests : RoslynTestBase
         await Assert.That(parameters.Length).IsEqualTo(2);
     }
 
+    #endregion
+
+    #region Empty Optional Behavior
+
     [Test]
     public async Task Query_on_empty_optional_returns_empty_results()
     {
@@ -75,4 +85,6 @@ public class OptionalSymbolQueriesTests : RoslynTestBase
         var action = () => emptyOptional.QueryMethods();
         await Assert.That(action).ThrowsException();
     }
+
+    #endregion
 }

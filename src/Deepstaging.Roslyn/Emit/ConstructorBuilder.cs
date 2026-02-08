@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
 
+using Deepstaging.Roslyn.Emit.Patterns;
+
 namespace Deepstaging.Roslyn.Emit;
 
 /// <summary>
@@ -8,42 +10,34 @@ namespace Deepstaging.Roslyn.Emit;
 /// Supports instance and static constructors with parameters and bodies.
 /// Immutable - each method returns a new instance.
 /// </summary>
-public readonly struct ConstructorBuilder
+public record struct ConstructorBuilder
 {
-    private readonly string _typeName;
-    private readonly Accessibility _accessibility;
-    private readonly bool _isStatic;
-    private readonly bool _isPrimary;
-    private readonly ImmutableArray<ParameterBuilder> _parameters;
-    private readonly ImmutableArray<AttributeBuilder> _attributes;
-    private readonly ImmutableArray<string> _usings;
-    private readonly BodyBuilder? _body;
-    private readonly ConstructorInitializer? _initializer;
-    private readonly XmlDocumentationBuilder? _xmlDoc;
+    /// <summary>Gets the type name for the constructor.</summary>
+    public string TypeName { get; init; }
+    /// <summary>Gets the accessibility of the constructor.</summary>
+    public Accessibility Accessibility { get; init; }
+    /// <summary>Gets whether the constructor is static.</summary>
+    public bool IsStatic { get; init; }
+    /// <summary>Gets whether this is a primary constructor.</summary>
+    public bool IsPrimary { get; init; }
 
-    private ConstructorBuilder(
-        string typeName,
-        Accessibility accessibility,
-        bool isStatic,
-        bool isPrimary,
-        ImmutableArray<ParameterBuilder> parameters,
-        ImmutableArray<AttributeBuilder> attributes,
-        ImmutableArray<string> usings,
-        BodyBuilder? body,
-        ConstructorInitializer? initializer,
-        XmlDocumentationBuilder? xmlDoc)
-    {
-        _typeName = typeName;
-        _accessibility = accessibility;
-        _isStatic = isStatic;
-        _isPrimary = isPrimary;
-        _parameters = parameters.IsDefault ? ImmutableArray<ParameterBuilder>.Empty : parameters;
-        _attributes = attributes.IsDefault ? ImmutableArray<AttributeBuilder>.Empty : attributes;
-        _usings = usings.IsDefault ? ImmutableArray<string>.Empty : usings;
-        _body = body;
-        _initializer = initializer;
-        _xmlDoc = xmlDoc;
-    }
+    /// <summary>Gets the parameters for the constructor.</summary>
+    public ImmutableArray<ParameterBuilder> Parameters { get; init; }
+
+    /// <summary>Gets the attributes applied to the constructor.</summary>
+    public ImmutableArray<AttributeBuilder> Attributes { get; init; }
+
+    /// <summary>Gets the using directives for the constructor.</summary>
+    public ImmutableArray<string> Usings { get; init; }
+
+    /// <summary>Gets the body of the constructor.</summary>
+    public BodyBuilder? Body { get; init; }
+    /// <summary>Gets the constructor initializer (this or base call).</summary>
+    public ConstructorInitializer? Initializer { get; init; }
+    /// <summary>Gets the XML documentation for the constructor.</summary>
+    public XmlDocumentationBuilder? XmlDoc { get; init; }
+    /// <summary>Gets the preprocessor directive condition for conditional compilation.</summary>
+    public Directive? Condition { get; init; }
 
     #region Factory Methods
 
@@ -56,17 +50,11 @@ public readonly struct ConstructorBuilder
         if (string.IsNullOrWhiteSpace(typeName))
             throw new ArgumentException("Type name cannot be null or empty.", nameof(typeName));
 
-        return new ConstructorBuilder(
-            typeName,
-            Accessibility.Public,
-            false,
-            false,
-            ImmutableArray<ParameterBuilder>.Empty,
-            ImmutableArray<AttributeBuilder>.Empty,
-            ImmutableArray<string>.Empty,
-            null,
-            null,
-            null);
+        return new ConstructorBuilder
+        {
+            TypeName = typeName,
+            Accessibility = Accessibility.Public,
+        };
     }
 
     #endregion
@@ -78,8 +66,7 @@ public readonly struct ConstructorBuilder
     /// </summary>
     public ConstructorBuilder WithAccessibility(Accessibility accessibility)
     {
-        return new ConstructorBuilder(_typeName, accessibility, _isStatic, _isPrimary, _parameters, _attributes,
-            _usings, _body, _initializer, _xmlDoc);
+        return this with { Accessibility = accessibility };
     }
 
     /// <summary>
@@ -88,8 +75,7 @@ public readonly struct ConstructorBuilder
     /// </summary>
     public ConstructorBuilder AsStatic()
     {
-        return new ConstructorBuilder(_typeName, Accessibility.NotApplicable, true, _isPrimary, _parameters,
-            _attributes, _usings, _body, _initializer, _xmlDoc);
+        return this with { Accessibility = Accessibility.NotApplicable, IsStatic = true };
     }
 
     /// <summary>
@@ -99,9 +85,15 @@ public readonly struct ConstructorBuilder
     /// </summary>
     public ConstructorBuilder AsPrimary()
     {
-        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, true, _parameters, _attributes, _usings,
-            null, null, _xmlDoc);
+        return this with { IsPrimary = true, Body = null, Initializer = null };
     }
+
+    /// <summary>
+    /// Wraps this constructor in a preprocessor directive (#if/#endif).
+    /// </summary>
+    /// <param name="directive">The directive condition (e.g., Directives.Net6OrGreater).</param>
+    public ConstructorBuilder When(Directive directive) =>
+        this with { Condition = directive };
 
     #endregion
 
@@ -115,8 +107,8 @@ public readonly struct ConstructorBuilder
     public ConstructorBuilder AddParameter(string name, string type)
     {
         var parameter = ParameterBuilder.For(name, type);
-        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters.Add(parameter),
-            _attributes, _usings, _body, _initializer, _xmlDoc);
+        var parameters = Parameters.IsDefault ? [] : Parameters;
+        return this with { Parameters = parameters.Add(parameter) };
     }
 
     /// <summary>
@@ -128,8 +120,8 @@ public readonly struct ConstructorBuilder
     public ConstructorBuilder AddParameter(string name, string type, Func<ParameterBuilder, ParameterBuilder> configure)
     {
         var parameter = configure(ParameterBuilder.For(name, type));
-        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters.Add(parameter),
-            _attributes, _usings, _body, _initializer, _xmlDoc);
+        var parameters = Parameters.IsDefault ? [] : Parameters;
+        return this with { Parameters = parameters.Add(parameter) };
     }
 
     /// <summary>
@@ -137,8 +129,8 @@ public readonly struct ConstructorBuilder
     /// </summary>
     public ConstructorBuilder AddParameter(ParameterBuilder parameter)
     {
-        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters.Add(parameter),
-            _attributes, _usings, _body, _initializer, _xmlDoc);
+        var parameters = Parameters.IsDefault ? [] : Parameters;
+        return this with { Parameters = parameters.Add(parameter) };
     }
 
     #endregion
@@ -151,8 +143,7 @@ public readonly struct ConstructorBuilder
     public ConstructorBuilder WithBody(Func<BodyBuilder, BodyBuilder> configure)
     {
         var body = configure(BodyBuilder.Empty());
-        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters, _attributes,
-            _usings, body, _initializer, _xmlDoc);
+        return this with { Body = body };
     }
 
     #endregion
@@ -166,8 +157,7 @@ public readonly struct ConstructorBuilder
     public ConstructorBuilder CallsThis(params string[] arguments)
     {
         var initializer = new ConstructorInitializer(ConstructorInitializerKind.This, arguments);
-        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters, _attributes,
-            _usings, _body, initializer, _xmlDoc);
+        return this with { Initializer = initializer };
     }
 
     /// <summary>
@@ -177,8 +167,7 @@ public readonly struct ConstructorBuilder
     public ConstructorBuilder CallsBase(params string[] arguments)
     {
         var initializer = new ConstructorInitializer(ConstructorInitializerKind.Base, arguments);
-        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters, _attributes,
-            _usings, _body, initializer, _xmlDoc);
+        return this with { Initializer = initializer };
     }
 
     #endregion
@@ -192,8 +181,7 @@ public readonly struct ConstructorBuilder
     public ConstructorBuilder WithXmlDoc(Func<XmlDocumentationBuilder, XmlDocumentationBuilder> configure)
     {
         var xmlDoc = configure(XmlDocumentationBuilder.Create());
-        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters, _attributes,
-            _usings, _body, _initializer, xmlDoc);
+        return this with { XmlDoc = xmlDoc };
     }
 
     /// <summary>
@@ -202,9 +190,8 @@ public readonly struct ConstructorBuilder
     /// <param name="summary">The summary text.</param>
     public ConstructorBuilder WithXmlDoc(string summary)
     {
-        var xmlDoc = XmlDocumentationBuilder.WithSummary(summary);
-        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters, _attributes,
-            _usings, _body, _initializer, xmlDoc);
+        var xmlDoc = XmlDocumentationBuilder.ForSummary(summary);
+        return this with { XmlDoc = xmlDoc };
     }
 
     /// <summary>
@@ -217,8 +204,7 @@ public readonly struct ConstructorBuilder
             return this;
 
         var xmlDoc = XmlDocumentationBuilder.From(documentation);
-        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters, _attributes,
-            _usings, _body, _initializer, xmlDoc);
+        return this with { XmlDoc = xmlDoc };
     }
 
     #endregion
@@ -232,8 +218,8 @@ public readonly struct ConstructorBuilder
     public ConstructorBuilder WithAttribute(string name)
     {
         var attribute = AttributeBuilder.For(name);
-        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters,
-            _attributes.Add(attribute), _usings, _body, _initializer, _xmlDoc);
+        var attributes = Attributes.IsDefault ? [] : Attributes;
+        return this with { Attributes = attributes.Add(attribute) };
     }
 
     /// <summary>
@@ -244,8 +230,8 @@ public readonly struct ConstructorBuilder
     public ConstructorBuilder WithAttribute(string name, Func<AttributeBuilder, AttributeBuilder> configure)
     {
         var attribute = configure(AttributeBuilder.For(name));
-        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters,
-            _attributes.Add(attribute), _usings, _body, _initializer, _xmlDoc);
+        var attributes = Attributes.IsDefault ? [] : Attributes;
+        return this with { Attributes = attributes.Add(attribute) };
     }
 
     /// <summary>
@@ -253,8 +239,8 @@ public readonly struct ConstructorBuilder
     /// </summary>
     public ConstructorBuilder WithAttribute(AttributeBuilder attribute)
     {
-        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters,
-            _attributes.Add(attribute), _usings, _body, _initializer, _xmlDoc);
+        var attributes = Attributes.IsDefault ? [] : Attributes;
+        return this with { Attributes = attributes.Add(attribute) };
     }
 
     #endregion
@@ -267,24 +253,9 @@ public readonly struct ConstructorBuilder
     /// <param name="namespace">The namespace to add (e.g., "System.Linq", "static System.Math").</param>
     public ConstructorBuilder AddUsing(string @namespace)
     {
-        return new ConstructorBuilder(_typeName, _accessibility, _isStatic, _isPrimary, _parameters, _attributes,
-            _usings.Add(@namespace), _body, _initializer, _xmlDoc);
+        var usings = Usings.IsDefault ? [] : Usings;
+        return this with { Usings = usings.Add(@namespace) };
     }
-
-    /// <summary>
-    /// Gets the using directives for this constructor.
-    /// </summary>
-    internal ImmutableArray<string> Usings => _usings;
-
-    /// <summary>
-    /// Gets whether this is a primary constructor.
-    /// </summary>
-    internal bool IsPrimary => _isPrimary;
-
-    /// <summary>
-    /// Gets the parameters for this constructor.
-    /// </summary>
-    internal ImmutableArray<ParameterBuilder> Parameters => _parameters;
 
     #endregion
 
@@ -296,20 +267,21 @@ public readonly struct ConstructorBuilder
     internal ConstructorDeclarationSyntax Build()
     {
         var constructor = SyntaxFactory.ConstructorDeclaration(
-            SyntaxFactory.Identifier(_typeName));
+            SyntaxFactory.Identifier(TypeName));
 
         // Add attributes
-        if (_attributes.Length > 0)
+        var attributes = Attributes.IsDefault ? [] : Attributes;
+        if (attributes.Length > 0)
         {
-            var attributeLists = _attributes.Select(a => a.BuildList()).ToArray();
+            var attributeLists = attributes.Select(a => a.BuildList()).ToArray();
             constructor = constructor.WithAttributeLists(SyntaxFactory.List(attributeLists));
         }
 
         // Add modifiers (unless static)
-        if (!_isStatic)
+        if (!IsStatic)
         {
             var modifiers = new List<SyntaxKind>();
-            if (_accessibility != Accessibility.NotApplicable) modifiers.Add(AccessibilityToSyntaxKind(_accessibility));
+            if (Accessibility != Accessibility.NotApplicable) modifiers.Add(AccessibilityToSyntaxKind(Accessibility));
 
             if (modifiers.Any())
                 constructor = constructor.WithModifiers(
@@ -323,10 +295,11 @@ public readonly struct ConstructorBuilder
         }
 
         // Add parameters (not allowed for static constructors)
-        if (!_isStatic)
+        if (!IsStatic)
         {
+            var parameters = Parameters.IsDefault ? [] : Parameters;
             var parameterList = SyntaxFactory.ParameterList(
-                SyntaxFactory.SeparatedList(_parameters.Select(p => p.Build())));
+                SyntaxFactory.SeparatedList(parameters.Select(p => p.Build())));
             constructor = constructor.WithParameterList(parameterList);
         }
         else
@@ -335,13 +308,13 @@ public readonly struct ConstructorBuilder
         }
 
         // Add initializer (this/base call)
-        if (_initializer.HasValue)
+        if (Initializer.HasValue)
         {
-            var kind = _initializer.Value.Kind == ConstructorInitializerKind.This
+            var kind = Initializer.Value.Kind == ConstructorInitializerKind.This
                 ? SyntaxKind.ThisConstructorInitializer
                 : SyntaxKind.BaseConstructorInitializer;
 
-            var arguments = _initializer.Value.Arguments
+            var arguments = Initializer.Value.Arguments
                 .Select(arg => SyntaxFactory.Argument(SyntaxFactory.ParseExpression(arg)));
 
             var initializerSyntax = SyntaxFactory.ConstructorInitializer(
@@ -351,18 +324,21 @@ public readonly struct ConstructorBuilder
             constructor = constructor.WithInitializer(initializerSyntax);
         }
 
-        // Add body
-        if (_body.HasValue)
-            constructor = constructor.WithBody(_body.Value.Build());
-        else
-            // Empty body
-            constructor = constructor.WithBody(SyntaxFactory.Block());
+        // Add body (including validation and assignments from parameters)
+        var finalBody = BuildBodyWithValidations();
+        constructor = constructor.WithBody(finalBody);
 
         // Add XML documentation
-        if (_xmlDoc.HasValue && _xmlDoc.Value.HasContent)
+        if (XmlDoc.HasValue && XmlDoc.Value.HasContent)
         {
-            var trivia = _xmlDoc.Value.Build();
+            var trivia = XmlDoc.Value.Build();
             constructor = constructor.WithLeadingTrivia(trivia);
+        }
+
+        // Wrap in preprocessor directive if specified
+        if (Condition.HasValue)
+        {
+            constructor = DirectiveHelper.WrapInDirective(constructor, Condition.Value);
         }
 
         return constructor;
@@ -380,17 +356,62 @@ public readonly struct ConstructorBuilder
         };
     }
 
+    private BlockSyntax BuildBodyWithValidations()
+    {
+        var bodyBuilder = BodyBuilder.Empty();
+        var parameters = Parameters.IsDefault ? [] : Parameters;
+
+        // 1. Add validation statements from parameters (at the start)
+        foreach (var param in parameters)
+        {
+            foreach (var statement in param.GetValidationStatements())
+            {
+                bodyBuilder = bodyBuilder.AddStatements(statement);
+            }
+        }
+
+        // 2. Add existing body statements
+        if (Body.HasValue)
+        {
+            var existingStatements = Body.Value.Statements.IsDefault ? [] : Body.Value.Statements;
+            foreach (var statement in existingStatements)
+            {
+                var statements = bodyBuilder.Statements.IsDefault ? [] : bodyBuilder.Statements;
+                bodyBuilder = bodyBuilder with { Statements = statements.Add(statement) };
+            }
+        }
+
+        // 3. Add assignment statements from parameters (at the end)
+        foreach (var param in parameters)
+        {
+            var assignment = param.GetAssignmentStatement();
+            if (assignment is not null)
+            {
+                bodyBuilder = bodyBuilder.AddStatement(assignment);
+            }
+        }
+
+        return bodyBuilder.Build();
+    }
+
     #endregion
 }
 
 /// <summary>
 /// Represents a constructor initializer (this or base call).
 /// </summary>
-internal readonly struct ConstructorInitializer
+public readonly struct ConstructorInitializer
 {
+    /// <summary>Gets the kind of initializer (this or base).</summary>
     public ConstructorInitializerKind Kind { get; }
+    /// <summary>Gets the arguments passed to the initializer.</summary>
     public ImmutableArray<string> Arguments { get; }
 
+    /// <summary>
+    /// Creates a new constructor initializer.
+    /// </summary>
+    /// <param name="kind">The kind of initializer.</param>
+    /// <param name="arguments">The arguments to pass.</param>
     public ConstructorInitializer(ConstructorInitializerKind kind, params string[] arguments)
     {
         Kind = kind;
@@ -398,8 +419,13 @@ internal readonly struct ConstructorInitializer
     }
 }
 
-internal enum ConstructorInitializerKind
+/// <summary>
+/// Specifies the kind of constructor initializer.
+/// </summary>
+public enum ConstructorInitializerKind
 {
+    /// <summary>Initializer calls this().</summary>
     This,
+    /// <summary>Initializer calls base().</summary>
     Base
 }

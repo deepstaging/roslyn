@@ -8,86 +8,73 @@ namespace Deepstaging.Roslyn.Emit;
 /// Supports adding members (properties, methods, fields, constructors) and emitting compilable C# code.
 /// Immutable - each method returns a new instance.
 /// </summary>
-public readonly struct TypeBuilder
+public record struct TypeBuilder
 {
-    private readonly string _name;
-    private readonly TypeKind _kind;
-    private readonly string? _namespace;
-    private readonly Accessibility _accessibility;
-    private readonly bool _isStatic;
-    private readonly bool _isAbstract;
-    private readonly bool _isSealed;
-    private readonly bool _isPartial;
-    private readonly ImmutableArray<string> _usings;
-    private readonly ImmutableArray<PropertyBuilder> _properties;
-    private readonly ImmutableArray<FieldBuilder> _fields;
-    private readonly ImmutableArray<EventBuilder> _events;
-    private readonly ImmutableArray<MethodBuilder> _methods;
-    private readonly ImmutableArray<ConversionOperatorBuilder> _conversionOperators;
-    private readonly ImmutableArray<ConstructorBuilder> _constructors;
-    private readonly ImmutableArray<TypeBuilder> _nestedTypes;
-    private readonly ImmutableArray<string> _interfaces;
-    private readonly ImmutableArray<AttributeBuilder> _attributes;
-    private readonly XmlDocumentationBuilder? _xmlDoc;
-    private readonly ConstructorBuilder? _primaryConstructor;
+    /// <summary>Gets the type name.</summary>
+    public string Name { get; init; }
 
-    private TypeBuilder(
-        string name,
-        TypeKind kind,
-        string? @namespace,
-        Accessibility accessibility,
-        bool isStatic,
-        bool isAbstract,
-        bool isSealed,
-        bool isPartial,
-        ImmutableArray<string> usings,
-        ImmutableArray<PropertyBuilder> properties,
-        ImmutableArray<FieldBuilder> fields,
-        ImmutableArray<EventBuilder> events,
-        ImmutableArray<MethodBuilder> methods,
-        ImmutableArray<ConversionOperatorBuilder> conversionOperators,
-        ImmutableArray<ConstructorBuilder> constructors,
-        ImmutableArray<TypeBuilder> nestedTypes,
-        ImmutableArray<string> interfaces,
-        ImmutableArray<AttributeBuilder> attributes,
-        XmlDocumentationBuilder? xmlDoc,
-        ConstructorBuilder? primaryConstructor)
-    {
-        _name = name;
-        _kind = kind;
-        _namespace = @namespace;
-        _accessibility = accessibility;
-        _isStatic = isStatic;
-        _isAbstract = isAbstract;
-        _isSealed = isSealed;
-        _isPartial = isPartial;
-        _usings = usings.IsDefault ? ImmutableArray<string>.Empty : usings;
-        _properties = properties.IsDefault ? ImmutableArray<PropertyBuilder>.Empty : properties;
-        _fields = fields.IsDefault ? ImmutableArray<FieldBuilder>.Empty : fields;
-        _events = events.IsDefault ? ImmutableArray<EventBuilder>.Empty : events;
-        _methods = methods.IsDefault ? ImmutableArray<MethodBuilder>.Empty : methods;
-        _conversionOperators = conversionOperators.IsDefault ? ImmutableArray<ConversionOperatorBuilder>.Empty : conversionOperators;
-        _constructors = constructors.IsDefault ? ImmutableArray<ConstructorBuilder>.Empty : constructors;
-        _nestedTypes = nestedTypes.IsDefault ? ImmutableArray<TypeBuilder>.Empty : nestedTypes;
-        _interfaces = interfaces.IsDefault ? ImmutableArray<string>.Empty : interfaces;
-        _attributes = attributes.IsDefault ? ImmutableArray<AttributeBuilder>.Empty : attributes;
-        _xmlDoc = xmlDoc;
-        _primaryConstructor = primaryConstructor;
-    }
+    /// <summary>Gets the type kind (class, interface, struct).</summary>
+    public TypeKind Kind { get; init; }
 
-    #region Properties
+    /// <summary>Gets the namespace.</summary>
+    public string? Namespace { get; init; }
 
-    /// <summary>
-    /// Gets the type name.
-    /// </summary>
-    public string Name => _name;
+    /// <summary>Gets the accessibility level.</summary>
+    public Accessibility Accessibility { get; init; }
 
-    /// <summary>
-    /// Gets the type kind (class, interface, struct).
-    /// </summary>
-    public TypeKind Kind => _kind;
+    /// <summary>Gets whether the type is static.</summary>
+    public bool IsStatic { get; init; }
 
-    #endregion
+    /// <summary>Gets whether the type is abstract.</summary>
+    public bool IsAbstract { get; init; }
+
+    /// <summary>Gets whether the type is sealed.</summary>
+    public bool IsSealed { get; init; }
+
+    /// <summary>Gets whether the type is partial.</summary>
+    public bool IsPartial { get; init; }
+
+    /// <summary>Gets whether the type is a record.</summary>
+    public bool IsRecord { get; init; }
+
+    /// <summary>Gets the using directives.</summary>
+    public ImmutableArray<string> Usings { get; init; }
+
+    /// <summary>Gets the properties.</summary>
+    public ImmutableArray<PropertyBuilder> Properties { get; init; }
+
+    /// <summary>Gets the fields.</summary>
+    public ImmutableArray<FieldBuilder> Fields { get; init; }
+
+    /// <summary>Gets the events.</summary>
+    public ImmutableArray<EventBuilder> Events { get; init; }
+
+    /// <summary>Gets the methods.</summary>
+    public ImmutableArray<MethodBuilder> Methods { get; init; }
+
+    /// <summary>Gets the conversion operators.</summary>
+    public ImmutableArray<ConversionOperatorBuilder> ConversionOperators { get; init; }
+
+    /// <summary>Gets the operators.</summary>
+    public ImmutableArray<OperatorBuilder> Operators { get; init; }
+
+    /// <summary>Gets the constructors.</summary>
+    public ImmutableArray<ConstructorBuilder> Constructors { get; init; }
+
+    /// <summary>Gets the nested types.</summary>
+    public ImmutableArray<TypeBuilder> NestedTypes { get; init; }
+
+    /// <summary>Gets the interfaces (may include conditional interfaces).</summary>
+    public ImmutableArray<ConditionalInterface> Interfaces { get; init; }
+
+    /// <summary>Gets the attributes.</summary>
+    public ImmutableArray<AttributeBuilder> Attributes { get; init; }
+
+    /// <summary>Gets the XML documentation builder.</summary>
+    public XmlDocumentationBuilder? XmlDoc { get; init; }
+
+    /// <summary>Gets the primary constructor.</summary>
+    public ConstructorBuilder? PrimaryConstructor { get; init; }
 
     #region Factory Methods
 
@@ -100,27 +87,12 @@ public readonly struct TypeBuilder
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Type name cannot be null or empty.", nameof(name));
 
-        return new TypeBuilder(
-            name,
-            TypeKind.Class,
-            null,
-            Accessibility.Public,
-            false,
-            false,
-            false,
-            false,
-            ImmutableArray<string>.Empty,
-            ImmutableArray<PropertyBuilder>.Empty,
-            ImmutableArray<FieldBuilder>.Empty,
-            ImmutableArray<EventBuilder>.Empty,
-            ImmutableArray<MethodBuilder>.Empty,
-            ImmutableArray<ConversionOperatorBuilder>.Empty,
-            ImmutableArray<ConstructorBuilder>.Empty,
-            ImmutableArray<TypeBuilder>.Empty,
-            ImmutableArray<string>.Empty,
-            ImmutableArray<AttributeBuilder>.Empty,
-            null,
-            null);
+        return new TypeBuilder
+        {
+            Name = name,
+            Kind = TypeKind.Class,
+            Accessibility = Accessibility.Public
+        };
     }
 
     /// <summary>
@@ -132,27 +104,12 @@ public readonly struct TypeBuilder
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Type name cannot be null or empty.", nameof(name));
 
-        return new TypeBuilder(
-            name,
-            TypeKind.Interface,
-            null,
-            Accessibility.Public,
-            false,
-            false,
-            false,
-            false,
-            ImmutableArray<string>.Empty,
-            ImmutableArray<PropertyBuilder>.Empty,
-            ImmutableArray<FieldBuilder>.Empty,
-            ImmutableArray<EventBuilder>.Empty,
-            ImmutableArray<MethodBuilder>.Empty,
-            ImmutableArray<ConversionOperatorBuilder>.Empty,
-            ImmutableArray<ConstructorBuilder>.Empty,
-            ImmutableArray<TypeBuilder>.Empty,
-            ImmutableArray<string>.Empty,
-            ImmutableArray<AttributeBuilder>.Empty,
-            null,
-            null);
+        return new TypeBuilder
+        {
+            Name = name,
+            Kind = TypeKind.Interface,
+            Accessibility = Accessibility.Public
+        };
     }
 
     /// <summary>
@@ -164,27 +121,12 @@ public readonly struct TypeBuilder
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Type name cannot be null or empty.", nameof(name));
 
-        return new TypeBuilder(
-            name,
-            TypeKind.Struct,
-            null,
-            Accessibility.Public,
-            false,
-            false,
-            false,
-            false,
-            ImmutableArray<string>.Empty,
-            ImmutableArray<PropertyBuilder>.Empty,
-            ImmutableArray<FieldBuilder>.Empty,
-            ImmutableArray<EventBuilder>.Empty,
-            ImmutableArray<MethodBuilder>.Empty,
-            ImmutableArray<ConversionOperatorBuilder>.Empty,
-            ImmutableArray<ConstructorBuilder>.Empty,
-            ImmutableArray<TypeBuilder>.Empty,
-            ImmutableArray<string>.Empty,
-            ImmutableArray<AttributeBuilder>.Empty,
-            null,
-            null);
+        return new TypeBuilder
+        {
+            Name = name,
+            Kind = TypeKind.Struct,
+            Accessibility = Accessibility.Public
+        };
     }
 
     /// <summary>
@@ -196,27 +138,13 @@ public readonly struct TypeBuilder
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Type name cannot be null or empty.", nameof(name));
 
-        return new TypeBuilder(
-            name,
-            TypeKind.Class, // Record is a special kind of class
-            null,
-            Accessibility.Public,
-            false,
-            false,
-            false,
-            false,
-            ImmutableArray<string>.Empty,
-            ImmutableArray<PropertyBuilder>.Empty,
-            ImmutableArray<FieldBuilder>.Empty,
-            ImmutableArray<EventBuilder>.Empty,
-            ImmutableArray<MethodBuilder>.Empty,
-            ImmutableArray<ConversionOperatorBuilder>.Empty,
-            ImmutableArray<ConstructorBuilder>.Empty,
-            ImmutableArray<TypeBuilder>.Empty,
-            ImmutableArray<string>.Empty,
-            ImmutableArray<AttributeBuilder>.Empty,
-            null,
-            null);
+        return new TypeBuilder
+        {
+            Name = name,
+            Kind = TypeKind.Class,
+            IsRecord = true,
+            Accessibility = Accessibility.Public
+        };
     }
 
     /// <summary>
@@ -255,10 +183,7 @@ public readonly struct TypeBuilder
     /// <param name="namespace">The namespace (e.g., "MyApp.Domain", "Company.Project").</param>
     public TypeBuilder InNamespace(string @namespace)
     {
-        return new TypeBuilder(_name, _kind, @namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors, _nestedTypes,
-            _interfaces,
-            _attributes, _xmlDoc, _primaryConstructor);
+        return this with { Namespace = @namespace };
     }
 
     /// <summary>
@@ -267,10 +192,8 @@ public readonly struct TypeBuilder
     /// <param name="namespace">The namespace to use (e.g., "System", "System.Collections.Generic").</param>
     public TypeBuilder AddUsing(string @namespace)
     {
-        return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings.Add(@namespace), _properties, _fields, _events, _methods, _conversionOperators, _constructors,
-            _nestedTypes,
-            _interfaces, _attributes, _xmlDoc, _primaryConstructor);
+        var usings = Usings.IsDefault ? [] : Usings;
+        return this with { Usings = usings.Add(@namespace) };
     }
 
     /// <summary>
@@ -279,10 +202,8 @@ public readonly struct TypeBuilder
     /// <param name="namespaces"> The namespaces to use.</param>
     public TypeBuilder AddUsings(params string[] namespaces)
     {
-        return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings.AddRange(namespaces), _properties, _fields, _events, _methods, _conversionOperators, _constructors,
-            _nestedTypes,
-            _interfaces, _attributes, _xmlDoc, _primaryConstructor);
+        var usings = Usings.IsDefault ? [] : Usings;
+        return this with { Usings = usings.AddRange(namespaces) };
     }
 
     #endregion
@@ -294,10 +215,7 @@ public readonly struct TypeBuilder
     /// </summary>
     public TypeBuilder WithAccessibility(Accessibility accessibility)
     {
-        return new TypeBuilder(_name, _kind, _namespace, accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors, _nestedTypes,
-            _interfaces,
-            _attributes, _xmlDoc, _primaryConstructor);
+        return this with { Accessibility = accessibility };
     }
 
     /// <summary>
@@ -305,10 +223,7 @@ public readonly struct TypeBuilder
     /// </summary>
     public TypeBuilder AsStatic()
     {
-        return new TypeBuilder(_name, _kind, _namespace, _accessibility, true, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors, _nestedTypes,
-            _interfaces,
-            _attributes, _xmlDoc, _primaryConstructor);
+        return this with { IsStatic = true };
     }
 
     /// <summary>
@@ -316,10 +231,7 @@ public readonly struct TypeBuilder
     /// </summary>
     public TypeBuilder AsAbstract()
     {
-        return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, true,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors, _nestedTypes,
-            _interfaces,
-            _attributes, _xmlDoc, _primaryConstructor);
+        return this with { IsAbstract = true };
     }
 
     /// <summary>
@@ -327,10 +239,7 @@ public readonly struct TypeBuilder
     /// </summary>
     public TypeBuilder AsSealed()
     {
-        return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            true, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors, _nestedTypes,
-            _interfaces,
-            _attributes, _xmlDoc, _primaryConstructor);
+        return this with { IsSealed = true };
     }
 
     /// <summary>
@@ -338,9 +247,7 @@ public readonly struct TypeBuilder
     /// </summary>
     public TypeBuilder AsPartial()
     {
-        return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, true, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors, _nestedTypes, _interfaces,
-            _attributes, _xmlDoc, _primaryConstructor);
+        return this with { IsPartial = true };
     }
 
     #endregion
@@ -356,9 +263,30 @@ public readonly struct TypeBuilder
         if (string.IsNullOrWhiteSpace(interfaceName))
             throw new ArgumentException("Interface name cannot be null or empty.", nameof(interfaceName));
 
-        return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors, _nestedTypes,
-            _interfaces.Add(interfaceName), _attributes, _xmlDoc, _primaryConstructor);
+        var interfaces = Interfaces.IsDefault ? [] : Interfaces;
+        return this with { Interfaces = interfaces.Add(new ConditionalInterface(interfaceName)) };
+    }
+
+    /// <summary>
+    /// Adds a conditional interface to implement, wrapped in #if/#endif directives.
+    /// </summary>
+    /// <param name="interfaceName">The interface name (e.g., "ISpanFormattable", "IParsable&lt;T&gt;").</param>
+    /// <param name="condition">The preprocessor directive condition (e.g., Directives.Net6OrGreater).</param>
+    /// <example>
+    /// <code>
+    /// TypeBuilder.Struct("MyId")
+    ///     .Implements("IEquatable&lt;MyId&gt;")
+    ///     .Implements("ISpanFormattable", Directives.Net6OrGreater)
+    ///     .Implements("IParsable&lt;MyId&gt;", Directives.Net7OrGreater);
+    /// </code>
+    /// </example>
+    public TypeBuilder Implements(string interfaceName, Directive condition)
+    {
+        if (string.IsNullOrWhiteSpace(interfaceName))
+            throw new ArgumentException("Interface name cannot be null or empty.", nameof(interfaceName));
+
+        var interfaces = Interfaces.IsDefault ? [] : Interfaces;
+        return this with { Interfaces = interfaces.Add(new ConditionalInterface(interfaceName, condition)) };
     }
 
     /// <summary>
@@ -383,10 +311,8 @@ public readonly struct TypeBuilder
     public TypeBuilder AddProperty(string name, string type, Func<PropertyBuilder, PropertyBuilder> configure)
     {
         var property = configure(PropertyBuilder.For(name, type));
-        return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties.Add(property), _fields, _events, _methods, _conversionOperators, _constructors,
-            _nestedTypes,
-            _interfaces, _attributes, _xmlDoc, _primaryConstructor);
+        var properties = Properties.IsDefault ? [] : Properties;
+        return this with { Properties = properties.Add(property) };
     }
 
     /// <summary>
@@ -394,10 +320,8 @@ public readonly struct TypeBuilder
     /// </summary>
     public TypeBuilder AddProperty(PropertyBuilder property)
     {
-        return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties.Add(property), _fields, _events, _methods, _conversionOperators, _constructors,
-            _nestedTypes,
-            _interfaces, _attributes, _xmlDoc, _primaryConstructor);
+        var properties = Properties.IsDefault ? [] : Properties;
+        return this with { Properties = properties.Add(property) };
     }
 
     #endregion
@@ -410,10 +334,8 @@ public readonly struct TypeBuilder
     public TypeBuilder AddField(string name, string type, Func<FieldBuilder, FieldBuilder> configure)
     {
         var field = configure(FieldBuilder.For(name, type));
-        return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields.Add(field), _events, _methods, _conversionOperators, _constructors,
-            _nestedTypes,
-            _interfaces, _attributes, _xmlDoc, _primaryConstructor);
+        var fields = Fields.IsDefault ? [] : Fields;
+        return this with { Fields = fields.Add(field) };
     }
 
     /// <summary>
@@ -421,10 +343,8 @@ public readonly struct TypeBuilder
     /// </summary>
     public TypeBuilder AddField(FieldBuilder field)
     {
-        return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields.Add(field), _events, _methods, _conversionOperators, _constructors,
-            _nestedTypes,
-            _interfaces, _attributes, _xmlDoc, _primaryConstructor);
+        var fields = Fields.IsDefault ? [] : Fields;
+        return this with { Fields = fields.Add(field) };
     }
 
     #endregion
@@ -440,10 +360,8 @@ public readonly struct TypeBuilder
     public TypeBuilder AddEvent(string name, string type, Func<EventBuilder, EventBuilder> configure)
     {
         var @event = configure(EventBuilder.For(name, type));
-        return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events.Add(@event), _methods, _conversionOperators, _constructors,
-            _nestedTypes,
-            _interfaces, _attributes, _xmlDoc, _primaryConstructor);
+        var events = Events.IsDefault ? [] : Events;
+        return this with { Events = events.Add(@event) };
     }
 
     /// <summary>
@@ -451,10 +369,8 @@ public readonly struct TypeBuilder
     /// </summary>
     public TypeBuilder AddEvent(EventBuilder @event)
     {
-        return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events.Add(@event), _methods, _conversionOperators, _constructors,
-            _nestedTypes,
-            _interfaces, _attributes, _xmlDoc, _primaryConstructor);
+        var events = Events.IsDefault ? [] : Events;
+        return this with { Events = events.Add(@event) };
     }
 
     #endregion
@@ -467,10 +383,8 @@ public readonly struct TypeBuilder
     public TypeBuilder AddMethod(string name, Func<MethodBuilder, MethodBuilder> configure)
     {
         var method = configure(MethodBuilder.For(name));
-        return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods.Add(method), _conversionOperators, _constructors,
-            _nestedTypes,
-            _interfaces, _attributes, _xmlDoc, _primaryConstructor);
+        var methods = Methods.IsDefault ? [] : Methods;
+        return this with { Methods = methods.Add(method) };
     }
 
     /// <summary>
@@ -478,10 +392,8 @@ public readonly struct TypeBuilder
     /// </summary>
     public TypeBuilder AddMethod(MethodBuilder method)
     {
-        return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods.Add(method), _conversionOperators, _constructors,
-            _nestedTypes,
-            _interfaces, _attributes, _xmlDoc, _primaryConstructor);
+        var methods = Methods.IsDefault ? [] : Methods;
+        return this with { Methods = methods.Add(method) };
     }
 
     #endregion
@@ -493,10 +405,8 @@ public readonly struct TypeBuilder
     /// </summary>
     public TypeBuilder AddConversionOperator(ConversionOperatorBuilder op)
     {
-        return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators.Add(op), _constructors,
-            _nestedTypes,
-            _interfaces, _attributes, _xmlDoc, _primaryConstructor);
+        var conversionOperators = ConversionOperators.IsDefault ? [] : ConversionOperators;
+        return this with { ConversionOperators = conversionOperators.Add(op) };
     }
 
     /// <summary>
@@ -507,10 +417,96 @@ public readonly struct TypeBuilder
     public TypeBuilder AddConversionOperator(Func<ConversionOperatorBuilder, ConversionOperatorBuilder> configure)
     {
         var op = configure(default);
-        return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators.Add(op), _constructors,
-            _nestedTypes,
-            _interfaces, _attributes, _xmlDoc, _primaryConstructor);
+        var conversionOperators = ConversionOperators.IsDefault ? [] : ConversionOperators;
+        return this with { ConversionOperators = conversionOperators.Add(op) };
+    }
+
+    /// <summary>
+    /// Adds an explicit conversion operator from the specified source type to this type.
+    /// </summary>
+    /// <param name="sourceType">The source type to convert from.</param>
+    /// <param name="configure">Configuration callback for the conversion operator.</param>
+    /// <param name="parameterName">The parameter name (default: "value").</param>
+    public TypeBuilder AddExplicitConversion(string sourceType, Func<ConversionOperatorBuilder, ConversionOperatorBuilder> configure, string parameterName = "value")
+    {
+        var op = configure(ConversionOperatorBuilder.Explicit(Name, sourceType, parameterName));
+        return AddConversionOperator(op);
+    }
+
+    /// <summary>
+    /// Adds an explicit conversion operator from this type to the specified target type.
+    /// </summary>
+    /// <param name="targetType">The target type to convert to.</param>
+    /// <param name="configure">Configuration callback for the conversion operator.</param>
+    /// <param name="parameterName">The parameter name (default: "value").</param>
+    public TypeBuilder AddExplicitConversionTo(string targetType, Func<ConversionOperatorBuilder, ConversionOperatorBuilder> configure, string parameterName = "value")
+    {
+        var op = configure(ConversionOperatorBuilder.Explicit(targetType, Name, parameterName));
+        return AddConversionOperator(op);
+    }
+
+    /// <summary>
+    /// Adds an implicit conversion operator from the specified source type to this type.
+    /// </summary>
+    /// <param name="sourceType">The source type to convert from.</param>
+    /// <param name="configure">Configuration callback for the conversion operator.</param>
+    /// <param name="parameterName">The parameter name (default: "value").</param>
+    public TypeBuilder AddImplicitConversion(string sourceType, Func<ConversionOperatorBuilder, ConversionOperatorBuilder> configure, string parameterName = "value")
+    {
+        var op = configure(ConversionOperatorBuilder.Implicit(Name, sourceType, parameterName));
+        return AddConversionOperator(op);
+    }
+
+    /// <summary>
+    /// Adds an implicit conversion operator from this type to the specified target type.
+    /// </summary>
+    /// <param name="targetType">The target type to convert to.</param>
+    /// <param name="configure">Configuration callback for the conversion operator.</param>
+    /// <param name="parameterName">The parameter name (default: "value").</param>
+    public TypeBuilder AddImplicitConversionTo(string targetType, Func<ConversionOperatorBuilder, ConversionOperatorBuilder> configure, string parameterName = "value")
+    {
+        var op = configure(ConversionOperatorBuilder.Implicit(targetType, Name, parameterName));
+        return AddConversionOperator(op);
+    }
+
+    #endregion
+
+    #region Add Members - Operators
+
+    /// <summary>
+    /// Adds a pre-configured operator.
+    /// </summary>
+    public TypeBuilder AddOperator(OperatorBuilder op)
+    {
+        var operators = Operators.IsDefault ? [] : Operators;
+        return this with { Operators = operators.Add(op) };
+    }
+
+    /// <summary>
+    /// Adds an operator with lambda configuration.
+    /// </summary>
+    public TypeBuilder AddOperator(Func<OperatorBuilder, OperatorBuilder> configure)
+    {
+        var op = configure(default);
+        return AddOperator(op);
+    }
+
+    /// <summary>
+    /// Adds an equality operator (==) for this type.
+    /// </summary>
+    /// <param name="expressionBody">The expression body (e.g., "left.Equals(right)").</param>
+    public TypeBuilder AddEqualityOperator(string expressionBody)
+    {
+        return AddOperator(OperatorBuilder.Equality(Name).WithExpressionBody(expressionBody));
+    }
+
+    /// <summary>
+    /// Adds an inequality operator (!=) for this type.
+    /// </summary>
+    /// <param name="expressionBody">The expression body (e.g., "!left.Equals(right)").</param>
+    public TypeBuilder AddInequalityOperator(string expressionBody)
+    {
+        return AddOperator(OperatorBuilder.Inequality(Name).WithExpressionBody(expressionBody));
     }
 
     #endregion
@@ -522,10 +518,9 @@ public readonly struct TypeBuilder
     /// </summary>
     public TypeBuilder AddConstructor(Func<ConstructorBuilder, ConstructorBuilder> configure)
     {
-        var constructor = configure(ConstructorBuilder.For(_name));
-        return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors.Add(constructor),
-            _nestedTypes, _interfaces, _attributes, _xmlDoc, _primaryConstructor);
+        var constructor = configure(ConstructorBuilder.For(Name));
+        var constructors = Constructors.IsDefault ? [] : Constructors;
+        return this with { Constructors = constructors.Add(constructor) };
     }
 
     /// <summary>
@@ -533,9 +528,8 @@ public readonly struct TypeBuilder
     /// </summary>
     public TypeBuilder AddConstructor(ConstructorBuilder constructor)
     {
-        return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors.Add(constructor),
-            _nestedTypes, _interfaces, _attributes, _xmlDoc, _primaryConstructor);
+        var constructors = Constructors.IsDefault ? [] : Constructors;
+        return this with { Constructors = constructors.Add(constructor) };
     }
 
     /// <summary>
@@ -545,10 +539,8 @@ public readonly struct TypeBuilder
     /// <param name="configure">Configuration callback for the primary constructor.</param>
     public TypeBuilder WithPrimaryConstructor(Func<ConstructorBuilder, ConstructorBuilder> configure)
     {
-        var constructor = configure(ConstructorBuilder.For(_name).AsPrimary());
-        return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors,
-            _nestedTypes, _interfaces, _attributes, _xmlDoc, constructor);
+        var constructor = configure(ConstructorBuilder.For(Name).AsPrimary());
+        return this with { PrimaryConstructor = constructor };
     }
 
     /// <summary>
@@ -557,9 +549,7 @@ public readonly struct TypeBuilder
     /// </summary>
     public TypeBuilder WithPrimaryConstructor(ConstructorBuilder constructor)
     {
-        return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors,
-            _nestedTypes, _interfaces, _attributes, _xmlDoc, constructor.AsPrimary());
+        return this with { PrimaryConstructor = constructor.AsPrimary() };
     }
 
     #endregion
@@ -572,10 +562,8 @@ public readonly struct TypeBuilder
     public TypeBuilder AddNestedType(string name, Func<TypeBuilder, TypeBuilder> configure)
     {
         var nestedType = configure(Class(name));
-        return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors,
-            _nestedTypes.Add(nestedType),
-            _interfaces, _attributes, _xmlDoc, _primaryConstructor);
+        var nestedTypes = NestedTypes.IsDefault ? [] : NestedTypes;
+        return this with { NestedTypes = nestedTypes.Add(nestedType) };
     }
 
     /// <summary>
@@ -583,10 +571,8 @@ public readonly struct TypeBuilder
     /// </summary>
     public TypeBuilder AddNestedType(TypeBuilder nestedType)
     {
-        return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors,
-            _nestedTypes.Add(nestedType),
-            _interfaces, _attributes, _xmlDoc, _primaryConstructor);
+        var nestedTypes = NestedTypes.IsDefault ? [] : NestedTypes;
+        return this with { NestedTypes = nestedTypes.Add(nestedType) };
     }
 
     #endregion
@@ -600,10 +586,7 @@ public readonly struct TypeBuilder
     public TypeBuilder WithXmlDoc(Func<XmlDocumentationBuilder, XmlDocumentationBuilder> configure)
     {
         var xmlDoc = configure(XmlDocumentationBuilder.Create());
-        return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors, _nestedTypes,
-            _interfaces,
-            _attributes, xmlDoc, _primaryConstructor);
+        return this with { XmlDoc = xmlDoc };
     }
 
     /// <summary>
@@ -612,11 +595,8 @@ public readonly struct TypeBuilder
     /// <param name="summary">The summary text.</param>
     public TypeBuilder WithXmlDoc(string summary)
     {
-        var xmlDoc = XmlDocumentationBuilder.WithSummary(summary);
-        return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors, _nestedTypes,
-            _interfaces,
-            _attributes, xmlDoc, _primaryConstructor);
+        var xmlDoc = XmlDocumentationBuilder.ForSummary(summary);
+        return this with { XmlDoc = xmlDoc };
     }
 
     /// <summary>
@@ -629,10 +609,7 @@ public readonly struct TypeBuilder
             return this;
 
         var xmlDoc = XmlDocumentationBuilder.From(documentation);
-        return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors, _nestedTypes,
-            _interfaces,
-            _attributes, xmlDoc, _primaryConstructor);
+        return this with { XmlDoc = xmlDoc };
     }
 
     #endregion
@@ -646,10 +623,8 @@ public readonly struct TypeBuilder
     public TypeBuilder WithAttribute(string name)
     {
         var attribute = AttributeBuilder.For(name);
-        return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors, _nestedTypes,
-            _interfaces,
-            _attributes.Add(attribute), _xmlDoc, _primaryConstructor);
+        var attributes = Attributes.IsDefault ? [] : Attributes;
+        return this with { Attributes = attributes.Add(attribute) };
     }
 
     /// <summary>
@@ -660,10 +635,8 @@ public readonly struct TypeBuilder
     public TypeBuilder WithAttribute(string name, Func<AttributeBuilder, AttributeBuilder> configure)
     {
         var attribute = configure(AttributeBuilder.For(name));
-        return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors, _nestedTypes,
-            _interfaces,
-            _attributes.Add(attribute), _xmlDoc, _primaryConstructor);
+        var attributes = Attributes.IsDefault ? [] : Attributes;
+        return this with { Attributes = attributes.Add(attribute) };
     }
 
     /// <summary>
@@ -671,10 +644,8 @@ public readonly struct TypeBuilder
     /// </summary>
     public TypeBuilder WithAttribute(AttributeBuilder attribute)
     {
-        return new TypeBuilder(_name, _kind, _namespace, _accessibility, _isStatic, _isAbstract,
-            _isSealed, _isPartial, _usings, _properties, _fields, _events, _methods, _conversionOperators, _constructors, _nestedTypes,
-            _interfaces,
-            _attributes.Add(attribute), _xmlDoc, _primaryConstructor);
+        var attributes = Attributes.IsDefault ? [] : Attributes;
+        return this with { Attributes = attributes.Add(attribute) };
     }
 
     #endregion
@@ -701,6 +672,15 @@ public readonly struct TypeBuilder
 
             // Format the code
             var formatted = FormatCode(compilationUnit, options);
+
+            // Insert preprocessor directives for conditional interfaces
+            if (HasConditionalInterfaces)
+            {
+                formatted = InsertInterfaceDirectives(formatted);
+
+                // Skip validation when directives are present (would fail due to #if)
+                return OptionalEmit.FromSuccess(compilationUnit, formatted);
+            }
 
             // Validate if requested
             if (options.ValidationLevel != ValidationLevel.None)
@@ -765,10 +745,10 @@ public readonly struct TypeBuilder
         var typeDecl = BuildTypeDeclaration();
 
         // Wrap in namespace if specified
-        if (!string.IsNullOrWhiteSpace(_namespace))
+        if (!string.IsNullOrWhiteSpace(Namespace))
         {
             var namespaceDecl = SyntaxFactory.FileScopedNamespaceDeclaration(
-                    SyntaxFactory.ParseName(_namespace!))
+                    SyntaxFactory.ParseName(Namespace!))
                 .AddMembers(typeDecl);
 
             compilationUnit = compilationUnit.AddMembers(namespaceDecl);
@@ -812,72 +792,103 @@ public readonly struct TypeBuilder
 
     private TypeDeclarationSyntax BuildTypeDeclaration()
     {
-        TypeDeclarationSyntax typeDecl = _kind switch
+        TypeDeclarationSyntax typeDecl = IsRecord
+            ? SyntaxFactory.RecordDeclaration(SyntaxFactory.Token(SyntaxKind.RecordKeyword), Name)
+            : Kind switch
+            {
+                TypeKind.Class => SyntaxFactory.ClassDeclaration(Name),
+                TypeKind.Interface => SyntaxFactory.InterfaceDeclaration(Name),
+                TypeKind.Struct => SyntaxFactory.StructDeclaration(Name),
+                _ => throw new InvalidOperationException($"Unsupported type kind: {Kind}")
+            };
+
+        // Records can use semicolon termination for types without members
+        // (or with only a primary constructor). Other types get braces automatically.
+        if (IsRecord)
         {
-            TypeKind.Class => SyntaxFactory.ClassDeclaration(_name),
-            TypeKind.Interface => SyntaxFactory.InterfaceDeclaration(_name),
-            TypeKind.Struct => SyntaxFactory.StructDeclaration(_name),
-            _ => throw new InvalidOperationException($"Unsupported type kind: {_kind}")
-        };
+            var hasMembers = HasAnyMembers();
+            if (hasMembers)
+            {
+                typeDecl = typeDecl
+                    .WithOpenBraceToken(SyntaxFactory.Token(SyntaxKind.OpenBraceToken))
+                    .WithCloseBraceToken(SyntaxFactory.Token(SyntaxKind.CloseBraceToken));
+            }
+            else
+            {
+                typeDecl = typeDecl.WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+            }
+        }
 
         // Add attributes
-        if (_attributes.Length > 0)
+        var attributes = Attributes.IsDefault ? [] : Attributes;
+        if (attributes.Length > 0)
         {
-            var attributeLists = _attributes.Select(a => a.BuildList()).ToArray();
+            var attributeLists = attributes.Select(a => a.BuildList()).ToArray();
             typeDecl = typeDecl.WithAttributeLists(SyntaxFactory.List(attributeLists));
         }
 
         // Add modifiers
         var modifiers = new List<SyntaxKind>();
-        modifiers.Add(AccessibilityToSyntaxKind(_accessibility));
-        if (_isStatic) modifiers.Add(SyntaxKind.StaticKeyword);
-        if (_isAbstract) modifiers.Add(SyntaxKind.AbstractKeyword);
-        if (_isSealed) modifiers.Add(SyntaxKind.SealedKeyword);
-        if (_isPartial) modifiers.Add(SyntaxKind.PartialKeyword);
+        modifiers.Add(AccessibilityToSyntaxKind(Accessibility));
+        if (IsStatic) modifiers.Add(SyntaxKind.StaticKeyword);
+        if (IsAbstract) modifiers.Add(SyntaxKind.AbstractKeyword);
+        if (IsSealed) modifiers.Add(SyntaxKind.SealedKeyword);
+        if (IsPartial) modifiers.Add(SyntaxKind.PartialKeyword);
 
         typeDecl = typeDecl.WithModifiers(
             SyntaxFactory.TokenList(modifiers.Select(SyntaxFactory.Token)));
 
         // Add primary constructor parameter list
-        if (_primaryConstructor.HasValue)
+        if (PrimaryConstructor.HasValue)
         {
-            var parameters = _primaryConstructor.Value.Parameters;
+            var parameters = PrimaryConstructor.Value.Parameters;
+            var normalizedParams = parameters.IsDefault ? [] : parameters;
             var parameterList = SyntaxFactory.ParameterList(
-                SyntaxFactory.SeparatedList(parameters.Select(p => p.Build())));
+                SyntaxFactory.SeparatedList(normalizedParams.Select(p => p.Build())));
             typeDecl = typeDecl.WithParameterList(parameterList);
         }
 
-        // Add base list (interfaces)
-        if (_interfaces.Length > 0)
+        // Add base list (unconditional interfaces only - conditional ones added via post-processing)
+        var interfaces = Interfaces.IsDefault ? [] : Interfaces;
+        if (interfaces.Length > 0)
         {
-            var baseTypes = _interfaces
-                .Select(i => SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName(i)))
-                .ToArray<BaseTypeSyntax>();
-
-            typeDecl = typeDecl.WithBaseList(
-                SyntaxFactory.BaseList(SyntaxFactory.SeparatedList(baseTypes)));
+            var baseList = BuildBaseListWithDirectives(interfaces);
+            if (baseList != null)
+            {
+                typeDecl = typeDecl.WithBaseList(baseList);
+            }
         }
 
-        // Add members in logical order: fields, events, constructors, properties, methods, conversion operators
-        foreach (var field in _fields) typeDecl = typeDecl.AddMembers(field.Build());
+        // Add members in logical order: fields, events, constructors, properties, methods, operators, conversion operators
+        var fields = Fields.IsDefault ? [] : Fields;
+        foreach (var field in fields) typeDecl = typeDecl.AddMembers(field.Build());
 
-        foreach (var @event in _events) typeDecl = typeDecl.AddMembers(@event.Build());
+        var events = Events.IsDefault ? [] : Events;
+        foreach (var @event in events) typeDecl = typeDecl.AddMembers(@event.Build());
 
-        foreach (var constructor in _constructors) typeDecl = typeDecl.AddMembers(constructor.Build());
+        var constructors = Constructors.IsDefault ? [] : Constructors;
+        foreach (var constructor in constructors) typeDecl = typeDecl.AddMembers(constructor.Build());
 
-        foreach (var property in _properties) typeDecl = typeDecl.AddMembers(property.Build());
+        var properties = Properties.IsDefault ? [] : Properties;
+        foreach (var property in properties) typeDecl = typeDecl.AddMembers(property.Build());
 
-        foreach (var method in _methods) typeDecl = typeDecl.AddMembers(method.Build());
+        var methods = Methods.IsDefault ? [] : Methods;
+        foreach (var method in methods) typeDecl = typeDecl.AddMembers(method.Build());
 
-        foreach (var convOp in _conversionOperators) typeDecl = typeDecl.AddMembers(convOp.Build());
+        var operators = Operators.IsDefault ? [] : Operators;
+        foreach (var op in operators) typeDecl = typeDecl.AddMembers(op.Build());
 
-        foreach (var nestedType in _nestedTypes)
+        var conversionOperators = ConversionOperators.IsDefault ? [] : ConversionOperators;
+        foreach (var convOp in conversionOperators) typeDecl = typeDecl.AddMembers(convOp.Build());
+
+        var nestedTypes = NestedTypes.IsDefault ? [] : NestedTypes;
+        foreach (var nestedType in nestedTypes)
             typeDecl = typeDecl.AddMembers(nestedType.BuildNestedTypeDeclaration());
 
         // Add XML documentation
-        if (_xmlDoc.HasValue && _xmlDoc.Value.HasContent)
+        if (XmlDoc.HasValue && XmlDoc.Value.HasContent)
         {
-            var trivia = _xmlDoc.Value.Build();
+            var trivia = XmlDoc.Value.Build();
             typeDecl = typeDecl.WithLeadingTrivia(trivia);
         }
 
@@ -893,51 +904,275 @@ public readonly struct TypeBuilder
     }
 
     /// <summary>
+    /// Checks if the type has any members (fields, properties, methods, etc.) beyond a primary constructor.
+    /// </summary>
+    private bool HasAnyMembers()
+    {
+        var fields = Fields.IsDefault ? [] : Fields;
+        var properties = Properties.IsDefault ? [] : Properties;
+        var methods = Methods.IsDefault ? [] : Methods;
+        var constructors = Constructors.IsDefault ? [] : Constructors;
+        var events = Events.IsDefault ? [] : Events;
+        var operators = Operators.IsDefault ? [] : Operators;
+        var conversionOperators = ConversionOperators.IsDefault ? [] : ConversionOperators;
+        var nestedTypes = NestedTypes.IsDefault ? [] : NestedTypes;
+
+        return fields.Length > 0 ||
+               properties.Length > 0 ||
+               methods.Length > 0 ||
+               constructors.Length > 0 ||
+               events.Length > 0 ||
+               operators.Length > 0 ||
+               conversionOperators.Length > 0 ||
+               nestedTypes.Length > 0;
+    }
+
+    /// <summary>
+    /// Builds the base list with only unconditional interfaces.
+    /// Conditional interfaces are added via post-processing in InsertInterfaceDirectives.
+    /// </summary>
+    private static BaseListSyntax? BuildBaseListWithDirectives(ImmutableArray<ConditionalInterface> interfaces)
+    {
+        // Only include unconditional interfaces in the syntax tree
+        var unconditional = interfaces.Where(i => !i.Condition.HasValue).ToArray();
+        if (unconditional.Length == 0)
+            return null;
+
+        var baseTypes = unconditional
+            .Select(i => SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName(i.Name)))
+            .ToArray<BaseTypeSyntax>();
+
+        return SyntaxFactory.BaseList(SyntaxFactory.SeparatedList(baseTypes));
+    }
+
+    /// <summary>
+    /// Gets whether this type has any conditional interfaces that need directive wrapping.
+    /// </summary>
+    private bool HasConditionalInterfaces =>
+        !Interfaces.IsDefault && Interfaces.Any(i => i.Condition.HasValue);
+
+    /// <summary>
+    /// Post-processes the formatted code to insert #if/#endif directives for conditional interfaces.
+    /// Inserts them after the unconditional interfaces with proper comma placement.
+    /// </summary>
+    private string InsertInterfaceDirectives(string code)
+    {
+        var interfaces = Interfaces.IsDefault ? [] : Interfaces;
+        var conditional = interfaces.Where(i => i.Condition.HasValue).ToList();
+        if (conditional.Count == 0)
+            return code;
+
+        var unconditional = interfaces.Where(i => !i.Condition.HasValue).ToList();
+
+        // Group conditional interfaces by directive condition, preserving order
+        var groupedConditional = conditional
+            .GroupBy(i => i.Condition!.Value.Condition)
+            .ToList();
+
+        var lines = code.Split('\n').ToList();
+
+        // Find the line containing the type declaration with base list
+        // Pattern: "struct TypeName : Interface1, Interface2" or just "struct TypeName"
+        var typeDeclarationIndex = -1;
+        var baseListEndIndex = -1;
+
+        for (var i = 0; i < lines.Count; i++)
+        {
+            var line = lines[i];
+            var trimmed = line.Trim();
+
+            // Look for struct/class/record declaration
+            if ((trimmed.Contains("struct ") || trimmed.Contains("class ") || trimmed.Contains("record ")) &&
+                !trimmed.StartsWith("//") && !trimmed.StartsWith("*"))
+            {
+                typeDeclarationIndex = i;
+
+                // Check if this line or subsequent lines contain the base list
+                if (trimmed.Contains(":"))
+                {
+                    // Base list starts on this line - find where it ends (the opening brace)
+                    for (var j = i; j < lines.Count; j++)
+                    {
+                        if (lines[j].Contains("{"))
+                        {
+                            baseListEndIndex = j;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    // No base list yet - the opening brace should be on this or next line
+                    baseListEndIndex = i;
+                    for (var j = i; j < lines.Count; j++)
+                    {
+                        if (lines[j].Contains("{"))
+                        {
+                            baseListEndIndex = j;
+                            break;
+                        }
+                    }
+                }
+                break;
+            }
+        }
+
+        if (typeDeclarationIndex == -1)
+            return code;
+
+        // Build the conditional interface blocks
+        var conditionalBlocks = new StringBuilder();
+        foreach (var group in groupedConditional)
+        {
+            var condition = group.Key;
+            var interfaceNames = group.Select(i => i.Name).ToList();
+
+            conditionalBlocks.AppendLine($"#if {condition}");
+            foreach (var interfaceName in interfaceNames)
+            {
+                // Comma goes BEFORE the interface name (continuing the list)
+                conditionalBlocks.AppendLine($"        , {interfaceName}");
+            }
+            conditionalBlocks.AppendLine("#endif");
+        }
+
+        // Find insertion point - just before the opening brace
+        if (baseListEndIndex >= 0 && baseListEndIndex < lines.Count)
+        {
+            var braceLine = lines[baseListEndIndex];
+            var braceIndex = braceLine.IndexOf('{');
+
+            if (braceIndex >= 0)
+            {
+                // If unconditional interfaces exist, we need to ensure no trailing comma
+                // and insert conditional blocks before the brace
+                if (unconditional.Count > 0)
+                {
+                    // Find and fix the line with the last unconditional interface
+                    for (var i = baseListEndIndex; i >= typeDeclarationIndex; i--)
+                    {
+                        var line = lines[i];
+                        // Check if this line has an interface (contains the last unconditional interface name)
+                        var lastUnconditional = unconditional.Last().Name;
+                        if (line.Contains(lastUnconditional))
+                        {
+                            // Remove trailing comma if present (conditional interfaces will add their own commas)
+                            var trimmedLine = line.TrimEnd();
+                            if (trimmedLine.EndsWith(","))
+                            {
+                                lines[i] = line.TrimEnd().TrimEnd(',');
+                            }
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    // No unconditional interfaces - we need to add the colon
+                    // Find the type declaration line and add ":"
+                    var declLine = lines[typeDeclarationIndex];
+                    if (!declLine.Contains(":"))
+                    {
+                        // Insert colon before conditional blocks
+                        conditionalBlocks.Insert(0, "    :\n");
+                    }
+                }
+
+                // Insert conditional blocks before the opening brace
+                var beforeBrace = braceLine.Substring(0, braceIndex);
+                var afterBrace = braceLine.Substring(braceIndex);
+                lines[baseListEndIndex] = beforeBrace.TrimEnd() + "\n" + conditionalBlocks.ToString().TrimEnd() + "\n" + afterBrace.TrimStart();
+            }
+        }
+
+        return string.Join("\n", lines);
+    }
+
+    /// <summary>
     /// Collects all using directives from this type and all nested types recursively.
     /// </summary>
     private IEnumerable<string> CollectAllUsings()
     {
         // Type-level usings
-        foreach (var @using in _usings)
+        var usings = Usings.IsDefault ? [] : Usings;
+        foreach (var @using in usings)
             yield return @using;
 
         // Method usings
-        foreach (var method in _methods)
-        foreach (var @using in method.Usings)
-            yield return @using;
+        var methods = Methods.IsDefault ? [] : Methods;
+        foreach (var method in methods)
+        {
+            var methodUsings = method.Usings.IsDefault ? [] : method.Usings;
+            foreach (var @using in methodUsings)
+                yield return @using;
+        }
 
         // Conversion operator usings
-        foreach (var convOp in _conversionOperators)
-        foreach (var @using in convOp.Usings)
-            yield return @using;
+        var conversionOperators = ConversionOperators.IsDefault ? [] : ConversionOperators;
+        foreach (var convOp in conversionOperators)
+        {
+            var convOpUsings = convOp.Usings.IsDefault ? [] : convOp.Usings;
+            foreach (var @using in convOpUsings)
+                yield return @using;
+        }
+
+        // Operator usings
+        var operators = Operators.IsDefault ? [] : Operators;
+        foreach (var op in operators)
+        {
+            var opUsings = op.Usings.IsDefault ? [] : op.Usings;
+            foreach (var @using in opUsings)
+                yield return @using;
+        }
 
         // Property usings
-        foreach (var property in _properties)
-        foreach (var @using in property.Usings)
-            yield return @using;
+        var properties = Properties.IsDefault ? [] : Properties;
+        foreach (var property in properties)
+        {
+            var propUsings = property.Usings.IsDefault ? [] : property.Usings;
+            foreach (var @using in propUsings)
+                yield return @using;
+        }
 
         // Field usings
-        foreach (var field in _fields)
-        foreach (var @using in field.Usings)
-            yield return @using;
+        var fields = Fields.IsDefault ? [] : Fields;
+        foreach (var field in fields)
+        {
+            var fieldUsings = field.Usings.IsDefault ? [] : field.Usings;
+            foreach (var @using in fieldUsings)
+                yield return @using;
+        }
 
         // Event usings
-        foreach (var @event in _events)
-        foreach (var @using in @event.Usings)
-            yield return @using;
+        var events = Events.IsDefault ? [] : Events;
+        foreach (var @event in events)
+        {
+            var eventUsings = @event.Usings.IsDefault ? [] : @event.Usings;
+            foreach (var @using in eventUsings)
+                yield return @using;
+        }
 
         // Constructor usings
-        foreach (var constructor in _constructors)
-        foreach (var @using in constructor.Usings)
-            yield return @using;
+        var constructors = Constructors.IsDefault ? [] : Constructors;
+        foreach (var constructor in constructors)
+        {
+            var ctorUsings = constructor.Usings.IsDefault ? [] : constructor.Usings;
+            foreach (var @using in ctorUsings)
+                yield return @using;
+        }
 
         // Attribute usings (on the type itself)
-        foreach (var attribute in _attributes)
-        foreach (var @using in attribute.Usings)
-            yield return @using;
+        var attributes = Attributes.IsDefault ? [] : Attributes;
+        foreach (var attribute in attributes)
+        {
+            var attrUsings = attribute.Usings.IsDefault ? [] : attribute.Usings;
+            foreach (var @using in attrUsings)
+                yield return @using;
+        }
 
         // Nested types (recursive)
-        foreach (var nestedType in _nestedTypes)
+        var nestedTypes = NestedTypes.IsDefault ? [] : NestedTypes;
+        foreach (var nestedType in nestedTypes)
         foreach (var @using in nestedType.CollectAllUsings())
             yield return @using;
     }

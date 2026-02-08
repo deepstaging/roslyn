@@ -8,54 +8,52 @@ namespace Deepstaging.Roslyn.Emit;
 /// Supports expression-bodied and block-bodied indexers.
 /// Immutable - each method returns a new instance.
 /// </summary>
-public readonly struct IndexerBuilder
+public record struct IndexerBuilder()
 {
-    private readonly string _type;
-    private readonly Accessibility _accessibility;
-    private readonly bool _isVirtual;
-    private readonly bool _isOverride;
-    private readonly bool _isAbstract;
-    private readonly bool _isSealed;
-    private readonly bool _hasInitSetter;
-    private readonly IndexerAccessorStyle _accessorStyle;
-    private readonly string? _getterBody;
-    private readonly string? _setterBody;
-    private readonly ImmutableArray<ParameterBuilder> _parameters;
-    private readonly ImmutableArray<AttributeBuilder> _attributes;
-    private readonly ImmutableArray<string> _usings;
-    private readonly XmlDocumentationBuilder? _xmlDoc;
+    /// <summary>The return type of the indexer.</summary>
+    public string Type { get; init; } = "";
 
-    private IndexerBuilder(
-        string type,
-        Accessibility accessibility,
-        bool isVirtual,
-        bool isOverride,
-        bool isAbstract,
-        bool isSealed,
-        bool hasInitSetter,
-        IndexerAccessorStyle accessorStyle,
-        string? getterBody,
-        string? setterBody,
-        ImmutableArray<ParameterBuilder> parameters,
-        ImmutableArray<AttributeBuilder> attributes,
-        ImmutableArray<string> usings,
-        XmlDocumentationBuilder? xmlDoc)
-    {
-        _type = type;
-        _accessibility = accessibility;
-        _isVirtual = isVirtual;
-        _isOverride = isOverride;
-        _isAbstract = isAbstract;
-        _isSealed = isSealed;
-        _hasInitSetter = hasInitSetter;
-        _accessorStyle = accessorStyle;
-        _getterBody = getterBody;
-        _setterBody = setterBody;
-        _parameters = parameters.IsDefault ? ImmutableArray<ParameterBuilder>.Empty : parameters;
-        _attributes = attributes.IsDefault ? ImmutableArray<AttributeBuilder>.Empty : attributes;
-        _usings = usings.IsDefault ? ImmutableArray<string>.Empty : usings;
-        _xmlDoc = xmlDoc;
-    }
+    /// <summary>The accessibility level of the indexer.</summary>
+    public Accessibility Accessibility { get; init; }
+
+    /// <summary>Whether the indexer is virtual.</summary>
+    public bool IsVirtual { get; init; }
+
+    /// <summary>Whether the indexer is an override.</summary>
+    public bool IsOverride { get; init; }
+
+    /// <summary>Whether the indexer is abstract.</summary>
+    public bool IsAbstract { get; init; }
+
+    /// <summary>Whether the indexer is sealed.</summary>
+    public bool IsSealed { get; init; }
+
+    /// <summary>Whether the indexer has an init-only setter.</summary>
+    public bool HasInitSetter { get; init; }
+
+    /// <summary>The accessor style for the indexer.</summary>
+    public IndexerAccessorStyle AccessorStyle { get; init; }
+
+    /// <summary>The getter body expression or block.</summary>
+    public string? GetterBody { get; init; }
+
+    /// <summary>The setter body expression or block.</summary>
+    public string? SetterBody { get; init; }
+
+    /// <summary>The indexer parameters.</summary>
+    public ImmutableArray<ParameterBuilder> Parameters { get; init; }
+
+    /// <summary>The attributes applied to the indexer.</summary>
+    public ImmutableArray<AttributeBuilder> Attributes { get; init; }
+
+    /// <summary>The using directives for this indexer.</summary>
+    public ImmutableArray<string> Usings { get; init; }
+
+    /// <summary>The XML documentation for the indexer.</summary>
+    public XmlDocumentationBuilder? XmlDoc { get; init; }
+
+    /// <summary>Gets the preprocessor directive condition for conditional compilation.</summary>
+    public Directive? Condition { get; init; }
 
     #region Factory Methods
 
@@ -68,21 +66,11 @@ public readonly struct IndexerBuilder
         if (string.IsNullOrWhiteSpace(type))
             throw new ArgumentException("Indexer type cannot be null or empty.", nameof(type));
 
-        return new IndexerBuilder(
-            type,
-            Accessibility.Public,
-            false,
-            false,
-            false,
-            false,
-            false,
-            IndexerAccessorStyle.None,
-            null,
-            null,
-            ImmutableArray<ParameterBuilder>.Empty,
-            ImmutableArray<AttributeBuilder>.Empty,
-            ImmutableArray<string>.Empty,
-            null);
+        return new IndexerBuilder
+        {
+            Type = type,
+            Accessibility = Accessibility.Public
+        };
     }
 
     #endregion
@@ -92,52 +80,39 @@ public readonly struct IndexerBuilder
     /// <summary>
     /// Sets the accessibility of the indexer.
     /// </summary>
-    public IndexerBuilder WithAccessibility(Accessibility accessibility)
-    {
-        return new IndexerBuilder(_type, accessibility, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, _hasInitSetter, _accessorStyle, _getterBody, _setterBody, _parameters, _attributes,
-            _usings, _xmlDoc);
-    }
+    public IndexerBuilder WithAccessibility(Accessibility accessibility) =>
+        this with { Accessibility = accessibility };
 
     /// <summary>
     /// Marks the indexer as virtual.
     /// </summary>
-    public IndexerBuilder AsVirtual()
-    {
-        return new IndexerBuilder(_type, _accessibility, true, _isOverride,
-            _isAbstract, _isSealed, _hasInitSetter, _accessorStyle, _getterBody, _setterBody, _parameters, _attributes,
-            _usings, _xmlDoc);
-    }
+    public IndexerBuilder AsVirtual() =>
+        this with { IsVirtual = true };
 
     /// <summary>
     /// Marks the indexer as override.
     /// </summary>
-    public IndexerBuilder AsOverride()
-    {
-        return new IndexerBuilder(_type, _accessibility, _isVirtual, true,
-            _isAbstract, _isSealed, _hasInitSetter, _accessorStyle, _getterBody, _setterBody, _parameters, _attributes,
-            _usings, _xmlDoc);
-    }
+    public IndexerBuilder AsOverride() =>
+        this with { IsOverride = true };
 
     /// <summary>
     /// Marks the indexer as abstract.
     /// </summary>
-    public IndexerBuilder AsAbstract()
-    {
-        return new IndexerBuilder(_type, _accessibility, _isVirtual, _isOverride,
-            true, _isSealed, _hasInitSetter, _accessorStyle, _getterBody, _setterBody, _parameters, _attributes,
-            _usings, _xmlDoc);
-    }
+    public IndexerBuilder AsAbstract() =>
+        this with { IsAbstract = true };
 
     /// <summary>
     /// Marks the indexer as sealed. Only valid when used with override.
     /// </summary>
-    public IndexerBuilder AsSealed()
-    {
-        return new IndexerBuilder(_type, _accessibility, _isVirtual, _isOverride,
-            _isAbstract, true, _hasInitSetter, _accessorStyle, _getterBody, _setterBody, _parameters, _attributes,
-            _usings, _xmlDoc);
-    }
+    public IndexerBuilder AsSealed() =>
+        this with { IsSealed = true };
+
+    /// <summary>
+    /// Wraps this indexer in a preprocessor directive (#if/#endif).
+    /// </summary>
+    /// <param name="directive">The directive condition (e.g., Directives.Net6OrGreater).</param>
+    public IndexerBuilder When(Directive directive) =>
+        this with { Condition = directive };
 
     #endregion
 
@@ -150,10 +125,8 @@ public readonly struct IndexerBuilder
     /// <param name="type">The parameter type (e.g., "int", "string").</param>
     public IndexerBuilder AddParameter(string name, string type)
     {
-        var parameter = ParameterBuilder.For(name, type);
-        return new IndexerBuilder(_type, _accessibility, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, _hasInitSetter, _accessorStyle, _getterBody, _setterBody,
-            _parameters.Add(parameter), _attributes, _usings, _xmlDoc);
+        var parameters = Parameters.IsDefault ? [] : Parameters;
+        return this with { Parameters = parameters.Add(ParameterBuilder.For(name, type)) };
     }
 
     /// <summary>
@@ -164,10 +137,8 @@ public readonly struct IndexerBuilder
     /// <param name="configure">Configuration callback for the parameter.</param>
     public IndexerBuilder AddParameter(string name, string type, Func<ParameterBuilder, ParameterBuilder> configure)
     {
-        var parameter = configure(ParameterBuilder.For(name, type));
-        return new IndexerBuilder(_type, _accessibility, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, _hasInitSetter, _accessorStyle, _getterBody, _setterBody,
-            _parameters.Add(parameter), _attributes, _usings, _xmlDoc);
+        var parameters = Parameters.IsDefault ? [] : Parameters;
+        return this with { Parameters = parameters.Add(configure(ParameterBuilder.For(name, type))) };
     }
 
     /// <summary>
@@ -175,9 +146,8 @@ public readonly struct IndexerBuilder
     /// </summary>
     public IndexerBuilder AddParameter(ParameterBuilder parameter)
     {
-        return new IndexerBuilder(_type, _accessibility, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, _hasInitSetter, _accessorStyle, _getterBody, _setterBody,
-            _parameters.Add(parameter), _attributes, _usings, _xmlDoc);
+        var parameters = Parameters.IsDefault ? [] : Parameters;
+        return this with { Parameters = parameters.Add(parameter) };
     }
 
     #endregion
@@ -188,12 +158,8 @@ public readonly struct IndexerBuilder
     /// Configures the indexer as an auto-indexer with get and set accessors.
     /// Note: Indexers cannot have auto-implemented accessors, so a body is typically required.
     /// </summary>
-    public IndexerBuilder WithAutoAccessors()
-    {
-        return new IndexerBuilder(_type, _accessibility, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, _hasInitSetter, IndexerAccessorStyle.Auto, null, null, _parameters, _attributes,
-            _usings, _xmlDoc);
-    }
+    public IndexerBuilder WithAutoAccessors() =>
+        this with { AccessorStyle = IndexerAccessorStyle.Auto, GetterBody = null, SetterBody = null };
 
     /// <summary>
     /// Configures the indexer with an expression-bodied getter.
@@ -206,9 +172,7 @@ public readonly struct IndexerBuilder
             ? expression.TrimStart().Substring(2).Trim()
             : expression.Trim();
 
-        return new IndexerBuilder(_type, _accessibility, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, _hasInitSetter, IndexerAccessorStyle.ExpressionBodied, cleanExpression, _setterBody,
-            _parameters, _attributes, _usings, _xmlDoc);
+        return this with { AccessorStyle = IndexerAccessorStyle.ExpressionBodied, GetterBody = cleanExpression };
     }
 
     /// <summary>
@@ -217,9 +181,7 @@ public readonly struct IndexerBuilder
     public IndexerBuilder WithGetter(Func<BodyBuilder, BodyBuilder> configure)
     {
         var body = configure(BodyBuilder.Empty());
-        return new IndexerBuilder(_type, _accessibility, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, _hasInitSetter, IndexerAccessorStyle.BlockBodied, body.Build().ToFullString(),
-            _setterBody, _parameters, _attributes, _usings, _xmlDoc);
+        return this with { AccessorStyle = IndexerAccessorStyle.BlockBodied, GetterBody = body.Build().ToFullString() };
     }
 
     /// <summary>
@@ -228,31 +190,21 @@ public readonly struct IndexerBuilder
     public IndexerBuilder WithSetter(Func<BodyBuilder, BodyBuilder> configure)
     {
         var body = configure(BodyBuilder.Empty());
-        return new IndexerBuilder(_type, _accessibility, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, _hasInitSetter, IndexerAccessorStyle.BlockBodied, _getterBody,
-            body.Build().ToFullString(), _parameters, _attributes, _usings, _xmlDoc);
+        return this with { AccessorStyle = IndexerAccessorStyle.BlockBodied, SetterBody = body.Build().ToFullString() };
     }
 
     /// <summary>
     /// Marks the indexer as read-only (get accessor only).
     /// </summary>
-    public IndexerBuilder AsReadOnly()
-    {
-        return new IndexerBuilder(_type, _accessibility, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, _hasInitSetter, IndexerAccessorStyle.GetterOnly, _getterBody, null, _parameters,
-            _attributes, _usings, _xmlDoc);
-    }
+    public IndexerBuilder AsReadOnly() =>
+        this with { AccessorStyle = IndexerAccessorStyle.GetterOnly, SetterBody = null };
 
     /// <summary>
     /// Configures the indexer to use an init-only setter instead of a set accessor.
     /// Example: public string this[int index] { get; init; }
     /// </summary>
-    public IndexerBuilder WithInitOnlySetter()
-    {
-        return new IndexerBuilder(_type, _accessibility, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, true, _accessorStyle, _getterBody, _setterBody, _parameters, _attributes, _usings,
-            _xmlDoc);
-    }
+    public IndexerBuilder WithInitOnlySetter() =>
+        this with { HasInitSetter = true };
 
     #endregion
 
@@ -262,25 +214,15 @@ public readonly struct IndexerBuilder
     /// Sets the XML documentation for the indexer.
     /// </summary>
     /// <param name="configure">Configuration callback for the XML documentation.</param>
-    public IndexerBuilder WithXmlDoc(Func<XmlDocumentationBuilder, XmlDocumentationBuilder> configure)
-    {
-        var xmlDoc = configure(XmlDocumentationBuilder.Create());
-        return new IndexerBuilder(_type, _accessibility, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, _hasInitSetter, _accessorStyle, _getterBody, _setterBody, _parameters, _attributes,
-            _usings, xmlDoc);
-    }
+    public IndexerBuilder WithXmlDoc(Func<XmlDocumentationBuilder, XmlDocumentationBuilder> configure) =>
+        this with { XmlDoc = configure(XmlDocumentationBuilder.Create()) };
 
     /// <summary>
     /// Sets the XML documentation for the indexer with a simple summary.
     /// </summary>
     /// <param name="summary">The summary text.</param>
-    public IndexerBuilder WithXmlDoc(string summary)
-    {
-        var xmlDoc = XmlDocumentationBuilder.WithSummary(summary);
-        return new IndexerBuilder(_type, _accessibility, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, _hasInitSetter, _accessorStyle, _getterBody, _setterBody, _parameters, _attributes,
-            _usings, xmlDoc);
-    }
+    public IndexerBuilder WithXmlDoc(string summary) =>
+        this with { XmlDoc = XmlDocumentationBuilder.ForSummary(summary) };
 
     #endregion
 
@@ -292,10 +234,8 @@ public readonly struct IndexerBuilder
     /// <param name="name">The attribute name (e.g., "JsonIgnore").</param>
     public IndexerBuilder WithAttribute(string name)
     {
-        var attribute = AttributeBuilder.For(name);
-        return new IndexerBuilder(_type, _accessibility, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, _hasInitSetter, _accessorStyle, _getterBody, _setterBody, _parameters,
-            _attributes.Add(attribute), _usings, _xmlDoc);
+        var attributes = Attributes.IsDefault ? [] : Attributes;
+        return this with { Attributes = attributes.Add(AttributeBuilder.For(name)) };
     }
 
     /// <summary>
@@ -305,10 +245,8 @@ public readonly struct IndexerBuilder
     /// <param name="configure">Configuration callback for the attribute.</param>
     public IndexerBuilder WithAttribute(string name, Func<AttributeBuilder, AttributeBuilder> configure)
     {
-        var attribute = configure(AttributeBuilder.For(name));
-        return new IndexerBuilder(_type, _accessibility, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, _hasInitSetter, _accessorStyle, _getterBody, _setterBody, _parameters,
-            _attributes.Add(attribute), _usings, _xmlDoc);
+        var attributes = Attributes.IsDefault ? [] : Attributes;
+        return this with { Attributes = attributes.Add(configure(AttributeBuilder.For(name))) };
     }
 
     /// <summary>
@@ -316,9 +254,8 @@ public readonly struct IndexerBuilder
     /// </summary>
     public IndexerBuilder WithAttribute(AttributeBuilder attribute)
     {
-        return new IndexerBuilder(_type, _accessibility, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, _hasInitSetter, _accessorStyle, _getterBody, _setterBody, _parameters,
-            _attributes.Add(attribute), _usings, _xmlDoc);
+        var attributes = Attributes.IsDefault ? [] : Attributes;
+        return this with { Attributes = attributes.Add(attribute) };
     }
 
     #endregion
@@ -331,15 +268,9 @@ public readonly struct IndexerBuilder
     /// <param name="namespace">The namespace to add (e.g., "System.Linq").</param>
     public IndexerBuilder AddUsing(string @namespace)
     {
-        return new IndexerBuilder(_type, _accessibility, _isVirtual, _isOverride,
-            _isAbstract, _isSealed, _hasInitSetter, _accessorStyle, _getterBody, _setterBody, _parameters, _attributes,
-            _usings.Add(@namespace), _xmlDoc);
+        var usings = Usings.IsDefault ? [] : Usings;
+        return this with { Usings = usings.Add(@namespace) };
     }
-
-    /// <summary>
-    /// Gets the using directives for this indexer.
-    /// </summary>
-    internal ImmutableArray<string> Usings => _usings;
 
     #endregion
 
@@ -351,36 +282,38 @@ public readonly struct IndexerBuilder
     internal IndexerDeclarationSyntax Build()
     {
         var indexer = SyntaxFactory.IndexerDeclaration(
-            SyntaxFactory.ParseTypeName(_type));
+            SyntaxFactory.ParseTypeName(Type));
 
         // Add attributes
-        if (_attributes.Length > 0)
+        var attributes = Attributes.IsDefault ? [] : Attributes;
+        if (attributes.Length > 0)
         {
-            var attributeLists = _attributes.Select(a => a.BuildList()).ToArray();
+            var attributeLists = attributes.Select(a => a.BuildList()).ToArray();
             indexer = indexer.WithAttributeLists(SyntaxFactory.List(attributeLists));
         }
 
         // Add modifiers (order matters for valid C#)
         var modifiers = new List<SyntaxKind>();
-        modifiers.Add(AccessibilityToSyntaxKind(_accessibility));
-        if (_isSealed) modifiers.Add(SyntaxKind.SealedKeyword);
-        if (_isVirtual) modifiers.Add(SyntaxKind.VirtualKeyword);
-        if (_isOverride) modifiers.Add(SyntaxKind.OverrideKeyword);
-        if (_isAbstract) modifiers.Add(SyntaxKind.AbstractKeyword);
+        modifiers.Add(AccessibilityToSyntaxKind(Accessibility));
+        if (IsSealed) modifiers.Add(SyntaxKind.SealedKeyword);
+        if (IsVirtual) modifiers.Add(SyntaxKind.VirtualKeyword);
+        if (IsOverride) modifiers.Add(SyntaxKind.OverrideKeyword);
+        if (IsAbstract) modifiers.Add(SyntaxKind.AbstractKeyword);
 
         indexer = indexer.WithModifiers(
             SyntaxFactory.TokenList(modifiers.Select(SyntaxFactory.Token)));
 
         // Add parameters
-        if (_parameters.Length > 0)
+        var parameters = Parameters.IsDefault ? [] : Parameters;
+        if (parameters.Length > 0)
         {
             var parameterList = SyntaxFactory.BracketedParameterList(
-                SyntaxFactory.SeparatedList(_parameters.Select(p => p.Build())));
+                SyntaxFactory.SeparatedList(parameters.Select(p => p.Build())));
             indexer = indexer.WithParameterList(parameterList);
         }
 
         // Add accessors based on style
-        indexer = _accessorStyle switch
+        indexer = AccessorStyle switch
         {
             IndexerAccessorStyle.Auto => AddAutoAccessors(indexer),
             IndexerAccessorStyle.ExpressionBodied => AddExpressionBody(indexer),
@@ -390,10 +323,16 @@ public readonly struct IndexerBuilder
         };
 
         // Add XML documentation
-        if (_xmlDoc.HasValue && _xmlDoc.Value.HasContent)
+        if (XmlDoc.HasValue && XmlDoc.Value.HasContent)
         {
-            var trivia = _xmlDoc.Value.Build();
+            var trivia = XmlDoc.Value.Build();
             indexer = indexer.WithLeadingTrivia(trivia);
+        }
+
+        // Wrap in preprocessor directive if specified
+        if (Condition.HasValue)
+        {
+            indexer = DirectiveHelper.WrapInDirective(indexer, Condition.Value);
         }
 
         return indexer;
@@ -401,7 +340,7 @@ public readonly struct IndexerBuilder
 
     private IndexerDeclarationSyntax AddAutoAccessors(IndexerDeclarationSyntax indexer)
     {
-        var setterKind = _hasInitSetter ? SyntaxKind.InitAccessorDeclaration : SyntaxKind.SetAccessorDeclaration;
+        var setterKind = HasInitSetter ? SyntaxKind.InitAccessorDeclaration : SyntaxKind.SetAccessorDeclaration;
         return indexer.WithAccessorList(
             SyntaxFactory.AccessorList(
                 SyntaxFactory.List(new[]
@@ -413,7 +352,7 @@ public readonly struct IndexerBuilder
                 })));
     }
 
-    private IndexerDeclarationSyntax AddGetterOnly(IndexerDeclarationSyntax indexer)
+    private static IndexerDeclarationSyntax AddGetterOnly(IndexerDeclarationSyntax indexer)
     {
         return indexer.WithAccessorList(
             SyntaxFactory.AccessorList(
@@ -424,13 +363,13 @@ public readonly struct IndexerBuilder
 
     private IndexerDeclarationSyntax AddExpressionBody(IndexerDeclarationSyntax indexer)
     {
-        if (_getterBody == null)
+        if (GetterBody == null)
             return indexer;
 
         return indexer
             .WithExpressionBody(
                 SyntaxFactory.ArrowExpressionClause(
-                    SyntaxFactory.ParseExpression(_getterBody)))
+                    SyntaxFactory.ParseExpression(GetterBody)))
             .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
     }
 
@@ -438,18 +377,18 @@ public readonly struct IndexerBuilder
     {
         var accessors = new List<AccessorDeclarationSyntax>();
 
-        if (_getterBody != null)
+        if (GetterBody != null)
         {
             var getter = SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
-                .WithBody(SyntaxFactory.ParseStatement(_getterBody) as BlockSyntax);
+                .WithBody(SyntaxFactory.ParseStatement(GetterBody) as BlockSyntax);
             accessors.Add(getter);
         }
 
-        if (_setterBody != null)
+        if (SetterBody != null)
         {
-            var setterKind = _hasInitSetter ? SyntaxKind.InitAccessorDeclaration : SyntaxKind.SetAccessorDeclaration;
+            var setterKind = HasInitSetter ? SyntaxKind.InitAccessorDeclaration : SyntaxKind.SetAccessorDeclaration;
             var setter = SyntaxFactory.AccessorDeclaration(setterKind)
-                .WithBody(SyntaxFactory.ParseStatement(_setterBody) as BlockSyntax);
+                .WithBody(SyntaxFactory.ParseStatement(SetterBody) as BlockSyntax);
             accessors.Add(setter);
         }
 
@@ -469,19 +408,24 @@ public readonly struct IndexerBuilder
         };
     }
 
-    /// <summary>
-    /// Gets the indexer return type.
-    /// </summary>
-    public string Type => _type;
-
     #endregion
 }
 
-internal enum IndexerAccessorStyle
+/// <summary>Specifies the accessor style for an indexer.</summary>
+public enum IndexerAccessorStyle
 {
+    /// <summary>No accessor style specified.</summary>
     None,
+
+    /// <summary>Auto-implemented accessors.</summary>
     Auto,
+
+    /// <summary>Expression-bodied accessor.</summary>
     ExpressionBodied,
+
+    /// <summary>Block-bodied accessors.</summary>
     BlockBodied,
+
+    /// <summary>Getter-only accessor.</summary>
     GetterOnly
 }

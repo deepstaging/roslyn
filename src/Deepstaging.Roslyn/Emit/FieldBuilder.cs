@@ -8,42 +8,60 @@ namespace Deepstaging.Roslyn.Emit;
 /// Supports private backing fields, constants, and readonly fields.
 /// Immutable - each method returns a new instance.
 /// </summary>
-public readonly struct FieldBuilder
+public record struct FieldBuilder
 {
-    private readonly string _name;
-    private readonly string _type;
-    private readonly Accessibility _accessibility;
-    private readonly bool _isStatic;
-    private readonly bool _isReadonly;
-    private readonly bool _isConst;
-    private readonly string? _initializer;
-    private readonly ImmutableArray<AttributeBuilder> _attributes;
-    private readonly ImmutableArray<string> _usings;
-    private readonly XmlDocumentationBuilder? _xmlDoc;
+    /// <summary>
+    /// Gets the field name.
+    /// </summary>
+    public string Name { get; init; }
 
-    private FieldBuilder(
-        string name,
-        string type,
-        Accessibility accessibility,
-        bool isStatic,
-        bool isReadonly,
-        bool isConst,
-        string? initializer,
-        ImmutableArray<AttributeBuilder> attributes,
-        ImmutableArray<string> usings,
-        XmlDocumentationBuilder? xmlDoc)
-    {
-        _name = name;
-        _type = type;
-        _accessibility = accessibility;
-        _isStatic = isStatic;
-        _isReadonly = isReadonly;
-        _isConst = isConst;
-        _initializer = initializer;
-        _attributes = attributes.IsDefault ? ImmutableArray<AttributeBuilder>.Empty : attributes;
-        _usings = usings.IsDefault ? ImmutableArray<string>.Empty : usings;
-        _xmlDoc = xmlDoc;
-    }
+    /// <summary>
+    /// Gets the field type.
+    /// </summary>
+    public string Type { get; init; }
+
+    /// <summary>
+    /// Gets the accessibility of the field.
+    /// </summary>
+    public Accessibility Accessibility { get; init; }
+
+    /// <summary>
+    /// Gets whether the field is static.
+    /// </summary>
+    public bool IsStatic { get; init; }
+
+    /// <summary>
+    /// Gets whether the field is readonly.
+    /// </summary>
+    public bool IsReadonly { get; init; }
+
+    /// <summary>
+    /// Gets whether the field is const.
+    /// </summary>
+    public bool IsConst { get; init; }
+
+    /// <summary>
+    /// Gets the initializer expression for the field.
+    /// </summary>
+    public string? Initializer { get; init; }
+
+    /// <summary>
+    /// Gets the attributes applied to the field.
+    /// </summary>
+    public ImmutableArray<AttributeBuilder> Attributes { get; init; }
+
+    /// <summary>
+    /// Gets the using directives for this field.
+    /// </summary>
+    internal ImmutableArray<string> Usings { get; init; }
+
+    /// <summary>
+    /// Gets the XML documentation for the field.
+    /// </summary>
+    public XmlDocumentationBuilder? XmlDoc { get; init; }
+
+    /// <summary>Gets the preprocessor directive condition for conditional compilation.</summary>
+    public Directive? Condition { get; init; }
 
     #region Factory Methods
 
@@ -59,17 +77,12 @@ public readonly struct FieldBuilder
         if (string.IsNullOrWhiteSpace(type))
             throw new ArgumentException("Field type cannot be null or empty.", nameof(type));
 
-        return new FieldBuilder(
-            name,
-            type,
-            Accessibility.Private,
-            false,
-            false,
-            false,
-            null,
-            ImmutableArray<AttributeBuilder>.Empty,
-            ImmutableArray<string>.Empty,
-            null);
+        return new FieldBuilder
+        {
+            Name = name,
+            Type = type,
+            Accessibility = Accessibility.Private
+        };
     }
 
     /// <summary>
@@ -102,39 +115,34 @@ public readonly struct FieldBuilder
     /// <summary>
     /// Sets the accessibility of the field.
     /// </summary>
-    public FieldBuilder WithAccessibility(Accessibility accessibility)
-    {
-        return new FieldBuilder(_name, _type, accessibility, _isStatic, _isReadonly, _isConst, _initializer,
-            _attributes, _usings, _xmlDoc);
-    }
+    public FieldBuilder WithAccessibility(Accessibility accessibility) =>
+        this with { Accessibility = accessibility };
 
     /// <summary>
     /// Marks the field as static.
     /// </summary>
-    public FieldBuilder AsStatic()
-    {
-        return new FieldBuilder(_name, _type, _accessibility, true, _isReadonly, _isConst, _initializer, _attributes,
-            _usings, _xmlDoc);
-    }
+    public FieldBuilder AsStatic() =>
+        this with { IsStatic = true };
 
     /// <summary>
     /// Marks the field as readonly.
     /// </summary>
-    public FieldBuilder AsReadonly()
-    {
-        return new FieldBuilder(_name, _type, _accessibility, _isStatic, true, _isConst, _initializer, _attributes,
-            _usings, _xmlDoc);
-    }
+    public FieldBuilder AsReadonly() =>
+        this with { IsReadonly = true };
 
     /// <summary>
     /// Marks the field as const.
     /// Note: const fields must have an initializer.
     /// </summary>
-    public FieldBuilder AsConst()
-    {
-        return new FieldBuilder(_name, _type, _accessibility, _isStatic, _isReadonly, true, _initializer, _attributes,
-            _usings, _xmlDoc);
-    }
+    public FieldBuilder AsConst() =>
+        this with { IsConst = true };
+
+    /// <summary>
+    /// Wraps this field in a preprocessor directive (#if/#endif).
+    /// </summary>
+    /// <param name="directive">The directive condition (e.g., Directives.Net6OrGreater).</param>
+    public FieldBuilder When(Directive directive) =>
+        this with { Condition = directive };
 
     #endregion
 
@@ -144,11 +152,8 @@ public readonly struct FieldBuilder
     /// Sets an initializer for the field.
     /// </summary>
     /// <param name="initializer">The initializer expression (e.g., "new()", "null", "42").</param>
-    public FieldBuilder WithInitializer(string initializer)
-    {
-        return new FieldBuilder(_name, _type, _accessibility, _isStatic, _isReadonly, _isConst, initializer,
-            _attributes, _usings, _xmlDoc);
-    }
+    public FieldBuilder WithInitializer(string initializer) =>
+        this with { Initializer = initializer };
 
     #endregion
 
@@ -161,8 +166,7 @@ public readonly struct FieldBuilder
     public FieldBuilder WithXmlDoc(Func<XmlDocumentationBuilder, XmlDocumentationBuilder> configure)
     {
         var xmlDoc = configure(XmlDocumentationBuilder.Create());
-        return new FieldBuilder(_name, _type, _accessibility, _isStatic, _isReadonly, _isConst, _initializer,
-            _attributes, _usings, xmlDoc);
+        return this with { XmlDoc = xmlDoc };
     }
 
     /// <summary>
@@ -171,9 +175,8 @@ public readonly struct FieldBuilder
     /// <param name="summary">The summary text.</param>
     public FieldBuilder WithXmlDoc(string summary)
     {
-        var xmlDoc = XmlDocumentationBuilder.WithSummary(summary);
-        return new FieldBuilder(_name, _type, _accessibility, _isStatic, _isReadonly, _isConst, _initializer,
-            _attributes, _usings, xmlDoc);
+        var xmlDoc = XmlDocumentationBuilder.ForSummary(summary);
+        return this with { XmlDoc = xmlDoc };
     }
 
     /// <summary>
@@ -186,8 +189,7 @@ public readonly struct FieldBuilder
             return this;
 
         var xmlDoc = XmlDocumentationBuilder.From(documentation);
-        return new FieldBuilder(_name, _type, _accessibility, _isStatic, _isReadonly, _isConst, _initializer,
-            _attributes, _usings, xmlDoc);
+        return this with { XmlDoc = xmlDoc };
     }
 
     #endregion
@@ -201,8 +203,8 @@ public readonly struct FieldBuilder
     public FieldBuilder WithAttribute(string name)
     {
         var attribute = AttributeBuilder.For(name);
-        return new FieldBuilder(_name, _type, _accessibility, _isStatic, _isReadonly, _isConst, _initializer,
-            _attributes.Add(attribute), _usings, _xmlDoc);
+        var attributes = Attributes.IsDefault ? [] : Attributes;
+        return this with { Attributes = attributes.Add(attribute) };
     }
 
     /// <summary>
@@ -213,8 +215,8 @@ public readonly struct FieldBuilder
     public FieldBuilder WithAttribute(string name, Func<AttributeBuilder, AttributeBuilder> configure)
     {
         var attribute = configure(AttributeBuilder.For(name));
-        return new FieldBuilder(_name, _type, _accessibility, _isStatic, _isReadonly, _isConst, _initializer,
-            _attributes.Add(attribute), _usings, _xmlDoc);
+        var attributes = Attributes.IsDefault ? [] : Attributes;
+        return this with { Attributes = attributes.Add(attribute) };
     }
 
     /// <summary>
@@ -222,8 +224,8 @@ public readonly struct FieldBuilder
     /// </summary>
     public FieldBuilder WithAttribute(AttributeBuilder attribute)
     {
-        return new FieldBuilder(_name, _type, _accessibility, _isStatic, _isReadonly, _isConst, _initializer,
-            _attributes.Add(attribute), _usings, _xmlDoc);
+        var attributes = Attributes.IsDefault ? [] : Attributes;
+        return this with { Attributes = attributes.Add(attribute) };
     }
 
     #endregion
@@ -236,14 +238,9 @@ public readonly struct FieldBuilder
     /// <param name="namespace">The namespace to add (e.g., "System.Linq", "static System.Math").</param>
     public FieldBuilder AddUsing(string @namespace)
     {
-        return new FieldBuilder(_name, _type, _accessibility, _isStatic, _isReadonly, _isConst, _initializer,
-            _attributes, _usings.Add(@namespace), _xmlDoc);
+        var usings = Usings.IsDefault ? [] : Usings;
+        return this with { Usings = usings.Add(@namespace) };
     }
-
-    /// <summary>
-    /// Gets the using directives for this field.
-    /// </summary>
-    internal ImmutableArray<string> Usings => _usings;
 
     #endregion
 
@@ -254,42 +251,49 @@ public readonly struct FieldBuilder
     /// </summary>
     internal FieldDeclarationSyntax Build()
     {
-        var variable = SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier(_name));
+        var variable = SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier(Name));
 
         // Add initializer if specified
-        if (_initializer != null)
+        if (Initializer != null)
             variable = variable.WithInitializer(
                 SyntaxFactory.EqualsValueClause(
-                    SyntaxFactory.ParseExpression(_initializer)));
+                    SyntaxFactory.ParseExpression(Initializer)));
 
         var declaration = SyntaxFactory.VariableDeclaration(
-                SyntaxFactory.ParseTypeName(_type))
+                SyntaxFactory.ParseTypeName(Type))
             .WithVariables(SyntaxFactory.SingletonSeparatedList(variable));
 
         var field = SyntaxFactory.FieldDeclaration(declaration);
 
         // Add attributes
-        if (_attributes.Length > 0)
+        var attributes = Attributes.IsDefault ? [] : Attributes;
+        if (attributes.Length > 0)
         {
-            var attributeLists = _attributes.Select(a => a.BuildList()).ToArray();
+            var attributeLists = attributes.Select(a => a.BuildList()).ToArray();
             field = field.WithAttributeLists(SyntaxFactory.List(attributeLists));
         }
 
         // Add modifiers
         var modifiers = new List<SyntaxKind>();
-        modifiers.Add(AccessibilityToSyntaxKind(_accessibility));
-        if (_isStatic) modifiers.Add(SyntaxKind.StaticKeyword);
-        if (_isReadonly) modifiers.Add(SyntaxKind.ReadOnlyKeyword);
-        if (_isConst) modifiers.Add(SyntaxKind.ConstKeyword);
+        modifiers.Add(AccessibilityToSyntaxKind(Accessibility));
+        if (IsStatic) modifiers.Add(SyntaxKind.StaticKeyword);
+        if (IsReadonly) modifiers.Add(SyntaxKind.ReadOnlyKeyword);
+        if (IsConst) modifiers.Add(SyntaxKind.ConstKeyword);
 
         field = field.WithModifiers(
             SyntaxFactory.TokenList(modifiers.Select(SyntaxFactory.Token)));
 
         // Add XML documentation
-        if (_xmlDoc.HasValue && _xmlDoc.Value.HasContent)
+        if (XmlDoc.HasValue && XmlDoc.Value.HasContent)
         {
-            var trivia = _xmlDoc.Value.Build();
+            var trivia = XmlDoc.Value.Build();
             field = field.WithLeadingTrivia(trivia);
+        }
+
+        // Wrap in preprocessor directive if specified
+        if (Condition.HasValue)
+        {
+            field = DirectiveHelper.WrapInDirective(field, Condition.Value);
         }
 
         return field;
@@ -306,16 +310,6 @@ public readonly struct FieldBuilder
             _ => SyntaxKind.PrivateKeyword
         };
     }
-
-    /// <summary>
-    /// Gets the field name.
-    /// </summary>
-    public string Name => _name;
-
-    /// <summary>
-    /// Gets the field type.
-    /// </summary>
-    public string Type => _type;
 
     #endregion
 }

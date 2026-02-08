@@ -5,6 +5,8 @@ namespace Deepstaging.Roslyn.Tests.Projections.Extensions;
 
 public class ValidSymbolNamespaceTests : RoslynTestBase
 {
+    #region Getting Namespaces
+
     [Test]
     public async Task Can_get_namespace_by_name()
     {
@@ -37,6 +39,10 @@ public class ValidSymbolNamespaceTests : RoslynTestBase
 
         await Assert.That(ns.Name).IsEqualTo("MyNamespace");
     }
+
+    #endregion
+
+    #region Type Access from Namespace
 
     [Test]
     public async Task Can_get_types_from_namespace()
@@ -93,6 +99,10 @@ public class ValidSymbolNamespaceTests : RoslynTestBase
         await Assert.That(type.Name).IsEqualTo("MyClass");
     }
 
+    #endregion
+
+    #region Nested Namespace Navigation
+
     [Test]
     public async Task Can_get_nested_namespaces()
     {
@@ -148,6 +158,10 @@ public class ValidSymbolNamespaceTests : RoslynTestBase
         await Assert.That(ns.IsGlobalNamespace()).IsFalse();
     }
 
+    #endregion
+
+    #region Query from Namespace
+
     [Test]
     public async Task Can_query_types_from_namespace()
     {
@@ -166,4 +180,6 @@ public class ValidSymbolNamespaceTests : RoslynTestBase
 
         await Assert.That(type.Name).IsEqualTo("PublicClass");
     }
+
+    #endregion
 }

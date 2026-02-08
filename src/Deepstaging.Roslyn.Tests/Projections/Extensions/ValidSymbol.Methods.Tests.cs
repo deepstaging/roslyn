@@ -5,6 +5,8 @@ namespace Deepstaging.Roslyn.Tests.Projections.Extensions;
 
 public class ValidSymbolMethodsTests : RoslynTestBase
 {
+    #region Return Type Access
+
     [Test]
     public async Task GetReturnType_always_returns_valid_type()
     {
@@ -26,6 +28,10 @@ public class ValidSymbolMethodsTests : RoslynTestBase
 
         await Assert.That(returnType.Name).IsEqualTo("Int32");
     }
+
+    #endregion
+
+    #region Async Detection
 
     [Test]
     public async Task IsAsync_detects_async_methods()
@@ -117,6 +123,10 @@ public class ValidSymbolMethodsTests : RoslynTestBase
         await Assert.That(returnType.Name).IsEqualTo("String");
     }
 
+    #endregion
+
+    #region Accessibility Checks
+
     [Test]
     public async Task IsPublicMethod_checks_accessibility()
     {
@@ -157,6 +167,10 @@ public class ValidSymbolMethodsTests : RoslynTestBase
         await Assert.That(staticMethod.IsStaticMethod()).IsTrue();
         await Assert.That(instanceMethod.IsStaticMethod()).IsFalse();
     }
+
+    #endregion
+
+    #region Modifier Checks
 
     [Test]
     public async Task IsVirtualMethod_checks_virtual_modifier()
@@ -227,6 +241,10 @@ public class ValidSymbolMethodsTests : RoslynTestBase
         await Assert.That(normalMethod.IsExtensionMethod()).IsFalse();
     }
 
+    #endregion
+
+    #region Overridden Method Access
+
     [Test]
     public async Task GetOverriddenMethod_returns_base_method()
     {
@@ -253,4 +271,6 @@ public class ValidSymbolMethodsTests : RoslynTestBase
         await Assert.That(overridden.HasValue).IsTrue();
         await Assert.That(overridden.ContainingType.Name).IsEqualTo("BaseClass");
     }
+
+    #endregion
 }

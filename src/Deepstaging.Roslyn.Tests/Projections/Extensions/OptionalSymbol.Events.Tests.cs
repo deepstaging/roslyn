@@ -5,6 +5,8 @@ namespace Deepstaging.Roslyn.Tests.Projections.Extensions;
 
 public class OptionalSymbolEventsTests : RoslynTestBase
 {
+    #region Event Type Access
+
     [Test]
     public async Task GetEventType_returns_event_handler_type()
     {
@@ -51,6 +53,10 @@ public class OptionalSymbolEventsTests : RoslynTestBase
         await Assert.That(instanceEvent.IsStatic).IsFalse();
     }
 
+    #endregion
+
+    #region Event Accessor Access
+
     [Test]
     public async Task GetAddMethod_returns_add_accessor()
     {
@@ -86,4 +92,6 @@ public class OptionalSymbolEventsTests : RoslynTestBase
 
         await Assert.That(removeMethod.HasValue).IsTrue();
     }
+
+    #endregion
 }

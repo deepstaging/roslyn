@@ -114,3 +114,40 @@ var result = builder.Emit(options);
 | `Syntax` | Syntax validation only (default) |
 | `Semantic` | Semantic validation (requires compilation) |
 | `Full` | Full validation |
+
+---
+
+## Directive
+
+Represents a preprocessor directive condition. See [Directives](directives.md) for full documentation.
+
+```csharp
+// Pre-defined directives
+Directives.Net6OrGreater
+Directives.Net7OrGreater
+
+// Custom directive
+Directives.Custom("MY_FEATURE_FLAG")
+
+// Combining directives
+Directives.Net6OrGreater.And(Directives.Custom("ENABLE_SPANS"))
+Directives.Net6OrGreater.Or(Directives.NetStandard21OrGreater)
+Directives.NetFramework.Not()
+```
+
+---
+
+## ConditionalInterface
+
+Represents an interface implementation that may be conditionally compiled.
+
+```csharp
+// Implicit conversion from string (unconditional)
+ConditionalInterface iface = "IEquatable<UserId>";
+
+// Explicit conditional interface
+var conditional = new ConditionalInterface("ISpanFormattable", Directives.Net6OrGreater);
+
+// Used with TypeBuilder.Implements
+builder.Implements("ISpanFormattable", Directives.Net6OrGreater);
+```

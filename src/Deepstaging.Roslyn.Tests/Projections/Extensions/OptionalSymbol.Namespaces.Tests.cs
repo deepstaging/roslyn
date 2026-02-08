@@ -5,6 +5,8 @@ namespace Deepstaging.Roslyn.Tests.Projections.Extensions;
 
 public class OptionalSymbolNamespaceTests : RoslynTestBase
 {
+    #region Type Access from Namespace
+
     [Test]
     public async Task GetTypes_returns_types_from_namespace()
     {
@@ -89,6 +91,10 @@ public class OptionalSymbolNamespaceTests : RoslynTestBase
         await Assert.That(type.HasValue).IsFalse();
     }
 
+    #endregion
+
+    #region RequireNamedType from Namespace
+
     [Test]
     public async Task RequireNamedType_returns_type_from_namespace()
     {
@@ -105,6 +111,10 @@ public class OptionalSymbolNamespaceTests : RoslynTestBase
 
         await Assert.That(type.Name).IsEqualTo("MyClass");
     }
+
+    #endregion
+
+    #region Child Namespace Access
 
     [Test]
     public async Task GetNamespaces_returns_child_namespaces()
@@ -190,6 +200,10 @@ public class OptionalSymbolNamespaceTests : RoslynTestBase
         await Assert.That(child.HasValue).IsFalse();
     }
 
+    #endregion
+
+    #region RequireNamespace from Namespace
+
     [Test]
     public async Task RequireNamespace_returns_child_namespace()
     {
@@ -236,6 +250,10 @@ public class OptionalSymbolNamespaceTests : RoslynTestBase
         await Assert.That(ns.IsGlobalNamespace()).IsFalse();
     }
 
+    #endregion
+
+    #region Chained Navigation
+
     [Test]
     public async Task Can_chain_namespace_navigation()
     {
@@ -274,4 +292,6 @@ public class OptionalSymbolNamespaceTests : RoslynTestBase
 
         await Assert.That(result.HasValue).IsFalse();
     }
+
+    #endregion
 }

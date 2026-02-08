@@ -5,6 +5,8 @@ namespace Deepstaging.Roslyn.Tests.Projections.Extensions;
 
 public class OptionalSymbolTests : RoslynTestBase
 {
+    #region Factory Methods
+
     [Test]
     public async Task Can_create_with_value()
     {
@@ -38,6 +40,10 @@ public class OptionalSymbolTests : RoslynTestBase
         await Assert.That(withValue.HasValue).IsTrue();
         await Assert.That(withNull.HasValue).IsFalse();
     }
+
+    #endregion
+
+    #region Value Extraction
 
     [Test]
     public async Task OrNull_returns_symbol_or_null()
@@ -91,6 +97,10 @@ public class OptionalSymbolTests : RoslynTestBase
         await Assert.That(() => empty.ValidateOrThrow()).ThrowsException();
     }
 
+    #endregion
+
+    #region Transformation
+
     [Test]
     public async Task Map_transforms_value()
     {
@@ -132,6 +142,10 @@ public class OptionalSymbolTests : RoslynTestBase
         await Assert.That(asNamed.HasValue).IsTrue();
         await Assert.That(asNamed.OrNull()?.Name).IsEqualTo("TestClass");
     }
+
+    #endregion
+
+    #region Property Access
 
     [Test]
     public async Task Name_property_returns_symbol_name()
@@ -176,4 +190,6 @@ public class OptionalSymbolTests : RoslynTestBase
         await Assert.That(interfaceType.IsClass).IsFalse();
         await Assert.That(interfaceType.IsInterface).IsTrue();
     }
+
+    #endregion
 }

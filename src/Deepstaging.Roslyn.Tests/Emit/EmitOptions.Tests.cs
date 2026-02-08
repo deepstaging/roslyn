@@ -5,6 +5,8 @@ namespace Deepstaging.Roslyn.Tests.Emit;
 
 public class EmitOptionsTests : RoslynTestBase
 {
+    #region Validation Levels
+
     [Test]
     public async Task Can_emit_without_validation()
     {
@@ -41,6 +43,10 @@ public class EmitOptionsTests : RoslynTestBase
         await Assert.That(result.Diagnostics).IsNotEmpty();
     }
 
+    #endregion
+
+    #region Formatting Options
+
     [Test]
     public async Task Can_customize_indentation()
     {
@@ -75,6 +81,10 @@ public class EmitOptionsTests : RoslynTestBase
         await Assert.That(result.Success).IsTrue();
     }
 
+    #endregion
+
+    #region Default Options
+
     [Test]
     public async Task Default_options_apply_formatting()
     {
@@ -89,4 +99,6 @@ public class EmitOptionsTests : RoslynTestBase
         // Should be formatted with consistent whitespace
         await Assert.That(result.Code).Contains("public string Name");
     }
+
+    #endregion
 }

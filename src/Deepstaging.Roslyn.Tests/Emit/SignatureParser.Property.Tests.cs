@@ -5,6 +5,8 @@ namespace Deepstaging.Roslyn.Tests.Emit;
 
 public class SignatureParserPropertyTests : RoslynTestBase
 {
+    #region Basic Property Parsing
+
     [Test]
     public async Task Parse_AutoProperty_ExtractsNameAndType()
     {
@@ -35,6 +37,10 @@ public class SignatureParserPropertyTests : RoslynTestBase
         await Assert.That(result.Success).IsTrue();
         await Assert.That(result.Code).Contains("public int Count { get; }");
     }
+
+    #endregion
+
+    #region Modifier Parsing
 
     [Test]
     public async Task Parse_StaticProperty_SetsStaticModifier()
@@ -80,6 +86,10 @@ public class SignatureParserPropertyTests : RoslynTestBase
         await Assert.That(result.Code).Contains("private string Secret");
     }
 
+    #endregion
+
+    #region Initializer and Expression Body
+
     [Test]
     public async Task Parse_PropertyWithInitializer_SetsInitializer()
     {
@@ -102,6 +112,10 @@ public class SignatureParserPropertyTests : RoslynTestBase
         await Assert.That(result.Code).Contains("=> FirstName + LastName");
     }
 
+    #endregion
+
+    #region Nullable and Generic Types
+
     [Test]
     public async Task Parse_NullableType_PreservesNullability()
     {
@@ -118,6 +132,10 @@ public class SignatureParserPropertyTests : RoslynTestBase
         await Assert.That(builder.Type).IsEqualTo("Dictionary<string, List<int>>");
     }
 
+    #endregion
+
+    #region Post-Parse Configuration
+
     [Test]
     public async Task Parse_CanAddAttributesAfterParsing()
     {
@@ -129,6 +147,10 @@ public class SignatureParserPropertyTests : RoslynTestBase
         await Assert.That(result.Success).IsTrue();
         await Assert.That(result.Code).Contains("[Required]");
     }
+
+    #endregion
+
+    #region Error Handling
 
     [Test]
     public async Task Parse_InvalidSignature_ThrowsArgumentException()
@@ -150,4 +172,6 @@ public class SignatureParserPropertyTests : RoslynTestBase
         await Assert.ThrowsAsync<ArgumentException>(() =>
             Task.FromResult(PropertyBuilder.Parse(null!)));
     }
+
+    #endregion
 }

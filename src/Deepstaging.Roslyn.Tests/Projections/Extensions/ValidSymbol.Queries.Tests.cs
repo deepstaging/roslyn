@@ -5,6 +5,8 @@ namespace Deepstaging.Roslyn.Tests.Projections.Extensions;
 
 public class ValidSymbolQueriesTests : RoslynTestBase
 {
+    #region Method Queries
+
     [Test]
     public async Task Can_query_methods_from_valid_symbol()
     {
@@ -43,6 +45,10 @@ public class ValidSymbolQueriesTests : RoslynTestBase
         await Assert.That(properties.Length).IsEqualTo(2);
     }
 
+    #endregion
+
+    #region Parameter Queries
+
     [Test]
     public async Task Can_query_parameters_from_valid_method()
     {
@@ -63,4 +69,6 @@ public class ValidSymbolQueriesTests : RoslynTestBase
 
         await Assert.That(parameters.Length).IsEqualTo(2);
     }
+
+    #endregion
 }

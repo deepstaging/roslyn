@@ -5,6 +5,8 @@ namespace Deepstaging.Roslyn.Tests;
 
 public class MethodQueryTests : RoslynTestBase
 {
+    #region Accessibility Filtering
+
     [Test]
     public async Task Can_filter_public_methods()
     {
@@ -24,6 +26,10 @@ public class MethodQueryTests : RoslynTestBase
 
         await Assert.That(methods.Any(m => m.Value.Name == "PublicMethod")).IsTrue();
     }
+
+    #endregion
+
+    #region Modifier Filtering
 
     [Test]
     public async Task Can_filter_async_methods()
@@ -66,4 +72,6 @@ public class MethodQueryTests : RoslynTestBase
 
         await Assert.That(staticMethods.Any(m => m.Value.Name == "StaticMethod")).IsTrue();
     }
+
+    #endregion
 }

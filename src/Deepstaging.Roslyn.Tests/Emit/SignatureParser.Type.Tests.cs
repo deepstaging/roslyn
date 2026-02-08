@@ -5,6 +5,8 @@ namespace Deepstaging.Roslyn.Tests.Emit;
 
 public class SignatureParserTypeTests : RoslynTestBase
 {
+    #region Basic Type Parsing
+
     [Test]
     public async Task Parse_SimpleClass_ExtractsName()
     {
@@ -34,6 +36,10 @@ public class SignatureParserTypeTests : RoslynTestBase
         await Assert.That(result.Code).Contains("IService");
         await Assert.That(result.Code).Contains("IDisposable");
     }
+
+    #endregion
+
+    #region Modifier Parsing
 
     [Test]
     public async Task Parse_SealedClass_SetsSealedModifier()
@@ -85,6 +91,10 @@ public class SignatureParserTypeTests : RoslynTestBase
         await Assert.That(result.Code).Contains("internal class Helper");
     }
 
+    #endregion
+
+    #region Interface and Struct Parsing
+
     [Test]
     public async Task Parse_Interface_CreatesInterface()
     {
@@ -121,6 +131,10 @@ public class SignatureParserTypeTests : RoslynTestBase
         await Assert.That(result.Code).Contains("struct Vector");
     }
 
+    #endregion
+
+    #region Post-Parse Configuration
+
     [Test]
     public async Task Parse_CanAddMembersAfterParsing()
     {
@@ -156,6 +170,10 @@ public class SignatureParserTypeTests : RoslynTestBase
         await Assert.That(result.Code).Contains("[Serializable]");
     }
 
+    #endregion
+
+    #region Error Handling
+
     [Test]
     public async Task Parse_InvalidSignature_ThrowsArgumentException()
     {
@@ -176,6 +194,10 @@ public class SignatureParserTypeTests : RoslynTestBase
         await Assert.ThrowsAsync<ArgumentException>(() =>
             Task.FromResult(TypeBuilder.Parse(null!)));
     }
+
+    #endregion
+
+    #region Edge Cases
 
     [Test]
     public async Task Parse_GenericClass_PreservesTypeParameters()
@@ -200,4 +222,6 @@ public class SignatureParserTypeTests : RoslynTestBase
         await Assert.That(result.Code).Contains("partial");
         await Assert.That(result.Code).Contains("class CacheManager");
     }
+
+    #endregion
 }

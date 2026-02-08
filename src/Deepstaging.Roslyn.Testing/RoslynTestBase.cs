@@ -13,6 +13,12 @@ namespace Deepstaging.Roslyn.Testing;
 public abstract class RoslynTestBase
 {
     /// <summary>
+    /// Gets well-known type symbols (Guid, String, Int32, etc.) from a dummy compilation.
+    /// </summary>
+    protected CommonCompilationSymbols.WellKnownSymbols WellKnownSymbols =>
+        SymbolsFor("class Dummy {}").Compilation.WellKnownSymbols;
+
+    /// <summary>
     /// Create a symbol test context from source code for testing queries and projections.
     /// </summary>
     /// <param name="source">The C# source code to compile.</param>

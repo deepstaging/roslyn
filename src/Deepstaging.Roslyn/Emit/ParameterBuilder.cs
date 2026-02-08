@@ -7,27 +7,28 @@ namespace Deepstaging.Roslyn.Emit;
 /// Fluent builder for method and constructor parameters.
 /// Immutable - each method returns a new instance.
 /// </summary>
-public readonly struct ParameterBuilder
+public record struct ParameterBuilder
 {
-    private readonly string _name;
-    private readonly string _type;
-    private readonly string? _defaultValue;
-    private readonly ParameterModifier _modifier;
-    private readonly ImmutableArray<AttributeBuilder> _attributes;
+    /// <summary>Gets the parameter name.</summary>
+    public string Name { get; init; }
 
-    private ParameterBuilder(
-        string name,
-        string type,
-        string? defaultValue,
-        ParameterModifier modifier,
-        ImmutableArray<AttributeBuilder> attributes)
-    {
-        _name = name;
-        _type = type;
-        _defaultValue = defaultValue;
-        _modifier = modifier;
-        _attributes = attributes.IsDefault ? ImmutableArray<AttributeBuilder>.Empty : attributes;
-    }
+    /// <summary>Gets the parameter type.</summary>
+    public string Type { get; init; }
+
+    /// <summary>Gets the default value expression.</summary>
+    public string? DefaultValue { get; init; }
+
+    /// <summary>Gets the parameter modifier.</summary>
+    public ParameterModifier Modifier { get; init; }
+
+    /// <summary>Gets the attributes applied to this parameter.</summary>
+    public ImmutableArray<AttributeBuilder> Attributes { get; init; }
+
+    /// <summary>Gets the validation rules for this parameter.</summary>
+    public ImmutableArray<ParameterValidation> Validations { get; init; }
+
+    /// <summary>Gets the member name this parameter should be assigned to (if any).</summary>
+    public string? AssignsToMember { get; init; }
 
     #region Factory Methods
 
@@ -43,7 +44,11 @@ public readonly struct ParameterBuilder
         if (string.IsNullOrWhiteSpace(type))
             throw new ArgumentException("Parameter type cannot be null or empty.", nameof(type));
 
-        return new ParameterBuilder(name, type, null, ParameterModifier.None, ImmutableArray<AttributeBuilder>.Empty);
+        return new ParameterBuilder
+        {
+            Name = name,
+            Type = type
+        };
     }
 
     #endregion
@@ -54,50 +59,38 @@ public readonly struct ParameterBuilder
     /// Sets the default value for the parameter.
     /// </summary>
     /// <param name="defaultValue">The default value expression (e.g., "null", "0", "default").</param>
-    public ParameterBuilder WithDefaultValue(string defaultValue)
-    {
-        return new ParameterBuilder(_name, _type, defaultValue, _modifier, _attributes);
-    }
+    public ParameterBuilder WithDefaultValue(string defaultValue) =>
+        this with { DefaultValue = defaultValue };
 
     /// <summary>
     /// Marks the parameter as 'ref'.
     /// </summary>
-    public ParameterBuilder AsRef()
-    {
-        return new ParameterBuilder(_name, _type, _defaultValue, ParameterModifier.Ref, _attributes);
-    }
+    public ParameterBuilder AsRef() =>
+        this with { Modifier = ParameterModifier.Ref };
 
     /// <summary>
     /// Marks the parameter as 'out'.
     /// </summary>
-    public ParameterBuilder AsOut()
-    {
-        return new ParameterBuilder(_name, _type, _defaultValue, ParameterModifier.Out, _attributes);
-    }
+    public ParameterBuilder AsOut() =>
+        this with { Modifier = ParameterModifier.Out };
 
     /// <summary>
     /// Marks the parameter as 'in'.
     /// </summary>
-    public ParameterBuilder AsIn()
-    {
-        return new ParameterBuilder(_name, _type, _defaultValue, ParameterModifier.In, _attributes);
-    }
+    public ParameterBuilder AsIn() =>
+        this with { Modifier = ParameterModifier.In };
 
     /// <summary>
     /// Marks the parameter as 'params'.
     /// </summary>
-    public ParameterBuilder AsParams()
-    {
-        return new ParameterBuilder(_name, _type, _defaultValue, ParameterModifier.Params, _attributes);
-    }
+    public ParameterBuilder AsParams() =>
+        this with { Modifier = ParameterModifier.Params };
 
     /// <summary>
     /// Marks the parameter as 'this' (extension method target).
     /// </summary>
-    public ParameterBuilder AsThis()
-    {
-        return new ParameterBuilder(_name, _type, _defaultValue, ParameterModifier.This, _attributes);
-    }
+    public ParameterBuilder AsThis() =>
+        this with { Modifier = ParameterModifier.This };
 
     #endregion
 
@@ -109,8 +102,8 @@ public readonly struct ParameterBuilder
     /// <param name="name">The attribute name (e.g., "CallerMemberName", "NotNull").</param>
     public ParameterBuilder WithAttribute(string name)
     {
-        var attribute = AttributeBuilder.For(name);
-        return new ParameterBuilder(_name, _type, _defaultValue, _modifier, _attributes.Add(attribute));
+        var attributes = Attributes.IsDefault ? [] : Attributes;
+        return this with { Attributes = attributes.Add(AttributeBuilder.For(name)) };
     }
 
     /// <summary>
@@ -120,8 +113,8 @@ public readonly struct ParameterBuilder
     /// <param name="configure">Configuration callback for the attribute.</param>
     public ParameterBuilder WithAttribute(string name, Func<AttributeBuilder, AttributeBuilder> configure)
     {
-        var attribute = configure(AttributeBuilder.For(name));
-        return new ParameterBuilder(_name, _type, _defaultValue, _modifier, _attributes.Add(attribute));
+        var attributes = Attributes.IsDefault ? [] : Attributes;
+        return this with { Attributes = attributes.Add(configure(AttributeBuilder.For(name))) };
     }
 
     /// <summary>
@@ -129,7 +122,8 @@ public readonly struct ParameterBuilder
     /// </summary>
     public ParameterBuilder WithAttribute(AttributeBuilder attribute)
     {
-        return new ParameterBuilder(_name, _type, _defaultValue, _modifier, _attributes.Add(attribute));
+        var attributes = Attributes.IsDefault ? [] : Attributes;
+        return this with { Attributes = attributes.Add(attribute) };
     }
 
     #endregion
@@ -142,60 +136,58 @@ public readonly struct ParameterBuilder
     internal ParameterSyntax Build()
     {
         var parameter = SyntaxFactory.Parameter(
-                SyntaxFactory.Identifier(_name))
-            .WithType(SyntaxFactory.ParseTypeName(_type));
+                SyntaxFactory.Identifier(Name))
+            .WithType(SyntaxFactory.ParseTypeName(Type));
 
         // Add attributes
-        if (_attributes.Length > 0)
+        var attributes = Attributes.IsDefault ? [] : Attributes;
+        if (attributes.Length > 0)
         {
-            var attributeLists = _attributes.Select(a => a.BuildList()).ToArray();
+            var attributeLists = attributes.Select(a => a.BuildList()).ToArray();
             parameter = parameter.WithAttributeLists(SyntaxFactory.List(attributeLists));
         }
 
         // Add modifier if specified
-        if (_modifier != ParameterModifier.None)
+        if (Modifier != ParameterModifier.None)
         {
-            var modifierToken = _modifier switch
+            var modifierToken = Modifier switch
             {
                 ParameterModifier.Ref => SyntaxKind.RefKeyword,
                 ParameterModifier.Out => SyntaxKind.OutKeyword,
                 ParameterModifier.In => SyntaxKind.InKeyword,
                 ParameterModifier.Params => SyntaxKind.ParamsKeyword,
                 ParameterModifier.This => SyntaxKind.ThisKeyword,
-                _ => throw new InvalidOperationException($"Unknown parameter modifier: {_modifier}")
+                _ => throw new InvalidOperationException($"Unknown parameter modifier: {Modifier}")
             };
             parameter = parameter.WithModifiers(
                 SyntaxFactory.TokenList(SyntaxFactory.Token(modifierToken)));
         }
 
         // Add default value if specified
-        if (_defaultValue != null)
+        if (DefaultValue != null)
             parameter = parameter.WithDefault(
                 SyntaxFactory.EqualsValueClause(
-                    SyntaxFactory.ParseExpression(_defaultValue)));
+                    SyntaxFactory.ParseExpression(DefaultValue)));
 
         return parameter;
     }
 
     /// <summary>
-    /// Gets the parameter name.
-    /// </summary>
-    public string Name => _name;
-
-    /// <summary>
-    /// Gets the parameter type.
-    /// </summary>
-    public string Type => _type;
-
-    /// <summary>
     /// Gets whether this parameter is an extension method target (has 'this' modifier).
     /// </summary>
-    public bool IsExtensionTarget => _modifier == ParameterModifier.This;
+    public bool IsExtensionTarget => Modifier == ParameterModifier.This;
 
     /// <summary>
     /// Gets the using directives from all attributes on this parameter.
     /// </summary>
-    internal ImmutableArray<string> Usings => _attributes.SelectMany(a => a.Usings).ToImmutableArray();
+    internal ImmutableArray<string> Usings
+    {
+        get
+        {
+            var attributes = Attributes.IsDefault ? [] : Attributes;
+            return attributes.SelectMany(a => a.Usings.IsDefault ? [] : a.Usings).ToImmutableArray();
+        }
+    }
 
     #endregion
 }
@@ -203,12 +195,44 @@ public readonly struct ParameterBuilder
 /// <summary>
 /// Parameter modifiers (ref, out, in, params, this).
 /// </summary>
-internal enum ParameterModifier
+public enum ParameterModifier
 {
+    /// <summary>No modifier.</summary>
     None,
+    /// <summary>The ref modifier.</summary>
     Ref,
+    /// <summary>The out modifier.</summary>
     Out,
+    /// <summary>The in modifier.</summary>
     In,
+    /// <summary>The params modifier.</summary>
     Params,
+    /// <summary>The this modifier for extension methods.</summary>
     This
+}
+
+/// <summary>
+/// Represents a validation rule for a parameter.
+/// </summary>
+public readonly record struct ParameterValidation(ParameterValidationKind Kind, string? MinValue = null, string? MaxValue = null);
+
+/// <summary>
+/// The kinds of parameter validation.
+/// </summary>
+public enum ParameterValidationKind
+{
+    /// <summary>Throws ArgumentNullException if null.</summary>
+    ThrowIfNull,
+    /// <summary>Throws ArgumentException if null or empty.</summary>
+    ThrowIfNullOrEmpty,
+    /// <summary>Throws ArgumentException if null, empty, or whitespace.</summary>
+    ThrowIfNullOrWhiteSpace,
+    /// <summary>Throws ArgumentOutOfRangeException if outside specified range.</summary>
+    ThrowIfOutOfRange,
+    /// <summary>Throws ArgumentOutOfRangeException if zero or negative.</summary>
+    ThrowIfNotPositive,
+    /// <summary>Throws ArgumentOutOfRangeException if negative.</summary>
+    ThrowIfNegative,
+    /// <summary>Throws ArgumentOutOfRangeException if zero.</summary>
+    ThrowIfZero
 }

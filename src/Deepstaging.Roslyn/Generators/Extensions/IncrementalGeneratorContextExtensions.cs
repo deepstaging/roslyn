@@ -42,34 +42,6 @@ public static class IncrementalGeneratorContextExtensions
         {
             return context.CompilationProvider.SelectMany(selector);
         }
-
-        /// <summary>
-        /// Registers code generation for each model in the provided values provider.
-        /// </summary>
-        /// <param name="models">The incremental values provider containing models to process</param>
-        /// <param name="produce">Action to generate code for each model</param>
-        /// <param name="onError">Optional error handler for generation failures</param>
-        public void ForEach<TModel>(
-            IncrementalValuesProvider<TModel> models,
-            Action<SourceProductionContext, TModel> produce,
-            Action<SourceProductionContext, TModel, Exception>? onError = null)
-        {
-            context.RegisterImplementationSourceOutput(models.Collect(), (ctx, array) =>
-            {
-                foreach (var model in array)
-                    try
-                    {
-                        produce(ctx, model);
-                    }
-                    catch (Exception ex)
-                    {
-                        if (onError != null)
-                            onError(ctx, model, ex);
-                        else
-                            ReportDefaultError(ctx, model, ex);
-                    }
-            });
-        }
     }
 
     /// <summary>

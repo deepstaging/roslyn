@@ -5,6 +5,8 @@ namespace Deepstaging.Roslyn.Tests.Emit;
 
 public class TypeBuilderTests : RoslynTestBase
 {
+    #region Basic Type Emission
+
     [Test]
     public async Task Can_emit_simple_class()
     {
@@ -17,6 +19,21 @@ public class TypeBuilderTests : RoslynTestBase
         await Assert.That(result.Success).IsTrue();
         await Assert.That(result.IsValid(out var validEmit)).IsTrue();
         await Assert.That(validEmit.Code).Contains("public class Customer");
+        await Assert.That(validEmit.Code).Contains("namespace MyApp.Domain");
+    }
+
+    [Test]
+    public async Task Can_emit_simple_record()
+    {
+        var result = TypeBuilder
+            .Record("Customer")
+            .InNamespace("MyApp.Domain")
+            .WithAccessibility(Accessibility.Public)
+            .Emit();
+
+        await Assert.That(result.Success).IsTrue();
+        await Assert.That(result.IsValid(out var validEmit)).IsTrue();
+        await Assert.That(validEmit.Code).Contains("public record Customer");
         await Assert.That(validEmit.Code).Contains("namespace MyApp.Domain");
     }
 
@@ -64,6 +81,10 @@ public class TypeBuilderTests : RoslynTestBase
 
         await Assert.That(diagnostics).IsEmpty();
     }
+
+    #endregion
+
+    #region Attribute Emission
 
     [Test]
     public async Task Can_emit_class_with_attribute()
@@ -142,6 +163,8 @@ public class TypeBuilderTests : RoslynTestBase
         await Assert.That(result.Code).Contains("[Obsolete]");
         await Assert.That(result.Code).Contains("public string GetName()");
     }
+
+    #endregion
 
     #region Nested Types
 

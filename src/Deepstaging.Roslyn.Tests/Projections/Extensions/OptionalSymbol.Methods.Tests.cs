@@ -5,6 +5,8 @@ namespace Deepstaging.Roslyn.Tests.Projections.Extensions;
 
 public class OptionalSymbolMethodsTests : RoslynTestBase
 {
+    #region Return Type Access
+
     [Test]
     public async Task GetReturnType_returns_method_return_type()
     {
@@ -27,6 +29,10 @@ public class OptionalSymbolMethodsTests : RoslynTestBase
         await Assert.That(returnType.HasValue).IsTrue();
         await Assert.That(returnType.Name).IsEqualTo("Int32");
     }
+
+    #endregion
+
+    #region Async Method Detection
 
     [Test]
     public async Task GetAsyncKind_detects_async_methods()
@@ -76,6 +82,10 @@ public class OptionalSymbolMethodsTests : RoslynTestBase
         await Assert.That(returnType.HasValue).IsTrue();
         await Assert.That(returnType.Name).IsEqualTo("String");
     }
+
+    #endregion
+
+    #region Overridden Method Access
 
     [Test]
     public async Task GetOverriddenMethod_returns_base_method()
@@ -129,6 +139,10 @@ public class OptionalSymbolMethodsTests : RoslynTestBase
         await Assert.That(implementation.HasValue).IsTrue();
     }
 
+    #endregion
+
+    #region Associated Symbol Access
+
     [Test]
     public async Task GetAssociatedSymbol_returns_property_for_accessor()
     {
@@ -147,4 +161,6 @@ public class OptionalSymbolMethodsTests : RoslynTestBase
 
         await Assert.That(property.GetMethod.AssociatedSymbol.HasValue).IsTrue();
     }
+
+    #endregion
 }

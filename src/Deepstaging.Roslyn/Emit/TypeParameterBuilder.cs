@@ -8,18 +8,17 @@ namespace Deepstaging.Roslyn.Emit;
 /// Supports constraints like where T : class, IDisposable, new().
 /// Immutable - each method returns a new instance.
 /// </summary>
-public readonly struct TypeParameterBuilder
+public record struct TypeParameterBuilder()
 {
-    private readonly string _name;
-    private readonly ImmutableArray<string> _constraints;
+    /// <summary>
+    /// The type parameter name (e.g., "T", "RT", "TResult").
+    /// </summary>
+    public required string Name { get; init; }
 
-    private TypeParameterBuilder(
-        string name,
-        ImmutableArray<string> constraints)
-    {
-        _name = name;
-        _constraints = constraints.IsDefault ? ImmutableArray<string>.Empty : constraints;
-    }
+    /// <summary>
+    /// The type constraints.
+    /// </summary>
+    public ImmutableArray<string> Constraints { get; init; }
 
     #region Factory Methods
 
@@ -32,7 +31,7 @@ public readonly struct TypeParameterBuilder
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Type parameter name cannot be null or empty.", nameof(name));
 
-        return new TypeParameterBuilder(name, ImmutableArray<string>.Empty);
+        return new TypeParameterBuilder { Name = name };
     }
 
     #endregion
@@ -48,7 +47,8 @@ public readonly struct TypeParameterBuilder
         if (string.IsNullOrWhiteSpace(constraint))
             throw new ArgumentException("Constraint cannot be null or empty.", nameof(constraint));
 
-        return new TypeParameterBuilder(_name, _constraints.Add(constraint));
+        var constraints = Constraints.IsDefault ? [] : Constraints;
+        return this with { Constraints = constraints.Add(constraint) };
     }
 
     /// <summary>
@@ -56,7 +56,8 @@ public readonly struct TypeParameterBuilder
     /// </summary>
     public TypeParameterBuilder AsClass()
     {
-        return new TypeParameterBuilder(_name, _constraints.Add("class"));
+        var constraints = Constraints.IsDefault ? [] : Constraints;
+        return this with { Constraints = constraints.Add("class") };
     }
 
     /// <summary>
@@ -64,7 +65,8 @@ public readonly struct TypeParameterBuilder
     /// </summary>
     public TypeParameterBuilder AsStruct()
     {
-        return new TypeParameterBuilder(_name, _constraints.Add("struct"));
+        var constraints = Constraints.IsDefault ? [] : Constraints;
+        return this with { Constraints = constraints.Add("struct") };
     }
 
     /// <summary>
@@ -72,7 +74,8 @@ public readonly struct TypeParameterBuilder
     /// </summary>
     public TypeParameterBuilder AsNotNull()
     {
-        return new TypeParameterBuilder(_name, _constraints.Add("notnull"));
+        var constraints = Constraints.IsDefault ? [] : Constraints;
+        return this with { Constraints = constraints.Add("notnull") };
     }
 
     /// <summary>
@@ -80,7 +83,8 @@ public readonly struct TypeParameterBuilder
     /// </summary>
     public TypeParameterBuilder WithNewConstraint()
     {
-        return new TypeParameterBuilder(_name, _constraints.Add("new()"));
+        var constraints = Constraints.IsDefault ? [] : Constraints;
+        return this with { Constraints = constraints.Add("new()") };
     }
 
     #endregion
@@ -90,22 +94,21 @@ public readonly struct TypeParameterBuilder
     /// <summary>
     /// Builds the type parameter as a TypeParameterSyntax node.
     /// </summary>
-    internal TypeParameterSyntax Build()
-    {
-        return SyntaxFactory.TypeParameter(SyntaxFactory.Identifier(_name));
-    }
+    internal TypeParameterSyntax Build() =>
+        SyntaxFactory.TypeParameter(SyntaxFactory.Identifier(Name));
 
     /// <summary>
     /// Builds the type parameter constraint clause if there are constraints.
     /// </summary>
     internal TypeParameterConstraintClauseSyntax? BuildConstraintClause()
     {
-        if (_constraints.Length == 0)
+        var constraints = Constraints.IsDefault ? [] : Constraints;
+        if (constraints.Length == 0)
             return null;
 
-        var constraints = new List<TypeParameterConstraintSyntax>();
+        var constraintSyntaxList = new List<TypeParameterConstraintSyntax>();
 
-        foreach (var constraint in _constraints)
+        foreach (var constraint in constraints)
         {
             TypeParameterConstraintSyntax constraintSyntax = constraint switch
             {
@@ -115,23 +118,25 @@ public readonly struct TypeParameterBuilder
                 "new()" => SyntaxFactory.ConstructorConstraint(),
                 _ => SyntaxFactory.TypeConstraint(SyntaxFactory.ParseTypeName(constraint))
             };
-            constraints.Add(constraintSyntax);
+            constraintSyntaxList.Add(constraintSyntax);
         }
 
         return SyntaxFactory.TypeParameterConstraintClause(
-            SyntaxFactory.IdentifierName(_name),
-            SyntaxFactory.SeparatedList(constraints));
+            SyntaxFactory.IdentifierName(Name),
+            SyntaxFactory.SeparatedList(constraintSyntaxList));
     }
-
-    /// <summary>
-    /// Gets the type parameter name.
-    /// </summary>
-    public string Name => _name;
 
     /// <summary>
     /// Gets whether this type parameter has constraints.
     /// </summary>
-    public bool HasConstraints => _constraints.Length > 0;
+    public bool HasConstraints
+    {
+        get
+        {
+            var constraints = Constraints.IsDefault ? [] : Constraints;
+            return constraints.Length > 0;
+        }
+    }
 
     #endregion
 }

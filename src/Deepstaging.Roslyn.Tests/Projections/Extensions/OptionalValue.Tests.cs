@@ -5,6 +5,8 @@ namespace Deepstaging.Roslyn.Tests.Projections.Extensions;
 
 public class OptionalValueTests : RoslynTestBase
 {
+    #region Factory Methods
+
     [Test]
     public async Task Can_create_with_value()
     {
@@ -43,6 +45,10 @@ public class OptionalValueTests : RoslynTestBase
         await Assert.That(empty.OrDefault(99)).IsEqualTo(99);
     }
 
+    #endregion
+
+    #region Transformation
+
     [Test]
     public async Task Map_transforms_value()
     {
@@ -64,6 +70,10 @@ public class OptionalValueTests : RoslynTestBase
         await Assert.That(asEnum.Value).IsEqualTo(DayOfWeek.Monday);
     }
 
+    #endregion
+
+    #region Equality
+
     [Test]
     public async Task Optional_values_are_equatable()
     {
@@ -76,6 +86,10 @@ public class OptionalValueTests : RoslynTestBase
         await Assert.That(opt1.Equals(opt3)).IsFalse();
         await Assert.That(opt1.Equals(empty)).IsFalse();
     }
+
+    #endregion
+
+    #region Pattern Matching
 
     [Test]
     public async Task Match_executes_correct_branch()
@@ -92,4 +106,6 @@ public class OptionalValueTests : RoslynTestBase
         await Assert.That(withValueResult).IsEqualTo(42);
         await Assert.That(emptyResult).IsEqualTo(-1);
     }
+
+    #endregion
 }

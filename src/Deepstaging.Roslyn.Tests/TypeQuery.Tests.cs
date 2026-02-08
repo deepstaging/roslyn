@@ -5,6 +5,8 @@ namespace Deepstaging.Roslyn.Tests;
 
 public class TypeQueryTests : RoslynTestBase
 {
+    #region Accessibility Filtering
+
     [Test]
     public async Task Can_find_public_classes()
     {
@@ -22,6 +24,10 @@ public class TypeQueryTests : RoslynTestBase
         await Assert.That(types.Any(t => t.Value.Name == "InternalClass")).IsFalse();
     }
 
+    #endregion
+
+    #region Type Kind Filtering
+
     [Test]
     public async Task Can_filter_interfaces()
     {
@@ -38,6 +44,10 @@ public class TypeQueryTests : RoslynTestBase
         await Assert.That(interfaces.Any(t => t.Value.Name == "IService")).IsTrue();
         await Assert.That(interfaces.Any(t => t.Value.Name == "ServiceClass")).IsFalse();
     }
+
+    #endregion
+
+    #region Attribute Filtering
 
     [Test]
     public async Task Can_filter_by_attribute()
@@ -58,4 +68,6 @@ public class TypeQueryTests : RoslynTestBase
         await Assert.That(obsoleteTypes.Any(t => t.Value.Name == "OldClass")).IsTrue();
         await Assert.That(obsoleteTypes.Any(t => t.Value.Name == "NewClass")).IsFalse();
     }
+
+    #endregion
 }

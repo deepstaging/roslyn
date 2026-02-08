@@ -43,6 +43,13 @@ TypeBuilder
     .Class("Repository")
     .Implements("IRepository")
     .Implements("IDisposable", "IAsyncDisposable")
+
+// Conditional interfaces (see Directives for more)
+TypeBuilder
+    .Struct("UserId")
+    .Implements("IEquatable<UserId>")
+    .Implements("ISpanFormattable", Directives.Net6OrGreater)
+    .Implements("IParsable<UserId>", Directives.Net7OrGreater)
 ```
 
 ## Adding Members
@@ -80,6 +87,24 @@ builder.WithPrimaryConstructor(ctor => ctor
 builder.AddNestedType("Inner", inner => inner
     .WithAccessibility(Accessibility.Private))
 builder.AddNestedType(nestedTypeBuilder)
+
+// Operators (see also: OperatorBuilder in other-builders.md)
+builder.AddEqualityOperator("left.Equals(right)")
+builder.AddInequalityOperator("!left.Equals(right)")
+builder.AddOperator(OperatorBuilder.LessThan("MyType")
+    .WithExpressionBody("left.Value < right.Value"))
+builder.AddOperator(operatorBuilder)
+
+// Conversion operators (see also: ConversionOperatorBuilder in other-builders.md)
+builder.AddExplicitConversion("Guid", op => op
+    .WithExpressionBody("new UserId(value)"))
+builder.AddExplicitConversionTo("Guid", op => op
+    .WithExpressionBody("value.Value"))
+builder.AddImplicitConversion("string", op => op
+    .WithExpressionBody("new Name(value)"))
+builder.AddImplicitConversionTo("string", op => op
+    .WithExpressionBody("value.Value"))
+builder.AddConversionOperator(conversionOperatorBuilder)
 ```
 
 ## Attributes

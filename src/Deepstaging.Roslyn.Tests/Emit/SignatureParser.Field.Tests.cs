@@ -5,6 +5,8 @@ namespace Deepstaging.Roslyn.Tests.Emit;
 
 public class SignatureParserFieldTests : RoslynTestBase
 {
+    #region Basic Field Parsing
+
     [Test]
     public async Task Parse_SimpleField_ExtractsNameAndType()
     {
@@ -24,6 +26,10 @@ public class SignatureParserFieldTests : RoslynTestBase
         await Assert.That(result.Success).IsTrue();
         await Assert.That(result.Code).Contains("private readonly string _name");
     }
+
+    #endregion
+
+    #region Modifier Parsing
 
     [Test]
     public async Task Parse_StaticField_SetsStaticModifier()
@@ -102,6 +108,10 @@ public class SignatureParserFieldTests : RoslynTestBase
         await Assert.That(result.Code).Contains("private static readonly object _lock");
     }
 
+    #endregion
+
+    #region Nullable and Generic Types
+
     [Test]
     public async Task Parse_NullableType_PreservesNullability()
     {
@@ -117,6 +127,10 @@ public class SignatureParserFieldTests : RoslynTestBase
 
         await Assert.That(builder.Type).IsEqualTo("Dictionary<string, int>");
     }
+
+    #endregion
+
+    #region Edge Cases
 
     [Test]
     public async Task Parse_FieldWithSemicolon_HandlesGracefully()
@@ -138,6 +152,10 @@ public class SignatureParserFieldTests : RoslynTestBase
         await Assert.That(result.Code).Contains("[NonSerialized]");
     }
 
+    #endregion
+
+    #region Error Handling
+
     [Test]
     public async Task Parse_InvalidSignature_ThrowsArgumentException()
     {
@@ -158,4 +176,6 @@ public class SignatureParserFieldTests : RoslynTestBase
         await Assert.ThrowsAsync<ArgumentException>(() =>
             Task.FromResult(FieldBuilder.Parse(null!)));
     }
+
+    #endregion
 }

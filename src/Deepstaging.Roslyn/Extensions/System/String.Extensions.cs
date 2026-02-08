@@ -103,6 +103,76 @@ public static class StringExtensions
         }
 
         /// <summary>
+        /// Converts the string to a backing field name (e.g., "Name" → "_name", "MyProperty" → "_myProperty").
+        /// </summary>
+        /// <returns>The backing field name with underscore prefix and camelCase.</returns>
+        public string ToBackingFieldName()
+        {
+            if (string.IsNullOrEmpty(text))
+                return text;
+
+            var camelCase = text.TrimStart('_').ToCamelCase();
+            return $"_{camelCase}";
+        }
+
+        /// <summary>
+        /// Converts the string to a parameter name (e.g., "Name" → "name", "_name" → "name").
+        /// Alias for ToCamelCase with underscore stripping.
+        /// </summary>
+        /// <returns>The parameter name in camelCase without leading underscore.</returns>
+        public string ToParameterName()
+        {
+            if (string.IsNullOrEmpty(text))
+                return text;
+
+            return text.TrimStart('_').ToCamelCase();
+        }
+
+        /// <summary>
+        /// Converts the string to a property name (e.g., "name" → "Name", "_name" → "Name").
+        /// Alias for ToPascalCase with underscore stripping.
+        /// </summary>
+        /// <returns>The property name in PascalCase without leading underscore.</returns>
+        public string ToPropertyName()
+        {
+            if (string.IsNullOrEmpty(text))
+                return text;
+
+            return text.TrimStart('_').ToPascalCase();
+        }
+
+        /// <summary>
+        /// Converts the string to a constant name in SCREAMING_SNAKE_CASE (e.g., "maxValue" → "MAX_VALUE").
+        /// </summary>
+        /// <returns>The constant name in uppercase with underscores.</returns>
+        public string ToConstantName()
+        {
+            if (string.IsNullOrEmpty(text))
+                return text;
+
+            return text.ToSnakeCase().ToUpperInvariant();
+        }
+
+        /// <summary>
+        /// Converts the string to an interface name with "I" prefix (e.g., "Comparable" → "IComparable").
+        /// If already prefixed with "I" followed by uppercase, returns unchanged.
+        /// </summary>
+        /// <returns>The interface name with "I" prefix.</returns>
+        public string ToInterfaceName()
+        {
+            if (string.IsNullOrEmpty(text))
+                return text;
+
+            var pascal = text.ToPascalCase();
+
+            // Already has interface prefix
+            if (pascal.Length > 1 && pascal[0] == 'I' && char.IsUpper(pascal[1]))
+                return pascal;
+
+            return $"I{pascal}";
+        }
+
+        /// <summary>
         /// Converts the string to PascalCase (e.g., "my_property_name" → "MyPropertyName").
         /// </summary>
         /// <returns>The PascalCase version of the string.</returns>
