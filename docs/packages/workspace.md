@@ -129,6 +129,62 @@ Document newDoc = await document.ReplaceNode(oldNode, newNode, cancellationToken
 Document newDoc = document.ReplaceNode(root, oldNode, newNode);
 ```
 
+### Code Fix Actions
+
+Pre-built `CodeAction` factories for common fixes. These return `CodeAction` objects ready for `CodeFixContext.RegisterCodeFix`.
+
+#### Modifier Actions
+
+```csharp
+// Add modifiers to type declarations
+document.AddPartialModifierAction(typeDecl)    // Add 'partial'
+document.AddSealedModifierAction(typeDecl)     // Add 'sealed'
+document.AddStaticModifierAction(typeDecl)     // Add 'static'
+
+// Generic modifier add/remove
+document.AddModifierAction(typeDecl, SyntaxKind.ReadOnlyKeyword, "Add 'readonly' modifier")
+document.RemoveModifierAction(typeDecl, SyntaxKind.AbstractKeyword, "Remove 'abstract' modifier")
+```
+
+#### Field Actions
+
+```csharp
+// Make a field private (replaces existing accessibility)
+document.MakeFieldPrivateAction(fieldDecl)
+document.MakeFieldPrivateAction(fieldDecl, "Custom title")
+```
+
+#### Using Directive Actions
+
+```csharp
+// Add a using directive to the document
+document.AddUsingAction("System.Linq")
+document.AddUsingAction("Microsoft.CodeAnalysis")
+```
+
+#### Base Type Actions
+
+```csharp
+// Add a base type or interface
+document.AddBaseTypeAction(typeDecl, "BaseClass")
+document.AddInterfaceAction(typeDecl, "IDisposable")
+```
+
+#### Attribute Actions
+
+```csharp
+// Add an attribute to a type
+document.AddAttributeAction(typeDecl, "Serializable")
+document.AddAttributeAction(typeDecl, "System.Obsolete")
+```
+
+#### Pragma Suppression Actions
+
+```csharp
+// Suppress a diagnostic with #pragma warning disable/restore
+document.SuppressWithPragmaAction(diagnostic)
+```
+
 ### CodeFixContext Extensions
 
 Helper methods for finding syntax nodes:
