@@ -40,31 +40,6 @@ public sealed class TypeBuilderExtensionsEfCoreValueConverterTests : RoslynTestB
     }
 
     [Test]
-    public async Task WithEfCoreValueConverterForValue_UsesValueProperty()
-    {
-        var type = TypeBuilder.Parse("public partial struct UserId")
-            .WithEfCoreValueConverterForValue(backingType: "global::System.Guid");
-
-        var result = type.Emit();
-
-        await Assert.That(result.Code).Contains("id => id.Value");
-        await Assert.That(result.Code).Contains("value => new UserId(value)");
-    }
-
-    [Test]
-    public async Task WithEfCoreValueConverterForValue_CustomValueAccessor()
-    {
-        var type = TypeBuilder.Parse("public partial struct UserId")
-            .WithEfCoreValueConverterForValue(
-                backingType: "global::System.Guid",
-                valueAccessor: "Id");
-
-        var result = type.Emit();
-
-        await Assert.That(result.Code).Contains("id => id.Id");
-    }
-
-    [Test]
     public async Task WithEfCoreValueConverter_ConfigureCallback_AllowsCustomization()
     {
         var type = TypeBuilder.Parse("public partial struct UserId")

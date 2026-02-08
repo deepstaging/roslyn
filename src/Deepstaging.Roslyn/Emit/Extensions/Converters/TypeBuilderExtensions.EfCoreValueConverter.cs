@@ -51,28 +51,6 @@ public static class TypeBuilderEfCoreValueConverterExtensions
     }
 
     /// <summary>
-    /// Adds a nested EF Core ValueConverter class with a simple value accessor pattern.
-    /// Uses the common pattern where the type has a Value property.
-    /// </summary>
-    /// <param name="builder">The type builder.</param>
-    /// <param name="backingType">The backing/provider type.</param>
-    /// <param name="valueAccessor">The property/field to access the value. Defaults to "Value".</param>
-    /// <param name="converterName">Optional converter class name. Defaults to "EfCoreValueConverter".</param>
-    public static TypeBuilder WithEfCoreValueConverterForValue(
-        this TypeBuilder builder,
-        string backingType,
-        string valueAccessor = "Value",
-        string converterName = "EfCoreValueConverter")
-    {
-        var typeName = builder.Name;
-        return builder.WithEfCoreValueConverter(
-            backingType,
-            $"id => id.{valueAccessor}",
-            $"value => new {typeName}(value)",
-            converterName);
-    }
-
-    /// <summary>
     /// Adds a nested EF Core ValueConverter class with full configuration.
     /// </summary>
     /// <param name="builder">The type builder.</param>
