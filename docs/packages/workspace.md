@@ -14,32 +14,50 @@ dotnet add package Deepstaging.Roslyn.Workspace
 
 ## Quick Start
 
-### Define a code fix with attributes
+### Real-world examples
+
+Add `partial` modifier to a struct:
 
 ```csharp
+[Shared]
+[CodeFix(StrongIdMustBePartialAnalyzer.DiagnosticId)]
 [ExportCodeFixProvider(LanguageNames.CSharp)]
-[CodeFix("MY001")]
-[CodeFix("MY002")]  // Can fix multiple diagnostics
-public class AddPartialModifierCodeFix : SyntaxCodeFix<TypeDeclarationSyntax>
+public sealed class StrongIdMustBePartialCodeFix : StructCodeFix
 {
-    protected override CodeAction? CreateFix(Document document, ValidSyntax<TypeDeclarationSyntax> syntax)
-    {
-        return CodeAction.Create(
-            title: "Add partial modifier",
-            createChangedDocument: ct => AddPartialModifier(document, syntax.Node, ct),
-            equivalenceKey: "AddPartial");
-    }
-    
-    private async Task<Document> AddPartialModifier(
+    protected override CodeAction CreateFix(
         Document document, 
-        TypeDeclarationSyntax declaration,
-        CancellationToken ct)
-    {
-        var newDeclaration = declaration
-            .AddModifiers(SyntaxFactory.Token(SyntaxKind.PartialKeyword));
-        
-        return await document.ReplaceNode(declaration, newDeclaration, ct);
-    }
+        ValidSyntax<StructDeclarationSyntax> syntax) =>
+        document.AddPartialModifierAction(syntax);
+}
+```
+
+Add `readonly` modifier to a struct:
+
+```csharp
+[Shared]
+[CodeFix(StrongIdShouldBeReadonlyAnalyzer.DiagnosticId)]
+[ExportCodeFixProvider(LanguageNames.CSharp)]
+public sealed class StrongIdShouldBeReadonlyCodeFix : StructCodeFix
+{
+    protected override CodeAction CreateFix(
+        Document document, 
+        ValidSyntax<StructDeclarationSyntax> syntax) =>
+        document.AddModifierAction(syntax, SyntaxKind.ReadOnlyKeyword, "Add 'readonly' modifier");
+}
+```
+
+Add `sealed` modifier to a class:
+
+```csharp
+[Shared]
+[CodeFix(EffectsModuleShouldBeSealedAnalyzer.DiagnosticId)]
+[ExportCodeFixProvider(LanguageNames.CSharp)]
+public sealed class EffectsModuleShouldBeSealedCodeFix : ClassCodeFix
+{
+    protected override CodeAction CreateFix(
+        Document document, 
+        ValidSyntax<ClassDeclarationSyntax> syntax) =>
+        document.AddSealedModifierAction(syntax);
 }
 ```
 
@@ -149,10 +167,10 @@ protected override CodeAction? CreateFix(Document document, ValidSyntax<TypeDecl
 Without this library:
 
 ```csharp
-public class MyCodeFix : CodeFixProvider
+public class AddPartialCodeFix : CodeFixProvider
 {
     public override ImmutableArray<string> FixableDiagnosticIds => 
-        ImmutableArray.Create("MY001", "MY002");
+        ImmutableArray.Create("ID0001");
     
     public override FixAllProvider GetFixAllProvider() => 
         WellKnownFixAllProviders.BatchFixer;
@@ -165,10 +183,20 @@ public class MyCodeFix : CodeFixProvider
         var diagnostic = context.Diagnostics.First();
         var node = root.FindNode(diagnostic.Location.SourceSpan);
         
-        if (node.FirstAncestorOrSelf<TypeDeclarationSyntax>() is not { } typeDecl)
+        if (node.FirstAncestorOrSelf<StructDeclarationSyntax>() is not { } structDecl)
             return;
         
-        var codeAction = CodeAction.Create(...);
+        var codeAction = CodeAction.Create(
+            title: "Add partial modifier",
+            createChangedDocument: async ct =>
+            {
+                var newDecl = structDecl.AddModifiers(
+                    SyntaxFactory.Token(SyntaxKind.PartialKeyword));
+                var newRoot = root.ReplaceNode(structDecl, newDecl);
+                return context.Document.WithSyntaxRoot(newRoot);
+            },
+            equivalenceKey: "AddPartial");
+            
         context.RegisterCodeFix(codeAction, diagnostic);
     }
 }
@@ -177,13 +205,13 @@ public class MyCodeFix : CodeFixProvider
 With this library:
 
 ```csharp
-[CodeFix("MY001")]
-[CodeFix("MY002")]
-public class MyCodeFix : SyntaxCodeFix<TypeDeclarationSyntax>
+[CodeFix("ID0001")]
+[ExportCodeFixProvider(LanguageNames.CSharp)]
+public sealed class AddPartialCodeFix : StructCodeFix
 {
-    protected override CodeAction? CreateFix(Document document, ValidSyntax<TypeDeclarationSyntax> syntax)
-    {
-        return CodeAction.Create(...);
-    }
+    protected override CodeAction CreateFix(
+        Document document, 
+        ValidSyntax<StructDeclarationSyntax> syntax) =>
+        document.AddPartialModifierAction(syntax);
 }
 ```
