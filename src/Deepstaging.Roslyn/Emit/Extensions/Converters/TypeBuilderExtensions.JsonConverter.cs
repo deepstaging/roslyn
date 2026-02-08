@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
 
+using Microsoft.CodeAnalysis;
+
 namespace Deepstaging.Roslyn.Emit.Converters;
 
 /// <summary>
@@ -8,6 +10,85 @@ namespace Deepstaging.Roslyn.Emit.Converters;
 /// </summary>
 public static class TypeBuilderJsonConverterExtensions
 {
+    /// <summary>
+    /// Adds a nested System.Text.Json JsonConverter class for a wrapper type with a single value property.
+    /// Automatically generates read/write expressions for common backing types (Guid, int, long, string).
+    /// </summary>
+    /// <param name="builder">The type builder.</param>
+    /// <param name="converterName">The name of the nested converter class.</param>
+    /// <param name="backingType">The backing type symbol (e.g., System.Guid, int, long, string).</param>
+    /// <param name="valuePropertyName">The name of the value property (default: "Value").</param>
+    /// <param name="addAttribute">Whether to add [JsonConverter] attribute to the parent type.</param>
+    /// <example>
+    /// <code>
+    /// TypeBuilder.Parse("public partial struct UserId")
+    ///     .WithJsonConverter("UserIdJsonConverter", guidSymbol);
+    /// </code>
+    /// </example>
+    public static TypeBuilder WithJsonConverter(
+        this TypeBuilder builder,
+        string converterName,
+        ValidSymbol<INamedTypeSymbol> backingType,
+        string valuePropertyName = "Value",
+        bool addAttribute = true)
+    {
+        var typeName = builder.Name;
+        var specialType = backingType.SpecialType;
+        var isGuid = backingType.FullyQualifiedName == "System.Guid";
+
+        var readExpression = GetReadExpression(specialType, isGuid);
+        var writeExpression = GetWriteExpression(specialType, isGuid, valuePropertyName);
+        var readAsPropertyNameExpression = GetReadAsPropertyNameExpression(typeName, specialType, isGuid);
+        var writeAsPropertyNameExpression = GetWriteAsPropertyNameExpression(specialType, isGuid, valuePropertyName);
+
+        return builder.WithJsonConverter(
+            converterName,
+            readExpression,
+            writeExpression,
+            readAsPropertyNameExpression,
+            writeAsPropertyNameExpression,
+            addAttribute);
+    }
+
+    private static string GetReadExpression(SpecialType specialType, bool isGuid) => specialType switch
+    {
+        SpecialType.System_Int32 => "new(reader.GetInt32())",
+        SpecialType.System_Int64 => "new(reader.GetInt64())",
+        SpecialType.System_String => "new(reader.GetString()!)",
+        _ when isGuid => "new(reader.GetGuid())",
+        _ => "default"
+    };
+
+    private static string GetWriteExpression(SpecialType specialType, bool isGuid, string valueProperty) =>
+        specialType switch
+        {
+            SpecialType.System_Int32 or SpecialType.System_Int64 => $"writer.WriteNumberValue(value.{valueProperty})",
+            SpecialType.System_String => $"writer.WriteStringValue(value.{valueProperty})",
+            _ when isGuid => $"writer.WriteStringValue(value.{valueProperty})",
+            _ => "writer.WriteNullValue()"
+        };
+
+    private static string GetReadAsPropertyNameExpression(string typeName, SpecialType specialType, bool isGuid) =>
+        specialType switch
+        {
+            SpecialType.System_Int32 =>
+                $"new(int.Parse(reader.GetString() ?? throw new global::System.FormatException(\"The string for the {typeName} property was null\")))",
+            SpecialType.System_Int64 =>
+                $"new(long.Parse(reader.GetString() ?? throw new global::System.FormatException(\"The string for the {typeName} property was null\")))",
+            SpecialType.System_String => "new(reader.GetString()!)",
+            _ when isGuid =>
+                $"new(global::System.Guid.Parse(reader.GetString() ?? throw new global::System.FormatException(\"The string for the {typeName} property was null\")))",
+            _ => "default"
+        };
+
+    private static string GetWriteAsPropertyNameExpression(SpecialType specialType, bool isGuid, string valueProperty) =>
+        specialType switch
+        {
+            SpecialType.System_String => $"writer.WritePropertyName(value.{valueProperty} ?? string.Empty)",
+            _ when isGuid => $"writer.WritePropertyName(value.{valueProperty}.ToString())",
+            _ => $"writer.WritePropertyName(value.{valueProperty}.ToString())"
+        };
+
     /// <summary>
     /// Adds a nested System.Text.Json JsonConverter class.
     /// </summary>
