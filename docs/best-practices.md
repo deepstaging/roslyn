@@ -1,6 +1,13 @@
 # Best Practices
 
-This guide covers recommended patterns for organizing Roslyn projects using Deepstaging.Roslyn. These practices are demonstrated in the [RoslynKit template](https://github.com/deepstaging/templates).
+This guide covers recommended patterns for organizing Roslyn projects using Deepstaging.Roslyn.
+
+## Learning Resources
+
+| Resource | Purpose |
+|----------|---------|
+| [RoslynKit Template](https://github.com/deepstaging/templates) | Starting point for your own Roslyn projects. Use `dotnet new roslynkit` to scaffold a new solution with the recommended structure. |
+| [Deepstaging.Ids](https://github.com/deepstaging/ids) | Reference implementation of a complete Roslyn toolkit. Demonstrates the Projection pattern, Emit API extensions, converters, and testing practices in a real-world strongly-typed ID generator. |
 
 ## Project Organization
 
