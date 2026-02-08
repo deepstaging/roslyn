@@ -12,7 +12,9 @@ public static class TypeBuilderJsonConverterExtensions
 {
     /// <summary>
     /// Adds a nested System.Text.Json JsonConverter class for a wrapper type with a single value property.
-    /// Automatically generates read/write expressions for common backing types (Guid, int, long, string).
+    /// Automatically generates read/write expressions for common backing types:
+    /// Guid, int, long, short, byte, sbyte, uint, ulong, ushort, float, double, decimal,
+    /// bool, string, DateTime, DateTimeOffset, DateOnly, TimeOnly, TimeSpan.
     /// </summary>
     /// <param name="builder">The type builder.</param>
     /// <param name="converterName">The name of the nested converter class.</param>
@@ -34,11 +36,12 @@ public static class TypeBuilderJsonConverterExtensions
     {
         var typeName = builder.Name;
         var specialType = backingType.SpecialType;
-        var isGuid = backingType.FullyQualifiedName == "System.Guid";
+        var fullyQualifiedName = backingType.FullyQualifiedName;
+        var isGuid = fullyQualifiedName == "System.Guid";
 
-        var readExpression = GetReadExpression(specialType, isGuid);
-        var writeExpression = GetWriteExpression(specialType, isGuid, valuePropertyName);
-        var readAsPropertyNameExpression = GetReadAsPropertyNameExpression(typeName, specialType, isGuid);
+        var readExpression = GetReadExpression(specialType, isGuid, fullyQualifiedName);
+        var writeExpression = GetWriteExpression(specialType, isGuid, fullyQualifiedName, valuePropertyName);
+        var readAsPropertyNameExpression = GetReadAsPropertyNameExpression(typeName, specialType, isGuid, fullyQualifiedName);
         var writeAsPropertyNameExpression = GetWriteAsPropertyNameExpression(specialType, isGuid, valuePropertyName);
 
         return builder.WithJsonConverter(
@@ -50,34 +53,89 @@ public static class TypeBuilderJsonConverterExtensions
             addAttribute);
     }
 
-    private static string GetReadExpression(SpecialType specialType, bool isGuid) => specialType switch
-    {
-        SpecialType.System_Int32 => "new(reader.GetInt32())",
-        SpecialType.System_Int64 => "new(reader.GetInt64())",
-        SpecialType.System_String => "new(reader.GetString()!)",
-        _ when isGuid => "new(reader.GetGuid())",
-        _ => "default"
-    };
-
-    private static string GetWriteExpression(SpecialType specialType, bool isGuid, string valueProperty) =>
+    private static string GetReadExpression(SpecialType specialType, bool isGuid, string fullyQualifiedName) =>
         specialType switch
         {
-            SpecialType.System_Int32 or SpecialType.System_Int64 => $"writer.WriteNumberValue(value.{valueProperty})",
+            SpecialType.System_Int16 => "new(reader.GetInt16())",
+            SpecialType.System_Int32 => "new(reader.GetInt32())",
+            SpecialType.System_Int64 => "new(reader.GetInt64())",
+            SpecialType.System_UInt16 => "new(reader.GetUInt16())",
+            SpecialType.System_UInt32 => "new(reader.GetUInt32())",
+            SpecialType.System_UInt64 => "new(reader.GetUInt64())",
+            SpecialType.System_Byte => "new(reader.GetByte())",
+            SpecialType.System_SByte => "new(reader.GetSByte())",
+            SpecialType.System_Single => "new(reader.GetSingle())",
+            SpecialType.System_Double => "new(reader.GetDouble())",
+            SpecialType.System_Decimal => "new(reader.GetDecimal())",
+            SpecialType.System_Boolean => "new(reader.GetBoolean())",
+            SpecialType.System_String => "new(reader.GetString()!)",
+            SpecialType.System_DateTime => "new(reader.GetDateTime())",
+            _ when isGuid => "new(reader.GetGuid())",
+            _ when fullyQualifiedName == "System.DateTimeOffset" => "new(reader.GetDateTimeOffset())",
+            _ when fullyQualifiedName == "System.DateOnly" => "new(global::System.DateOnly.Parse(reader.GetString()!))",
+            _ when fullyQualifiedName == "System.TimeOnly" => "new(global::System.TimeOnly.Parse(reader.GetString()!))",
+            _ when fullyQualifiedName == "System.TimeSpan" => "new(global::System.TimeSpan.Parse(reader.GetString()!))",
+            _ => "default"
+        };
+
+    private static string GetWriteExpression(SpecialType specialType, bool isGuid, string fullyQualifiedName, string valueProperty) =>
+        specialType switch
+        {
+            SpecialType.System_Int16 or SpecialType.System_Int32 or SpecialType.System_Int64 or
+            SpecialType.System_UInt16 or SpecialType.System_UInt32 or SpecialType.System_UInt64 or
+            SpecialType.System_Byte or SpecialType.System_SByte or
+            SpecialType.System_Single or SpecialType.System_Double or SpecialType.System_Decimal
+                => $"writer.WriteNumberValue(value.{valueProperty})",
+            SpecialType.System_Boolean => $"writer.WriteBooleanValue(value.{valueProperty})",
             SpecialType.System_String => $"writer.WriteStringValue(value.{valueProperty})",
+            SpecialType.System_DateTime => $"writer.WriteStringValue(value.{valueProperty})",
             _ when isGuid => $"writer.WriteStringValue(value.{valueProperty})",
+            _ when fullyQualifiedName == "System.DateTimeOffset" => $"writer.WriteStringValue(value.{valueProperty})",
+            _ when fullyQualifiedName is "System.DateOnly" or "System.TimeOnly" or "System.TimeSpan"
+                => $"writer.WriteStringValue(value.{valueProperty}.ToString())",
             _ => "writer.WriteNullValue()"
         };
 
-    private static string GetReadAsPropertyNameExpression(string typeName, SpecialType specialType, bool isGuid) =>
+    private static string GetReadAsPropertyNameExpression(string typeName, SpecialType specialType, bool isGuid, string fullyQualifiedName) =>
         specialType switch
         {
+            SpecialType.System_Int16 =>
+                $"new(short.Parse(reader.GetString() ?? throw new global::System.FormatException(\"The string for the {typeName} property was null\")))",
             SpecialType.System_Int32 =>
                 $"new(int.Parse(reader.GetString() ?? throw new global::System.FormatException(\"The string for the {typeName} property was null\")))",
             SpecialType.System_Int64 =>
                 $"new(long.Parse(reader.GetString() ?? throw new global::System.FormatException(\"The string for the {typeName} property was null\")))",
+            SpecialType.System_UInt16 =>
+                $"new(ushort.Parse(reader.GetString() ?? throw new global::System.FormatException(\"The string for the {typeName} property was null\")))",
+            SpecialType.System_UInt32 =>
+                $"new(uint.Parse(reader.GetString() ?? throw new global::System.FormatException(\"The string for the {typeName} property was null\")))",
+            SpecialType.System_UInt64 =>
+                $"new(ulong.Parse(reader.GetString() ?? throw new global::System.FormatException(\"The string for the {typeName} property was null\")))",
+            SpecialType.System_Byte =>
+                $"new(byte.Parse(reader.GetString() ?? throw new global::System.FormatException(\"The string for the {typeName} property was null\")))",
+            SpecialType.System_SByte =>
+                $"new(sbyte.Parse(reader.GetString() ?? throw new global::System.FormatException(\"The string for the {typeName} property was null\")))",
+            SpecialType.System_Single =>
+                $"new(float.Parse(reader.GetString() ?? throw new global::System.FormatException(\"The string for the {typeName} property was null\")))",
+            SpecialType.System_Double =>
+                $"new(double.Parse(reader.GetString() ?? throw new global::System.FormatException(\"The string for the {typeName} property was null\")))",
+            SpecialType.System_Decimal =>
+                $"new(decimal.Parse(reader.GetString() ?? throw new global::System.FormatException(\"The string for the {typeName} property was null\")))",
+            SpecialType.System_Boolean =>
+                $"new(bool.Parse(reader.GetString() ?? throw new global::System.FormatException(\"The string for the {typeName} property was null\")))",
             SpecialType.System_String => "new(reader.GetString()!)",
+            SpecialType.System_DateTime =>
+                $"new(global::System.DateTime.Parse(reader.GetString() ?? throw new global::System.FormatException(\"The string for the {typeName} property was null\")))",
             _ when isGuid =>
                 $"new(global::System.Guid.Parse(reader.GetString() ?? throw new global::System.FormatException(\"The string for the {typeName} property was null\")))",
+            _ when fullyQualifiedName == "System.DateTimeOffset" =>
+                $"new(global::System.DateTimeOffset.Parse(reader.GetString() ?? throw new global::System.FormatException(\"The string for the {typeName} property was null\")))",
+            _ when fullyQualifiedName == "System.DateOnly" =>
+                $"new(global::System.DateOnly.Parse(reader.GetString() ?? throw new global::System.FormatException(\"The string for the {typeName} property was null\")))",
+            _ when fullyQualifiedName == "System.TimeOnly" =>
+                $"new(global::System.TimeOnly.Parse(reader.GetString() ?? throw new global::System.FormatException(\"The string for the {typeName} property was null\")))",
+            _ when fullyQualifiedName == "System.TimeSpan" =>
+                $"new(global::System.TimeSpan.Parse(reader.GetString() ?? throw new global::System.FormatException(\"The string for the {typeName} property was null\")))",
             _ => "default"
         };
 
