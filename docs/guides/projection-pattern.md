@@ -125,10 +125,9 @@ extension(ValidSymbol<INamedTypeSymbol> symbol)
 {
     public ImmutableArray<NotifyPropertyModel> QueryNotifyProperties()
     {
-        return [..symbol.QueryFields()
+        return symbol.QueryFields()
             .ThatArePrivate()
             .WithAttribute<NotifyAttribute>()
-            .GetAll()
             .Select(field => new NotifyPropertyModel
             {
                 FieldName = field.Name,
@@ -137,7 +136,7 @@ extension(ValidSymbol<INamedTypeSymbol> symbol)
                 AlsoNotify = field.GetAttribute<AlsoNotifyAttribute>()
                     .NamedArgArray<string>("Properties")
                     .OrEmpty()
-            })];
+            });
     }
 }
 
@@ -146,22 +145,21 @@ extension(ValidSymbol<INamedTypeSymbol> symbol)
 {
     public ImmutableArray<EffectMethodModel> QueryEffectMethods()
     {
-        return [..symbol.QueryMethods()
+        return symbol.QueryMethods()
             .ThatArePublic()
             .ThatAreNotStatic()
             .WithAttribute<EffectAttribute>()
-            .GetAll()
             .Select(method => new EffectMethodModel
             {
                 MethodName = method.Name,
                 ReturnType = method.ReturnType.ToDisplayString(),
-                Parameters = [..method.Parameters.Select(p => new ParameterModel
+                Parameters = method.Parameters.Select(p => new ParameterModel
                 {
                     Name = p.Name,
                     Type = p.Type.ToDisplayString()
-                })],
+                }),
                 IsAsync = method.IsAsync
-            })];
+            });
     }
 }
 
