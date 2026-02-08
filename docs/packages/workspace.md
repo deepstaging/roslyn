@@ -69,7 +69,7 @@ The base class handles:
 
 ## API Reference
 
-### SyntaxCodeFix\<TSyntax\>
+### `SyntaxCodeFix<TSyntax>`
 
 Abstract base class for code fix providers:
 
@@ -203,7 +203,7 @@ OptionalSyntax<PropertyDeclarationSyntax> propDecl = await context.FindProperty(
 
 ## Projections
 
-### ValidSyntax\<T\>
+### `ValidSyntax<T>`
 
 A wrapper guaranteeing a non-null syntax node:
 
