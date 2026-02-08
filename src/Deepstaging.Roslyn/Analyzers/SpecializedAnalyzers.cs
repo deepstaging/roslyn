@@ -32,3 +32,13 @@ public abstract class EventAnalyzer : SymbolAnalyzer<IEventSymbol>;
 /// Base class for analyzers that report diagnostics on parameter symbols.
 /// </summary>
 public abstract class ParameterAnalyzer : SymbolAnalyzer<IParameterSymbol>;
+
+/// <summary>
+/// Base class for analyzers that report diagnostics on namespace symbols.
+/// </summary>
+public abstract class NamespaceAnalyzer : SymbolAnalyzer<INamespaceSymbol>;
+
+/// <summary>
+/// Base class for analyzers that report diagnostics on type parameter symbols (generic constraints).
+/// </summary>
+public abstract class TypeParameterAnalyzer : SymbolAnalyzer<ITypeParameterSymbol>;

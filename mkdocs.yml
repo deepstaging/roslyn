@@ -66,6 +66,13 @@ nav:
   - Home: index.md
   - Getting Started: getting-started.md
   - Best Practices: best-practices.md
+  - Guides:
+    - Project Organization: guides/project-organization.md
+    - Projection Pattern: guides/projection-pattern.md
+    - Generators: guides/generators.md
+    - Analyzers: guides/analyzers.md
+    - CodeFixes: guides/codefixes.md
+    - Testing: guides/testing.md
   - API Reference:
     - Queries:
       - Overview: api/queries/index.md

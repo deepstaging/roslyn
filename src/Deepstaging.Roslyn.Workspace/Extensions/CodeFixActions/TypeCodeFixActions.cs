@@ -1,0 +1,206 @@
+// SPDX-FileCopyrightText: 2024-present Deepstaging
+// SPDX-License-Identifier: RPL-1.5
+
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeActions;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+
+namespace Deepstaging.Roslyn;
+
+/// <summary>
+/// Code fix action helpers for type declarations (class, struct, interface, record, enum).
+/// </summary>
+public static class TypeCodeFixActions
+{
+    extension(Document document)
+    {
+        #region Type Modifier Helpers
+
+        /// <summary>
+        /// Creates a code action that adds the 'partial' modifier to a type declaration.
+        /// </summary>
+        public CodeAction AddPartialModifierAction<T>(ValidSyntax<T> typeDecl)
+            where T : TypeDeclarationSyntax
+        {
+            return document.AddModifierAction(typeDecl, SyntaxKind.PartialKeyword, "Add 'partial' modifier");
+        }
+
+        /// <summary>
+        /// Creates a code action that adds the 'sealed' modifier to a type declaration.
+        /// </summary>
+        public CodeAction AddSealedModifierAction<T>(ValidSyntax<T> typeDecl)
+            where T : TypeDeclarationSyntax
+        {
+            return document.AddModifierAction(typeDecl, SyntaxKind.SealedKeyword, "Add 'sealed' modifier");
+        }
+
+        /// <summary>
+        /// Creates a code action that adds the 'static' modifier to a type declaration.
+        /// </summary>
+        public CodeAction AddStaticModifierAction<T>(ValidSyntax<T> typeDecl)
+            where T : TypeDeclarationSyntax
+        {
+            return document.AddModifierAction(typeDecl, SyntaxKind.StaticKeyword, "Add 'static' modifier");
+        }
+
+        /// <summary>
+        /// Creates a code action that adds the 'abstract' modifier to a type declaration.
+        /// </summary>
+        public CodeAction AddAbstractModifierAction<T>(ValidSyntax<T> typeDecl)
+            where T : TypeDeclarationSyntax
+        {
+            return document.AddModifierAction(typeDecl, SyntaxKind.AbstractKeyword, "Add 'abstract' modifier");
+        }
+
+        /// <summary>
+        /// Creates a code action that adds the 'readonly' modifier to a struct declaration.
+        /// </summary>
+        public CodeAction AddReadonlyModifierAction(ValidSyntax<StructDeclarationSyntax> structDecl)
+        {
+            return document.AddModifierAction(structDecl, SyntaxKind.ReadOnlyKeyword, "Add 'readonly' modifier");
+        }
+
+        /// <summary>
+        /// Creates a code action that adds a modifier to a type declaration.
+        /// </summary>
+        /// <param name="typeDecl">The validated type declaration syntax.</param>
+        /// <param name="modifier">The modifier kind to add.</param>
+        /// <param name="title">The title for the code action.</param>
+        public CodeAction AddModifierAction<T>(
+            ValidSyntax<T> typeDecl,
+            SyntaxKind modifier,
+            string title)
+            where T : TypeDeclarationSyntax
+        {
+            return CodeAction.Create(
+                title,
+                ct => document.ReplaceNode(
+                    typeDecl.Node,
+                    typeDecl.AddModifier(modifier),
+                    ct),
+                title);
+        }
+
+        /// <summary>
+        /// Creates a code action that removes a modifier from a type declaration.
+        /// </summary>
+        /// <param name="typeDecl">The validated type declaration syntax.</param>
+        /// <param name="modifier">The modifier kind to remove.</param>
+        /// <param name="title">The title for the code action.</param>
+        public CodeAction RemoveModifierAction<T>(
+            ValidSyntax<T> typeDecl,
+            SyntaxKind modifier,
+            string title)
+            where T : TypeDeclarationSyntax
+        {
+            return CodeAction.Create(
+                title,
+                ct => document.ReplaceNode(
+                    typeDecl.Node,
+                    typeDecl.RemoveModifier(modifier),
+                    ct),
+                title);
+        }
+
+        #endregion
+
+        #region Type Rename Helpers
+
+        /// <summary>
+        /// Creates a code action that renames a type (class, struct, interface, etc.).
+        /// </summary>
+        /// <param name="typeDecl">The validated type declaration syntax.</param>
+        /// <param name="newName">The new name for the type.</param>
+        /// <param name="title">Optional title. Defaults to "Rename to 'newName'".</param>
+        public CodeAction RenameTypeAction<T>(
+            ValidSyntax<T> typeDecl,
+            string newName,
+            string? title = null)
+            where T : TypeDeclarationSyntax
+        {
+            title ??= $"Rename to '{newName}'";
+            return CodeAction.Create(
+                title,
+                ct => document.ReplaceNode(
+                    typeDecl.Node,
+                    typeDecl.Node.WithIdentifier(SyntaxFactory.Identifier(newName)),
+                    ct),
+                title);
+        }
+
+        #endregion
+
+        #region Base Type Helpers
+
+        /// <summary>
+        /// Creates a code action that adds a base type or interface to a type declaration.
+        /// </summary>
+        /// <param name="typeDecl">The validated type declaration syntax.</param>
+        /// <param name="baseTypeName">The name of the base type or interface to add.</param>
+        public CodeAction AddBaseTypeAction<T>(
+            ValidSyntax<T> typeDecl,
+            string baseTypeName)
+            where T : TypeDeclarationSyntax
+        {
+            var title = $"Add '{baseTypeName}'";
+            return CodeAction.Create(
+                title,
+                ct => AddBaseTypeAsync(document, typeDecl, baseTypeName, ct),
+                title);
+        }
+
+        /// <summary>
+        /// Creates a code action that adds an interface to a type declaration.
+        /// </summary>
+        public CodeAction AddInterfaceAction<T>(
+            ValidSyntax<T> typeDecl,
+            string interfaceName)
+            where T : TypeDeclarationSyntax
+        {
+            var title = $"Implement '{interfaceName}'";
+            return CodeAction.Create(
+                title,
+                ct => AddBaseTypeAsync(document, typeDecl, interfaceName, ct),
+                title);
+        }
+
+        #endregion
+    }
+
+    #region Private Helper Methods
+
+    private static async Task<Document> AddBaseTypeAsync<T>(
+        Document document,
+        ValidSyntax<T> typeDecl,
+        string baseTypeName,
+        CancellationToken cancellationToken)
+        where T : TypeDeclarationSyntax
+    {
+        var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+        if (root is null)
+            return document;
+
+        var node = typeDecl.Node;
+        var baseType = SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName(baseTypeName));
+
+        TypeDeclarationSyntax newNode;
+        if (node.BaseList is null)
+        {
+            var baseList = SyntaxFactory.BaseList(
+                    SyntaxFactory.SingletonSeparatedList<BaseTypeSyntax>(baseType))
+                .WithLeadingTrivia(SyntaxFactory.Space);
+            newNode = node.WithBaseList(baseList);
+        }
+        else
+        {
+            var newBaseList = node.BaseList.AddTypes(baseType);
+            newNode = node.WithBaseList(newBaseList);
+        }
+
+        var newRoot = root.ReplaceNode(node, newNode);
+        return document.WithSyntaxRoot(newRoot);
+    }
+
+    #endregion
+}
