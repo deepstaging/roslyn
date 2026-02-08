@@ -26,6 +26,7 @@ Here's a complete incremental generator that finds classes with `[AutoNotify]` a
 ```csharp
 using Deepstaging.Roslyn;
 using Deepstaging.Roslyn.Emit;
+using Deepstaging.Roslyn.Emit.Interfaces.Observable;
 using Deepstaging.Roslyn.Generators;
 using Microsoft.CodeAnalysis;
 
@@ -74,24 +75,23 @@ file static class AutoNotifyExtensions
             .Class(model.TypeName)
             .AsPartial()
             .InNamespace(model.Namespace)
-            .AddUsing("System.ComponentModel")
-            .Implements("INotifyPropertyChanged")
-            .AddEvent("PropertyChanged", "PropertyChangedEventHandler?")
-            .AddMethod("OnPropertyChanged", "void", m => m
-                .AsProtected()
-                .AddParameter("name", "string")
-                .WithBody(b => b.AddStatement(
-                    "PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name))")))
+            .ImplementsINotifyPropertyChanged()
             .WithEach(model.Fields, (type, field) => type
                 .AddProperty(field.PropertyName, field.TypeName, p => p
                     .WithGetter(b => b.AddStatement($"return {field.FieldName}"))
                     .WithSetter(b => b
                         .AddStatement($"{field.FieldName} = value")
-                        .AddStatement($"OnPropertyChanged(nameof({field.PropertyName}))"))))
+                        .AddStatement($"OnPropertyChanged()"))))
             .Emit();
     }
 }
 ```
+
+The `ImplementsINotifyPropertyChanged()` extension adds:
+
+- The `INotifyPropertyChanged` interface
+- The `PropertyChanged` event
+- A protected `OnPropertyChanged` helper with `[CallerMemberName]` support
 
 ### Generator Context Extensions
 
