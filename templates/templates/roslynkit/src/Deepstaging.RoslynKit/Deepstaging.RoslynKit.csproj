@@ -1,0 +1,24 @@
+<!-- SPDX-FileCopyrightText: 2024-present Deepstaging -->
+<!-- SPDX-License-Identifier: RPL-1.5 -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+        <!-- Package metadata -->
+        <PackageId>Deepstaging.RoslynKit</PackageId>
+        <Title>Deepstaging.RoslynKit</Title>
+        <Description>Attributes for Deepstaging.RoslynKit source generators.</Description>
+        <PackageTags>deepstaging;roslynkit;source-generator;attributes</PackageTags>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!-- PolySharp for polyfills on netstandard2.0 -->
+        <PackageReference Include="PolySharp">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+</Project>

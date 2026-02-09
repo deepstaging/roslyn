@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Deepstaging",
+  "classifications": [
+    "Roslyn",
+    "Source Generator",
+    "Analyzer",
+    "CodeFix",
+    "Library"
+  ],
+  "identity": "Deepstaging.RoslynKit",
+  "name": "Deepstaging Roslyn Kit",
+  "shortName": "roslynkit",
+  "description": "A complete Roslyn project template with source generator, analyzer, and codefix using Deepstaging.Roslyn. Demonstrates the Builder pattern with immutable With*() methods.",
+  "tags": {
+    "language": "C#",
+    "type": "solution"
+  },
+  "sourceName": "Deepstaging.RoslynKit",
+  "preferNameDirectory": true,
+  "symbols": {
+    "namespace": {
+      "type": "parameter",
+      "datatype": "string",
+      "description": "The root namespace for the generated projects.",
+      "defaultValue": "Deepstaging.RoslynKit",
+      "replaces": "Deepstaging.RoslynKit"
+    },
+    "authorName": {
+      "type": "parameter",
+      "datatype": "string",
+      "description": "The author name for package metadata.",
+      "defaultValue": "Deepstaging",
+      "replaces": "{{AuthorName}}"
+    }
+  },
+  "sources": [
+    {
+      "modifiers": [
+        {
+          "exclude": [
+            "**/artifacts/**",
+            "**/.git/**",
+            "**/.idea/**",
+            "**/.vs/**",
+            "**/bin/**",
+            "**/obj/**",
+            "**/*.user",
+            "**/samples/**"
+          ]
+        }
+      ]
+    }
+  ],
+  "postActions": [
+    {
+      "condition": "(OS != \"Windows_NT\")",
+      "description": "Make build scripts executable",
+      "manualInstructions": [
+        {
+          "text": "Run 'chmod +x build/*.sh'"
+        }
+      ],
+      "actionId": "cb9a6cf3-4f5c-4860-b9d2-03a574959774",
+      "args": {
+        "+x": "build/*.sh"
+      },
+      "continueOnError": true
+    }
+  ]
+}

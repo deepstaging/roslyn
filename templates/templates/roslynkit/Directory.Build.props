@@ -1,0 +1,33 @@
+<!-- SPDX-FileCopyrightText: 2024-present Deepstaging -->
+<!-- SPDX-License-Identifier: RPL-1.5 -->
+<Project>
+    <!-- 
+      Directory.Build.props
+      
+      This file is automatically imported by MSBuild for ALL projects in this directory tree.
+      It orchestrates importing modular build configuration files.
+      
+      Learn more: https://learn.microsoft.com/en-us/visualstudio/msbuild/customize-by-directory
+    -->
+
+    <!-- Import modular build configuration -->
+    <Import Project="$(MSBuildThisFileDirectory)build/Build.Paths.props"/>
+    <Import Project="$(MSBuildThisFileDirectory)build/Build.Language.props"/>
+    <Import Project="$(MSBuildThisFileDirectory)build/Build.Packaging.props"/>
+    <Import Project="$(MSBuildThisFileDirectory)build/Build.SourceLink.props"/>
+    <Import Project="$(MSBuildThisFileDirectory)build/Build.GitHooks.props"/>
+
+    <!-- 
+      Import development-time overrides
+      
+      Directory.Build.Dev.props is git-ignored and only applied in Debug builds.
+      Use it for local customizations like:
+      - Custom artifact paths
+      - Additional diagnostic warnings
+      - Local package sources
+      
+      See Directory.Build.Dev.props.template for examples.
+    -->
+    <Import Project="$(MSBuildThisFileDirectory)Directory.Build.Dev.props"
+            Condition="Exists('$(MSBuildThisFileDirectory)Directory.Build.Dev.props') AND '$(Configuration)' == 'Debug'"/>
+</Project>

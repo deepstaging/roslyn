@@ -1,0 +1,38 @@
+<!-- SPDX-FileCopyrightText: 2024-present Deepstaging -->
+<!-- SPDX-License-Identifier: RPL-1.5 -->
+<Project>
+  <!--
+    Automatically restores dotnet tools and installs Husky.Net git hooks.
+    
+    This runs before Restore to ensure hooks are in place for new clones.
+    Set HUSKY=0 environment variable to skip hook installation (e.g., in CI).
+  -->
+  
+  <Target Name="RestoreToolsAndInstallHusky" 
+          BeforeTargets="Restore" 
+          Condition="'$(HUSKY)' != '0' AND '$(DesignTimeBuild)' != 'true'">
+    
+    <!-- Only run once per solution restore, not per project -->
+    <PropertyGroup>
+      <HuskyMarkerFile>$(MSBuildThisFileDirectory)../.husky/.installed</HuskyMarkerFile>
+    </PropertyGroup>
+    
+    <Exec Command="dotnet tool restore" 
+          WorkingDirectory="$(MSBuildThisFileDirectory).."
+          Condition="!Exists('$(HuskyMarkerFile)')"
+          StandardOutputImportance="Low"
+          StandardErrorImportance="High" />
+    
+    <Exec Command="dotnet husky install" 
+          WorkingDirectory="$(MSBuildThisFileDirectory).."
+          Condition="!Exists('$(HuskyMarkerFile)')"
+          StandardOutputImportance="Low"
+          StandardErrorImportance="High" />
+    
+    <!-- Create marker file to avoid re-running on every project -->
+    <Touch Files="$(HuskyMarkerFile)" 
+           AlwaysCreate="true" 
+           Condition="!Exists('$(HuskyMarkerFile)')" />
+  </Target>
+  
+</Project>

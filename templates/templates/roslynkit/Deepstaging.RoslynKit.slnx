@@ -1,0 +1,8 @@
+<Solution>
+    <Project Path="src/Deepstaging.RoslynKit/Deepstaging.RoslynKit.csproj"/>
+    <Project Path="src/Deepstaging.RoslynKit.Projection/Deepstaging.RoslynKit.Projection.csproj"/>
+    <Project Path="src/Deepstaging.RoslynKit.Generators/Deepstaging.RoslynKit.Generators.csproj"/>
+    <Project Path="src/Deepstaging.RoslynKit.Analyzers/Deepstaging.RoslynKit.Analyzers.csproj"/>
+    <Project Path="src/Deepstaging.RoslynKit.CodeFixes/Deepstaging.RoslynKit.CodeFixes.csproj"/>
+    <Project Path="src/Deepstaging.RoslynKit.Tests/Deepstaging.RoslynKit.Tests.csproj"/>
+</Solution>

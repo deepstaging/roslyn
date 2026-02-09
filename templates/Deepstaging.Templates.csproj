@@ -1,0 +1,43 @@
+<!-- SPDX-FileCopyrightText: 2024-present Deepstaging -->
+<!-- SPDX-License-Identifier: RPL-1.5 -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <PackageType>Template</PackageType>
+        <PackageId>Deepstaging.Templates</PackageId>
+        <Title>Deepstaging Project Templates</Title>
+        <Description>Project templates for building Roslyn source generators, analyzers, and code fixes using Deepstaging.Roslyn.</Description>
+        <Authors>Deepstaging</Authors>
+        <PackageTags>dotnet-new;templates;roslyn;source-generator;analyzer;codefix;deepstaging</PackageTags>
+        <PackageLicenseExpression>RPL-1.5</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/deepstaging/templates</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/deepstaging/templates</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        
+        <TargetFramework>netstandard2.0</TargetFramework>
+        
+        <!-- Template pack settings -->
+        <IncludeContentInPack>true</IncludeContentInPack>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+        <ContentTargetFolders>content</ContentTargetFolders>
+        <NoDefaultExcludes>true</NoDefaultExcludes>
+        
+        <!-- Versioning -->
+        <VersionPrefix>1.0.0</VersionPrefix>
+        <VersionSuffix>alpha.1</VersionSuffix>
+        
+        <!-- Suppress NU5128 - expected for template packs with no lib assemblies -->
+        <NoWarn>$(NoWarn);NU5128</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!-- Include all templates -->
+        <Content Include="templates/**/*" Exclude="templates/**/bin/**;templates/**/obj/**;templates/**/artifacts/**" />
+        <Compile Remove="**/*" />
+        
+        <!-- Package README -->
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>

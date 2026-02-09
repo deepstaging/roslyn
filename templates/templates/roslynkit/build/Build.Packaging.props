@@ -1,0 +1,69 @@
+<!-- SPDX-FileCopyrightText: 2024-present Deepstaging -->
+<!-- SPDX-License-Identifier: RPL-1.5 -->
+<Project>
+  <!-- 
+    Build.Packaging.props
+    
+    Defines NuGet package metadata, versioning, and packaging behavior.
+    
+    Imported by: Directory.Build.props
+  -->
+
+  <PropertyGroup>
+    <!-- 
+      IsPackable: Controls whether 'dotnet pack' creates a NuGet package
+      Default is false - projects must explicitly opt-in to being packable
+      
+      To make a project packable, add this to its .csproj:
+      <IsPackable>true</IsPackable>
+    -->
+    <IsPackable>false</IsPackable>
+
+    <!-- ========================================
+         PACKAGE METADATA (used by packable projects)
+         ======================================== -->
+
+    <Authors>Deepstaging</Authors>
+    <Company>Deepstaging</Company>
+    <Copyright>Copyright © Deepstaging</Copyright>
+    <Description>Roslyn project templates using Deepstaging.Roslyn</Description>
+
+    <!-- 
+      PackageLicenseExpression: SPDX license identifier
+      https://spdx.org/licenses/
+    -->
+    <PackageLicenseExpression>RPL-1.5</PackageLicenseExpression>
+
+    <PackageProjectUrl>https://github.com/deepstaging/templates</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/deepstaging/templates</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+
+    <!-- 
+      Package assets (README and icon)
+      These files are included in the NuGet package for display on nuget.org
+    -->
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
+
+    <!-- 
+      PackageTags: Semicolon-separated tags for discoverability on nuget.org
+    -->
+    <PackageTags>roslyn;source-generator;analyzer;codefix;template</PackageTags>
+
+    <!-- ========================================
+         VERSIONING
+         ======================================== -->
+
+    <!-- 
+      VersionPrefix: Base version for your package (SemVer format: major.minor.patch)
+      VersionSuffix: Prerelease suffix (e.g., alpha.1, beta.1, rc.1)
+      
+      For dev builds, the workspace automatically appends a timestamp suffix like:
+      1.0.0-dev-20260107120000
+      
+      Update this when you want to release a new version.
+    -->
+    <VersionPrefix>1.0.0</VersionPrefix>
+    <VersionSuffix>alpha.1</VersionSuffix>
+  </PropertyGroup>
+</Project>

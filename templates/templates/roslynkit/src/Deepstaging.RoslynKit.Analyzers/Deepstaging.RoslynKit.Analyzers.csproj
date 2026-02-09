@@ -1,0 +1,65 @@
+<!-- SPDX-FileCopyrightText: 2024-present Deepstaging -->
+<!-- SPDX-License-Identifier: RPL-1.5 -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+        <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+        <IsRoslynComponent>true</IsRoslynComponent>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+        <!-- Disable release tracking for now -->
+        <NoWarn>$(NoWarn);RS2008</NoWarn>
+
+        <!-- Package metadata -->
+        <PackageId>Deepstaging.RoslynKit.Analyzers</PackageId>
+        <Title>Deepstaging.RoslynKit.Analyzers</Title>
+        <Description>Roslyn analyzers for Deepstaging.RoslynKit.</Description>
+        <PackageTags>deepstaging;roslynkit;analyzers;roslyn</PackageTags>
+
+        <!-- Copy local dependencies so they can be bundled with the analyzer -->
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp"/>
+        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Deepstaging.Roslyn"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Deepstaging.RoslynKit\Deepstaging.RoslynKit.csproj"/>
+        <ProjectReference Include="..\Deepstaging.RoslynKit.Projection\Deepstaging.RoslynKit.Projection.csproj"/>
+    </ItemGroup>
+
+    <!-- 
+        Bundle dependencies for analyzer consumption.
+        When this project is referenced as an analyzer, these files will be loaded alongside it.
+    -->
+    <PropertyGroup>
+        <GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
+    </PropertyGroup>
+
+    <Target Name="GetDependencyTargetPaths" AfterTargets="ResolvePackageAssets">
+        <ItemGroup>
+            <!-- Bundle Deepstaging.Roslyn -->
+            <TargetPathWithTargetPlatformMoniker Include="@(ReferenceCopyLocalPaths)"
+                                                 Condition="'%(Filename)' == 'Deepstaging.Roslyn'"
+                                                 IncludeRuntimeDependency="false"/>
+            <!-- Bundle Deepstaging.RoslynKit (attributes) -->
+            <TargetPathWithTargetPlatformMoniker Include="@(ReferenceCopyLocalPaths)"
+                                                 Condition="'%(Filename)' == 'Deepstaging.RoslynKit'"
+                                                 IncludeRuntimeDependency="false"/>
+            <!-- Bundle Deepstaging.RoslynKit.Projection -->
+            <TargetPathWithTargetPlatformMoniker Include="@(ReferenceCopyLocalPaths)"
+                                                 Condition="'%(Filename)' == 'Deepstaging.RoslynKit.Projection'"
+                                                 IncludeRuntimeDependency="false"/>
+        </ItemGroup>
+    </Target>
+
+</Project>

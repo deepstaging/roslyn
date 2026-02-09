@@ -1,0 +1,34 @@
+<!-- SPDX-FileCopyrightText: 2024-present Deepstaging -->
+<!-- SPDX-License-Identifier: RPL-1.5 -->
+<Project>
+  <!-- Centralized Package Management -->
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Deepstaging.Roslyn packages -->
+    <PackageVersion Include="Deepstaging.Roslyn" Version="1.0.0-dev-20260208212209" />
+    <PackageVersion Include="Deepstaging.Roslyn.Scriban" Version="1.0.0-dev-20260208212209" />
+    <PackageVersion Include="Deepstaging.Roslyn.Testing" Version="1.0.0-dev-20260208212209" />
+    <PackageVersion Include="Deepstaging.Roslyn.Workspace" Version="1.0.0-dev-20260208212209" />
+    <!-- Core Roslyn -->
+    <PackageVersion Include="Microsoft.CodeAnalysis.Common" Version="5.0.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="5.0.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="4.14.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="5.0.0" />
+    <!-- Source Generator Foundation -->
+    <PackageVersion Include="Scriban" Version="6.5.2" />
+    <!-- Reference Assemblies for Testing -->
+    <PackageVersion Include="Basic.Reference.Assemblies.Net100" Version="1.8.4" />
+    <!-- Testing -->
+    <PackageVersion Include="TUnit" Version="1.12.125" />
+    <PackageVersion Include="TUnit.Engine" Version="1.12.125" />
+    <PackageVersion Include="Microsoft.Testing.Platform" Version="2.0.2" />
+    <PackageVersion Include="Microsoft.Testing.Platform.MSBuild" Version="2.0.2" />
+    <!-- SourceLink -->
+    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.102" />
+    <!-- Utilities -->
+    <PackageVersion Include="PolySharp" Version="1.15.0" />
+  </ItemGroup>
+</Project>

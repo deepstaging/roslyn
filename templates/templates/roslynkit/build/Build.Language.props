@@ -1,0 +1,37 @@
+<!-- SPDX-FileCopyrightText: 2024-present Deepstaging -->
+<!-- SPDX-License-Identifier: RPL-1.5 -->
+<Project>
+  <!-- 
+    Build.Language.props
+    
+    Configures C# language features, code quality, and compiler behavior.
+    
+    Imported by: Directory.Build.props
+  -->
+  
+  <PropertyGroup>
+    <!-- 
+      LangVersion: Use latest C# language features
+      https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/configure-language-version
+    -->
+    <LangVersion>latest</LangVersion>
+    
+    <!-- 
+      Nullable: Enable nullable reference types (helps catch null reference bugs at compile time)
+      https://learn.microsoft.com/en-us/dotnet/csharp/nullable-references
+    -->
+    <Nullable>enable</Nullable>
+    
+    <!-- 
+      ImplicitUsings: Automatically import common namespaces (System, System.Linq, etc.)
+      https://learn.microsoft.com/en-us/dotnet/core/project-sdk/overview#implicit-using-directives
+    -->
+    <ImplicitUsings>enable</ImplicitUsings>
+    
+    <!-- 
+      TreatWarningsAsErrors: Build fails if there are any warnings
+      Enforces clean code - fix warnings, don't ignore them!
+    -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+</Project>
