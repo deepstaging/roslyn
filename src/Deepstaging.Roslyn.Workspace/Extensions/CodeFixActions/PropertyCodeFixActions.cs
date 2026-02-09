@@ -18,6 +18,22 @@ public static class PropertyCodeFixActions
         #region Property Modifier Helpers
 
         /// <summary>
+        /// Creates a code action that adds the 'partial' modifier to a property.
+        /// </summary>
+        public CodeAction AddPartialModifierAction(
+            ValidSyntax<PropertyDeclarationSyntax> propertyDecl,
+            string title = "Add 'partial' modifier")
+        {
+            return CodeAction.Create(
+                title,
+                ct => document.ReplaceNode(
+                    propertyDecl.Node,
+                    AddModifierWithOrdering(propertyDecl.Node, SyntaxKind.PartialKeyword),
+                    ct),
+                title);
+        }
+
+        /// <summary>
         /// Creates a code action that adds the 'required' modifier to a property.
         /// </summary>
         public CodeAction AddRequiredModifierAction(
@@ -88,4 +104,60 @@ public static class PropertyCodeFixActions
 
         #endregion
     }
+
+    #region Private Helper Methods
+
+    private static PropertyDeclarationSyntax AddModifierWithOrdering(
+        PropertyDeclarationSyntax node,
+        SyntaxKind kind)
+    {
+        if (node.Modifiers.Any(m => m.IsKind(kind)))
+            return node;
+
+        var token = SyntaxFactory.Token(kind).WithTrailingTrivia(SyntaxFactory.Space);
+        var insertIndex = GetModifierInsertIndex(node.Modifiers, kind);
+        var newModifiers = node.Modifiers.Insert(insertIndex, token);
+        return node.WithModifiers(newModifiers);
+    }
+
+    private static int GetModifierInsertIndex(SyntaxTokenList modifiers, SyntaxKind kind)
+    {
+        var priority = GetModifierPriority(kind);
+
+        for (var i = 0; i < modifiers.Count; i++)
+            if (GetModifierPriority(modifiers[i].Kind()) > priority)
+                return i;
+
+        return modifiers.Count;
+    }
+
+    private static int GetModifierPriority(SyntaxKind kind) =>
+        kind switch
+        {
+            // Accessibility modifiers come first
+            SyntaxKind.PublicKeyword or
+            SyntaxKind.PrivateKeyword or
+            SyntaxKind.ProtectedKeyword or
+            SyntaxKind.InternalKeyword => 0,
+
+            // Then static/abstract/sealed/virtual/override/new/readonly/required
+            SyntaxKind.StaticKeyword or
+            SyntaxKind.AbstractKeyword or
+            SyntaxKind.SealedKeyword or
+            SyntaxKind.VirtualKeyword or
+            SyntaxKind.OverrideKeyword or
+            SyntaxKind.NewKeyword or
+            SyntaxKind.ReadOnlyKeyword or
+            SyntaxKind.RequiredKeyword => 1,
+
+            // Then partial
+            SyntaxKind.PartialKeyword => 2,
+
+            // Then unsafe
+            SyntaxKind.UnsafeKeyword => 3,
+
+            _ => 4
+        };
+
+    #endregion
 }

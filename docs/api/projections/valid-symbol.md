@@ -45,6 +45,43 @@ ValidSymbol<IMethodSymbol>? method = valid.OfType<IMethodSymbol>();
 valid.Do(s => Console.WriteLine(s.Name));
 ```
 
+## Attribute Access
+
+```csharp
+// Get all attributes
+valid.GetAttributes()                           // IEnumerable<ValidAttribute>
+
+// Get by name (supports "Name" or "NameAttribute")
+valid.GetAttributes("Obsolete")                 // IEnumerable<ValidAttribute>
+valid.GetAttribute("Obsolete")                  // OptionalAttribute
+
+// Get by generic type parameter
+valid.GetAttributes<ObsoleteAttribute>()        // IEnumerable<ValidAttribute>
+valid.GetAttribute<ObsoleteAttribute>()         // OptionalAttribute
+
+// Get by System.Type (supports open generics for finding any instantiation)
+valid.GetAttributes(typeof(MyGenericAttribute<>))  // IEnumerable<ValidAttribute>
+valid.GetAttribute(typeof(MyGenericAttribute<>))   // OptionalAttribute
+
+// Check presence
+valid.HasAttribute("Obsolete")                  // bool
+valid.HasAttribute<ObsoleteAttribute>()         // bool
+valid.HasAttribute(typeof(MyGenericAttribute<>)) // bool
+valid.LacksAttribute("Obsolete")                // bool
+```
+
+### Finding Generic Attributes
+
+For generic attributes like `[HttpClient<TConfig>]`, use `Type` overloads or metadata name:
+
+```csharp
+// Using Type with open generic
+var attrs = symbol.GetAttributes(typeof(HttpClientAttribute<>));
+
+// Using metadata name with arity
+var attrs = symbol.Value.GetAttributesByMetadataName("HttpClientAttribute`1");
+```
+
 ## Type Hierarchy (INamedTypeSymbol)
 
 ```csharp

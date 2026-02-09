@@ -18,6 +18,14 @@ public static class MethodCodeFixActions
         #region Method Modifier Helpers
 
         /// <summary>
+        /// Creates a code action that adds the 'partial' modifier to a method declaration.
+        /// </summary>
+        public CodeAction AddPartialModifierAction(ValidSyntax<MethodDeclarationSyntax> methodDecl)
+        {
+            return document.AddMethodModifierAction(methodDecl, SyntaxKind.PartialKeyword, "Add 'partial' modifier");
+        }
+
+        /// <summary>
         /// Creates a code action that adds the 'async' modifier to a method declaration.
         /// </summary>
         public CodeAction AddAsyncModifierAction(ValidSyntax<MethodDeclarationSyntax> methodDecl)
@@ -61,7 +69,7 @@ public static class MethodCodeFixActions
                 title,
                 ct => document.ReplaceNode(
                     methodDecl.Node,
-                    methodDecl.Node.AddModifiers(SyntaxFactory.Token(modifier)),
+                    AddModifierWithOrdering(methodDecl.Node, modifier),
                     ct),
                 title);
         }
@@ -166,4 +174,63 @@ public static class MethodCodeFixActions
 
         #endregion
     }
+
+    #region Private Helper Methods
+
+    private static MethodDeclarationSyntax AddModifierWithOrdering(
+        MethodDeclarationSyntax node,
+        SyntaxKind kind)
+    {
+        if (node.Modifiers.Any(m => m.IsKind(kind)))
+            return node;
+
+        var token = SyntaxFactory.Token(kind).WithTrailingTrivia(SyntaxFactory.Space);
+        var insertIndex = GetModifierInsertIndex(node.Modifiers, kind);
+        var newModifiers = node.Modifiers.Insert(insertIndex, token);
+        return node.WithModifiers(newModifiers);
+    }
+
+    private static int GetModifierInsertIndex(SyntaxTokenList modifiers, SyntaxKind kind)
+    {
+        var priority = GetModifierPriority(kind);
+
+        for (var i = 0; i < modifiers.Count; i++)
+            if (GetModifierPriority(modifiers[i].Kind()) > priority)
+                return i;
+
+        return modifiers.Count;
+    }
+
+    private static int GetModifierPriority(SyntaxKind kind) =>
+        kind switch
+        {
+            // Accessibility modifiers come first
+            SyntaxKind.PublicKeyword or
+            SyntaxKind.PrivateKeyword or
+            SyntaxKind.ProtectedKeyword or
+            SyntaxKind.InternalKeyword => 0,
+
+            // Then static/abstract/sealed/virtual/override/new/readonly
+            SyntaxKind.StaticKeyword or
+            SyntaxKind.AbstractKeyword or
+            SyntaxKind.SealedKeyword or
+            SyntaxKind.VirtualKeyword or
+            SyntaxKind.OverrideKeyword or
+            SyntaxKind.NewKeyword or
+            SyntaxKind.ReadOnlyKeyword => 1,
+
+            // Then async/extern
+            SyntaxKind.AsyncKeyword or
+            SyntaxKind.ExternKeyword => 2,
+
+            // Then partial
+            SyntaxKind.PartialKeyword => 3,
+
+            // Then unsafe
+            SyntaxKind.UnsafeKeyword => 4,
+
+            _ => 5
+        };
+
+    #endregion
 }

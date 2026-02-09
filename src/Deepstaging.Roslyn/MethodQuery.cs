@@ -229,6 +229,88 @@ public readonly struct MethodQuery
         return AddFilter(m => !m.IsSealed);
     }
 
+    /// <summary>
+    /// Filters for partial methods (either definition or implementation).
+    /// </summary>
+    public MethodQuery ThatArePartial()
+    {
+        return AddFilter(m => m.IsPartialMethod());
+    }
+
+    /// <summary>
+    /// Filters for non-partial methods.
+    /// </summary>
+    public MethodQuery ThatAreNotPartial()
+    {
+        return AddFilter(m => !m.IsPartialMethod());
+    }
+
+    /// <summary>
+    /// Filters for partial method definitions (declarations without implementation).
+    /// These are the `partial void Foo();` declarations that get implemented elsewhere.
+    /// </summary>
+    public MethodQuery ThatArePartialDefinitions()
+    {
+        return AddFilter(m => m.PartialImplementationPart != null);
+    }
+
+    /// <summary>
+    /// Filters for partial method implementations (the implementing part).
+    /// These are the `partial void Foo() { ... }` implementations.
+    /// </summary>
+    public MethodQuery ThatArePartialImplementations()
+    {
+        return AddFilter(m => m.PartialDefinitionPart != null);
+    }
+
+    /// <summary>
+    /// Filters for extern methods (methods with external implementation).
+    /// </summary>
+    public MethodQuery ThatAreExtern()
+    {
+        return AddFilter(m => m.IsExtern);
+    }
+
+    /// <summary>
+    /// Filters for non-extern methods.
+    /// </summary>
+    public MethodQuery ThatAreNotExtern()
+    {
+        return AddFilter(m => !m.IsExtern);
+    }
+
+    /// <summary>
+    /// Filters for readonly methods (struct methods that don't modify state).
+    /// </summary>
+    public MethodQuery ThatAreReadOnly()
+    {
+        return AddFilter(m => m.IsReadOnly);
+    }
+
+    /// <summary>
+    /// Filters for non-readonly methods.
+    /// </summary>
+    public MethodQuery ThatAreNotReadOnly()
+    {
+        return AddFilter(m => !m.IsReadOnly);
+    }
+
+    /// <summary>
+    /// Filters for extension methods.
+    /// </summary>
+    public MethodQuery ThatAreExtensionMethods()
+    {
+        return AddFilter(m => m.IsExtensionMethod);
+    }
+
+    /// <summary>
+    /// Filters for non-extension methods.
+    /// </summary>
+    public MethodQuery ThatAreNotExtensionMethods()
+    {
+        return AddFilter(m => !m.IsExtensionMethod);
+    }
+
     #endregion
 
     #region Name Filters

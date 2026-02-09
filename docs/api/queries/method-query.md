@@ -58,6 +58,16 @@ var handlers = typeSymbol.QueryMethods()
 | `ThatAreNotOverrides()` | Non-override methods |
 | `ThatAreSealed()` | Sealed methods |
 | `ThatAreNotSealed()` | Non-sealed methods |
+| `ThatArePartial()` | Partial methods (definition or implementation) |
+| `ThatAreNotPartial()` | Non-partial methods |
+| `ThatArePartialDefinitions()` | Partial method definitions (declarations) |
+| `ThatArePartialImplementations()` | Partial method implementations |
+| `ThatAreExtern()` | Extern methods |
+| `ThatAreNotExtern()` | Non-extern methods |
+| `ThatAreReadOnly()` | Readonly struct methods |
+| `ThatAreNotReadOnly()` | Non-readonly methods |
+| `ThatAreExtensionMethods()` | Extension methods |
+| `ThatAreNotExtensionMethods()` | Non-extension methods |
 
 ## Name Filters
 

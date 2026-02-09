@@ -53,6 +53,24 @@ public static class SymbolExtensions
         }
 
         /// <summary>
+        /// Gets attributes by System.Type, supporting open generic types.
+        /// For generic attributes, use typeof(MyAttribute&lt;&gt;) to match any instantiation.
+        /// </summary>
+        /// <param name="attributeType">The attribute type. Can be an open generic like typeof(MyAttribute&lt;&gt;).</param>
+        public IEnumerable<ValidAttribute> GetAttributesByType(Type attributeType)
+        {
+            return symbol.GetAttributes().GetByType(attributeType);
+        }
+
+        /// <summary>
+        /// Gets attributes by metadata name (supports generic arity notation like "MyAttribute`1").
+        /// </summary>
+        public IEnumerable<ValidAttribute> GetAttributesByMetadataName(string metadataName)
+        {
+            return symbol.GetAttributes().GetByMetadataName(metadataName);
+        }
+
+        /// <summary>
         /// Checks if the symbol is public.
         /// </summary>
         public bool IsPublic()

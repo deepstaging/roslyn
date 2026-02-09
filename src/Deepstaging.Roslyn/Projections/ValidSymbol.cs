@@ -711,6 +711,26 @@ public readonly struct ValidSymbol<TSymbol> : IProjection<TSymbol>
     }
 
     /// <summary>
+    /// Gets the first attribute of the specified System.Type.
+    /// Supports open generic types - use typeof(MyAttribute&lt;&gt;) to match any instantiation.
+    /// </summary>
+    /// <param name="attributeType">The attribute type. Can be an open generic like typeof(MyAttribute&lt;&gt;).</param>
+    public OptionalAttribute GetAttribute(Type attributeType)
+    {
+        return _symbol.GetAttributesByType(attributeType).FirstOrDefault().Map(OptionalAttribute.FromNullable);
+    }
+
+    /// <summary>
+    /// Gets attributes of the specified System.Type.
+    /// Supports open generic types - use typeof(MyAttribute&lt;&gt;) to match any instantiation.
+    /// </summary>
+    /// <param name="attributeType">The attribute type. Can be an open generic like typeof(MyAttribute&lt;&gt;).</param>
+    public IEnumerable<ValidAttribute> GetAttributes(Type attributeType)
+    {
+        return _symbol.GetAttributesByType(attributeType);
+    }
+
+    /// <summary>
     /// Checks if the symbol has any attributes.
     /// </summary>
     public bool HasAttributes()
@@ -735,6 +755,16 @@ public readonly struct ValidSymbol<TSymbol> : IProjection<TSymbol>
     }
 
     /// <summary>
+    /// Checks if the symbol has an attribute of the specified System.Type.
+    /// Supports open generic types - use typeof(MyAttribute&lt;&gt;) to match any instantiation.
+    /// </summary>
+    /// <param name="attributeType">The attribute type. Can be an open generic like typeof(MyAttribute&lt;&gt;).</param>
+    public bool HasAttribute(Type attributeType)
+    {
+        return _symbol.GetAttributesByType(attributeType).Any();
+    }
+
+    /// <summary>
     /// Checks if the symbol has no attributes.
     /// </summary>
     public bool LacksAttributes()
@@ -756,6 +786,16 @@ public readonly struct ValidSymbol<TSymbol> : IProjection<TSymbol>
     public bool LacksAttribute<TAttribute>() where TAttribute : Attribute
     {
         return !_symbol.GetAttributesByType<TAttribute>().Any();
+    }
+
+    /// <summary>
+    /// Checks if the symbol does not have an attribute of the specified System.Type.
+    /// Supports open generic types - use typeof(MyAttribute&lt;&gt;) to match any instantiation.
+    /// </summary>
+    /// <param name="attributeType">The attribute type. Can be an open generic like typeof(MyAttribute&lt;&gt;).</param>
+    public bool LacksAttribute(Type attributeType)
+    {
+        return !_symbol.GetAttributesByType(attributeType).Any();
     }
 
     #endregion

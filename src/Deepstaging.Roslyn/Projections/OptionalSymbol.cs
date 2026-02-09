@@ -747,6 +747,28 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
     }
 
     /// <summary>
+    /// Gets the first attribute of the specified System.Type.
+    /// Supports open generic types - use typeof(MyAttribute&lt;&gt;) to match any instantiation.
+    /// </summary>
+    /// <param name="attributeType">The attribute type. Can be an open generic like typeof(MyAttribute&lt;&gt;).</param>
+    public OptionalAttribute GetAttribute(Type attributeType)
+    {
+        return _symbol == null
+            ? OptionalAttribute.Empty()
+            : OptionalAttribute.FromNullable(_symbol.GetAttributesByType(attributeType).FirstOrDefault().Value);
+    }
+
+    /// <summary>
+    /// Gets attributes of the specified System.Type.
+    /// Supports open generic types - use typeof(MyAttribute&lt;&gt;) to match any instantiation.
+    /// </summary>
+    /// <param name="attributeType">The attribute type. Can be an open generic like typeof(MyAttribute&lt;&gt;).</param>
+    public IEnumerable<ValidAttribute> GetAttributes(Type attributeType)
+    {
+        return _symbol?.GetAttributesByType(attributeType) ?? [];
+    }
+
+    /// <summary>
     /// Checks if the symbol has any attributes.
     /// </summary>
     public bool HasAttributes()
@@ -771,6 +793,16 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
     }
 
     /// <summary>
+    /// Checks if the symbol has an attribute of the specified System.Type.
+    /// Supports open generic types - use typeof(MyAttribute&lt;&gt;) to match any instantiation.
+    /// </summary>
+    /// <param name="attributeType">The attribute type. Can be an open generic like typeof(MyAttribute&lt;&gt;).</param>
+    public bool HasAttribute(Type attributeType)
+    {
+        return _symbol?.GetAttributesByType(attributeType).Any() == true;
+    }
+
+    /// <summary>
     /// Checks if the symbol has no attributes (or symbol is empty).
     /// </summary>
     public bool LacksAttributes()
@@ -792,6 +824,16 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
     public bool LacksAttribute<TAttribute>() where TAttribute : Attribute
     {
         return _symbol == null || !_symbol.GetAttributesByType<TAttribute>().Any();
+    }
+
+    /// <summary>
+    /// Checks if the symbol does not have an attribute of the specified System.Type (or symbol is empty).
+    /// Supports open generic types - use typeof(MyAttribute&lt;&gt;) to match any instantiation.
+    /// </summary>
+    /// <param name="attributeType">The attribute type. Can be an open generic like typeof(MyAttribute&lt;&gt;).</param>
+    public bool LacksAttribute(Type attributeType)
+    {
+        return _symbol == null || !_symbol.GetAttributesByType(attributeType).Any();
     }
 
     #endregion
