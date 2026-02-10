@@ -1,0 +1,15 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Auto-add SPDX license headers to staged files, then re-stage them
+./build/add-license-headers.sh --staged
+
+# Re-stage any files that were modified
+git diff --name-only | while read -r file; do
+    if git diff --cached --name-only | grep -q "^$file$"; then
+        git add "$file"
+    fi
+done
+
+# Verify all staged files have headers
+dotnet husky run --name check-license-headers

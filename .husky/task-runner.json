@@ -2,12 +2,21 @@
    "$schema": "https://alirezanet.github.io/Husky.Net/schema.json",
    "tasks": [
       {
-         "name": "welcome-message-example",
+         "name": "check-license-headers",
          "command": "bash",
-         "args": [ "-c", "echo Husky.Net is awesome!" ],
+         "args": ["build/check-license-headers.sh"],
          "windows": {
-            "command": "cmd",
-            "args": ["/c", "echo Husky.Net is awesome!" ]
+            "command": "bash",
+            "args": ["build/check-license-headers.sh"]
+         }
+      },
+      {
+         "name": "add-license-headers",
+         "command": "bash",
+         "args": ["build/add-license-headers.sh", "--staged"],
+         "windows": {
+            "command": "bash",
+            "args": ["build/add-license-headers.sh", "--staged"]
          }
       }
    ]
