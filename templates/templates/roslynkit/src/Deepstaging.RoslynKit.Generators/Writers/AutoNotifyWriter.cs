@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: RPL-1.5
 
 using Deepstaging.Roslyn.Emit;
+using Deepstaging.Roslyn.Emit.Interfaces.Observable;
 using Deepstaging.RoslynKit.Projection.Models;
 
 namespace Deepstaging.RoslynKit.Generators.Writers;
@@ -23,9 +24,6 @@ public static class AutoNotifyWriter
                 .AsPartial()
                 .InNamespace(model.Namespace)
                 .WithAccessibility(model.Accessibility)
-                .AddUsing("System.ComponentModel")
-                .AddUsing("System.Runtime.CompilerServices")
-                .Implements("INotifyPropertyChanged")
                 .GenerateBaseImplementation(model)
                 .WithEach(model.Properties, AddProperty).Emit();
         }
@@ -45,15 +43,15 @@ public static class AutoNotifyWriter
     private static TypeBuilder GenerateBaseImplementation(this TypeBuilder builder, AutoNotifyModel model)
     {
         return builder.If(model.GenerateBaseImplementation, type => type
-            .AddEvent("PropertyChanged", "PropertyChangedEventHandler?",
-                e => e.WithXmlDoc("Occurs when a property value changes."))
-            .AddMethod(OnPropertyChangedMethod)
+            .ImplementsINotifyPropertyChanged()
             .AddMethod(SetFieldMethod));
     }
 
     private static MethodBuilder SetFieldMethod =>
         MethodBuilder.Parse("protected bool SetField<T>(ref T field, T value, string? propertyName = null)")
-            .AddParameter("propertyName", "string?", p => p.WithAttribute("CallerMemberName").WithDefaultValue("null"))
+            .AddParameter("propertyName", "string?", p => p
+                .WithAttribute("global::System.Runtime.CompilerServices.CallerMemberName")
+                .WithDefaultValue("null"))
             .WithXmlDoc("Sets a field value and raises PropertyChanged if the value changed.")
             .WithBody(b => b.AddStatements(
                 """
@@ -62,10 +60,4 @@ public static class AutoNotifyWriter
                 OnPropertyChanged(propertyName);
                 return true;
                 """));
-
-    private static MethodBuilder OnPropertyChangedMethod =>
-        MethodBuilder.Parse("protected virtual void OnPropertyChanged(string? propertyName = null)")
-            .AddParameter("propertyName", "string?", p => p.WithAttribute("CallerMemberName").WithDefaultValue("null"))
-            .WithXmlDoc("Raises the PropertyChanged event.")
-            .WithBody(b => b.AddStatement("PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName))"));
 }
