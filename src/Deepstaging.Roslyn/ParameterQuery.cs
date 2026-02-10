@@ -312,6 +312,8 @@ public readonly struct ParameterQuery
     /// </summary>
     public ImmutableArray<ValidSymbol<IParameterSymbol>> GetAll()
     {
+        if (_methodSymbol is null) return [];
+
         var parameters = _methodSymbol.Parameters.AsEnumerable();
 
         // Apply all filters
@@ -326,6 +328,8 @@ public readonly struct ParameterQuery
     /// </summary>
     public ImmutableArray<IParameterSymbol> GetAllSymbols()
     {
+        if (_methodSymbol is null) return [];
+
         var parameters = _methodSymbol.Parameters.AsEnumerable();
 
         // Apply all filters

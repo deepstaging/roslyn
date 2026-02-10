@@ -303,6 +303,8 @@ public readonly struct FieldQuery
     /// </summary>
     public ImmutableArray<ValidSymbol<IFieldSymbol>> GetAll()
     {
+        if (_typeSymbol is null) return [];
+
         var fields = _typeSymbol.GetMembers()
             .OfType<IFieldSymbol>()
             .Where(f => !f.IsImplicitlyDeclared);
@@ -319,6 +321,8 @@ public readonly struct FieldQuery
     /// </summary>
     public ImmutableArray<IFieldSymbol> GetAllSymbols()
     {
+        if (_typeSymbol is null) return [];
+
         var fields = _typeSymbol.GetMembers()
             .OfType<IFieldSymbol>()
             .Where(f => !f.IsImplicitlyDeclared);

@@ -287,6 +287,8 @@ public readonly struct EventQuery
     /// </summary>
     public ImmutableArray<ValidSymbol<IEventSymbol>> GetAll()
     {
+        if (_typeSymbol is null) return [];
+
         var events = _typeSymbol.GetMembers()
             .OfType<IEventSymbol>();
 
@@ -302,6 +304,8 @@ public readonly struct EventQuery
     /// </summary>
     public ImmutableArray<IEventSymbol> GetAllSymbols()
     {
+        if (_typeSymbol is null) return [];
+
         var events = _typeSymbol.GetMembers()
             .OfType<IEventSymbol>();
 

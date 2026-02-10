@@ -222,6 +222,8 @@ public readonly struct ConstructorQuery
     /// </summary>
     public ImmutableArray<ValidSymbol<IMethodSymbol>> GetAll()
     {
+        if (_typeSymbol is null) return [];
+
         var constructors = _typeSymbol.GetMembers()
             .OfType<IMethodSymbol>()
             .Where(m => m.MethodKind == MethodKind.Constructor && !m.IsImplicitlyDeclared);
@@ -238,6 +240,8 @@ public readonly struct ConstructorQuery
     /// </summary>
     public ImmutableArray<IMethodSymbol> GetAllSymbols()
     {
+        if (_typeSymbol is null) return [];
+
         var constructors = _typeSymbol.GetMembers()
             .OfType<IMethodSymbol>()
             .Where(m => m.MethodKind == MethodKind.Constructor && !m.IsImplicitlyDeclared);

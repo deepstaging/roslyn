@@ -77,13 +77,15 @@ public class OptionalSymbolQueriesTests : RoslynTestBase
     [Test]
     public async Task Query_on_empty_optional_returns_empty_results()
     {
-        // Note: Currently OptionalSymbol query extensions throw on empty optionals
-        // This test documents the current behavior
         var emptyOptional = OptionalSymbol<INamedTypeSymbol>.Empty();
 
-        // When calling QueryMethods on empty optional, it throws
-        var action = () => emptyOptional.QueryMethods();
-        await Assert.That(action).ThrowsException();
+        var methods = emptyOptional.QueryMethods().GetAll();
+        var properties = emptyOptional.QueryProperties().GetAll();
+        var constructors = emptyOptional.QueryConstructors().GetAll();
+
+        await Assert.That(methods.Length).IsEqualTo(0);
+        await Assert.That(properties.Length).IsEqualTo(0);
+        await Assert.That(constructors.Length).IsEqualTo(0);
     }
 
     #endregion

@@ -385,6 +385,8 @@ public readonly struct PropertyQuery
     /// </summary>
     public ImmutableArray<ValidSymbol<IPropertySymbol>> GetAll()
     {
+        if (_typeSymbol is null) return [];
+
         var properties = _typeSymbol.GetMembers()
             .OfType<IPropertySymbol>()
             .Where(p => !p.IsImplicitlyDeclared);
@@ -401,6 +403,8 @@ public readonly struct PropertyQuery
     /// </summary>
     public ImmutableArray<IPropertySymbol> GetAllSymbols()
     {
+        if (_typeSymbol is null) return [];
+
         var properties = _typeSymbol.GetMembers()
             .OfType<IPropertySymbol>()
             .Where(p => !p.IsImplicitlyDeclared);

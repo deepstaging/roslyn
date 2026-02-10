@@ -366,33 +366,6 @@ public static class OptionalSymbolExtensions
         }
     }
 
-    extension(OptionalSymbol<INamedTypeSymbol> typeSymbol)
-    {
-        /// <summary>
-        /// Creates a query to search for methods in the type.
-        /// </summary>
-        public MethodQuery QueryMethods()
-        {
-            return MethodQuery.From(typeSymbol.OrThrow());
-        }
-
-        /// <summary>
-        /// Creates a query to search for properties in the type.
-        /// </summary>
-        public PropertyQuery QueryProperties()
-        {
-            return PropertyQuery.From(typeSymbol.OrThrow());
-        }
-
-        /// <summary>
-        /// Creates a query to search for constructors in the type.
-        /// </summary>
-        public ConstructorQuery QueryConstructors()
-        {
-            return ConstructorQuery.From(typeSymbol.OrThrow());
-        }
-    }
-
     extension(ValidSymbol<INamedTypeSymbol> typeSymbol)
     {
         /// <summary>

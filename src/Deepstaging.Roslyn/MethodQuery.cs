@@ -505,6 +505,8 @@ public readonly struct MethodQuery
     /// </summary>
     public ImmutableArray<ValidSymbol<IMethodSymbol>> GetAll()
     {
+        if (_typeSymbol is null) return [];
+
         var methods = _typeSymbol.GetMembers()
             .OfType<IMethodSymbol>()
             .Where(m => m.MethodKind == MethodKind.Ordinary && !m.IsImplicitlyDeclared);
@@ -521,6 +523,8 @@ public readonly struct MethodQuery
     /// </summary>
     public ImmutableArray<IMethodSymbol> GetAllSymbols()
     {
+        if (_typeSymbol is null) return [];
+
         var methods = _typeSymbol.GetMembers()
             .OfType<IMethodSymbol>()
             .Where(m => m.MethodKind == MethodKind.Ordinary && !m.IsImplicitlyDeclared);
