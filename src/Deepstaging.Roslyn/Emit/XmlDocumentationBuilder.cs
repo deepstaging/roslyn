@@ -82,6 +82,29 @@ public record struct XmlDocumentationBuilder
         };
     }
 
+    /// <summary>
+    /// Creates a builder pre-populated from a pipeline-safe <see cref="DocumentationSnapshot"/>.
+    /// </summary>
+    /// <param name="snapshot">The documentation snapshot to copy from.</param>
+    public static XmlDocumentationBuilder From(DocumentationSnapshot snapshot)
+    {
+        if (!snapshot.HasValue && snapshot.Params.Count == 0 && snapshot.TypeParams.Count == 0)
+            return new();
+
+        return new()
+        {
+            Summary = snapshot.Summary,
+            Remarks = snapshot.Remarks,
+            Returns = snapshot.Returns,
+            Value = snapshot.Value,
+            Example = snapshot.Example,
+            Params = [..snapshot.Params.Select(p => (p.Name, p.Description))],
+            TypeParams = [..snapshot.TypeParams.Select(p => (p.Name, p.Description))],
+            Exceptions = [..snapshot.Exceptions.Select(e => (e.Type, e.Description))],
+            SeeAlso = [..snapshot.SeeAlso],
+        };
+    }
+
     #endregion
 
     #region Content

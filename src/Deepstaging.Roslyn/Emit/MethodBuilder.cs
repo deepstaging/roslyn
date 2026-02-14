@@ -404,6 +404,19 @@ public record struct MethodBuilder
     }
 
     /// <summary>
+    /// Sets the XML documentation for the method from a pipeline-safe <see cref="DocumentationSnapshot"/>.
+    /// </summary>
+    /// <param name="snapshot">The documentation snapshot to copy.</param>
+    public MethodBuilder WithXmlDoc(DocumentationSnapshot snapshot)
+    {
+        if (!snapshot.HasValue && snapshot.Params.Count == 0 && snapshot.TypeParams.Count == 0)
+            return this;
+
+        var xmlDoc = XmlDocumentationBuilder.From(snapshot);
+        return this with { XmlDoc = xmlDoc };
+    }
+
+    /// <summary>
     /// Sets the XML documentation for the method using inheritdoc.
     /// </summary>
     /// <param name="cref">Optional cref attribute for the inheritdoc element.</param>

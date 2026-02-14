@@ -681,6 +681,19 @@ public record struct TypeBuilder
         return this with { XmlDoc = xmlDoc };
     }
 
+    /// <summary>
+    /// Sets the XML documentation for the type from a pipeline-safe <see cref="DocumentationSnapshot"/>.
+    /// </summary>
+    /// <param name="snapshot">The documentation snapshot to copy.</param>
+    public TypeBuilder WithXmlDoc(DocumentationSnapshot snapshot)
+    {
+        if (!snapshot.HasValue && snapshot.Params.Count == 0 && snapshot.TypeParams.Count == 0)
+            return this;
+
+        var xmlDoc = XmlDocumentationBuilder.From(snapshot);
+        return this with { XmlDoc = xmlDoc };
+    }
+
     #endregion
 
     #region Attributes
