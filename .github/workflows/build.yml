@@ -10,7 +10,12 @@ on:
 
 jobs:
   build:
-    uses: deepstaging/.github/.github/workflows/dotnet-build.yml@main
-    with:
-      solution: Deepstaging.Roslyn.slnx
-      dotnet-version: '10.0.x'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - run: dotnet restore Deepstaging.Roslyn.slnx
+      - run: dotnet build Deepstaging.Roslyn.slnx -c Release --no-restore
+      - run: dotnet test Deepstaging.Roslyn.slnx -c Release --no-build
