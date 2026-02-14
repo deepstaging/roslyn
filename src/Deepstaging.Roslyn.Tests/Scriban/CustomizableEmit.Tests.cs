@@ -106,6 +106,58 @@ public class CustomizableEmitTests : RoslynTestBase
     }
 
     [Test]
+    public async Task ResolveFrom_invalid_csharp_reports_DSRK006_with_template_name()
+    {
+        var emit = TypeBuilder.Class("MyClass").Emit();
+        var customizable = emit.WithUserTemplate("Test/MyType", new { });
+
+        var texts = CreateAdditionalTexts(
+            ("Templates/Test/MyType.scriban-cs",
+                "public class { }"));
+
+        var templates = UserTemplates.From(texts);
+        var resolved = customizable.ResolveFrom(templates);
+
+        await Assert.That(resolved.Success).IsFalse();
+        await Assert.That(resolved.Diagnostics.First().Id).IsEqualTo("DSRK006");
+        await Assert.That(resolved.Diagnostics.First().GetMessage()).Contains("Test/MyType");
+    }
+
+    [Test]
+    public async Task ResolveFrom_invalid_csharp_includes_cs_errors_in_message()
+    {
+        var emit = TypeBuilder.Class("MyClass").Emit();
+        var customizable = emit.WithUserTemplate("Test/MyType", new { });
+
+        var texts = CreateAdditionalTexts(
+            ("Templates/Test/MyType.scriban-cs",
+                "public class { }"));
+
+        var templates = UserTemplates.From(texts);
+        var resolved = customizable.ResolveFrom(templates);
+
+        await Assert.That(resolved.Diagnostics.First().GetMessage()).Contains("CS");
+    }
+
+    [Test]
+    public async Task ResolveFrom_invalid_csharp_location_points_to_template_file()
+    {
+        var emit = TypeBuilder.Class("MyClass").Emit();
+        var customizable = emit.WithUserTemplate("Test/MyType", new { });
+
+        var texts = CreateAdditionalTexts(
+            ("Templates/Test/MyType.scriban-cs",
+                "public class { }"));
+
+        var templates = UserTemplates.From(texts);
+        var resolved = customizable.ResolveFrom(templates);
+
+        var location = resolved.Diagnostics.First().Location;
+        await Assert.That(location.IsInSource).IsFalse();
+        await Assert.That(location.GetLineSpan().Path).Contains("Templates/Test/MyType.scriban-cs");
+    }
+
+    [Test]
     public async Task ResolveFrom_returns_default_emit_when_default_is_invalid()
     {
         var method = MethodBuilder
@@ -142,6 +194,38 @@ public class CustomizableEmitTests : RoslynTestBase
         var resolved = customizable.ResolveFrom(templates);
 
         await Assert.That(resolved.Success).IsFalse();
+    }
+
+    [Test]
+    public async Task ResolveFrom_scriban_error_reports_DSRK007_with_template_name()
+    {
+        var emit = TypeBuilder.Class("MyClass").Emit();
+        var customizable = emit.WithUserTemplate("Test/MyType", new { });
+
+        var texts = CreateAdditionalTexts(
+            ("Templates/Test/MyType.scriban-cs", "{{ for }}"));
+
+        var templates = UserTemplates.From(texts);
+        var resolved = customizable.ResolveFrom(templates);
+
+        await Assert.That(resolved.Diagnostics.First().Id).IsEqualTo("DSRK007");
+        await Assert.That(resolved.Diagnostics.First().GetMessage()).Contains("Test/MyType");
+    }
+
+    [Test]
+    public async Task ResolveFrom_scriban_error_location_points_to_template_file()
+    {
+        var emit = TypeBuilder.Class("MyClass").Emit();
+        var customizable = emit.WithUserTemplate("Test/MyType", new { });
+
+        var texts = CreateAdditionalTexts(
+            ("Templates/Test/MyType.scriban-cs", "{{ for }}"));
+
+        var templates = UserTemplates.From(texts);
+        var resolved = customizable.ResolveFrom(templates);
+
+        var location = resolved.Diagnostics.First().Location;
+        await Assert.That(location.GetLineSpan().Path).Contains("Templates/Test/MyType.scriban-cs");
     }
 
     #endregion

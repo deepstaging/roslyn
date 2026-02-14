@@ -12,11 +12,11 @@ public sealed class UserTemplates
     /// <summary>
     /// An empty instance with no user templates.
     /// </summary>
-    public static readonly UserTemplates Empty = new(ImmutableDictionary<string, string>.Empty);
+    public static readonly UserTemplates Empty = new(ImmutableDictionary<string, UserTemplateEntry>.Empty);
 
-    private readonly ImmutableDictionary<string, string> _templates;
+    private readonly ImmutableDictionary<string, UserTemplateEntry> _templates;
 
-    private UserTemplates(ImmutableDictionary<string, string> templates)
+    private UserTemplates(ImmutableDictionary<string, UserTemplateEntry> templates)
     {
         _templates = templates;
     }
@@ -28,7 +28,7 @@ public sealed class UserTemplates
     /// <param name="additionalTexts">Additional texts from the incremental generator pipeline.</param>
     public static UserTemplates From(ImmutableArray<AdditionalText> additionalTexts)
     {
-        var builder = ImmutableDictionary.CreateBuilder<string, string>();
+        var builder = ImmutableDictionary.CreateBuilder<string, UserTemplateEntry>();
 
         foreach (var text in additionalTexts)
         {
@@ -41,7 +41,7 @@ public sealed class UserTemplates
 
             var content = text.GetText()?.ToString();
             if (content is not null)
-                builder[name] = content;
+                builder[name] = new UserTemplateEntry(content, text.Path);
         }
 
         return new UserTemplates(builder.ToImmutable());
@@ -55,16 +55,22 @@ public sealed class UserTemplates
     /// <param name="model">The model object to pass to the Scriban template.</param>
     public RenderResult? TryRender(string templateName, object? model)
     {
-        if (!_templates.TryGetValue(templateName, out var templateText))
+        if (!_templates.TryGetValue(templateName, out var entry))
             return null;
 
-        return Template.RenderFromText(templateText, templateName, model);
+        return Template.RenderFromText(entry.Content, templateName, model);
     }
 
     /// <summary>
     /// Checks whether a user template exists for the given name.
     /// </summary>
     public bool HasTemplate(string templateName) => _templates.ContainsKey(templateName);
+
+    /// <summary>
+    /// Gets the file path for a user template, or null if no template exists.
+    /// </summary>
+    public string? GetFilePath(string templateName) =>
+        _templates.TryGetValue(templateName, out var entry) ? entry.FilePath : null;
 
     /// <summary>
     /// Extracts the namespaced template name from a file path.
@@ -90,3 +96,8 @@ public sealed class UserTemplates
         return relative.Length > 0 ? relative : null;
     }
 }
+
+/// <summary>
+/// A user template entry with content and file path.
+/// </summary>
+internal readonly record struct UserTemplateEntry(string Content, string FilePath);

@@ -174,5 +174,7 @@ The Scriban package bundles scaffold analyzers and code fixes — no additional 
 | ID | Severity | Description |
 |----|----------|-------------|
 | **DSRK005** | Info | Customizable template available for a type. Code fix creates starter template. |
+| **DSRK006** | Error | User template rendered invalid C#. Includes template name and C# syntax errors. |
+| **DSRK007** | Error | User template has Scriban parse or render errors. Includes template name and details. |
 
 See [Customizable Templates](../guides/customizable-templates.md) for the full guide.

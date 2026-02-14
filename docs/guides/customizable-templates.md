@@ -2,6 +2,9 @@
 
 Make your generator's output customizable by consumers through Scriban templates.
 
+!!! warning "Early / Experimental"
+    This feature is in early development and has not been tested against many scenarios. APIs may change and behavior may be unstable. Use with caution in production projects.
+
 ## Overview
 
 When a generator uses **customizable templates**, consumers can override the default generated code by providing their own `.scriban-cs` template files. The flow:
@@ -160,6 +163,28 @@ Use the **code fix** (lightbulb action) to create a starter template pre-filled 
 | **Enabled** | Yes |
 
 Reported when a type uses a trigger attribute that has a customizable template available, but no user template file has been created yet. The accompanying code fix creates the template file with scaffold content.
+
+### DSRK006 — User template rendered invalid C#
+
+| Property | Value |
+|----------|-------|
+| **ID** | DSRK006 |
+| **Severity** | Error |
+| **Category** | CodeGeneration |
+| **Enabled** | Yes |
+
+Reported when a user-provided Scriban template renders successfully but the output is not valid C#. The diagnostic message includes the template name and the specific C# syntax errors. The location points to the template file.
+
+### DSRK007 — User template Scriban error
+
+| Property | Value |
+|----------|-------|
+| **ID** | DSRK007 |
+| **Severity** | Error |
+| **Category** | CodeGeneration |
+| **Enabled** | Yes |
+
+Reported when a user-provided Scriban template has parse errors (invalid Scriban syntax) or fails during rendering. The diagnostic message includes the template name and the Scriban error details. The location points to the template file.
 
 ### How scaffold metadata works
 

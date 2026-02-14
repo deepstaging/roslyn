@@ -3,6 +3,7 @@
 
 using Deepstaging.Roslyn.Emit;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Text;
 
 namespace Deepstaging.Roslyn.Scriban;
 
@@ -60,10 +61,12 @@ public readonly struct CustomizableEmit
         if (rendered is null)
             return DefaultEmit;
 
+        var location = CreateTemplateLocation(templates);
+
         return rendered switch
         {
-            RenderResult.Success s => ValidateRenderedOutput(s.Text),
-            RenderResult.Failure f => OptionalEmit.FromFailure([f.Diagnostic]),
+            RenderResult.Success s => ValidateRenderedOutput(s.Text, location),
+            RenderResult.Failure f => CreateScribanErrorResult(f, location),
             _ => DefaultEmit,
         };
     }
@@ -91,18 +94,58 @@ public readonly struct CustomizableEmit
 
     /// <summary>
     /// Validates rendered Scriban output as C# source code.
-    /// Applies the same syntax validation that TypeBuilder.Emit() uses.
+    /// Produces a DSRK006 diagnostic with the template name and aggregated C# errors
+    /// instead of raw CS* diagnostics.
     /// </summary>
-    private static OptionalEmit ValidateRenderedOutput(string code)
+    private OptionalEmit ValidateRenderedOutput(string code, Location? templateLocation)
     {
         var tree = CSharpSyntaxTree.ParseText(code);
         var root = tree.GetCompilationUnitRoot();
-        var diagnostics = root.GetDiagnostics()
+        var errors = root.GetDiagnostics()
             .Where(d => d.Severity == DiagnosticSeverity.Error)
             .ToImmutableArray();
 
-        return diagnostics.Any()
-            ? OptionalEmit.FromDiagnostics(root, code, diagnostics)
-            : OptionalEmit.FromSuccess(root, code);
+        if (!errors.Any())
+            return OptionalEmit.FromSuccess(root, code);
+
+        var errorSummary = string.Join("; ", errors.Select(d =>
+            $"{d.Id} at {d.Location.GetLineSpan().StartLinePosition}: {d.GetMessage()}"));
+
+        var diagnostic = Diagnostic.Create(
+            Rules.UserTemplateInvalidCSharp,
+            templateLocation ?? Location.None,
+            TemplateName,
+            errorSummary);
+
+        return OptionalEmit.FromFailure([diagnostic]);
+    }
+
+    /// <summary>
+    /// Creates a DSRK007 diagnostic for Scriban parse/render errors in user templates.
+    /// </summary>
+    private OptionalEmit CreateScribanErrorResult(RenderResult.Failure failure, Location? templateLocation)
+    {
+        var diagnostic = Diagnostic.Create(
+            Rules.UserTemplateScribanError,
+            templateLocation ?? Location.None,
+            TemplateName,
+            failure.Diagnostic.GetMessage());
+
+        return OptionalEmit.FromFailure([diagnostic]);
+    }
+
+    /// <summary>
+    /// Creates a <see cref="Location"/> pointing to the user template file, if the file path is known.
+    /// </summary>
+    private Location? CreateTemplateLocation(UserTemplates templates)
+    {
+        var filePath = templates.GetFilePath(TemplateName);
+        if (filePath is null)
+            return null;
+
+        return Location.Create(
+            filePath,
+            TextSpan.FromBounds(0, 0),
+            new LinePositionSpan(LinePosition.Zero, LinePosition.Zero));
     }
 }

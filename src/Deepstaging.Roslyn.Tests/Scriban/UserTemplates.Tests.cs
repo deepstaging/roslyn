@@ -113,6 +113,29 @@ public class UserTemplatesTests
 
     #endregion
 
+    #region GetFilePath
+
+    [Test]
+    public async Task GetFilePath_returns_path_for_existing_template()
+    {
+        var texts = CreateAdditionalTexts(
+            ("Templates/Test/MyType.scriban-cs", "content"));
+
+        var templates = UserTemplates.From(texts);
+
+        await Assert.That(templates.GetFilePath("Test/MyType")).IsEqualTo("Templates/Test/MyType.scriban-cs");
+    }
+
+    [Test]
+    public async Task GetFilePath_returns_null_for_missing_template()
+    {
+        var templates = UserTemplates.From([]);
+
+        await Assert.That(templates.GetFilePath("NonExistent")).IsNull();
+    }
+
+    #endregion
+
     #region Helpers
 
     private static ImmutableArray<AdditionalText> CreateAdditionalTexts(
