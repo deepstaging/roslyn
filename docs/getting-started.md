@@ -49,8 +49,11 @@ public sealed class AutoNotifyGenerator : IIncrementalGenerator
     }
 }
 
-internal record AutoNotifyModel(string Namespace, string TypeName, ImmutableArray<FieldModel> Fields);
-internal record FieldModel(string FieldName, string PropertyName, string TypeName);
+[PipelineModel]
+internal sealed record AutoNotifyModel(string Namespace, string TypeName, EquatableArray<FieldModel> Fields);
+
+[PipelineModel]
+internal sealed record FieldModel(string FieldName, string PropertyName, string TypeName);
 
 file static class AutoNotifyExtensions
 {
@@ -66,7 +69,8 @@ file static class AutoNotifyExtensions
                 .Select(f => new FieldModel(
                     f.Name,
                     f.Name.TrimStart('_').ToPascalCase(),
-                    f.Type.FullyQualifiedName)));
+                    f.Type.FullyQualifiedName))
+                .ToEquatableArray());
     }
 
     extension(AutoNotifyModel model)
@@ -125,7 +129,7 @@ context.MapTypes((compilation, ct) =>
         .ThatAreClasses()
         .ThatArePartial()
         .WithName("*Repository")
-        .Select(t => new RepositoryModel(t.Value)));
+        .Select(t => new RepositoryModel(t.Name, t.Namespace ?? "")));
 ```
 
 ## Core Concepts

@@ -128,7 +128,7 @@ extension(ValidSymbol<INamedTypeSymbol> symbol)
 // Query fields with a specific attribute
 extension(ValidSymbol<INamedTypeSymbol> symbol)
 {
-    public ImmutableArray<NotifyPropertyModel> QueryNotifyProperties()
+    public EquatableArray<NotifyPropertyModel> QueryNotifyProperties()
     {
         return symbol.QueryFields()
             .ThatArePrivate()
@@ -141,7 +141,8 @@ extension(ValidSymbol<INamedTypeSymbol> symbol)
                 AlsoNotify = field.GetAttribute<AlsoNotifyAttribute>()
                     .NamedArgArray<string>("Properties")
                     .OrEmpty()
-            });
+            })
+            .ToEquatableArray();
     }
 }
 
