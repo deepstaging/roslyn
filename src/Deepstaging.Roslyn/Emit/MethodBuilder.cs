@@ -391,19 +391,6 @@ public record struct MethodBuilder
     }
 
     /// <summary>
-    /// Sets the XML documentation for the method from parsed XmlDocumentation.
-    /// </summary>
-    /// <param name="documentation">The parsed XML documentation to copy.</param>
-    public MethodBuilder WithXmlDoc(XmlDocumentation documentation)
-    {
-        if (documentation.IsEmpty)
-            return this;
-
-        var xmlDoc = XmlDocumentationBuilder.From(documentation);
-        return this with { XmlDoc = xmlDoc };
-    }
-
-    /// <summary>
     /// Sets the XML documentation for the method from a pipeline-safe <see cref="DocumentationSnapshot"/>.
     /// </summary>
     /// <param name="snapshot">The documentation snapshot to copy.</param>

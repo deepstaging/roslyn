@@ -669,19 +669,6 @@ public record struct TypeBuilder
     }
 
     /// <summary>
-    /// Sets the XML documentation for the type from parsed XmlDocumentation.
-    /// </summary>
-    /// <param name="documentation">The parsed XML documentation to copy.</param>
-    public TypeBuilder WithXmlDoc(XmlDocumentation documentation)
-    {
-        if (documentation.IsEmpty)
-            return this;
-
-        var xmlDoc = XmlDocumentationBuilder.From(documentation);
-        return this with { XmlDoc = xmlDoc };
-    }
-
-    /// <summary>
     /// Sets the XML documentation for the type from a pipeline-safe <see cref="DocumentationSnapshot"/>.
     /// </summary>
     /// <param name="snapshot">The documentation snapshot to copy.</param>

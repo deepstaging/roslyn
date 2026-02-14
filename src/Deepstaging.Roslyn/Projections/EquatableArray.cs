@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: RPL-1.5
 
 using System.Collections;
+using System.Runtime.CompilerServices;
 
 namespace Deepstaging.Roslyn;
 
@@ -9,8 +10,10 @@ namespace Deepstaging.Roslyn;
 /// A drop-in replacement for <see cref="ImmutableArray{T}"/> that provides structural equality.
 /// Use this in pipeline models instead of <see cref="ImmutableArray{T}"/> to ensure
 /// incremental generator caching works correctly.
+/// Supports collection expression syntax: <c>EquatableArray&lt;int&gt; a = [1, 2, 3];</c>
 /// </summary>
 /// <typeparam name="T">The element type, which must implement <see cref="IEquatable{T}"/>.</typeparam>
+[CollectionBuilder(typeof(EquatableArray), nameof(EquatableArray.Create))]
 public readonly struct EquatableArray<T>(ImmutableArray<T> array)
     : IEquatable<EquatableArray<T>>, IReadOnlyList<T>
     where T : IEquatable<T>
@@ -101,6 +104,21 @@ public readonly struct EquatableArray<T>(ImmutableArray<T> array)
     /// <inheritdoc />
     public static bool operator !=(EquatableArray<T> left, EquatableArray<T> right)
         => !left.Equals(right);
+}
+
+/// <summary>
+/// Factory methods for <see cref="EquatableArray{T}"/>. Used by the
+/// <see cref="CollectionBuilderAttribute"/> to enable collection expression syntax.
+/// </summary>
+public static class EquatableArray
+{
+    /// <summary>
+    /// Creates an <see cref="EquatableArray{T}"/> from a <see cref="ReadOnlySpan{T}"/>.
+    /// This is the target for <c>[CollectionBuilder]</c> and enables
+    /// <c>EquatableArray&lt;int&gt; a = [1, 2, 3];</c> syntax.
+    /// </summary>
+    public static EquatableArray<T> Create<T>(ReadOnlySpan<T> items) where T : IEquatable<T>
+        => new(ImmutableArray.Create(items));
 }
 
 /// <summary>

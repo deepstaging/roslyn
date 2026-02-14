@@ -60,29 +60,6 @@ public record struct XmlDocumentationBuilder
     public static XmlDocumentationBuilder ForInheritDoc(string? cref = null) => new() { InheritDoc = cref ?? string.Empty };
 
     /// <summary>
-    /// Creates an XML documentation builder from parsed XmlDocumentation.
-    /// </summary>
-    /// <param name="documentation">The parsed XML documentation to copy from.</param>
-    public static XmlDocumentationBuilder From(XmlDocumentation documentation)
-    {
-        if (documentation.IsEmpty)
-            return new();
-
-        return new()
-        {
-            Summary = documentation.Summary,
-            Remarks = documentation.Remarks,
-            Returns = documentation.Returns,
-            Value = documentation.Value,
-            Example = documentation.Example,
-            Params = [..documentation.Params],
-            TypeParams = [..documentation.TypeParams],
-            Exceptions = [..documentation.Exceptions],
-            SeeAlso = [..documentation.SeeAlso],
-        };
-    }
-
-    /// <summary>
     /// Creates a builder pre-populated from a pipeline-safe <see cref="DocumentationSnapshot"/>.
     /// </summary>
     /// <param name="snapshot">The documentation snapshot to copy from.</param>
