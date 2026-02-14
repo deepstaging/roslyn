@@ -41,15 +41,12 @@ jobs:
           if [[ "${{ github.ref_type }}" == "tag" ]]; then
             # Tag push - release build without version suffix
             ./build/pack.sh --no-version-suffix --update-versions --output ./artifacts/packages
-          elif [[ "${{ github.event_name }}" == "push" ]]; then
-            # Branch push - dev build with commit-count suffix
-            ./build/pack.sh --ci --output ./artifacts/packages
           elif [[ -n "${{ github.event.inputs.version-suffix }}" ]]; then
-            # Manual trigger with suffix
+            # Manual trigger with explicit suffix
             ./build/pack.sh --version-suffix "${{ github.event.inputs.version-suffix }}" --update-versions --output ./artifacts/packages
           else
-            # Manual trigger without suffix - release build
-            ./build/pack.sh --no-version-suffix --update-versions --output ./artifacts/packages
+            # Branch push or manual trigger without suffix - dev build
+            ./build/pack.sh --ci --output ./artifacts/packages
           fi
 
       - name: Upload packages artifact
