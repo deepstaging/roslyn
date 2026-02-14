@@ -14,6 +14,7 @@ Create constructor declarations.
 
 ```csharp
 ctor.WithAccessibility(Accessibility.Public)
+ctor.WithAccessibility("public")  // from snapshot or ValidSymbol.AccessibilityString
 ctor.AsStatic()
 ctor.AsPrimary()  // for primary constructors
 ```

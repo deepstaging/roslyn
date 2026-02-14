@@ -140,6 +140,14 @@ public record struct MethodBuilder
     }
 
     /// <summary>
+    /// Sets the accessibility of the method from a keyword string (e.g., "public", "internal").
+    /// Accepts the same values produced by <see cref="ValidSymbol{TSymbol}.AccessibilityString"/>
+    /// and <see cref="SymbolSnapshot.AccessibilityString"/>.
+    /// </summary>
+    public MethodBuilder WithAccessibility(string accessibilityKeyword) =>
+        WithAccessibility(AccessibilityHelper.Parse(accessibilityKeyword));
+
+    /// <summary>
     /// Marks the method as static.
     /// </summary>
     public MethodBuilder AsStatic()

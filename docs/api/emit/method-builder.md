@@ -24,6 +24,7 @@ method.WithReturnType("IAsyncEnumerable<Order>")
 
 ```csharp
 method.WithAccessibility(Accessibility.Public)
+method.WithAccessibility("public")  // from snapshot or ValidSymbol.AccessibilityString
 method.AsStatic()
 method.AsVirtual()
 method.AsOverride()

@@ -188,6 +188,7 @@ Create event declarations.
 
 ```csharp
 event.WithAccessibility(Accessibility.Public)
+event.WithAccessibility("public")  // from snapshot or ValidSymbol.AccessibilityString
 event.AsStatic()
 event.AsVirtual()
 event.AsOverride()
@@ -261,6 +262,7 @@ indexer.WithInitOnlySetter()
 
 ```csharp
 indexer.WithAccessibility(Accessibility.Public)
+indexer.WithAccessibility("public")  // from snapshot or ValidSymbol.AccessibilityString
 indexer.AsVirtual()
 indexer.AsOverride()
 indexer.AsAbstract()

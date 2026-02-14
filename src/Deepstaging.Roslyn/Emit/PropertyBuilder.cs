@@ -117,6 +117,14 @@ public record struct PropertyBuilder
         this with { Accessibility = accessibility };
 
     /// <summary>
+    /// Sets the accessibility of the property from a keyword string (e.g., "public", "internal").
+    /// Accepts the same values produced by <see cref="ValidSymbol{TSymbol}.AccessibilityString"/>
+    /// and <see cref="SymbolSnapshot.AccessibilityString"/>.
+    /// </summary>
+    public readonly PropertyBuilder WithAccessibility(string accessibilityKeyword) =>
+        WithAccessibility(AccessibilityHelper.Parse(accessibilityKeyword));
+
+    /// <summary>
     /// Marks the property as static.
     /// </summary>
     public readonly PropertyBuilder AsStatic() =>

@@ -39,6 +39,7 @@ prop.WithSetter(body => body
 
 ```csharp
 prop.WithAccessibility(Accessibility.Public)
+prop.WithAccessibility("public")  // from snapshot or ValidSymbol.AccessibilityString
 prop.AsStatic()
 prop.AsVirtual()
 prop.AsOverride()

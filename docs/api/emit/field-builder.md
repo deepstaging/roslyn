@@ -15,6 +15,7 @@ Create field declarations.
 
 ```csharp
 field.WithAccessibility(Accessibility.Private)
+field.WithAccessibility("private")  // from snapshot or ValidSymbol.AccessibilityString
 field.AsStatic()
 field.AsReadonly()
 field.AsConst()

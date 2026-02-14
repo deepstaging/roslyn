@@ -30,6 +30,7 @@ TypeBuilder
 TypeBuilder
     .Class("MyClass")
     .WithAccessibility(Accessibility.Public)
+    .WithAccessibility("public")  // from snapshot or ValidSymbol.AccessibilityString
     .AsStatic()
     .AsAbstract()
     .AsSealed()

@@ -73,6 +73,14 @@ public record struct ConstructorBuilder
     }
 
     /// <summary>
+    /// Sets the accessibility of the constructor from a keyword string (e.g., "public", "internal").
+    /// Accepts the same values produced by <see cref="ValidSymbol{TSymbol}.AccessibilityString"/>
+    /// and <see cref="SymbolSnapshot.AccessibilityString"/>.
+    /// </summary>
+    public ConstructorBuilder WithAccessibility(string accessibilityKeyword) =>
+        WithAccessibility(AccessibilityHelper.Parse(accessibilityKeyword));
+
+    /// <summary>
     /// Marks the constructor as static.
     /// Note: Static constructors cannot have parameters or accessibility modifiers.
     /// </summary>
