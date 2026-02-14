@@ -23,7 +23,8 @@ This guide covers recommended patterns for organizing Roslyn projects using Deep
 
 1. **Separate concerns** into distinct projects (Attributes, Projection, Generators, Analyzers, CodeFixes)
 2. **Use the Projection pattern** as the single source of truth for attribute interpretation
-3. **Keep generators thin**—delegate to projection queries and writer extensions
-4. **Leverage base classes** for analyzers and code fixes
-5. **Use fluent APIs** for queries and emit—they're more readable and composable
-6. **Test thoroughly** with RoslynTestBase and snapshot verification
+3. **Use [PipelineModel](api/projections/pipeline-model.md) records** with `EquatableArray<T>` and [snapshot types](api/projections/snapshots.md) for correct incremental caching
+4. **Keep generators thin**—delegate to projection queries and writer extensions
+5. **Leverage base classes** for analyzers and code fixes
+6. **Use fluent APIs** for queries and emit—they're more readable and composable
+7. **Test thoroughly** with RoslynTestBase and snapshot verification

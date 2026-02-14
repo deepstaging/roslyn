@@ -46,16 +46,17 @@ public sealed record ValidateAttributeQuery(AttributeData AttributeData)
 
 ## 2. Models
 
-Simple records capturing data needed for generation:
+Simple records capturing data needed for generation. Mark them with `[PipelineModel]` and use [`EquatableArray<T>`](../api/projections/equatable-array.md) instead of `ImmutableArray<T>` for correct incremental caching. When you need symbol data in a model, use [snapshot types](../api/projections/snapshots.md) instead of `ValidSymbol<T>` or `ISymbol`.
 
 ```csharp
 // Models/AutoNotifyModel.cs
+[PipelineModel]
 public sealed record AutoNotifyModel
 {
     public required string Namespace { get; init; }
     public required string TypeName { get; init; }
     public required Accessibility Accessibility { get; init; }
-    public required ImmutableArray<NotifyPropertyModel> Properties { get; init; }
+    public required EquatableArray<NotifyPropertyModel> Properties { get; init; }
 }
 ```
 
@@ -63,15 +64,17 @@ public sealed record AutoNotifyModel
 
 ```csharp
 // Nested models for complex generation
+[PipelineModel]
 public sealed record NotifyPropertyModel
 {
     public required string FieldName { get; init; }
     public required string PropertyName { get; init; }
     public required string TypeName { get; init; }
-    public required ImmutableArray<string> AlsoNotify { get; init; }
+    public required EquatableArray<string> AlsoNotify { get; init; }
 }
 
 // Model with generation options
+[PipelineModel]
 public sealed record StrongIdModel
 {
     public required string Namespace { get; init; }
@@ -82,15 +85,17 @@ public sealed record StrongIdModel
     public required bool GenerateEfConverter { get; init; }
 }
 
-// Model capturing method signatures
+// Model using snapshots for rich symbol data
+[PipelineModel]
 public sealed record EffectMethodModel
 {
-    public required string MethodName { get; init; }
-    public required string ReturnType { get; init; }
-    public required ImmutableArray<ParameterModel> Parameters { get; init; }
+    public required MethodSnapshot Method { get; init; }
     public required bool IsAsync { get; init; }
 }
 ```
+
+!!! tip "When to use snapshots vs. strings"
+    Use **snapshot types** (`TypeSnapshot`, `MethodSnapshot`, etc.) when your writer needs multiple properties from a symbol — they capture everything in one call. Use **plain strings** when you only need a name or type reference.
 
 ## 3. Query Extensions
 
@@ -140,10 +145,10 @@ extension(ValidSymbol<INamedTypeSymbol> symbol)
     }
 }
 
-// Query methods matching a pattern
+// Query methods matching a pattern — using snapshots
 extension(ValidSymbol<INamedTypeSymbol> symbol)
 {
-    public ImmutableArray<EffectMethodModel> QueryEffectMethods()
+    public EquatableArray<EffectMethodModel> QueryEffectMethods()
     {
         return symbol.QueryMethods()
             .ThatArePublic()
@@ -151,15 +156,10 @@ extension(ValidSymbol<INamedTypeSymbol> symbol)
             .WithAttribute<EffectAttribute>()
             .Select(method => new EffectMethodModel
             {
-                MethodName = method.Name,
-                ReturnType = method.ReturnType.ToDisplayString(),
-                Parameters = method.Parameters.Select(p => new ParameterModel
-                {
-                    Name = p.Name,
-                    Type = p.Type.ToDisplayString()
-                }),
-                IsAsync = method.IsAsync
-            });
+                Method = method.ToSnapshot(),
+                IsAsync = method.IsAsync()
+            })
+            .ToEquatableArray();
     }
 }
 

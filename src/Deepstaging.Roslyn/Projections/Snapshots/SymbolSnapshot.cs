@@ -16,22 +16,22 @@ public record SymbolSnapshot : IEquatable<SymbolSnapshot>
     /// <summary>
     /// Gets the name of the symbol.
     /// </summary>
-    public required string Name { get; init; }
+    public string Name { get; init; } = "";
 
     /// <summary>
     /// Gets the containing namespace, or null if in global namespace.
     /// </summary>
-    public required string? Namespace { get; init; }
+    public string? Namespace { get; init; }
 
     /// <summary>
     /// Gets the fully qualified name without global namespace prefix.
     /// </summary>
-    public required string FullyQualifiedName { get; init; }
+    public string FullyQualifiedName { get; init; } = "";
 
     /// <summary>
     /// Gets the fully qualified name with global namespace prefix.
     /// </summary>
-    public required string GloballyQualifiedName { get; init; }
+    public string GloballyQualifiedName { get; init; } = "";
 
     /// <summary>
     /// Gets the display name (namespace.name) of the symbol.
@@ -42,12 +42,12 @@ public record SymbolSnapshot : IEquatable<SymbolSnapshot>
     /// <summary>
     /// Gets a suggested property name derived from the symbol name.
     /// </summary>
-    public required string PropertyName { get; init; }
+    public string PropertyName { get; init; } = "";
 
     /// <summary>
     /// Gets a suggested parameter name (camelCase) derived from the property name.
     /// </summary>
-    public required string ParameterName { get; init; }
+    public string ParameterName { get; init; } = "";
 
     #endregion
 
@@ -56,7 +56,7 @@ public record SymbolSnapshot : IEquatable<SymbolSnapshot>
     /// <summary>
     /// Gets the accessibility as a string keyword.
     /// </summary>
-    public required string AccessibilityString { get; init; }
+    public string AccessibilityString { get; init; } = "";
 
     /// <summary>
     /// Gets a value indicating whether the symbol is public.

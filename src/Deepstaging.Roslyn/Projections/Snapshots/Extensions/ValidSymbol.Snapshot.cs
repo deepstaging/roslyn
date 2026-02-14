@@ -13,32 +13,34 @@ public static class ValidSymbolSnapshotExtensions
     extension<TSymbol>(ValidSymbol<TSymbol> symbol) where TSymbol : class, ISymbol
     {
         /// <summary>
-        /// Creates the base <see cref="SymbolSnapshot"/> properties shared across all symbol types.
+        /// Populates the base <see cref="SymbolSnapshot"/> properties on a derived snapshot
+        /// using a record <c>with</c> expression.
         /// </summary>
-        internal SymbolSnapshot ToBaseSnapshot() => new()
-        {
-            Name = symbol.Name,
-            Namespace = symbol.Namespace,
-            FullyQualifiedName = symbol.FullyQualifiedName,
-            GloballyQualifiedName = symbol.GloballyQualifiedName,
-            PropertyName = symbol.PropertyName,
-            ParameterName = symbol.ParameterName,
-            AccessibilityString = symbol.AccessibilityString,
-            IsPublic = symbol.IsPublic,
-            IsInternal = symbol.IsInternal,
-            IsStatic = symbol.IsStatic,
-            IsAbstract = symbol.IsAbstract,
-            IsSealed = symbol.IsSealed,
-            IsVirtual = symbol.IsVirtual,
-            IsOverride = symbol.IsOverride,
-            IsReadOnly = symbol.IsReadOnly,
-            IsPartial = symbol.IsPartial,
-            Kind = symbol.Kind,
-            IsValueType = symbol.IsValueType,
-            IsReferenceType = symbol.IsReferenceType,
-            IsNullable = symbol.IsNullable,
-            Documentation = symbol.XmlDocumentation.ToSnapshot(),
-        };
+        internal T WithBaseProperties<T>(T snapshot) where T : SymbolSnapshot =>
+            snapshot with
+            {
+                Name = symbol.Name,
+                Namespace = symbol.Namespace,
+                FullyQualifiedName = symbol.FullyQualifiedName,
+                GloballyQualifiedName = symbol.GloballyQualifiedName,
+                PropertyName = symbol.PropertyName,
+                ParameterName = symbol.ParameterName,
+                AccessibilityString = symbol.AccessibilityString,
+                IsPublic = symbol.IsPublic,
+                IsInternal = symbol.IsInternal,
+                IsStatic = symbol.IsStatic,
+                IsAbstract = symbol.IsAbstract,
+                IsSealed = symbol.IsSealed,
+                IsVirtual = symbol.IsVirtual,
+                IsOverride = symbol.IsOverride,
+                IsReadOnly = symbol.IsReadOnly,
+                IsPartial = symbol.IsPartial,
+                Kind = symbol.Kind,
+                IsValueType = symbol.IsValueType,
+                IsReferenceType = symbol.IsReferenceType,
+                IsNullable = symbol.IsNullable,
+                Documentation = symbol.XmlDocumentation.ToSnapshot(),
+            };
     }
 
     extension(ValidSymbol<INamedTypeSymbol> symbol)
@@ -46,32 +48,8 @@ public static class ValidSymbolSnapshotExtensions
         /// <summary>
         /// Creates a pipeline-safe <see cref="TypeSnapshot"/> from this named type symbol.
         /// </summary>
-        public TypeSnapshot ToSnapshot() => new()
+        public TypeSnapshot ToSnapshot() => symbol.WithBaseProperties(new TypeSnapshot
         {
-            // Base properties
-            Name = symbol.Name,
-            Namespace = symbol.Namespace,
-            FullyQualifiedName = symbol.FullyQualifiedName,
-            GloballyQualifiedName = symbol.GloballyQualifiedName,
-            PropertyName = symbol.PropertyName,
-            ParameterName = symbol.ParameterName,
-            AccessibilityString = symbol.AccessibilityString,
-            IsPublic = symbol.IsPublic,
-            IsInternal = symbol.IsInternal,
-            IsStatic = symbol.IsStatic,
-            IsAbstract = symbol.IsAbstract,
-            IsSealed = symbol.IsSealed,
-            IsVirtual = symbol.IsVirtual,
-            IsOverride = symbol.IsOverride,
-            IsReadOnly = symbol.IsReadOnly,
-            IsPartial = symbol.IsPartial,
-            Kind = symbol.Kind,
-            IsValueType = symbol.IsValueType,
-            IsReferenceType = symbol.IsReferenceType,
-            IsNullable = symbol.IsNullable,
-            Documentation = symbol.XmlDocumentation.ToSnapshot(),
-
-            // Type-specific properties
             IsInterface = symbol.IsInterface,
             IsClass = symbol.IsClass,
             IsStruct = symbol.IsStruct,
@@ -91,7 +69,7 @@ public static class ValidSymbolSnapshotExtensions
             InterfaceNames = symbol.Interfaces
                 .Select(i => i.GloballyQualifiedName)
                 .ToEquatableArray(),
-        };
+        });
     }
 
     extension(ValidSymbol<IMethodSymbol> method)
@@ -99,32 +77,8 @@ public static class ValidSymbolSnapshotExtensions
         /// <summary>
         /// Creates a pipeline-safe <see cref="MethodSnapshot"/> from this method symbol.
         /// </summary>
-        public MethodSnapshot ToSnapshot() => new()
+        public MethodSnapshot ToSnapshot() => method.WithBaseProperties(new MethodSnapshot
         {
-            // Base properties
-            Name = method.Name,
-            Namespace = method.Namespace,
-            FullyQualifiedName = method.FullyQualifiedName,
-            GloballyQualifiedName = method.GloballyQualifiedName,
-            PropertyName = method.PropertyName,
-            ParameterName = method.ParameterName,
-            AccessibilityString = method.AccessibilityString,
-            IsPublic = method.IsPublic,
-            IsInternal = method.IsInternal,
-            IsStatic = method.IsStatic,
-            IsAbstract = method.IsAbstract,
-            IsSealed = method.IsSealed,
-            IsVirtual = method.IsVirtual,
-            IsOverride = method.IsOverride,
-            IsReadOnly = method.IsReadOnly,
-            IsPartial = method.IsPartial,
-            Kind = method.Kind,
-            IsValueType = method.IsValueType,
-            IsReferenceType = method.IsReferenceType,
-            IsNullable = method.IsNullable,
-            Documentation = method.XmlDocumentation.ToSnapshot(),
-
-            // Method-specific properties
             ReturnType = method.ReturnType.GloballyQualifiedName,
             ReturnsVoid = method.ReturnsVoid,
             AsyncKind = method.AsyncKind,
@@ -139,7 +93,7 @@ public static class ValidSymbolSnapshotExtensions
             Parameters = method.Parameters
                 .Select(p => p.ToSnapshot())
                 .ToEquatableArray(),
-        };
+        });
     }
 
     extension(ValidSymbol<IParameterSymbol> parameter)
@@ -147,32 +101,8 @@ public static class ValidSymbolSnapshotExtensions
         /// <summary>
         /// Creates a pipeline-safe <see cref="ParameterSnapshot"/> from this parameter symbol.
         /// </summary>
-        public ParameterSnapshot ToSnapshot() => new()
+        public ParameterSnapshot ToSnapshot() => parameter.WithBaseProperties(new ParameterSnapshot
         {
-            // Base properties
-            Name = parameter.Name,
-            Namespace = parameter.Namespace,
-            FullyQualifiedName = parameter.FullyQualifiedName,
-            GloballyQualifiedName = parameter.GloballyQualifiedName,
-            PropertyName = parameter.PropertyName,
-            ParameterName = parameter.ParameterName,
-            AccessibilityString = parameter.AccessibilityString,
-            IsPublic = parameter.IsPublic,
-            IsInternal = parameter.IsInternal,
-            IsStatic = parameter.IsStatic,
-            IsAbstract = parameter.IsAbstract,
-            IsSealed = parameter.IsSealed,
-            IsVirtual = parameter.IsVirtual,
-            IsOverride = parameter.IsOverride,
-            IsReadOnly = parameter.IsReadOnly,
-            IsPartial = parameter.IsPartial,
-            Kind = parameter.Kind,
-            IsValueType = parameter.IsValueType,
-            IsReferenceType = parameter.IsReferenceType,
-            IsNullable = parameter.IsNullable,
-            Documentation = parameter.XmlDocumentation.ToSnapshot(),
-
-            // Parameter-specific properties
             Type = parameter.Type.GloballyQualifiedName,
             HasExplicitDefaultValue = parameter.HasExplicitDefaultValue,
             DefaultValueExpression = parameter.HasExplicitDefaultValue
@@ -181,7 +111,7 @@ public static class ValidSymbolSnapshotExtensions
             RefKind = parameter.Value.RefKind,
             IsParams = parameter.Value.IsParams,
             IsOptional = parameter.Value.IsOptional,
-        };
+        });
     }
 
     extension(ValidSymbol<IPropertySymbol> property)
@@ -189,32 +119,8 @@ public static class ValidSymbolSnapshotExtensions
         /// <summary>
         /// Creates a pipeline-safe <see cref="PropertySnapshot"/> from this property symbol.
         /// </summary>
-        public PropertySnapshot ToSnapshot() => new()
+        public PropertySnapshot ToSnapshot() => property.WithBaseProperties(new PropertySnapshot
         {
-            // Base properties
-            Name = property.Name,
-            Namespace = property.Namespace,
-            FullyQualifiedName = property.FullyQualifiedName,
-            GloballyQualifiedName = property.GloballyQualifiedName,
-            PropertyName = property.PropertyName,
-            ParameterName = property.ParameterName,
-            AccessibilityString = property.AccessibilityString,
-            IsPublic = property.IsPublic,
-            IsInternal = property.IsInternal,
-            IsStatic = property.IsStatic,
-            IsAbstract = property.IsAbstract,
-            IsSealed = property.IsSealed,
-            IsVirtual = property.IsVirtual,
-            IsOverride = property.IsOverride,
-            IsReadOnly = property.IsReadOnly,
-            IsPartial = property.IsPartial,
-            Kind = property.Kind,
-            IsValueType = property.IsValueType,
-            IsReferenceType = property.IsReferenceType,
-            IsNullable = property.IsNullable,
-            Documentation = property.XmlDocumentation.ToSnapshot(),
-
-            // Property-specific properties
             Type = property.Type.GloballyQualifiedName,
             HasGetter = property.Value.GetMethod != null,
             HasSetter = property.Value.SetMethod != null,
@@ -226,7 +132,7 @@ public static class ValidSymbolSnapshotExtensions
                     .Select(p => ValidSymbol<IParameterSymbol>.From(p).ToSnapshot())
                     .ToEquatableArray()
                 : [],
-        };
+        });
     }
 
     extension(ValidSymbol<IFieldSymbol> field)
@@ -234,32 +140,8 @@ public static class ValidSymbolSnapshotExtensions
         /// <summary>
         /// Creates a pipeline-safe <see cref="FieldSnapshot"/> from this field symbol.
         /// </summary>
-        public FieldSnapshot ToSnapshot() => new()
+        public FieldSnapshot ToSnapshot() => field.WithBaseProperties(new FieldSnapshot
         {
-            // Base properties
-            Name = field.Name,
-            Namespace = field.Namespace,
-            FullyQualifiedName = field.FullyQualifiedName,
-            GloballyQualifiedName = field.GloballyQualifiedName,
-            PropertyName = field.PropertyName,
-            ParameterName = field.ParameterName,
-            AccessibilityString = field.AccessibilityString,
-            IsPublic = field.IsPublic,
-            IsInternal = field.IsInternal,
-            IsStatic = field.IsStatic,
-            IsAbstract = field.IsAbstract,
-            IsSealed = field.IsSealed,
-            IsVirtual = field.IsVirtual,
-            IsOverride = field.IsOverride,
-            IsReadOnly = field.IsReadOnly,
-            IsPartial = field.IsPartial,
-            Kind = field.Kind,
-            IsValueType = field.IsValueType,
-            IsReferenceType = field.IsReferenceType,
-            IsNullable = field.IsNullable,
-            Documentation = field.XmlDocumentation.ToSnapshot(),
-
-            // Field-specific properties
             Type = field.Type.GloballyQualifiedName,
             IsConst = field.Value.IsConst,
             IsVolatile = field.Value.IsVolatile,
@@ -267,7 +149,7 @@ public static class ValidSymbolSnapshotExtensions
             ConstantValueExpression = field.Value.HasConstantValue
                 ? FormatDefaultValue(field.Value.ConstantValue, field.Value.Type)
                 : null,
-        };
+        });
     }
 
     extension(ValidSymbol<IEventSymbol> @event)
@@ -275,34 +157,10 @@ public static class ValidSymbolSnapshotExtensions
         /// <summary>
         /// Creates a pipeline-safe <see cref="EventSnapshot"/> from this event symbol.
         /// </summary>
-        public EventSnapshot ToSnapshot() => new()
+        public EventSnapshot ToSnapshot() => @event.WithBaseProperties(new EventSnapshot
         {
-            // Base properties
-            Name = @event.Name,
-            Namespace = @event.Namespace,
-            FullyQualifiedName = @event.FullyQualifiedName,
-            GloballyQualifiedName = @event.GloballyQualifiedName,
-            PropertyName = @event.PropertyName,
-            ParameterName = @event.ParameterName,
-            AccessibilityString = @event.AccessibilityString,
-            IsPublic = @event.IsPublic,
-            IsInternal = @event.IsInternal,
-            IsStatic = @event.IsStatic,
-            IsAbstract = @event.IsAbstract,
-            IsSealed = @event.IsSealed,
-            IsVirtual = @event.IsVirtual,
-            IsOverride = @event.IsOverride,
-            IsReadOnly = @event.IsReadOnly,
-            IsPartial = @event.IsPartial,
-            Kind = @event.Kind,
-            IsValueType = @event.IsValueType,
-            IsReferenceType = @event.IsReferenceType,
-            IsNullable = @event.IsNullable,
-            Documentation = @event.XmlDocumentation.ToSnapshot(),
-
-            // Event-specific properties
             Type = @event.Type.GloballyQualifiedName,
-        };
+        });
     }
 
     /// <summary>
