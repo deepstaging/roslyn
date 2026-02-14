@@ -40,7 +40,7 @@ internal readonly struct ParsableTypeInfo
     /// <summary>
     /// Creates a ParsableTypeInfo from the given type symbol.
     /// </summary>
-    public static ParsableTypeInfo From(ValidSymbol<INamedTypeSymbol> type)
+    public static ParsableTypeInfo From(TypeSnapshot type)
     {
         return new ParsableTypeInfo(BackingTypeCore.From(type));
     }

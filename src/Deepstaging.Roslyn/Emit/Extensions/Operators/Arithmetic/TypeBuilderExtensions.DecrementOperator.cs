@@ -19,7 +19,7 @@ public static class TypeBuilderDecrementOperatorExtensions
     /// <returns>The modified type builder.</returns>
     public static TypeBuilder ImplementsDecrementOperator(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         string valueAccessor)
     {
         var typeName = builder.Name;
@@ -61,7 +61,7 @@ public static class TypeBuilderDecrementOperatorExtensions
     /// </summary>
     public static TypeBuilder ImplementsDecrementOperator(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         PropertyBuilder property) =>
         builder.ImplementsDecrementOperator(backingType, property.Name);
 
@@ -70,7 +70,7 @@ public static class TypeBuilderDecrementOperatorExtensions
     /// </summary>
     public static TypeBuilder ImplementsDecrementOperator(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         FieldBuilder field) =>
         builder.ImplementsDecrementOperator(backingType, field.Name);
 }

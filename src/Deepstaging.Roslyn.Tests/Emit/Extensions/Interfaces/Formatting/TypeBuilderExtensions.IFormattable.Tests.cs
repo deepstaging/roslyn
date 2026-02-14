@@ -17,7 +17,7 @@ public class TypeBuilderIFormattableExtensionsTests : RoslynTestBase
             .Struct("MyId")
             .InNamespace("Test")
             .AddProperty("Value", "global::System.Guid", p => p.AsReadOnly())
-            .ImplementsIFormattable(WellKnownSymbols.Guid, "Value")
+            .ImplementsIFormattable(WellKnownSymbols.Guid.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -34,7 +34,7 @@ public class TypeBuilderIFormattableExtensionsTests : RoslynTestBase
             .Struct("MyId")
             .InNamespace("Test")
             .AddProperty("Value", "int", p => p.AsReadOnly())
-            .ImplementsIFormattable(WellKnownSymbols.Int32, "Value")
+            .ImplementsIFormattable(WellKnownSymbols.Int32.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -52,7 +52,7 @@ public class TypeBuilderIFormattableExtensionsTests : RoslynTestBase
             .Struct("MyId")
             .InNamespace("Test")
             .AddProperty("Value", "string?", p => p.AsReadOnly())
-            .ImplementsIFormattable(WellKnownSymbols.String, "Value")
+            .ImplementsIFormattable(WellKnownSymbols.String.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -70,7 +70,7 @@ public class TypeBuilderIFormattableExtensionsTests : RoslynTestBase
             .Struct("Counter")
             .InNamespace("Test")
             .AddProperty(valueProperty)
-            .ImplementsIFormattable(WellKnownSymbols.Int32, valueProperty)
+            .ImplementsIFormattable(WellKnownSymbols.Int32.ToSnapshot(), valueProperty)
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -86,7 +86,7 @@ public class TypeBuilderIFormattableExtensionsTests : RoslynTestBase
             .Struct("Counter")
             .InNamespace("Test")
             .AddField(valueField)
-            .ImplementsIFormattable(WellKnownSymbols.Int32, valueField)
+            .ImplementsIFormattable(WellKnownSymbols.Int32.ToSnapshot(), valueField)
             .Emit();
 
         await Assert.That(result.Success).IsTrue();

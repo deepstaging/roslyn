@@ -35,7 +35,7 @@ internal readonly struct FormattableTypeInfo
     /// <summary>
     /// Creates a FormattableTypeInfo from the given type symbol.
     /// </summary>
-    public static FormattableTypeInfo From(ValidSymbol<INamedTypeSymbol> type)
+    public static FormattableTypeInfo From(TypeSnapshot type)
     {
         var core = BackingTypeCore.From(type);
         return new FormattableTypeInfo(core, core.IsNumericType);

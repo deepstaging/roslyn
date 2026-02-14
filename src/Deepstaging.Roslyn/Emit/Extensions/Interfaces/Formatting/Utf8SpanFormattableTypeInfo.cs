@@ -34,7 +34,7 @@ internal readonly struct Utf8SpanFormattableTypeInfo
     /// <summary>
     /// Creates a Utf8SpanFormattableTypeInfo from the given type symbol.
     /// </summary>
-    public static Utf8SpanFormattableTypeInfo From(ValidSymbol<INamedTypeSymbol> type)
+    public static Utf8SpanFormattableTypeInfo From(TypeSnapshot type)
     {
         return new Utf8SpanFormattableTypeInfo(BackingTypeCore.From(type));
     }

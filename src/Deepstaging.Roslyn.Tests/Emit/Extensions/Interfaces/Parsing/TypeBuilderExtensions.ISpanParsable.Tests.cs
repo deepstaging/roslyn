@@ -17,7 +17,7 @@ public class TypeBuilderISpanParsableExtensionsTests : RoslynTestBase
             .Struct("MyId")
             .InNamespace("Test")
             .AddProperty("Value", "global::System.Guid", p => p.AsReadOnly())
-            .ImplementsISpanParsable(WellKnownSymbols.Guid)
+            .ImplementsISpanParsable(WellKnownSymbols.Guid.ToSnapshot())
             .Emit();
 
         await Assert.That(result.Success).IsTrue();

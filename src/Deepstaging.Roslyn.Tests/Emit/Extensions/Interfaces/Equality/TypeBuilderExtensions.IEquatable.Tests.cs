@@ -19,7 +19,7 @@ public class TypeBuilderIEquatableExtensionsTests : RoslynTestBase
             .Struct("MyId")
             .InNamespace("Test")
             .AddProperty("Value", "global::System.Guid", p => p.AsReadOnly())
-            .ImplementsIEquatable(WellKnownSymbols.Guid, "Value")
+            .ImplementsIEquatable(WellKnownSymbols.Guid.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -37,7 +37,7 @@ public class TypeBuilderIEquatableExtensionsTests : RoslynTestBase
             .Struct("MyId")
             .InNamespace("Test")
             .AddProperty("Value", "string?", p => p.AsReadOnly())
-            .ImplementsIEquatable(WellKnownSymbols.String, "Value")
+            .ImplementsIEquatable(WellKnownSymbols.String.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -53,7 +53,7 @@ public class TypeBuilderIEquatableExtensionsTests : RoslynTestBase
             .Struct("MyId")
             .InNamespace("Test")
             .AddProperty("Value", "int", p => p.AsReadOnly())
-            .ImplementsIEquatable(WellKnownSymbols.Int32, "Value")
+            .ImplementsIEquatable(WellKnownSymbols.Int32.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -94,7 +94,7 @@ public class TypeBuilderIEquatableExtensionsTests : RoslynTestBase
             .Struct("MyId")
             .InNamespace("Test")
             .AddProperty(valueProperty)
-            .ImplementsIEquatable(WellKnownSymbols.Guid, valueProperty)
+            .ImplementsIEquatable(WellKnownSymbols.Guid.ToSnapshot(), valueProperty)
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -111,7 +111,7 @@ public class TypeBuilderIEquatableExtensionsTests : RoslynTestBase
             .Struct("MyId")
             .InNamespace("Test")
             .AddField(valueField)
-            .ImplementsIEquatable(WellKnownSymbols.Guid, valueField)
+            .ImplementsIEquatable(WellKnownSymbols.Guid.ToSnapshot(), valueField)
             .Emit();
 
         await Assert.That(result.Success).IsTrue();

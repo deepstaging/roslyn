@@ -15,7 +15,7 @@ public static class TypeBuilderUnaryPlusOperatorExtensions
     /// </summary>
     public static TypeBuilder ImplementsUnaryPlusOperator(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         string valueAccessor)
     {
         var typeName = builder.Name;
@@ -54,7 +54,7 @@ public static class TypeBuilderUnaryPlusOperatorExtensions
     /// </summary>
     public static TypeBuilder ImplementsUnaryPlusOperator(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         PropertyBuilder property) =>
         builder.ImplementsUnaryPlusOperator(backingType, property.Name);
 
@@ -63,7 +63,7 @@ public static class TypeBuilderUnaryPlusOperatorExtensions
     /// </summary>
     public static TypeBuilder ImplementsUnaryPlusOperator(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         FieldBuilder field) =>
         builder.ImplementsUnaryPlusOperator(backingType, field.Name);
 }

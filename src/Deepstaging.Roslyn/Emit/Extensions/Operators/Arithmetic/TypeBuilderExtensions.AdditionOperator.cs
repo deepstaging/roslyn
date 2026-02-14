@@ -19,7 +19,7 @@ public static class TypeBuilderAdditionOperatorExtensions
     /// <returns>The modified type builder.</returns>
     public static TypeBuilder ImplementsAdditionOperator(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         string valueAccessor)
     {
         var typeName = builder.Name;
@@ -65,7 +65,7 @@ public static class TypeBuilderAdditionOperatorExtensions
     /// <returns>The modified type builder.</returns>
     public static TypeBuilder ImplementsAdditionOperator(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         PropertyBuilder property) =>
         builder.ImplementsAdditionOperator(backingType, property.Name);
 
@@ -78,7 +78,7 @@ public static class TypeBuilderAdditionOperatorExtensions
     /// <returns>The modified type builder.</returns>
     public static TypeBuilder ImplementsAdditionOperator(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         FieldBuilder field) =>
         builder.ImplementsAdditionOperator(backingType, field.Name);
 }

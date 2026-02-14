@@ -15,7 +15,7 @@ public static class TypeBuilderUnaryNegationOperatorExtensions
     /// </summary>
     public static TypeBuilder ImplementsUnaryNegationOperator(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         string valueAccessor)
     {
         var typeName = builder.Name;
@@ -54,7 +54,7 @@ public static class TypeBuilderUnaryNegationOperatorExtensions
     /// </summary>
     public static TypeBuilder ImplementsUnaryNegationOperator(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         PropertyBuilder property) =>
         builder.ImplementsUnaryNegationOperator(backingType, property.Name);
 
@@ -63,7 +63,7 @@ public static class TypeBuilderUnaryNegationOperatorExtensions
     /// </summary>
     public static TypeBuilder ImplementsUnaryNegationOperator(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         FieldBuilder field) =>
         builder.ImplementsUnaryNegationOperator(backingType, field.Name);
 }

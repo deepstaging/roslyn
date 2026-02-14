@@ -17,7 +17,7 @@ public class TypeBuilderIParsableExtensionsTests : RoslynTestBase
             .Struct("MyId")
             .InNamespace("Test")
             .AddProperty("Value", "global::System.Guid", p => p.AsReadOnly())
-            .ImplementsIParsable(WellKnownSymbols.Guid)
+            .ImplementsIParsable(WellKnownSymbols.Guid.ToSnapshot())
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -34,7 +34,7 @@ public class TypeBuilderIParsableExtensionsTests : RoslynTestBase
             .Struct("MyId")
             .InNamespace("Test")
             .AddProperty("Value", "int", p => p.AsReadOnly())
-            .ImplementsIParsable(WellKnownSymbols.Int32)
+            .ImplementsIParsable(WellKnownSymbols.Int32.ToSnapshot())
             .Emit();
 
         await Assert.That(result.Success).IsTrue();

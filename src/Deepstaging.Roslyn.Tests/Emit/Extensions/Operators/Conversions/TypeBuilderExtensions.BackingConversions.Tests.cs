@@ -17,7 +17,7 @@ public class TypeBuilderBackingConversionsExtensionsTests : RoslynTestBase
             .Struct("CustomerId")
             .InNamespace("Test")
             .AddProperty("Value", "global::System.Guid", p => p.AsReadOnly())
-            .WithBackingConversions(WellKnownSymbols.Guid, "Value")
+            .WithBackingConversions(WellKnownSymbols.Guid.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -34,7 +34,7 @@ public class TypeBuilderBackingConversionsExtensionsTests : RoslynTestBase
             .Struct("Counter")
             .InNamespace("Test")
             .AddProperty("Value", "int", p => p.AsReadOnly())
-            .WithBackingConversions(WellKnownSymbols.Int32, "Value")
+            .WithBackingConversions(WellKnownSymbols.Int32.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -65,7 +65,7 @@ public class TypeBuilderBackingConversionsExtensionsTests : RoslynTestBase
         var result = TypeBuilder
             .Struct("CustomerId")
             .InNamespace("Test")
-            .WithImplicitConversionFromBacking(WellKnownSymbols.Guid)
+            .WithImplicitConversionFromBacking(WellKnownSymbols.Guid.ToSnapshot())
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -80,7 +80,7 @@ public class TypeBuilderBackingConversionsExtensionsTests : RoslynTestBase
             .Struct("CustomerId")
             .InNamespace("Test")
             .AddProperty("Value", "global::System.Guid", p => p.AsReadOnly())
-            .WithExplicitConversionToBacking(WellKnownSymbols.Guid, "Value")
+            .WithExplicitConversionToBacking(WellKnownSymbols.Guid.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -99,7 +99,7 @@ public class TypeBuilderBackingConversionsExtensionsTests : RoslynTestBase
             .Struct("CustomerId")
             .InNamespace("Test")
             .AddProperty(valueProperty)
-            .WithBackingConversions(WellKnownSymbols.Guid, valueProperty)
+            .WithBackingConversions(WellKnownSymbols.Guid.ToSnapshot(), valueProperty)
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -115,7 +115,7 @@ public class TypeBuilderBackingConversionsExtensionsTests : RoslynTestBase
             .Struct("CustomerId")
             .InNamespace("Test")
             .AddField(valueField)
-            .WithBackingConversions(WellKnownSymbols.Guid, valueField)
+            .WithBackingConversions(WellKnownSymbols.Guid.ToSnapshot(), valueField)
             .Emit();
 
         await Assert.That(result.Success).IsTrue();

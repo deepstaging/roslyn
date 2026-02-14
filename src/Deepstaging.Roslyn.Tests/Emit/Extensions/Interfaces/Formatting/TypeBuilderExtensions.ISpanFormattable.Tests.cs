@@ -17,7 +17,7 @@ public class TypeBuilderISpanFormattableExtensionsTests : RoslynTestBase
             .Struct("MyId")
             .InNamespace("Test")
             .AddProperty("Value", "global::System.Guid", p => p.AsReadOnly())
-            .ImplementsISpanFormattable(WellKnownSymbols.Guid, "Value")
+            .ImplementsISpanFormattable(WellKnownSymbols.Guid.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -33,7 +33,7 @@ public class TypeBuilderISpanFormattableExtensionsTests : RoslynTestBase
             .Struct("MyId")
             .InNamespace("Test")
             .AddProperty("Value", "string?", p => p.AsReadOnly())
-            .ImplementsISpanFormattable(WellKnownSymbols.String, "Value")
+            .ImplementsISpanFormattable(WellKnownSymbols.String.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();

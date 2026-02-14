@@ -14,7 +14,7 @@ public class TypeBuilderConvertibleExtensionsTests : RoslynTestBase
             .Struct("Counter")
             .InNamespace("Test")
             .AddProperty("Value", "int", p => p.AsReadOnly())
-            .ImplementsIConvertible(WellKnownSymbols.Int32, "Value")
+            .ImplementsIConvertible(WellKnownSymbols.Int32.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -35,7 +35,7 @@ public class TypeBuilderConvertibleExtensionsTests : RoslynTestBase
             .Struct("CustomerId")
             .InNamespace("Test")
             .AddProperty("Value", "string", p => p.AsReadOnly())
-            .ImplementsIConvertible(WellKnownSymbols.String, "Value")
+            .ImplementsIConvertible(WellKnownSymbols.String.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -64,7 +64,7 @@ public class TypeBuilderConvertibleExtensionsTests : RoslynTestBase
             .Struct("Counter")
             .InNamespace("Test")
             .AddProperty("Value", "int", p => p.AsReadOnly())
-            .ImplementsIConvertible(WellKnownSymbols.Int32, "Value")
+            .ImplementsIConvertible(WellKnownSymbols.Int32.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -83,7 +83,7 @@ public class TypeBuilderConvertibleExtensionsTests : RoslynTestBase
             .Struct("Counter")
             .InNamespace("Test")
             .AddProperty(valueProperty)
-            .ImplementsIConvertible(WellKnownSymbols.Int32, valueProperty)
+            .ImplementsIConvertible(WellKnownSymbols.Int32.ToSnapshot(), valueProperty)
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -99,7 +99,7 @@ public class TypeBuilderConvertibleExtensionsTests : RoslynTestBase
             .Struct("Counter")
             .InNamespace("Test")
             .AddField(valueField)
-            .ImplementsIConvertible(WellKnownSymbols.Int32, valueField)
+            .ImplementsIConvertible(WellKnownSymbols.Int32.ToSnapshot(), valueField)
             .Emit();
 
         await Assert.That(result.Success).IsTrue();

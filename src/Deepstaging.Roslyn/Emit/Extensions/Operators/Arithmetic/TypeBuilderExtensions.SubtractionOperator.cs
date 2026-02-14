@@ -19,7 +19,7 @@ public static class TypeBuilderSubtractionOperatorExtensions
     /// <returns>The modified type builder.</returns>
     public static TypeBuilder ImplementsSubtractionOperator(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         string valueAccessor)
     {
         var typeName = builder.Name;
@@ -61,7 +61,7 @@ public static class TypeBuilderSubtractionOperatorExtensions
     /// </summary>
     public static TypeBuilder ImplementsSubtractionOperator(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         PropertyBuilder property) =>
         builder.ImplementsSubtractionOperator(backingType, property.Name);
 
@@ -70,7 +70,7 @@ public static class TypeBuilderSubtractionOperatorExtensions
     /// </summary>
     public static TypeBuilder ImplementsSubtractionOperator(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         FieldBuilder field) =>
         builder.ImplementsSubtractionOperator(backingType, field.Name);
 }

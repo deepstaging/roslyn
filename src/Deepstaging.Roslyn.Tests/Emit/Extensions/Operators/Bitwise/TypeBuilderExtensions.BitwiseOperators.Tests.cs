@@ -16,7 +16,7 @@ public class TypeBuilderBitwiseOperatorsTests : RoslynTestBase
             .Struct("Flags")
             .InNamespace("Test")
             .AddProperty("Value", "int", p => p.AsReadOnly())
-            .ImplementsBitwiseAndOperator(WellKnownSymbols.Int32, "Value")
+            .ImplementsBitwiseAndOperator(WellKnownSymbols.Int32.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -49,7 +49,7 @@ public class TypeBuilderBitwiseOperatorsTests : RoslynTestBase
             .Struct("Flags")
             .InNamespace("Test")
             .AddProperty("Value", "int", p => p.AsReadOnly())
-            .ImplementsBitwiseOrOperator(WellKnownSymbols.Int32, "Value")
+            .ImplementsBitwiseOrOperator(WellKnownSymbols.Int32.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -68,7 +68,7 @@ public class TypeBuilderBitwiseOperatorsTests : RoslynTestBase
             .Struct("Flags")
             .InNamespace("Test")
             .AddProperty("Value", "int", p => p.AsReadOnly())
-            .ImplementsExclusiveOrOperator(WellKnownSymbols.Int32, "Value")
+            .ImplementsExclusiveOrOperator(WellKnownSymbols.Int32.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -87,7 +87,7 @@ public class TypeBuilderBitwiseOperatorsTests : RoslynTestBase
             .Struct("Flags")
             .InNamespace("Test")
             .AddProperty("Value", "int", p => p.AsReadOnly())
-            .ImplementsBitwiseComplementOperator(WellKnownSymbols.Int32, "Value")
+            .ImplementsBitwiseComplementOperator(WellKnownSymbols.Int32.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -106,7 +106,7 @@ public class TypeBuilderBitwiseOperatorsTests : RoslynTestBase
             .Struct("Flags")
             .InNamespace("Test")
             .AddProperty("Value", "int", p => p.AsReadOnly())
-            .ImplementsLeftShiftOperator(WellKnownSymbols.Int32, "Value")
+            .ImplementsLeftShiftOperator(WellKnownSymbols.Int32.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -126,7 +126,7 @@ public class TypeBuilderBitwiseOperatorsTests : RoslynTestBase
             .Struct("Flags")
             .InNamespace("Test")
             .AddProperty("Value", "int", p => p.AsReadOnly())
-            .ImplementsRightShiftOperator(WellKnownSymbols.Int32, "Value")
+            .ImplementsRightShiftOperator(WellKnownSymbols.Int32.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -145,7 +145,7 @@ public class TypeBuilderBitwiseOperatorsTests : RoslynTestBase
             .Struct("Flags")
             .InNamespace("Test")
             .AddProperty("Value", "int", p => p.AsReadOnly())
-            .ImplementsUnsignedRightShiftOperator(WellKnownSymbols.Int32, "Value")
+            .ImplementsUnsignedRightShiftOperator(WellKnownSymbols.Int32.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -166,7 +166,7 @@ public class TypeBuilderBitwiseOperatorsTests : RoslynTestBase
             .Struct("Flags")
             .InNamespace("Test")
             .AddProperty(valueProperty)
-            .ImplementsBitwiseAndOperator(WellKnownSymbols.Int32, valueProperty)
+            .ImplementsBitwiseAndOperator(WellKnownSymbols.Int32.ToSnapshot(), valueProperty)
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -184,7 +184,7 @@ public class TypeBuilderBitwiseOperatorsTests : RoslynTestBase
             .Struct("Money")
             .InNamespace("Test")
             .AddProperty("Value", "decimal", p => p.AsReadOnly())
-            .ImplementsBitwiseAndOperator(WellKnownSymbols.Decimal, "Value")
+            .ImplementsBitwiseAndOperator(WellKnownSymbols.Decimal.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();

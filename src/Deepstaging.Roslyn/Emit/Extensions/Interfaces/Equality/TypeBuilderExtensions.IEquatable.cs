@@ -20,7 +20,7 @@ public static class TypeBuilderEquatableExtensions
     /// <returns>The modified type builder.</returns>
     public static TypeBuilder ImplementsIEquatable(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         string valueAccessor,
         StringComparison stringComparison = StringComparison.Ordinal)
     {
@@ -133,7 +133,7 @@ public static class TypeBuilderEquatableExtensions
     /// </summary>
     public static TypeBuilder ImplementsIEquatable(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         PropertyBuilder property,
         StringComparison stringComparison = StringComparison.Ordinal) =>
         builder.ImplementsIEquatable(backingType, property.Name, stringComparison);
@@ -143,7 +143,7 @@ public static class TypeBuilderEquatableExtensions
     /// </summary>
     public static TypeBuilder ImplementsIEquatable(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         FieldBuilder field,
         StringComparison stringComparison = StringComparison.Ordinal) =>
         builder.ImplementsIEquatable(backingType, field.Name, stringComparison);

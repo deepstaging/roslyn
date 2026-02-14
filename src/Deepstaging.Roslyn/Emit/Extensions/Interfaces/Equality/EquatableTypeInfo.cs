@@ -28,7 +28,7 @@ internal readonly struct EquatableTypeInfo
     /// <summary>
     /// Creates an EquatableTypeInfo from the given type symbol.
     /// </summary>
-    public static EquatableTypeInfo From(ValidSymbol<INamedTypeSymbol> type)
+    public static EquatableTypeInfo From(TypeSnapshot type)
     {
         return new EquatableTypeInfo(BackingTypeCore.From(type));
     }

@@ -20,7 +20,7 @@ public static class TypeBuilderComparableExtensions
     /// <returns>The modified type builder.</returns>
     public static TypeBuilder ImplementsIComparable(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         string valueAccessor,
         StringComparison stringComparison = StringComparison.Ordinal)
     {
@@ -101,7 +101,7 @@ public static class TypeBuilderComparableExtensions
     /// </summary>
     public static TypeBuilder ImplementsIComparable(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         PropertyBuilder property,
         StringComparison stringComparison = StringComparison.Ordinal) =>
         builder.ImplementsIComparable(backingType, property.Name, stringComparison);
@@ -111,7 +111,7 @@ public static class TypeBuilderComparableExtensions
     /// </summary>
     public static TypeBuilder ImplementsIComparable(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         FieldBuilder field,
         StringComparison stringComparison = StringComparison.Ordinal) =>
         builder.ImplementsIComparable(backingType, field.Name, stringComparison);

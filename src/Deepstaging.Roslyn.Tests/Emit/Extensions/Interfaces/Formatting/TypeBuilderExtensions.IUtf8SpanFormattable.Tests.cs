@@ -17,7 +17,7 @@ public class TypeBuilderIUtf8SpanFormattableExtensionsTests : RoslynTestBase
             .Struct("MyId")
             .InNamespace("Test")
             .AddProperty("Value", "global::System.Guid", p => p.AsReadOnly())
-            .ImplementsIUtf8SpanFormattable(WellKnownSymbols.Guid, "Value")
+            .ImplementsIUtf8SpanFormattable(WellKnownSymbols.Guid.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -33,7 +33,7 @@ public class TypeBuilderIUtf8SpanFormattableExtensionsTests : RoslynTestBase
             .Struct("MyId")
             .InNamespace("Test")
             .AddProperty("Value", "string?", p => p.AsReadOnly())
-            .ImplementsIUtf8SpanFormattable(WellKnownSymbols.String, "Value")
+            .ImplementsIUtf8SpanFormattable(WellKnownSymbols.String.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
