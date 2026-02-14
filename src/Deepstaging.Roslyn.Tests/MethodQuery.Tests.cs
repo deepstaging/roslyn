@@ -130,7 +130,7 @@ public class MethodQueryTests : RoslynTestBase
     public async Task Can_filter_extension_methods()
     {
         var code = """
-                   public static class StringExtensions
+                   public static class TestStringExtensions
                    {
                        public static string ToUpperFirst(this string s) => s;
                        public static string Regular(string s) => s;
@@ -138,7 +138,7 @@ public class MethodQueryTests : RoslynTestBase
                    """;
 
         var extensionMethods = SymbolsFor(code)
-            .RequireNamedType("StringExtensions")
+            .RequireNamedType("TestStringExtensions")
             .QueryMethods()
             .ThatAreExtensionMethods()
             .GetAll();
