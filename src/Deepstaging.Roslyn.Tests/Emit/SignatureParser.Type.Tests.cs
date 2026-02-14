@@ -206,8 +206,43 @@ public class SignatureParserTypeTests : RoslynTestBase
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
-        // Note: Generic type parameters on types would need additional handling
-        // For now, this tests that we don't break on generic syntax
+        await Assert.That(result.Code).Contains("class Repository<T>");
+    }
+
+    [Test]
+    public async Task Parse_GenericClassWithConstraint_PreservesConstraint()
+    {
+        var result = TypeBuilder.Parse("public sealed class DbSetQuery<RT, T> where T : class")
+            .Emit();
+
+        await Assert.That(result.Success).IsTrue();
+        await Assert.That(result.Code).Contains("class DbSetQuery<RT, T>");
+        await Assert.That(result.Code).Contains("where T : class");
+    }
+
+    [Test]
+    public async Task Parse_GenericClassWithTypeRef_PreservesTypeParameters()
+    {
+        TypeRef queryType = TypeRef.From("DbSetQuery").Of("RT", "T");
+
+        var result = TypeBuilder.Parse($"public sealed class {queryType} where T : class")
+            .Emit();
+
+        await Assert.That(result.Success).IsTrue();
+        await Assert.That(result.Code).Contains("class DbSetQuery<RT, T>");
+        await Assert.That(result.Code).Contains("where T : class");
+    }
+
+    [Test]
+    public async Task Parse_GenericClassWithMultipleConstraints_PreservesAll()
+    {
+        var result = TypeBuilder.Parse("public class Handler<T, TResult> where T : class where TResult : struct")
+            .Emit();
+
+        await Assert.That(result.Success).IsTrue();
+        await Assert.That(result.Code).Contains("class Handler<T, TResult>");
+        await Assert.That(result.Code).Contains("where T : class");
+        await Assert.That(result.Code).Contains("where TResult : struct");
     }
 
     [Test]

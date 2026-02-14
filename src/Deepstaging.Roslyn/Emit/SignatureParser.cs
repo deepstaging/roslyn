@@ -389,12 +389,46 @@ internal static class SignatureParser
         // Apply modifiers
         builder = ApplyTypeModifiers(builder, type.Modifiers);
 
+        // Add type parameters
+        if (type.TypeParameterList != null)
+            foreach (var typeParam in type.TypeParameterList.Parameters)
+            {
+                var constraint = FindConstraintClause(type.ConstraintClauses, typeParam.Identifier.Text);
+                builder = AddTypeTypeParameter(builder, typeParam, constraint);
+            }
+
         // Add base types (interfaces and base class)
         if (type.BaseList != null)
             foreach (var baseType in type.BaseList.Types)
                 builder = builder.Implements(baseType.Type.ToString());
 
         return builder;
+    }
+
+    private static TypeBuilder AddTypeTypeParameter(
+        TypeBuilder builder,
+        TypeParameterSyntax typeParam,
+        TypeParameterConstraintClauseSyntax? constraint)
+    {
+        if (constraint == null) return builder.AddTypeParameter(typeParam.Identifier.Text);
+
+        return builder.AddTypeParameter(typeParam.Identifier.Text, tp =>
+        {
+            foreach (var c in constraint.Constraints)
+                tp = c switch
+                {
+                    ClassOrStructConstraintSyntax { ClassOrStructKeyword.RawKind: (int)SyntaxKind.ClassKeyword }
+                        => tp.AsClass(),
+                    ClassOrStructConstraintSyntax { ClassOrStructKeyword.RawKind: (int)SyntaxKind.StructKeyword }
+                        => tp.AsStruct(),
+                    ConstructorConstraintSyntax
+                        => tp.WithNewConstraint(),
+                    TypeConstraintSyntax typeConstraint
+                        => tp.WithConstraint(typeConstraint.Type.ToString()),
+                    _ => tp
+                };
+            return tp;
+        });
     }
 
     private static TypeBuilder ApplyTypeModifiers(TypeBuilder builder, SyntaxTokenList modifiers)

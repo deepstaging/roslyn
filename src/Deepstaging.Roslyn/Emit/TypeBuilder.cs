@@ -76,6 +76,9 @@ public record struct TypeBuilder
     /// <summary>Gets the primary constructor.</summary>
     public ConstructorBuilder? PrimaryConstructor { get; init; }
 
+    /// <summary>Gets the generic type parameters.</summary>
+    public ImmutableArray<TypeParameterBuilder> TypeParameters { get; init; }
+
     /// <summary>Gets user-defined metadata that does not affect code generation.</summary>
     public ImmutableDictionary<string, object?>? Metadata { get; init; }
 
@@ -259,6 +262,43 @@ public record struct TypeBuilder
     public TypeBuilder AsPartial()
     {
         return this with { IsPartial = true };
+    }
+
+    #endregion
+
+    #region Type Parameters
+
+    /// <summary>
+    /// Adds a generic type parameter to the type.
+    /// </summary>
+    /// <param name="name">The type parameter name (e.g., "T", "RT", "TResult").</param>
+    public TypeBuilder AddTypeParameter(string name)
+    {
+        var typeParameter = TypeParameterBuilder.For(name);
+        var typeParams = TypeParameters.IsDefault ? [] : TypeParameters;
+        return this with { TypeParameters = typeParams.Add(typeParameter) };
+    }
+
+    /// <summary>
+    /// Adds a generic type parameter with constraints.
+    /// </summary>
+    /// <param name="name">The type parameter name.</param>
+    /// <param name="configure">A function to configure constraints on the type parameter.</param>
+    public TypeBuilder AddTypeParameter(string name, Func<TypeParameterBuilder, TypeParameterBuilder> configure)
+    {
+        var typeParameter = configure(TypeParameterBuilder.For(name));
+        var typeParams = TypeParameters.IsDefault ? [] : TypeParameters;
+        return this with { TypeParameters = typeParams.Add(typeParameter) };
+    }
+
+    /// <summary>
+    /// Adds a pre-configured type parameter builder.
+    /// </summary>
+    /// <param name="typeParameter">The type parameter builder to add.</param>
+    public TypeBuilder AddTypeParameter(TypeParameterBuilder typeParameter)
+    {
+        var typeParams = TypeParameters.IsDefault ? [] : TypeParameters;
+        return this with { TypeParameters = typeParams.Add(typeParameter) };
     }
 
     #endregion
@@ -981,6 +1021,25 @@ public record struct TypeBuilder
 
         typeDecl = typeDecl.WithModifiers(
             SyntaxFactory.TokenList(modifiers.Select(SyntaxFactory.Token)));
+
+        // Add type parameters
+        var typeParameters = TypeParameters.IsDefault ? [] : TypeParameters;
+        if (typeParameters.Length > 0)
+        {
+            var typeParameterList = SyntaxFactory.TypeParameterList(
+                SyntaxFactory.SeparatedList(typeParameters.Select(tp => tp.Build())));
+            typeDecl = typeDecl.WithTypeParameterList(typeParameterList);
+
+            // Add constraint clauses
+            var constraintClauses = typeParameters
+                .Select(tp => tp.BuildConstraintClause())
+                .Where(c => c != null)
+                .Cast<TypeParameterConstraintClauseSyntax>()
+                .ToList();
+
+            if (constraintClauses.Count > 0)
+                typeDecl = typeDecl.WithConstraintClauses(SyntaxFactory.List(constraintClauses));
+        }
 
         // Add primary constructor parameter list
         if (PrimaryConstructor.HasValue)

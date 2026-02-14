@@ -37,6 +37,29 @@ TypeBuilder
     .AsPartial()
 ```
 
+## Type Parameters
+
+```csharp
+// Simple type parameter
+TypeBuilder
+    .Class("Repository")
+    .AddTypeParameter("T")
+
+// Type parameter with constraints
+TypeBuilder
+    .Class("Repository")
+    .AddTypeParameter("T", tp => tp.AsClass().WithNewConstraint())
+
+// Multiple type parameters with mixed constraints
+TypeBuilder
+    .Class("Handler")
+    .AddTypeParameter("T", tp => tp.AsClass())
+    .AddTypeParameter("TResult", tp => tp.AsStruct())
+
+// Parse generic signatures directly
+TypeBuilder.Parse("public sealed class DbSetQuery<RT, T> where T : class")
+```
+
 ## Interfaces
 
 ```csharp
