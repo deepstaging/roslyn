@@ -26,7 +26,7 @@
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.103" />
     <!-- Utilities -->
     <PackageVersion Include="System.Collections.Immutable" Version="10.0.1" />
-    <PackageVersion Include="System.Text.Json" Version="10.0.2" />
+    <PackageVersion Include="System.Text.Json" Version="10.0.3" />
     <PackageVersion Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2" />
     <PackageVersion Include="PolySharp" Version="1.15.0" />
     <!-- LanguageExt for Testing -->
