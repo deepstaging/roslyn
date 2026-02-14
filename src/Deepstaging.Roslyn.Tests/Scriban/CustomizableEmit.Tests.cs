@@ -10,16 +10,39 @@ namespace Deepstaging.Roslyn.Tests.Scriban;
 
 public class CustomizableEmitTests : RoslynTestBase
 {
-    #region DefineUserTemplate
+    #region WithUserTemplate
 
     [Test]
-    public async Task DefineUserTemplate_preserves_default_emit()
+    public async Task WithUserTemplate_preserves_default_emit()
     {
         var emit = TypeBuilder.Class("MyClass").Emit();
-        var customizable = emit.DefineUserTemplate("Test/MyClass", new { });
+        var customizable = emit.WithUserTemplate("Test/MyClass", new { });
 
         await Assert.That(customizable.DefaultEmit.Success).IsTrue();
         await Assert.That(customizable.TemplateName).IsEqualTo("Test/MyClass");
+    }
+
+    [Test]
+    public async Task WithUserTemplate_with_map_records_bindings()
+    {
+        var map = new TemplateMap<SimpleModel>();
+
+        TypeBuilder.Class(map.Bind("MyClass", m => m.TypeName))
+            .InNamespace(map.Bind("TestApp", m => m.Namespace))
+            .Emit()
+            .WithUserTemplate("Test/MyClass", new SimpleModel(), map);
+
+        await Assert.That(map.Bindings).Count().IsEqualTo(2);
+        await Assert.That(map.Bindings[0].PropertyPath).IsEqualTo("TypeName");
+        await Assert.That(map.Bindings[0].Value).IsEqualTo("MyClass");
+        await Assert.That(map.Bindings[1].PropertyPath).IsEqualTo("Namespace");
+        await Assert.That(map.Bindings[1].Value).IsEqualTo("TestApp");
+    }
+
+    private sealed class SimpleModel
+    {
+        public string TypeName { get; init; } = "";
+        public string Namespace { get; init; } = "";
     }
 
     #endregion
@@ -30,7 +53,7 @@ public class CustomizableEmitTests : RoslynTestBase
     public async Task ResolveFrom_returns_default_when_no_user_template()
     {
         var emit = TypeBuilder.Class("MyClass").Emit();
-        var customizable = emit.DefineUserTemplate("Test/MyClass", new { });
+        var customizable = emit.WithUserTemplate("Test/MyClass", new { });
 
         var resolved = customizable.ResolveFrom(UserTemplates.Empty);
 
@@ -47,7 +70,7 @@ public class CustomizableEmitTests : RoslynTestBase
     {
         var model = new { TypeName = "CustomClass" };
         var emit = TypeBuilder.Class("DefaultClass").Emit();
-        var customizable = emit.DefineUserTemplate("Test/MyType", model);
+        var customizable = emit.WithUserTemplate("Test/MyType", model);
 
         var texts = CreateAdditionalTexts(
             ("Templates/Test/MyType.scriban-cs",
@@ -69,7 +92,7 @@ public class CustomizableEmitTests : RoslynTestBase
     public async Task ResolveFrom_validates_rendered_output()
     {
         var emit = TypeBuilder.Class("MyClass").Emit();
-        var customizable = emit.DefineUserTemplate("Test/MyType", new { });
+        var customizable = emit.WithUserTemplate("Test/MyType", new { });
 
         var texts = CreateAdditionalTexts(
             ("Templates/Test/MyType.scriban-cs",
@@ -90,7 +113,7 @@ public class CustomizableEmitTests : RoslynTestBase
             .WithBody(b => b.AddStatement("not valid c#"));
 
         var emit = TypeBuilder.Class("MyClass").AddMethod(method).Emit();
-        var customizable = emit.DefineUserTemplate("Test/MyType", new { });
+        var customizable = emit.WithUserTemplate("Test/MyType", new { });
 
         // Even if user template exists, default emit failures are returned as-is
         var texts = CreateAdditionalTexts(
@@ -110,7 +133,7 @@ public class CustomizableEmitTests : RoslynTestBase
     public async Task ResolveFrom_returns_failure_when_template_has_errors()
     {
         var emit = TypeBuilder.Class("MyClass").Emit();
-        var customizable = emit.DefineUserTemplate("Test/MyType", new { });
+        var customizable = emit.WithUserTemplate("Test/MyType", new { });
 
         var texts = CreateAdditionalTexts(
             ("Templates/Test/MyType.scriban-cs", "{{ for }}"));

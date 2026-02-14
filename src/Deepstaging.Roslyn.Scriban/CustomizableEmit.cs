@@ -28,11 +28,20 @@ public readonly struct CustomizableEmit
     /// </summary>
     public object? Model { get; }
 
-    internal CustomizableEmit(OptionalEmit defaultEmit, string templateName, object? model)
+    /// <summary>
+    /// Gets the explicit property bindings recorded by a <see cref="TemplateMap{TModel}"/>.
+    /// These define which model property values appear in the emit output and should become
+    /// Scriban template placeholders when scaffolding.
+    /// </summary>
+    public IReadOnlyList<TemplateBinding> Bindings { get; }
+
+    internal CustomizableEmit(OptionalEmit defaultEmit, string templateName, object? model,
+        IReadOnlyList<TemplateBinding>? bindings = null)
     {
         DefaultEmit = defaultEmit;
         TemplateName = templateName;
         Model = model;
+        Bindings = bindings ?? [];
     }
 
     /// <summary>
