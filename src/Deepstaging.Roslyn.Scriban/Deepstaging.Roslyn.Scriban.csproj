@@ -7,9 +7,13 @@
         <RootNamespace>Deepstaging.Roslyn.Scriban</RootNamespace>
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
+        <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
 
         <!-- PolySharp polyfills must be internal to avoid type conflicts with consuming projects -->
         <PolySharpUsePublicAccessibilityForGeneratedTypes>false</PolySharpUsePublicAccessibilityForGeneratedTypes>
+
+        <!-- Disable release tracking for now -->
+        <NoWarn>$(NoWarn);RS2008</NoWarn>
         <!-- Only include the polyfills that the old Polyfills.cs provided -->
         <PolySharpIncludeGeneratedTypes>System.Index;System.Range;System.Runtime.CompilerServices.IsExternalInit;System.Runtime.CompilerServices.RequiredMemberAttribute;System.Runtime.CompilerServices.CompilerFeatureRequiredAttribute;System.Diagnostics.CodeAnalysis.SetsRequiredMembersAttribute</PolySharpIncludeGeneratedTypes>
 

@@ -15,6 +15,7 @@ public class AnalyzerTestContext
 {
     private readonly string _source;
     private readonly DiagnosticAnalyzer _analyzer;
+    private readonly List<AdditionalText> _additionalTexts = [];
 
     // ReSharper disable once CollectionNeverQueried.Local
     private readonly List<DiagnosticAssertion> _assertions = [];
@@ -23,6 +24,17 @@ public class AnalyzerTestContext
     {
         _source = source;
         _analyzer = analyzer;
+    }
+
+    /// <summary>
+    /// Adds an additional text file available to the analyzer (e.g., user template files).
+    /// </summary>
+    /// <param name="path">The file path.</param>
+    /// <param name="content">The file content.</param>
+    public AnalyzerTestContext WithAdditionalText(string path, string content)
+    {
+        _additionalTexts.Add(new InMemoryAdditionalText(path, content));
+        return this;
     }
 
     /// <summary>
@@ -71,7 +83,15 @@ public class AnalyzerTestContext
     {
         var compilation = CompilationHelper.CreateCompilation(_source);
         var analyzers = ImmutableArray.Create(_analyzer);
-        var compilationWithAnalyzers = compilation.WithAnalyzers(analyzers);
+
+        var options = _additionalTexts.Count > 0
+            ? new AnalyzerOptions([.. _additionalTexts])
+            : null;
+
+        var compilationWithAnalyzers = options is not null
+            ? compilation.WithAnalyzers(analyzers, options)
+            : compilation.WithAnalyzers(analyzers);
+
         var allDiagnostics = await compilationWithAnalyzers.GetAllDiagnosticsAsync();
 
         // Filter to only analyzer diagnostics (not compiler errors/warnings)
