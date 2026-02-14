@@ -11,15 +11,12 @@
         <IsRoslynComponent>true</IsRoslynComponent>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
-        <!-- Disable release tracking for now -->
-        <NoWarn>$(NoWarn);RS2008</NoWarn>
+        <!-- Disable release tracking for now; RS1038 is a transitive reference from Scriban→Workspace
+             (this analyzer code does not use any Workspaces types) -->
+        <NoWarn>$(NoWarn);RS2008;RS1038</NoWarn>
 
-        <!-- Package metadata -->
-        <IsPackable>true</IsPackable>
-        <PackageId>Deepstaging.Roslyn.Scriban.Analyzers</PackageId>
-        <Title>Deepstaging.Roslyn.Scriban.Analyzers</Title>
-        <Description>Roslyn analyzers for customizable Scriban template scaffolding.</Description>
-        <PackageTags>deepstaging;roslyn;scriban;analyzers;scaffold</PackageTags>
+        <!-- Bundled into Deepstaging.Roslyn.Scriban package (not separately packable) -->
+        <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>

@@ -9,12 +9,8 @@
         <Nullable>enable</Nullable>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
-        <!-- Package metadata -->
-        <IsPackable>true</IsPackable>
-        <PackageId>Deepstaging.Roslyn.Scriban.CodeFixes</PackageId>
-        <Title>Deepstaging.Roslyn.Scriban.CodeFixes</Title>
-        <Description>Code fixes for customizable Scriban template scaffolding.</Description>
-        <PackageTags>deepstaging;roslyn;scriban;codefix;scaffold</PackageTags>
+        <!-- Bundled into Deepstaging.Roslyn.Scriban package (not separately packable) -->
+        <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>
