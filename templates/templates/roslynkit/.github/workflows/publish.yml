@@ -1,0 +1,106 @@
+# SPDX-FileCopyrightText: 2024-present Deepstaging
+# SPDX-License-Identifier: RPL-1.5
+#
+# NuGet Publish Workflow (DISABLED by default)
+#
+# To enable publishing, update the 'on' trigger below:
+#
+#   on:
+#     push:
+#       branches: [main]
+#       tags: ['v*']
+#       paths: ['src/**']
+#     workflow_dispatch:
+#       inputs:
+#         version-suffix:
+#           description: 'Version suffix (leave empty for release)'
+#           required: false
+#           default: ''
+#
+# Prerequisites:
+#   1. Register your NuGet account at https://www.nuget.org
+#   2. Configure Trusted Publishing (recommended) or API key:
+#
+#      Trusted Publishing (OIDC - no secrets to manage):
+#        - Go to https://www.nuget.org → Manage Packages → Manage GitHub Repositories
+#        - Add your repository and configure the allowed workflow
+#        - Set the NUGET_USER repository variable (Settings → Variables → Actions)
+#
+#      API Key (alternative):
+#        - Generate an API key at https://www.nuget.org/account/apikeys
+#        - Add it as NUGET_API_KEY secret (Settings → Secrets → Actions)
+#        - Replace the "NuGet Login" step with:
+#            env:
+#              NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+#
+name: Publish NuGet Packages
+
+on:
+  workflow_dispatch:
+    inputs:
+      version-suffix:
+        description: 'Version suffix (leave empty for release)'
+        required: false
+        default: ''
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+      - run: dotnet restore Deepstaging.RoslynKit.slnx
+      - run: dotnet build Deepstaging.RoslynKit.slnx -c Release --no-restore
+      - run: dotnet test --project src/Deepstaging.RoslynKit.Tests/Deepstaging.RoslynKit.Tests.csproj -c Release --no-build
+
+  publish:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write  # Required for OIDC Trusted Publishing
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0  # Full history for accurate commit count
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Create artifacts directory
+        run: mkdir -p ./artifacts/packages
+
+      - name: Build and Pack
+        run: |
+          if [[ -n "${{ github.event.inputs.version-suffix }}" ]]; then
+            ./build/pack.sh --version-suffix "${{ github.event.inputs.version-suffix }}" --output ./artifacts/packages
+          else
+            ./build/pack.sh --no-version-suffix --output ./artifacts/packages
+          fi
+
+      - name: Upload packages artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-packages
+          path: ./artifacts/packages/*.nupkg
+
+      # Trusted Publishing: Exchange OIDC token for temporary NuGet API key
+      - name: NuGet Login (Trusted Publishing)
+        id: nuget-login
+        uses: nuget/login@v1
+        with:
+          user: ${{ vars.NUGET_USER }}
+
+      - name: Push to NuGet.org
+        run: |
+          for package in ./artifacts/packages/*.nupkg; do
+            echo "Pushing $package..."
+            dotnet nuget push "$package" \
+              --api-key "${{ steps.nuget-login.outputs.NUGET_API_KEY }}" \
+              --source https://api.nuget.org/v3/index.json \
+              --skip-duplicate
+          done

@@ -230,6 +230,53 @@ This model is then used by:
 └── Deepstaging.RoslynKit.slnx           # Solution file
 ```
 
+## CI/CD
+
+### Build & Test (enabled by default)
+
+Push to `main` or open a PR and the **Build & Test** workflow runs automatically.
+
+### Publishing to NuGet (disabled by default)
+
+The **Publish NuGet Packages** workflow is included but only available via manual dispatch until you configure it.
+
+#### 1. Configure Trusted Publishing (recommended)
+
+1. Register or sign in at [nuget.org](https://www.nuget.org)
+2. Go to **Manage Packages → Manage GitHub Repositories** and add your repository
+3. In your GitHub repo, go to **Settings → Variables → Actions** and create a variable:
+   - Name: `NUGET_USER` — Value: your NuGet username
+
+#### 2. Enable automatic publishing
+
+Edit `.github/workflows/publish.yml` and replace the `on:` trigger:
+
+```yaml
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+    paths: ['src/**']
+  workflow_dispatch:
+    inputs:
+      version-suffix:
+        description: 'Version suffix (leave empty for release)'
+        required: false
+        default: ''
+```
+
+#### Alternative: API key authentication
+
+If you prefer API keys over Trusted Publishing:
+
+1. Generate a key at [nuget.org/account/apikeys](https://www.nuget.org/account/apikeys)
+2. Add it as `NUGET_API_KEY` in **Settings → Secrets → Actions**
+3. Replace the `NuGet Login` step in the workflow with:
+   ```yaml
+   env:
+     NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+   ```
+
 ## Building
 
 ### Prerequisites
