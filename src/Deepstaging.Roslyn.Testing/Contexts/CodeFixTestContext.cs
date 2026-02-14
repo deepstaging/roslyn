@@ -17,6 +17,7 @@ public class CodeFixTestContext
 {
     private readonly string _source;
     private readonly CodeFixProvider _codeFix;
+    private readonly List<AdditionalText> _additionalTexts = [];
     private DiagnosticAnalyzer? _analyzer;
 
     internal CodeFixTestContext(string source, CodeFixProvider codeFix, DiagnosticAnalyzer? analyzer = null)
@@ -35,6 +36,17 @@ public class CodeFixTestContext
     public CodeFixTestContext WithAnalyzer<TAnalyzer>() where TAnalyzer : DiagnosticAnalyzer, new()
     {
         _analyzer = new TAnalyzer();
+        return this;
+    }
+
+    /// <summary>
+    /// Adds an additional text file available to the analyzer (e.g., user template files).
+    /// </summary>
+    /// <param name="path">The file path.</param>
+    /// <param name="content">The file content.</param>
+    public CodeFixTestContext WithAdditionalText(string path, string content)
+    {
+        _additionalTexts.Add(new InMemoryAdditionalText(path, content));
         return this;
     }
 
@@ -62,6 +74,11 @@ public class CodeFixTestContext
     /// Get the optional analyzer for producing diagnostics.
     /// </summary>
     internal DiagnosticAnalyzer? Analyzer => _analyzer;
+
+    /// <summary>
+    /// Get the additional texts available to the analyzer.
+    /// </summary>
+    internal IReadOnlyList<AdditionalText> AdditionalTexts => _additionalTexts;
 }
 
 /// <summary>
@@ -80,64 +97,17 @@ public class CodeFixAssertion
 
     /// <summary>
     /// Assert that applying the code fix produces the expected source code.
+    /// Use this for code fixes that modify existing documents.
     /// </summary>
     /// <param name="expectedSource">The expected source code after applying the fix.</param>
     public async Task ShouldProduce(string expectedSource)
     {
-        var compilation = CompilationHelper.CreateCompilation(_context.Source);
-        var document = CreateDocument(_context.Source);
+        var solution = await ApplyFirstFixAsync();
 
-        // Get diagnostics - either from analyzer or semantic model
-        var targetDiagnostic = await GetTargetDiagnosticAsync(compilation, document);
-
-        if (targetDiagnostic == null)
-        {
-            var source = _context.Analyzer != null ? "analyzer" : "compiler";
-            Assert.Fail($"No diagnostic '{_diagnosticId}' found from {source}. Cannot apply fix.");
-            return;
-        }
-
-        // Get code fixes for the diagnostic
-        var codeActions = new List<CodeAction>();
-        var context = new CodeFixContext(
-            document,
-            targetDiagnostic,
-            (action, _) => codeActions.Add(action),
-            CancellationToken.None);
-
-        await _context.CodeFix.RegisterCodeFixesAsync(context);
-
-        if (codeActions.Count == 0)
-        {
-            Assert.Fail($"Code fix provider did not register any fixes for diagnostic '{_diagnosticId}'");
-            return;
-        }
-
-        // Apply the first code fix
-        var operations = await codeActions[0].GetOperationsAsync(CancellationToken.None);
-        var solution = operations
-            .OfType<ApplyChangesOperation>()
-            .FirstOrDefault()
-            ?.ChangedSolution;
-
-        if (solution == null)
-        {
-            Assert.Fail("Code fix did not produce a solution with changes");
-            return;
-        }
-
-        // Get the fixed document
-        var fixedDocument = solution.GetDocument(document.Id);
-        if (fixedDocument == null)
-        {
-            Assert.Fail("Could not retrieve fixed document from solution");
-            return;
-        }
-
-        var fixedSourceText = await fixedDocument.GetTextAsync();
+        var document = solution.Projects.First().Documents.First();
+        var fixedSourceText = await document.GetTextAsync();
         var actualSource = fixedSourceText.ToString();
 
-        // Normalize line endings for comparison
         var normalizedActual = NormalizeLineEndings(actualSource);
         var normalizedExpected = NormalizeLineEndings(expectedSource);
 
@@ -148,22 +118,79 @@ public class CodeFixAssertion
                 $"Actual:\n{normalizedActual}");
     }
 
+    /// <summary>
+    /// Assert that the code fix adds an additional document to the project.
+    /// Use this for code fixes that create new files (e.g., template scaffolds).
+    /// </summary>
+    public AdditionalDocumentAssertion ShouldAddAdditionalDocument()
+    {
+        return new AdditionalDocumentAssertion(this);
+    }
+
+    internal async Task<Solution> ApplyFirstFixAsync()
+    {
+        var (document, diagnostic) = await GetDocumentAndDiagnosticAsync();
+
+        var codeActions = new List<CodeAction>();
+        var context = new CodeFixContext(
+            document,
+            diagnostic,
+            (action, _) => codeActions.Add(action),
+            CancellationToken.None);
+
+        await _context.CodeFix.RegisterCodeFixesAsync(context);
+
+        if (codeActions.Count == 0)
+            Assert.Fail($"Code fix provider did not register any fixes for diagnostic '{_diagnosticId}'");
+
+        var operations = await codeActions[0].GetOperationsAsync(CancellationToken.None);
+        var solution = operations
+            .OfType<ApplyChangesOperation>()
+            .FirstOrDefault()
+            ?.ChangedSolution;
+
+        if (solution == null)
+            Assert.Fail("Code fix did not produce a solution with changes");
+
+        return solution!;
+    }
+
+    private async Task<(Document document, Diagnostic diagnostic)> GetDocumentAndDiagnosticAsync()
+    {
+        var compilation = CompilationHelper.CreateCompilation(_context.Source);
+        var document = CreateDocument(_context.Source);
+
+        var targetDiagnostic = await GetTargetDiagnosticAsync(compilation, document);
+
+        if (targetDiagnostic == null)
+        {
+            var source = _context.Analyzer != null ? "analyzer" : "compiler";
+            Assert.Fail($"No diagnostic '{_diagnosticId}' found from {source}. Cannot apply fix.");
+        }
+
+        return (document, targetDiagnostic!);
+    }
+
     private async Task<Diagnostic?> GetTargetDiagnosticAsync(Compilation compilation, Document document)
     {
         if (_context.Analyzer != null)
         {
-            // Run the analyzer to get diagnostics
             var analyzers = ImmutableArray.Create(_context.Analyzer);
-            var compilationWithAnalyzers = compilation.WithAnalyzers(analyzers);
+
+            var options = _context.AdditionalTexts.Count > 0
+                ? new AnalyzerOptions([.. _context.AdditionalTexts])
+                : null;
+
+            var compilationWithAnalyzers = options is not null
+                ? compilation.WithAnalyzers(analyzers, options)
+                : compilation.WithAnalyzers(analyzers);
+
             var allDiagnostics = await compilationWithAnalyzers.GetAllDiagnosticsAsync();
 
-            // Find matching diagnostic and remap to document location
             var analyzerDiagnostic = allDiagnostics.FirstOrDefault(d => d.Id == _diagnosticId);
             if (analyzerDiagnostic == null)
                 return null;
 
-            // The diagnostic location references the compilation's syntax tree.
-            // We need to create a new diagnostic with a location in the document's syntax tree.
             var documentTree = await document.GetSyntaxTreeAsync();
             if (documentTree == null)
                 return null;
@@ -171,7 +198,6 @@ public class CodeFixAssertion
             var originalSpan = analyzerDiagnostic.Location.SourceSpan;
             var newLocation = Location.Create(documentTree, originalSpan);
 
-            // Create new diagnostic with remapped location
             return Diagnostic.Create(
                 analyzerDiagnostic.Descriptor,
                 newLocation,
@@ -180,7 +206,6 @@ public class CodeFixAssertion
         }
         else
         {
-            // Fall back to semantic model diagnostics (compiler diagnostics)
             var semanticModel = await document.GetSemanticModelAsync();
             if (semanticModel == null)
             {
@@ -198,7 +223,6 @@ public class CodeFixAssertion
         var projectId = ProjectId.CreateNewId();
         var documentId = DocumentId.CreateNewId(projectId);
 
-        // Get all configured references
         var references = ReferenceConfiguration.GetAdditionalReferences()
             .Concat([MetadataReference.CreateFromFile(typeof(object).Assembly.Location)]);
 
@@ -208,7 +232,6 @@ public class CodeFixAssertion
             .WithProjectParseOptions(projectId,
                 CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.CSharp14));
 
-        // Add all references
         foreach (var reference in references) solution = solution.AddMetadataReference(projectId, reference);
 
         solution = solution.AddDocument(documentId, "TestDocument.cs", SourceText.From(source));
@@ -222,5 +245,86 @@ public class CodeFixAssertion
     private static string NormalizeLineEndings(string text)
     {
         return text.Replace("\r\n", "\n").Replace("\r", "\n").Trim();
+    }
+}
+
+/// <summary>
+/// Fluent assertions for code fixes that add additional documents.
+/// </summary>
+public class AdditionalDocumentAssertion
+{
+    private readonly CodeFixAssertion _parent;
+    private string? _expectedPathContains;
+
+    internal AdditionalDocumentAssertion(CodeFixAssertion parent)
+    {
+        _parent = parent;
+    }
+
+    /// <summary>
+    /// Assert the added document's path contains the specified substring.
+    /// </summary>
+    public AdditionalDocumentAssertion WithPathContaining(string pathFragment)
+    {
+        _expectedPathContains = pathFragment;
+        return this;
+    }
+
+    /// <summary>
+    /// Assert the added document's content contains the specified text.
+    /// </summary>
+    /// <param name="expectedContent">Text that should appear in the added document.</param>
+    public async Task WithContentContaining(string expectedContent)
+    {
+        var solution = await _parent.ApplyFirstFixAsync();
+
+        var project = solution.Projects.First();
+        var additionalDocs = project.AdditionalDocuments.ToArray();
+
+        if (additionalDocs.Length == 0)
+            Assert.Fail("Expected code fix to add an additional document, but none were added.");
+
+        var doc = additionalDocs[0];
+
+        if (_expectedPathContains != null && !doc.Name.Contains(_expectedPathContains))
+            Assert.Fail(
+                $"Expected additional document path to contain '{_expectedPathContains}', " +
+                $"but was '{doc.Name}'.");
+
+        var text = await doc.GetTextAsync();
+        var content = text.ToString();
+
+        if (!content.Contains(expectedContent))
+            Assert.Fail(
+                $"Expected additional document to contain '{expectedContent}', " +
+                $"but content was:\n{content}");
+    }
+
+    /// <summary>
+    /// Enables awaiting on the assertion to verify all conditions (without content check).
+    /// </summary>
+    public TaskAwaiter GetAwaiter()
+    {
+        return VerifyAsync().GetAwaiter();
+    }
+
+    private async Task VerifyAsync()
+    {
+        var solution = await _parent.ApplyFirstFixAsync();
+
+        var project = solution.Projects.First();
+        var additionalDocs = project.AdditionalDocuments.ToArray();
+
+        if (additionalDocs.Length == 0)
+            Assert.Fail("Expected code fix to add an additional document, but none were added.");
+
+        if (_expectedPathContains != null)
+        {
+            var doc = additionalDocs[0];
+            if (!doc.Name.Contains(_expectedPathContains))
+                Assert.Fail(
+                    $"Expected additional document path to contain '{_expectedPathContains}', " +
+                    $"but was '{doc.Name}'.");
+        }
     }
 }

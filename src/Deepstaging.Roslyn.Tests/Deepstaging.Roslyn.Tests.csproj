@@ -21,6 +21,8 @@
     <ItemGroup>
         <ProjectReference Include="..\Deepstaging.Roslyn.Analyzers\Deepstaging.Roslyn.Analyzers.csproj"/>
         <ProjectReference Include="..\Deepstaging.Roslyn.Scriban\Deepstaging.Roslyn.Scriban.csproj"/>
+        <ProjectReference Include="..\Deepstaging.Roslyn.Scriban.Analyzers\Deepstaging.Roslyn.Scriban.Analyzers.csproj"/>
+        <ProjectReference Include="..\Deepstaging.Roslyn.Scriban.CodeFixes\Deepstaging.Roslyn.Scriban.CodeFixes.csproj"/>
         <ProjectReference Include="..\Deepstaging.Roslyn.Workspace\Deepstaging.Roslyn.Workspace.csproj"/>
         <ProjectReference Include="..\Deepstaging.Roslyn.Testing\Deepstaging.Roslyn.Testing.csproj"/>
         <ProjectReference Include="..\Deepstaging.Roslyn\Deepstaging.Roslyn.csproj"/>

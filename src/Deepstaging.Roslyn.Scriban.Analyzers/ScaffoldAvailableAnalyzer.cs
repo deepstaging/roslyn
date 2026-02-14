@@ -1,8 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
 
-using Microsoft.CodeAnalysis.Diagnostics;
-
 namespace Deepstaging.Roslyn.Scriban;
 
 /// <summary>
@@ -23,13 +21,8 @@ namespace Deepstaging.Roslyn.Scriban;
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public sealed class ScaffoldAvailableAnalyzer : DiagnosticAnalyzer
 {
-    /// <summary>
-    /// Diagnostic ID for scaffold available notification.
-    /// </summary>
-    public const string DiagnosticId = "DSRK005";
-
     private static readonly DiagnosticDescriptor Rule = new(
-        DiagnosticId,
+        ScaffoldDiagnostics.ScaffoldAvailable,
         "Customizable template available",
         "Type '{0}' supports a customizable template '{1}'. Add a template to override the default generated code.",
         "CodeGeneration",

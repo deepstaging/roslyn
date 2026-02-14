@@ -1,0 +1,33 @@
+<!-- SPDX-FileCopyrightText: 2024-present Deepstaging -->
+<!-- SPDX-License-Identifier: RPL-1.5 -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <RootNamespace>Deepstaging.Roslyn.Scriban</RootNamespace>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+        <!-- Package metadata -->
+        <IsPackable>true</IsPackable>
+        <PackageId>Deepstaging.Roslyn.Scriban.CodeFixes</PackageId>
+        <Title>Deepstaging.Roslyn.Scriban.CodeFixes</Title>
+        <Description>Code fixes for customizable Scriban template scaffolding.</Description>
+        <PackageTags>deepstaging;roslyn;scriban;codefix;scaffold</PackageTags>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common"/>
+        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../Deepstaging.Roslyn.Scriban/Deepstaging.Roslyn.Scriban.csproj"/>
+        <ProjectReference Include="../Deepstaging.Roslyn.Workspace/Deepstaging.Roslyn.Workspace.csproj"/>
+    </ItemGroup>
+
+</Project>
