@@ -572,7 +572,7 @@ public class TypeRefTests
     [Test]
     public void From_throws_on_null()
     {
-        Assert.Throws<ArgumentException>(() => TypeRef.From(null!));
+        Assert.Throws<ArgumentException>(() => TypeRef.From((string)null!));
     }
 
     [Test]

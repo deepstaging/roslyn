@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2024-present Deepstaging
+# SPDX-License-Identifier: RPL-1.5
 site_name: Deepstaging.Roslyn
 site_description: A fluent toolkit for building Roslyn source generators, analyzers, and code fixes
 site_url: https://deepstaging.github.io/roslyn
@@ -94,6 +96,9 @@ nav:
       - OptionalValue: api/projections/optional-value.md
       - Syntax Wrappers: api/projections/syntax-wrappers.md
       - XmlDocumentation: api/projections/xml-documentation.md
+      - EquatableArray: api/projections/equatable-array.md
+      - Snapshots: api/projections/snapshots.md
+      - PipelineModel: api/projections/pipeline-model.md
     - Emit:
       - Overview: api/emit/index.md
       - TypeBuilder: api/emit/type-builder.md
@@ -110,6 +115,7 @@ nav:
     - Extensions:
       - Overview: api/extensions/index.md
       - Symbol Extensions: api/extensions/symbol-extensions.md
+      - Type Extensions: api/extensions/type-extensions.md
       - Compilation Extensions: api/extensions/compilation-extensions.md
       - Attribute Extensions: api/extensions/attribute-extensions.md
       - String Extensions: api/extensions/string-extensions.md

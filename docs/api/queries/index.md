@@ -25,6 +25,11 @@ var models = TypeQuery.From(compilation)
     .ThatAreClasses()
     .WithAttribute("Entity")
     .Select(t => new EntityModel(t.Name, t.Namespace));
+
+// Materialize to pipeline-safe snapshots
+var snapshots = typeSymbol.QueryMethods()
+    .ThatArePublic()
+    .Snapshots();   // → EquatableArray<MethodSnapshot>
 ```
 
 ## Query Types
@@ -38,6 +43,27 @@ var models = TypeQuery.From(compilation)
 | [ConstructorQuery](constructor-query.md) | Find constructors on a type |
 | [EventQuery](event-query.md) | Find events on a type |
 | [ParameterQuery](parameter-query.md) | Find parameters on a method |
+
+---
+
+## Snapshot Terminals
+
+All query builders support `.Snapshots()` and `.Snapshot()` terminals that materialize results into pipeline-safe [snapshot types](../projections/snapshots.md):
+
+```csharp
+// All matching results as snapshots
+EquatableArray<MethodSnapshot> methods = typeSymbol.QueryMethods()
+    .ThatArePublic()
+    .ThatAreInstance()
+    .Snapshots();
+
+// First matching result as snapshot (or null)
+TypeSnapshot? entity = TypeQuery.From(compilation)
+    .WithName("Customer")
+    .Snapshot();
+```
+
+Use snapshot terminals when building [pipeline models](../projections/pipeline-model.md) for incremental generators.
 
 ---
 

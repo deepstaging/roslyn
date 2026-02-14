@@ -10,7 +10,8 @@ Extension methods organized by the type they extend. These wrap common Roslyn op
 
 | Category | Description |
 |----------|-------------|
-| [Symbol Extensions](symbol-extensions.md) | ISymbol, ITypeSymbol, INamedTypeSymbol, IMethodSymbol |
+| [Symbol Extensions](symbol-extensions.md) | ISymbol, INamedTypeSymbol, IMethodSymbol |
+| [Type Extensions](type-extensions.md) | ITypeSymbol — collections, async, classification, equality, and more |
 | [Compilation Extensions](compilation-extensions.md) | Compilation and namespace queries |
 | [Attribute Extensions](attribute-extensions.md) | AttributeData extraction |
 | [String Extensions](string-extensions.md) | Case conversion utilities |

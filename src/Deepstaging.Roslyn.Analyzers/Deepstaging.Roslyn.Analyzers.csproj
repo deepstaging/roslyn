@@ -1,0 +1,36 @@
+<!-- SPDX-FileCopyrightText: 2024-present Deepstaging -->
+<!-- SPDX-License-Identifier: RPL-1.5 -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+        <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+        <IsRoslynComponent>true</IsRoslynComponent>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+        <!-- Disable release tracking for now -->
+        <NoWarn>$(NoWarn);RS2008</NoWarn>
+
+        <!-- Package metadata -->
+        <IsPackable>true</IsPackable>
+        <PackageId>Deepstaging.Roslyn.Analyzers</PackageId>
+        <Title>Deepstaging.Roslyn.Analyzers</Title>
+        <Description>Roslyn analyzers for pipeline model correctness in incremental source generators.</Description>
+        <PackageTags>deepstaging;roslyn;analyzers;pipeline-model;source-generator</PackageTags>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp"/>
+        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Deepstaging.Roslyn\Deepstaging.Roslyn.csproj"/>
+    </ItemGroup>
+
+</Project>

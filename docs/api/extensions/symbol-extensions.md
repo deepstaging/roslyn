@@ -65,7 +65,7 @@ symbol.IsFromMetadata()      // from referenced assembly
 
 ## ITypeSymbol Extensions
 
-Start query builders and check type characteristics.
+Start query builders and check type characteristics. For the full categorized reference, see [Type Extensions](type-extensions.md).
 
 ### Query Builders
 
@@ -98,6 +98,15 @@ typeSymbol.IsListType()              // IList<T>
 typeSymbol.IsDictionaryType()        // IDictionary<TKey, TValue>
 typeSymbol.IsQueryableType()         // IQueryable<T>
 typeSymbol.IsObservableType()        // IObservable<T>
+typeSymbol.IsSetType()               // ISet<T>
+typeSymbol.IsReadOnlyListType()      // IReadOnlyList<T>
+typeSymbol.IsReadOnlyCollectionType()    // IReadOnlyCollection<T>
+typeSymbol.IsReadOnlyDictionaryType()    // IReadOnlyDictionary<TKey, TValue>
+typeSymbol.IsHashSetType()               // HashSet<T>
+typeSymbol.IsImmutableArrayType()        // ImmutableArray<T>
+typeSymbol.IsImmutableListType()         // ImmutableList<T>
+typeSymbol.IsImmutableDictionaryType()   // ImmutableDictionary<TKey, TValue>
+typeSymbol.IsImmutableHashSetType()      // ImmutableHashSet<T>
 ```
 
 ### Special Type Checks
@@ -110,6 +119,35 @@ typeSymbol.IsLazyType()              // Lazy<T>
 typeSymbol.IsTupleType()             // ValueTuple
 typeSymbol.IsArrayType()             // T[]
 typeSymbol.IsPointerType()           // T*
+typeSymbol.IsExpressionType()        // Expression<T>
+typeSymbol.IsSpanType()              // Span<T>
+typeSymbol.IsReadOnlySpanType()      // ReadOnlySpan<T>
+typeSymbol.IsMemoryType()            // Memory<T>
+typeSymbol.IsReadOnlyMemoryType()    // ReadOnlyMemory<T>
+```
+
+### Common Value Types
+
+```csharp
+typeSymbol.IsTimeSpanType()          // System.TimeSpan
+typeSymbol.IsDateTimeType()          // System.DateTime
+typeSymbol.IsDateTimeOffsetType()    // System.DateTimeOffset
+typeSymbol.IsGuidType()              // System.Guid
+typeSymbol.IsUriType()               // System.Uri
+typeSymbol.IsCancellationTokenType() // System.Threading.CancellationToken
+```
+
+### Equality
+
+```csharp
+typeSymbol.ImplementsIEquatable()    // checks IEquatable<T>, primitives, enums, Nullable<T>
+```
+
+### Roslyn / Library Types
+
+```csharp
+typeSymbol.IsValidSymbolType()       // Deepstaging.Roslyn.ValidSymbol<T>
+typeSymbol.IsRoslynSymbolType()      // Microsoft.CodeAnalysis.ISymbol or implementors
 ```
 
 ### Type Kind Checks

@@ -42,6 +42,14 @@ public readonly record struct TypeRef
     public static TypeRef From<T>(ValidSymbol<T> symbol) where T : class, ITypeSymbol => 
         From(symbol.GloballyQualifiedName);
 
+    /// <summary>
+    /// Creates a type reference from a <see cref="SymbolSnapshot"/>.
+    /// Uses the globally qualified name from the snapshot.
+    /// </summary>
+    /// <param name="snapshot">The symbol snapshot.</param>
+    public static TypeRef From(SymbolSnapshot snapshot) =>
+        From(snapshot?.GloballyQualifiedName ?? throw new ArgumentNullException(nameof(snapshot)));
+
     /// <summary>Creates a globally qualified type reference with <c>global::</c> prefix.</summary>
     /// <param name="fullyQualifiedName">The fully qualified type name without the global:: prefix (e.g., "System.String").</param>
     public static TypeRef Global(string fullyQualifiedName)

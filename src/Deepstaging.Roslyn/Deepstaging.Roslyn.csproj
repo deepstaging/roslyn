@@ -31,4 +31,17 @@
         </PackageReference>
     </ItemGroup>
 
+    <!-- Bundle DSRK analyzers into the package -->
+    <PropertyGroup>
+        <BundleArtifactsPath>$(MSBuildThisFileDirectory)..</BundleArtifactsPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.Analyzers/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.Analyzers.dll"
+              Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+        <!-- Analyzer dependency — must be co-located in the analyzers folder for the compiler to load -->
+        <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.Analyzers/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.dll"
+              Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    </ItemGroup>
+
 </Project>

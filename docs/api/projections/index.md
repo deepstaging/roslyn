@@ -19,6 +19,9 @@ Roslyn symbols are often nullable, requiring constant null checks. Projections w
 | [OptionalValue](optional-value.md) | A general-purpose optional wrapper |
 | [Syntax Wrappers](syntax-wrappers.md) | Optional/Valid wrappers for syntax nodes |
 | [XmlDocumentation](xml-documentation.md) | Parsed XML documentation from a symbol |
+| [EquatableArray](equatable-array.md) | Drop-in `ImmutableArray<T>` replacement with sequence equality |
+| [Snapshots](snapshots.md) | Pipeline-safe materializations of Roslyn symbols |
+| [PipelineModel](pipeline-model.md) | `[PipelineModel]` attribute and DSRK analyzers |
 
 ## The Pattern
 

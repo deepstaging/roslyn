@@ -345,3 +345,52 @@ public abstract class LocalVariableAnalyzer<TAttribute> : SymbolAnalyzer<ILocalS
     protected abstract bool ShouldReport(ValidSymbol<ILocalSymbol> local);
 }
 ```
+
+## Multi-Diagnostic Analyzers
+
+When a single type can produce multiple diagnostics (e.g., one per invalid property), use `MultiDiagnosticTypeAnalyzer<TItem>`:
+
+```csharp
+[DiagnosticAnalyzer(LanguageNames.CSharp)]
+[Reports(DiagnosticId, "Pipeline model property uses ImmutableArray<T>",
+    Message = "Property '{0}' on pipeline model '{1}' uses ImmutableArray<T> — use EquatableArray<T> instead",
+    Category = "PipelineModel")]
+public sealed class PipelineModelImmutableArrayAnalyzer : MultiDiagnosticTypeAnalyzer<ValidSymbol<IPropertySymbol>>
+{
+    public const string DiagnosticId = "DSRK001";
+
+    protected override IEnumerable<ValidSymbol<IPropertySymbol>> GetDiagnosticItems(
+        ValidSymbol<INamedTypeSymbol> type)
+    {
+        if (type.LacksAttribute<PipelineModelAttribute>())
+            yield break;
+
+        var properties = type.QueryProperties()
+            .ThatAreInstance()
+            .Where(x => x.Type.IsImmutableArrayType());
+
+        foreach (var property in properties.GetAll())
+            yield return property;
+    }
+
+    protected override object[] GetMessageArgs(
+        ValidSymbol<INamedTypeSymbol> symbol, ValidSymbol<IPropertySymbol> item)
+        => [item.Name, symbol.Name];
+
+    protected override Location GetLocation(
+        ValidSymbol<INamedTypeSymbol> symbol, ValidSymbol<IPropertySymbol> item)
+        => item.Location;
+}
+```
+
+### Key Differences from TypeAnalyzer
+
+| | `TypeAnalyzer<TAttribute>` | `MultiDiagnosticTypeAnalyzer<TItem>` |
+|---|---|---|
+| **Diagnostics per type** | One | Zero or more |
+| **Override** | `ShouldReport(type) → bool` | `GetDiagnosticItems(type) → IEnumerable<TItem>` |
+| **Location** | Type declaration | Custom via `GetLocation()` |
+| **Message args** | Type name only | Custom via `GetMessageArgs()` |
+| **Attribute filter** | Generic `TAttribute` parameter | Manual in `GetDiagnosticItems` |
+
+See the [PipelineModel analyzers](../api/projections/pipeline-model.md) for a real-world example of four `MultiDiagnosticTypeAnalyzer` implementations.
