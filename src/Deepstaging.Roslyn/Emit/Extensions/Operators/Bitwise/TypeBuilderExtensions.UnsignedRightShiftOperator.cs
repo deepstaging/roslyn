@@ -16,7 +16,7 @@ public static class TypeBuilderUnsignedRightShiftOperatorExtensions
     /// </summary>
     public static TypeBuilder ImplementsUnsignedRightShiftOperator(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         string valueAccessor)
     {
         var typeName = builder.Name;
@@ -55,7 +55,7 @@ public static class TypeBuilderUnsignedRightShiftOperatorExtensions
     /// </summary>
     public static TypeBuilder ImplementsUnsignedRightShiftOperator(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         PropertyBuilder property) =>
         builder.ImplementsUnsignedRightShiftOperator(backingType, property.Name);
 
@@ -64,7 +64,7 @@ public static class TypeBuilderUnsignedRightShiftOperatorExtensions
     /// </summary>
     public static TypeBuilder ImplementsUnsignedRightShiftOperator(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         FieldBuilder field) =>
         builder.ImplementsUnsignedRightShiftOperator(backingType, field.Name);
 }

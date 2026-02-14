@@ -151,11 +151,13 @@ public record struct EventBuilder
         this with { XmlDoc = XmlDocumentationBuilder.ForSummary(summary) };
 
     /// <summary>
-    /// Sets the XML documentation for the event from parsed XmlDocumentation.
+    /// Sets the XML documentation for the event from a pipeline-safe <see cref="DocumentationSnapshot"/>.
     /// </summary>
-    /// <param name="documentation">The parsed XML documentation to copy.</param>
-    public readonly EventBuilder WithXmlDoc(XmlDocumentation documentation) =>
-        documentation.IsEmpty ? this : this with { XmlDoc = XmlDocumentationBuilder.From(documentation) };
+    /// <param name="snapshot">The documentation snapshot to copy.</param>
+    public readonly EventBuilder WithXmlDoc(DocumentationSnapshot snapshot) =>
+        snapshot.HasValue || snapshot.Params.Count > 0 || snapshot.TypeParams.Count > 0
+            ? this with { XmlDoc = XmlDocumentationBuilder.From(snapshot) }
+            : this;
 
     #endregion
 

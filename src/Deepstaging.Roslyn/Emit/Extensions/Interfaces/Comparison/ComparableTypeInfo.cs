@@ -28,7 +28,7 @@ internal readonly struct ComparableTypeInfo
     /// <summary>
     /// Creates a ComparableTypeInfo from the given type symbol.
     /// </summary>
-    public static ComparableTypeInfo From(ValidSymbol<INamedTypeSymbol> type)
+    public static ComparableTypeInfo From(TypeSnapshot type)
     {
         return new ComparableTypeInfo(BackingTypeCore.From(type));
     }

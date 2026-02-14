@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: RPL-1.5
 
 using Assembly = System.Reflection.Assembly;
+using Microsoft.CodeAnalysis.Text;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable MemberCanBePrivate.Global
@@ -16,6 +17,7 @@ public class GeneratorTestContext
     private readonly string _source;
     private readonly object _generator;
     private readonly Type _generatorType;
+    private readonly List<AdditionalText> _additionalTexts = [];
     private GeneratorDriverRunResult _result;
     private bool _hasResult;
 
@@ -32,6 +34,17 @@ public class GeneratorTestContext
     /// Gets the original source code.
     /// </summary>
     internal string Source => _source;
+
+    /// <summary>
+    /// Adds additional text files to the generator run (e.g., user template overrides).
+    /// </summary>
+    /// <param name="path">The file path for the additional text.</param>
+    /// <param name="content">The text content.</param>
+    public GeneratorTestContext WithAdditionalText(string path, string content)
+    {
+        _additionalTexts.Add(new InMemoryAdditionalText(path, content));
+        return this;
+    }
 
     /// <summary>
     /// Assert that the generator should produce output.
@@ -69,7 +82,8 @@ public class GeneratorTestContext
         GeneratorDriver driver;
         if (_generator is IIncrementalGenerator incrementalGenerator)
             // Standard incremental generator
-            driver = CSharpGeneratorDriver.Create(incrementalGenerator);
+            driver = CSharpGeneratorDriver.Create(incrementalGenerator)
+                .AddAdditionalTexts([.._additionalTexts]);
         else
             throw new InvalidOperationException(
                 $"Generator type {_generatorType.Name} must implement IIncrementalGenerator.");
@@ -480,4 +494,15 @@ public class DiagnosticFilter
 
         return parts.Count > 0 ? string.Join(", ", parts) : "any diagnostics";
     }
+}
+
+/// <summary>
+/// In-memory implementation of <see cref="AdditionalText"/> for testing.
+/// </summary>
+internal sealed class InMemoryAdditionalText(string path, string content) : AdditionalText
+{
+    public override string Path => path;
+
+    public override SourceText? GetText(CancellationToken cancellationToken = default)
+        => SourceText.From(content);
 }

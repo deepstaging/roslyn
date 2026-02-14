@@ -6,6 +6,8 @@ Scriban template infrastructure for Roslyn incremental source generators.
 
 This library provides a convenient way to use [Scriban](https://github.com/scriban/scriban) templates in Roslyn source generators. Instead of building C# strings manually, you write `.scriban-cs` templates and render them with model objects.
 
+It also includes support for **customizable templates** — letting consumers override generated code by providing their own Scriban templates. See the [Customizable Templates guide](../guides/customizable-templates.md) for details.
+
 ## Installation
 
 ```bash
@@ -164,3 +166,15 @@ Template errors produce Roslyn diagnostics with ID `DEEPCORE001`:
 | Render error | `{ExceptionType} occurred while rendering a template: {message}` |
 
 Errors are reported via `SourceProductionContext.ReportDiagnostic()` so they appear in the IDE.
+
+## Bundled Analyzers & Code Fixes
+
+The Scriban package bundles scaffold analyzers and code fixes — no additional package references needed.
+
+| ID | Severity | Description |
+|----|----------|-------------|
+| **DSRK005** | Info | Customizable template available for a type. Code fix creates starter template. |
+| **DSRK006** | Error | User template rendered invalid C#. Includes template name and C# syntax errors. |
+| **DSRK007** | Error | User template has Scriban parse or render errors. Includes template name and details. |
+
+See [Customizable Templates](../guides/customizable-templates.md) for the full guide.

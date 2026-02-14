@@ -8,6 +8,11 @@
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
 
+        <!-- PolySharp polyfills must be internal to avoid type conflicts with consuming projects -->
+        <PolySharpUsePublicAccessibilityForGeneratedTypes>false</PolySharpUsePublicAccessibilityForGeneratedTypes>
+        <!-- Only include the polyfills that the old Polyfills.cs provided -->
+        <PolySharpIncludeGeneratedTypes>System.Index;System.Range;System.Runtime.CompilerServices.IsExternalInit;System.Runtime.CompilerServices.RequiredMemberAttribute;System.Runtime.CompilerServices.CompilerFeatureRequiredAttribute;System.Diagnostics.CodeAnalysis.SetsRequiredMembersAttribute</PolySharpIncludeGeneratedTypes>
+
         <!-- Generate XML documentation for IntelliSense -->
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
@@ -22,6 +27,7 @@
 
     <ItemGroup>
         <None Include="README.md" Pack="true" PackagePath="\"/>
+        <None Include="buildTransitive/Deepstaging.Roslyn.Scriban.targets" Pack="true" PackagePath="buildTransitive\"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -38,10 +44,43 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Scriban" PrivateAssets="all"/>
+        <PackageReference Include="PolySharp">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="../Deepstaging.Roslyn/Deepstaging.Roslyn.csproj"/>
+    </ItemGroup>
+
+    <!-- Bundle scaffold analyzers and code fixes into the package -->
+    <PropertyGroup>
+        <BundleArtifactsPath>$(MSBuildThisFileDirectory)..</BundleArtifactsPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!-- Analyzer: loaded by compiler host -->
+        <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.Scriban.Analyzers/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.Scriban.Analyzers.dll"
+              Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+        <!-- Code fix: loaded by IDE -->
+        <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.Scriban.CodeFixes/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.Scriban.CodeFixes.dll"
+              Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+        <!-- Analyzer dependencies — must be co-located in the analyzers folder for the compiler to load -->
+        <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.Scriban/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.Scriban.dll"
+              Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+        <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.Scriban/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.dll"
+              Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+        <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.Workspace/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.Workspace.dll"
+              Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    </ItemGroup>
+
+    <!-- Expose analyzer/codefix types as compile-time references (for test projects) -->
+    <ItemGroup>
+        <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.Scriban.Analyzers/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.Scriban.Analyzers.dll"
+              Pack="true" PackagePath="lib/netstandard2.0" Visible="false" />
+        <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.Scriban.CodeFixes/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.Scriban.CodeFixes.dll"
+              Pack="true" PackagePath="lib/netstandard2.0" Visible="false" />
     </ItemGroup>
 
 </Project>

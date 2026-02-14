@@ -15,7 +15,7 @@ public static class TypeBuilderModulusOperatorExtensions
     /// </summary>
     public static TypeBuilder ImplementsModulusOperator(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         string valueAccessor)
     {
         var typeName = builder.Name;
@@ -54,7 +54,7 @@ public static class TypeBuilderModulusOperatorExtensions
     /// </summary>
     public static TypeBuilder ImplementsModulusOperator(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         PropertyBuilder property) =>
         builder.ImplementsModulusOperator(backingType, property.Name);
 
@@ -63,7 +63,7 @@ public static class TypeBuilderModulusOperatorExtensions
     /// </summary>
     public static TypeBuilder ImplementsModulusOperator(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         FieldBuilder field) =>
         builder.ImplementsModulusOperator(backingType, field.Name);
 }

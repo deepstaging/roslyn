@@ -60,25 +60,25 @@ public record struct XmlDocumentationBuilder
     public static XmlDocumentationBuilder ForInheritDoc(string? cref = null) => new() { InheritDoc = cref ?? string.Empty };
 
     /// <summary>
-    /// Creates an XML documentation builder from parsed XmlDocumentation.
+    /// Creates a builder pre-populated from a pipeline-safe <see cref="DocumentationSnapshot"/>.
     /// </summary>
-    /// <param name="documentation">The parsed XML documentation to copy from.</param>
-    public static XmlDocumentationBuilder From(XmlDocumentation documentation)
+    /// <param name="snapshot">The documentation snapshot to copy from.</param>
+    public static XmlDocumentationBuilder From(DocumentationSnapshot snapshot)
     {
-        if (documentation.IsEmpty)
+        if (!snapshot.HasValue && snapshot.Params.Count == 0 && snapshot.TypeParams.Count == 0)
             return new();
 
         return new()
         {
-            Summary = documentation.Summary,
-            Remarks = documentation.Remarks,
-            Returns = documentation.Returns,
-            Value = documentation.Value,
-            Example = documentation.Example,
-            Params = [..documentation.Params],
-            TypeParams = [..documentation.TypeParams],
-            Exceptions = [..documentation.Exceptions],
-            SeeAlso = [..documentation.SeeAlso],
+            Summary = snapshot.Summary,
+            Remarks = snapshot.Remarks,
+            Returns = snapshot.Returns,
+            Value = snapshot.Value,
+            Example = snapshot.Example,
+            Params = [..snapshot.Params.Select(p => (p.Name, p.Description))],
+            TypeParams = [..snapshot.TypeParams.Select(p => (p.Name, p.Description))],
+            Exceptions = [..snapshot.Exceptions.Select(e => (e.Type, e.Description))],
+            SeeAlso = [..snapshot.SeeAlso],
         };
     }
 

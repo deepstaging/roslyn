@@ -18,7 +18,7 @@ public static class TypeBuilderParsableExtensions
     /// <returns>The modified type builder.</returns>
     public static TypeBuilder ImplementsIParsable(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType)
+        TypeSnapshot backingType)
     {
         var typeName = builder.Name;
         var info = ParsableTypeInfo.From(backingType);

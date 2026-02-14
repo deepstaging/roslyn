@@ -40,7 +40,7 @@ internal readonly struct SpanParsableTypeInfo
     /// <summary>
     /// Creates a SpanParsableTypeInfo from the given type symbol.
     /// </summary>
-    public static SpanParsableTypeInfo From(ValidSymbol<INamedTypeSymbol> type)
+    public static SpanParsableTypeInfo From(TypeSnapshot type)
     {
         return new SpanParsableTypeInfo(BackingTypeCore.From(type));
     }

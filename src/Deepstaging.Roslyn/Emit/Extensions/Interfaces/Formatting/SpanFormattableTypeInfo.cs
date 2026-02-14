@@ -35,7 +35,7 @@ internal readonly struct SpanFormattableTypeInfo
     /// <summary>
     /// Creates a SpanFormattableTypeInfo from the given type symbol.
     /// </summary>
-    public static SpanFormattableTypeInfo From(ValidSymbol<INamedTypeSymbol> type)
+    public static SpanFormattableTypeInfo From(TypeSnapshot type)
     {
         var core = BackingTypeCore.From(type);
         return new SpanFormattableTypeInfo(core, core.IsNumericType);

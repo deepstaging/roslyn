@@ -17,7 +17,7 @@ public class TypeBuilderIUtf8SpanParsableExtensionsTests : RoslynTestBase
             .Struct("MyId")
             .InNamespace("Test")
             .AddProperty("Value", "int", p => p.AsReadOnly())
-            .ImplementsIUtf8SpanParsable(WellKnownSymbols.Int32)
+            .ImplementsIUtf8SpanParsable(WellKnownSymbols.Int32.ToSnapshot())
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -34,7 +34,7 @@ public class TypeBuilderIUtf8SpanParsableExtensionsTests : RoslynTestBase
             .Struct("MyId")
             .InNamespace("Test")
             .AddProperty("Value", "global::System.Guid", p => p.AsReadOnly())
-            .ImplementsIUtf8SpanParsable(WellKnownSymbols.Guid)
+            .ImplementsIUtf8SpanParsable(WellKnownSymbols.Guid.ToSnapshot())
             .Emit();
 
         await Assert.That(result.Success).IsTrue();

@@ -2,6 +2,8 @@
     <Project Path="src/Deepstaging.Roslyn/Deepstaging.Roslyn.csproj"/>
     <Project Path="src/Deepstaging.Roslyn.Analyzers/Deepstaging.Roslyn.Analyzers.csproj"/>
     <Project Path="src/Deepstaging.Roslyn.Scriban/Deepstaging.Roslyn.Scriban.csproj"/>
+    <Project Path="src/Deepstaging.Roslyn.Scriban.Analyzers/Deepstaging.Roslyn.Scriban.Analyzers.csproj"/>
+    <Project Path="src/Deepstaging.Roslyn.Scriban.CodeFixes/Deepstaging.Roslyn.Scriban.CodeFixes.csproj"/>
     <Project Path="src/Deepstaging.Roslyn.Workspace/Deepstaging.Roslyn.Workspace.csproj"/>
     <Project Path="src/Deepstaging.Roslyn.Testing/Deepstaging.Roslyn.Testing.csproj"/>
     <Project Path="src/Deepstaging.Roslyn.Tests/Deepstaging.Roslyn.Tests.csproj"/>

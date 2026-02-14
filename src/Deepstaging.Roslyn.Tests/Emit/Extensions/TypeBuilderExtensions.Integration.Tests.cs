@@ -24,14 +24,14 @@ public class TypeBuilderInterfaceExtensionsIntegrationTests : RoslynTestBase
             .InNamespace("MyApp.Domain")
             .AsPartial()
             .AddProperty("Value", "global::System.Guid", p => p.AsReadOnly())
-            .ImplementsIEquatable(WellKnownSymbols.Guid, "Value")
-            .ImplementsIComparable(WellKnownSymbols.Guid, "Value")
-            .ImplementsIFormattable(WellKnownSymbols.Guid, "Value")
-            .ImplementsISpanFormattable(WellKnownSymbols.Guid, "Value")
-            .ImplementsIParsable(WellKnownSymbols.Guid)
-            .ImplementsISpanParsable(WellKnownSymbols.Guid)
-            .ImplementsIUtf8SpanFormattable(WellKnownSymbols.Guid, "Value")
-            .ImplementsIUtf8SpanParsable(WellKnownSymbols.Guid) // Should be skipped
+            .ImplementsIEquatable(WellKnownSymbols.Guid.ToSnapshot(), "Value")
+            .ImplementsIComparable(WellKnownSymbols.Guid.ToSnapshot(), "Value")
+            .ImplementsIFormattable(WellKnownSymbols.Guid.ToSnapshot(), "Value")
+            .ImplementsISpanFormattable(WellKnownSymbols.Guid.ToSnapshot(), "Value")
+            .ImplementsIParsable(WellKnownSymbols.Guid.ToSnapshot())
+            .ImplementsISpanParsable(WellKnownSymbols.Guid.ToSnapshot())
+            .ImplementsIUtf8SpanFormattable(WellKnownSymbols.Guid.ToSnapshot(), "Value")
+            .ImplementsIUtf8SpanParsable(WellKnownSymbols.Guid.ToSnapshot()) // Should be skipped
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -54,14 +54,14 @@ public class TypeBuilderInterfaceExtensionsIntegrationTests : RoslynTestBase
             .InNamespace("MyApp.Domain")
             .AsPartial()
             .AddProperty("Value", "int", p => p.AsReadOnly())
-            .ImplementsIEquatable(WellKnownSymbols.Int32, "Value")
-            .ImplementsIComparable(WellKnownSymbols.Int32, "Value")
-            .ImplementsIFormattable(WellKnownSymbols.Int32, "Value")
-            .ImplementsISpanFormattable(WellKnownSymbols.Int32, "Value")
-            .ImplementsIParsable(WellKnownSymbols.Int32)
-            .ImplementsISpanParsable(WellKnownSymbols.Int32)
-            .ImplementsIUtf8SpanFormattable(WellKnownSymbols.Int32, "Value")
-            .ImplementsIUtf8SpanParsable(WellKnownSymbols.Int32)
+            .ImplementsIEquatable(WellKnownSymbols.Int32.ToSnapshot(), "Value")
+            .ImplementsIComparable(WellKnownSymbols.Int32.ToSnapshot(), "Value")
+            .ImplementsIFormattable(WellKnownSymbols.Int32.ToSnapshot(), "Value")
+            .ImplementsISpanFormattable(WellKnownSymbols.Int32.ToSnapshot(), "Value")
+            .ImplementsIParsable(WellKnownSymbols.Int32.ToSnapshot())
+            .ImplementsISpanParsable(WellKnownSymbols.Int32.ToSnapshot())
+            .ImplementsIUtf8SpanFormattable(WellKnownSymbols.Int32.ToSnapshot(), "Value")
+            .ImplementsIUtf8SpanParsable(WellKnownSymbols.Int32.ToSnapshot())
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -76,13 +76,13 @@ public class TypeBuilderInterfaceExtensionsIntegrationTests : RoslynTestBase
             .InNamespace("MyApp.Domain")
             .AsPartial()
             .AddProperty("Value", "string?", p => p.AsReadOnly())
-            .ImplementsIEquatable(WellKnownSymbols.String, "Value")
-            .ImplementsIComparable(WellKnownSymbols.String, "Value")
-            .ImplementsIFormattable(WellKnownSymbols.String, "Value")
-            .ImplementsISpanFormattable(WellKnownSymbols.String, "Value")
-            .ImplementsIParsable(WellKnownSymbols.String)
-            .ImplementsISpanParsable(WellKnownSymbols.String)
-            .ImplementsIUtf8SpanFormattable(WellKnownSymbols.String, "Value")
+            .ImplementsIEquatable(WellKnownSymbols.String.ToSnapshot(), "Value")
+            .ImplementsIComparable(WellKnownSymbols.String.ToSnapshot(), "Value")
+            .ImplementsIFormattable(WellKnownSymbols.String.ToSnapshot(), "Value")
+            .ImplementsISpanFormattable(WellKnownSymbols.String.ToSnapshot(), "Value")
+            .ImplementsIParsable(WellKnownSymbols.String.ToSnapshot())
+            .ImplementsISpanParsable(WellKnownSymbols.String.ToSnapshot())
+            .ImplementsIUtf8SpanFormattable(WellKnownSymbols.String.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -99,7 +99,7 @@ public class TypeBuilderInterfaceExtensionsIntegrationTests : RoslynTestBase
     {
         var result = TypeBuilder
             .Struct("MyId")
-            .ImplementsIEquatable(WellKnownSymbols.Guid, "Value")
+            .ImplementsIEquatable(WellKnownSymbols.Guid.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -112,9 +112,9 @@ public class TypeBuilderInterfaceExtensionsIntegrationTests : RoslynTestBase
         var result = TypeBuilder
             .Struct("MyId")
             .AddProperty("Value", "global::System.Guid", p => p.AsReadOnly())
-            .ImplementsIEquatable(WellKnownSymbols.Guid, "Value") // "Value" could be typo'd
-            .ImplementsIComparable(WellKnownSymbols.Guid, "Value") // repeated everywhere
-            .ImplementsIFormattable(WellKnownSymbols.Guid, "Value")
+            .ImplementsIEquatable(WellKnownSymbols.Guid.ToSnapshot(), "Value") // "Value" could be typo'd
+            .ImplementsIComparable(WellKnownSymbols.Guid.ToSnapshot(), "Value") // repeated everywhere
+            .ImplementsIFormattable(WellKnownSymbols.Guid.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -125,12 +125,12 @@ public class TypeBuilderInterfaceExtensionsIntegrationTests : RoslynTestBase
     {
         var result = TypeBuilder
             .Struct("MyId")
-            .ImplementsIEquatable(WellKnownSymbols.Guid, "Value")
-            .ImplementsIComparable(WellKnownSymbols.Guid, "Value")
-            .ImplementsIFormattable(WellKnownSymbols.Guid, "Value")
-            .ImplementsISpanFormattable(WellKnownSymbols.Guid, "Value")
-            .ImplementsIParsable(WellKnownSymbols.Guid)
-            .ImplementsISpanParsable(WellKnownSymbols.Guid)
+            .ImplementsIEquatable(WellKnownSymbols.Guid.ToSnapshot(), "Value")
+            .ImplementsIComparable(WellKnownSymbols.Guid.ToSnapshot(), "Value")
+            .ImplementsIFormattable(WellKnownSymbols.Guid.ToSnapshot(), "Value")
+            .ImplementsISpanFormattable(WellKnownSymbols.Guid.ToSnapshot(), "Value")
+            .ImplementsIParsable(WellKnownSymbols.Guid.ToSnapshot())
+            .ImplementsISpanParsable(WellKnownSymbols.Guid.ToSnapshot())
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -146,7 +146,7 @@ public class TypeBuilderInterfaceExtensionsIntegrationTests : RoslynTestBase
             .Struct("MyId")
             .AddProperty("Value", "global::System.Guid", p => p.AsReadOnly())
             // Missing: constructor that takes Guid
-            .ImplementsIEquatable(WellKnownSymbols.Guid, "Value")
+            .ImplementsIEquatable(WellKnownSymbols.Guid.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -160,8 +160,8 @@ public class TypeBuilderInterfaceExtensionsIntegrationTests : RoslynTestBase
         // Default behavior uses Ordinal comparison
         var result = TypeBuilder
             .Struct("MyId")
-            .ImplementsIEquatable(WellKnownSymbols.String, "Value")
-            .ImplementsIComparable(WellKnownSymbols.String, "Value")
+            .ImplementsIEquatable(WellKnownSymbols.String.ToSnapshot(), "Value")
+            .ImplementsIComparable(WellKnownSymbols.String.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -175,8 +175,8 @@ public class TypeBuilderInterfaceExtensionsIntegrationTests : RoslynTestBase
         // Can now customize string comparison
         var result = TypeBuilder
             .Struct("MyId")
-            .ImplementsIEquatable(WellKnownSymbols.String, "Value", StringComparison.OrdinalIgnoreCase)
-            .ImplementsIComparable(WellKnownSymbols.String, "Value", StringComparison.OrdinalIgnoreCase)
+            .ImplementsIEquatable(WellKnownSymbols.String.ToSnapshot(), "Value", StringComparison.OrdinalIgnoreCase)
+            .ImplementsIComparable(WellKnownSymbols.String.ToSnapshot(), "Value", StringComparison.OrdinalIgnoreCase)
             .Emit();
 
         await Assert.That(result.Success).IsTrue();

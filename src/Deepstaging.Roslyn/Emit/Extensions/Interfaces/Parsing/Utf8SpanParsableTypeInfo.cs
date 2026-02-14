@@ -35,7 +35,7 @@ internal readonly struct Utf8SpanParsableTypeInfo
     /// <summary>
     /// Creates a Utf8SpanParsableTypeInfo from the given type symbol.
     /// </summary>
-    public static Utf8SpanParsableTypeInfo From(ValidSymbol<INamedTypeSymbol> type)
+    public static Utf8SpanParsableTypeInfo From(TypeSnapshot type)
     {
         var core = BackingTypeCore.From(type);
         var supportsUtf8Parsing = core.IsInt32 || core.IsInt64;

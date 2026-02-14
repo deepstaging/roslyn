@@ -16,7 +16,7 @@ public static class TypeBuilderBitwiseOrOperatorExtensions
     /// </summary>
     public static TypeBuilder ImplementsBitwiseOrOperator(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         string valueAccessor)
     {
         var typeName = builder.Name;
@@ -55,7 +55,7 @@ public static class TypeBuilderBitwiseOrOperatorExtensions
     /// </summary>
     public static TypeBuilder ImplementsBitwiseOrOperator(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         PropertyBuilder property) =>
         builder.ImplementsBitwiseOrOperator(backingType, property.Name);
 
@@ -64,7 +64,7 @@ public static class TypeBuilderBitwiseOrOperatorExtensions
     /// </summary>
     public static TypeBuilder ImplementsBitwiseOrOperator(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         FieldBuilder field) =>
         builder.ImplementsBitwiseOrOperator(backingType, field.Name);
 }

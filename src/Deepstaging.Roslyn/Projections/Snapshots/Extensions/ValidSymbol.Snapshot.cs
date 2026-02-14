@@ -10,11 +10,25 @@ namespace Deepstaging.Roslyn;
 /// </summary>
 public static class ValidSymbolSnapshotExtensions
 {
+    /// <summary>
+    /// Format that produces canonical globally-qualified names without C# keyword substitution.
+    /// <c>System.Int32</c> → <c>global::System.Int32</c> (not <c>int</c>).
+    /// </summary>
+    private static readonly SymbolDisplayFormat CanonicalGlobalFormat = new(
+        SymbolDisplayGlobalNamespaceStyle.Included,
+        SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces,
+        SymbolDisplayGenericsOptions.IncludeTypeParameters,
+        miscellaneousOptions: SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers);
+
     extension<TSymbol>(ValidSymbol<TSymbol> symbol) where TSymbol : class, ISymbol
     {
         /// <summary>
         /// Populates the base <see cref="SymbolSnapshot"/> properties on a derived snapshot
         /// using a record <c>with</c> expression.
+        /// Uses <see cref="SymbolDisplayFormat.FullyQualifiedFormat"/> for
+        /// <see cref="SymbolSnapshot.GloballyQualifiedName"/> so that
+        /// <c>System.Int32</c> becomes <c>global::System.Int32</c> (not <c>int</c>),
+        /// ensuring reliable type identity comparisons in pipeline-safe code.
         /// </summary>
         internal T WithBaseProperties<T>(T snapshot) where T : SymbolSnapshot =>
             snapshot with
@@ -22,7 +36,8 @@ public static class ValidSymbolSnapshotExtensions
                 Name = symbol.Name,
                 Namespace = symbol.Namespace,
                 FullyQualifiedName = symbol.FullyQualifiedName,
-                GloballyQualifiedName = symbol.GloballyQualifiedName,
+                GloballyQualifiedName = symbol.Value.ToDisplayString(CanonicalGlobalFormat),
+                CodeName = symbol.GloballyQualifiedName,
                 PropertyName = symbol.PropertyName,
                 ParameterName = symbol.ParameterName,
                 AccessibilityString = symbol.AccessibilityString,

@@ -19,7 +19,7 @@ public static class TypeBuilderIncrementOperatorExtensions
     /// <returns>The modified type builder.</returns>
     public static TypeBuilder ImplementsIncrementOperator(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         string valueAccessor)
     {
         var typeName = builder.Name;
@@ -61,7 +61,7 @@ public static class TypeBuilderIncrementOperatorExtensions
     /// </summary>
     public static TypeBuilder ImplementsIncrementOperator(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         PropertyBuilder property) =>
         builder.ImplementsIncrementOperator(backingType, property.Name);
 
@@ -70,7 +70,7 @@ public static class TypeBuilderIncrementOperatorExtensions
     /// </summary>
     public static TypeBuilder ImplementsIncrementOperator(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         FieldBuilder field) =>
         builder.ImplementsIncrementOperator(backingType, field.Name);
 }

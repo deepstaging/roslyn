@@ -30,8 +30,17 @@ public record SymbolSnapshot : IEquatable<SymbolSnapshot>
 
     /// <summary>
     /// Gets the fully qualified name with global namespace prefix.
+    /// Uses canonical form without C# keyword substitution (e.g., <c>global::System.Int32</c>).
+    /// For code generation that should emit C# keywords (e.g., <c>int</c>), use <see cref="CodeName"/>.
     /// </summary>
     public string GloballyQualifiedName { get; init; } = "";
+
+    /// <summary>
+    /// Gets the type name suitable for emitting in generated C# code.
+    /// Uses C# keyword aliases where applicable (e.g., <c>int</c> instead of <c>global::System.Int32</c>).
+    /// Falls back to <see cref="GloballyQualifiedName"/> for non-keyword types.
+    /// </summary>
+    public string CodeName { get; init; } = "";
 
     /// <summary>
     /// Gets the display name (namespace.name) of the symbol.

@@ -19,7 +19,7 @@ public class TypeBuilderIComparableExtensionsTests : RoslynTestBase
             .Struct("MyId")
             .InNamespace("Test")
             .AddProperty("Value", "global::System.Guid", p => p.AsReadOnly())
-            .ImplementsIComparable(WellKnownSymbols.Guid, "Value")
+            .ImplementsIComparable(WellKnownSymbols.Guid.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -38,7 +38,7 @@ public class TypeBuilderIComparableExtensionsTests : RoslynTestBase
             .Struct("MyId")
             .InNamespace("Test")
             .AddProperty("Value", "string?", p => p.AsReadOnly())
-            .ImplementsIComparable(WellKnownSymbols.String, "Value")
+            .ImplementsIComparable(WellKnownSymbols.String.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -77,7 +77,7 @@ public class TypeBuilderIComparableExtensionsTests : RoslynTestBase
             .Struct("Counter")
             .InNamespace("Test")
             .AddProperty(valueProperty)
-            .ImplementsIComparable(WellKnownSymbols.Int32, valueProperty)
+            .ImplementsIComparable(WellKnownSymbols.Int32.ToSnapshot(), valueProperty)
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -93,7 +93,7 @@ public class TypeBuilderIComparableExtensionsTests : RoslynTestBase
             .Struct("Counter")
             .InNamespace("Test")
             .AddField(valueField)
-            .ImplementsIComparable(WellKnownSymbols.Int32, valueField)
+            .ImplementsIComparable(WellKnownSymbols.Int32.ToSnapshot(), valueField)
             .Emit();
 
         await Assert.That(result.Success).IsTrue();

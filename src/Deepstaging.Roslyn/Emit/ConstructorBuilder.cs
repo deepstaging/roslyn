@@ -225,15 +225,15 @@ public record struct ConstructorBuilder
     }
 
     /// <summary>
-    /// Sets the XML documentation for the constructor from parsed XmlDocumentation.
+    /// Sets the XML documentation for the constructor from a pipeline-safe <see cref="DocumentationSnapshot"/>.
     /// </summary>
-    /// <param name="documentation">The parsed XML documentation to copy.</param>
-    public ConstructorBuilder WithXmlDoc(XmlDocumentation documentation)
+    /// <param name="snapshot">The documentation snapshot to copy.</param>
+    public ConstructorBuilder WithXmlDoc(DocumentationSnapshot snapshot)
     {
-        if (documentation.IsEmpty)
+        if (!snapshot.HasValue && snapshot.Params.Count == 0 && snapshot.TypeParams.Count == 0)
             return this;
 
-        var xmlDoc = XmlDocumentationBuilder.From(documentation);
+        var xmlDoc = XmlDocumentationBuilder.From(snapshot);
         return this with { XmlDoc = xmlDoc };
     }
 

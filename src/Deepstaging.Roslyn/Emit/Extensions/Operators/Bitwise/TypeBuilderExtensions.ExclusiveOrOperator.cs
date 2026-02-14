@@ -16,7 +16,7 @@ public static class TypeBuilderExclusiveOrOperatorExtensions
     /// </summary>
     public static TypeBuilder ImplementsExclusiveOrOperator(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         string valueAccessor)
     {
         var typeName = builder.Name;
@@ -55,7 +55,7 @@ public static class TypeBuilderExclusiveOrOperatorExtensions
     /// </summary>
     public static TypeBuilder ImplementsExclusiveOrOperator(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         PropertyBuilder property) =>
         builder.ImplementsExclusiveOrOperator(backingType, property.Name);
 
@@ -64,7 +64,7 @@ public static class TypeBuilderExclusiveOrOperatorExtensions
     /// </summary>
     public static TypeBuilder ImplementsExclusiveOrOperator(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         FieldBuilder field) =>
         builder.ImplementsExclusiveOrOperator(backingType, field.Name);
 }

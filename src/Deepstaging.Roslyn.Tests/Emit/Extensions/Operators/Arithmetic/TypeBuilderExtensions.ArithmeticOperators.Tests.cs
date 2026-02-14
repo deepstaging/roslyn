@@ -19,7 +19,7 @@ public class TypeBuilderArithmeticOperatorExtensionsTests : RoslynTestBase
             .Struct("Counter")
             .InNamespace("Test")
             .AddProperty("Value", "int", p => p.AsReadOnly())
-            .ImplementsAdditionOperator(WellKnownSymbols.Int32, "Value")
+            .ImplementsAdditionOperator(WellKnownSymbols.Int32.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -47,7 +47,7 @@ public class TypeBuilderArithmeticOperatorExtensionsTests : RoslynTestBase
         var result = TypeBuilder
             .Struct("Name")
             .InNamespace("Test")
-            .ImplementsAdditionOperator(WellKnownSymbols.String, "Value")
+            .ImplementsAdditionOperator(WellKnownSymbols.String.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -66,7 +66,7 @@ public class TypeBuilderArithmeticOperatorExtensionsTests : RoslynTestBase
             .Struct("Counter")
             .InNamespace("Test")
             .AddProperty("Value", "int", p => p.AsReadOnly())
-            .ImplementsSubtractionOperator(WellKnownSymbols.Int32, "Value")
+            .ImplementsSubtractionOperator(WellKnownSymbols.Int32.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -86,7 +86,7 @@ public class TypeBuilderArithmeticOperatorExtensionsTests : RoslynTestBase
             .Struct("Counter")
             .InNamespace("Test")
             .AddProperty("Value", "int", p => p.AsReadOnly())
-            .ImplementsIncrementOperator(WellKnownSymbols.Int32, "Value")
+            .ImplementsIncrementOperator(WellKnownSymbols.Int32.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -106,7 +106,7 @@ public class TypeBuilderArithmeticOperatorExtensionsTests : RoslynTestBase
             .Struct("Counter")
             .InNamespace("Test")
             .AddProperty("Value", "int", p => p.AsReadOnly())
-            .ImplementsDecrementOperator(WellKnownSymbols.Int32, "Value")
+            .ImplementsDecrementOperator(WellKnownSymbols.Int32.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -126,7 +126,7 @@ public class TypeBuilderArithmeticOperatorExtensionsTests : RoslynTestBase
             .Struct("Counter")
             .InNamespace("Test")
             .AddProperty("Value", "int", p => p.AsReadOnly())
-            .ImplementsMultiplyOperator(WellKnownSymbols.Int32, "Value")
+            .ImplementsMultiplyOperator(WellKnownSymbols.Int32.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -146,7 +146,7 @@ public class TypeBuilderArithmeticOperatorExtensionsTests : RoslynTestBase
             .Struct("Counter")
             .InNamespace("Test")
             .AddProperty("Value", "int", p => p.AsReadOnly())
-            .ImplementsDivisionOperator(WellKnownSymbols.Int32, "Value")
+            .ImplementsDivisionOperator(WellKnownSymbols.Int32.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -166,7 +166,7 @@ public class TypeBuilderArithmeticOperatorExtensionsTests : RoslynTestBase
             .Struct("Counter")
             .InNamespace("Test")
             .AddProperty("Value", "int", p => p.AsReadOnly())
-            .ImplementsModulusOperator(WellKnownSymbols.Int32, "Value")
+            .ImplementsModulusOperator(WellKnownSymbols.Int32.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -186,7 +186,7 @@ public class TypeBuilderArithmeticOperatorExtensionsTests : RoslynTestBase
             .Struct("Counter")
             .InNamespace("Test")
             .AddProperty("Value", "int", p => p.AsReadOnly())
-            .ImplementsUnaryNegationOperator(WellKnownSymbols.Int32, "Value")
+            .ImplementsUnaryNegationOperator(WellKnownSymbols.Int32.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -206,7 +206,7 @@ public class TypeBuilderArithmeticOperatorExtensionsTests : RoslynTestBase
             .Struct("Counter")
             .InNamespace("Test")
             .AddProperty("Value", "int", p => p.AsReadOnly())
-            .ImplementsUnaryPlusOperator(WellKnownSymbols.Int32, "Value")
+            .ImplementsUnaryPlusOperator(WellKnownSymbols.Int32.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -226,10 +226,10 @@ public class TypeBuilderArithmeticOperatorExtensionsTests : RoslynTestBase
             .Struct("Counter")
             .InNamespace("Test")
             .AddProperty("Value", "int", p => p.AsReadOnly())
-            .ImplementsAdditionOperator(WellKnownSymbols.Int32, "Value")
-            .ImplementsSubtractionOperator(WellKnownSymbols.Int32, "Value")
-            .ImplementsIncrementOperator(WellKnownSymbols.Int32, "Value")
-            .ImplementsDecrementOperator(WellKnownSymbols.Int32, "Value")
+            .ImplementsAdditionOperator(WellKnownSymbols.Int32.ToSnapshot(), "Value")
+            .ImplementsSubtractionOperator(WellKnownSymbols.Int32.ToSnapshot(), "Value")
+            .ImplementsIncrementOperator(WellKnownSymbols.Int32.ToSnapshot(), "Value")
+            .ImplementsDecrementOperator(WellKnownSymbols.Int32.ToSnapshot(), "Value")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -252,7 +252,7 @@ public class TypeBuilderArithmeticOperatorExtensionsTests : RoslynTestBase
             .Struct("Counter")
             .InNamespace("Test")
             .AddProperty(valueProperty)
-            .ImplementsAdditionOperator(WellKnownSymbols.Int32, valueProperty)
+            .ImplementsAdditionOperator(WellKnownSymbols.Int32.ToSnapshot(), valueProperty)
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
@@ -268,7 +268,7 @@ public class TypeBuilderArithmeticOperatorExtensionsTests : RoslynTestBase
             .Struct("Counter")
             .InNamespace("Test")
             .AddField(valueField)
-            .ImplementsAdditionOperator(WellKnownSymbols.Int32, valueField)
+            .ImplementsAdditionOperator(WellKnownSymbols.Int32.ToSnapshot(), valueField)
             .Emit();
 
         await Assert.That(result.Success).IsTrue();

@@ -19,7 +19,7 @@ public static class TypeBuilderFormattableExtensions
     /// <returns>The modified type builder.</returns>
     public static TypeBuilder ImplementsIFormattable(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         string valueAccessor)
     {
         var info = FormattableTypeInfo.From(backingType);
@@ -85,7 +85,7 @@ public static class TypeBuilderFormattableExtensions
     /// </summary>
     public static TypeBuilder ImplementsIFormattable(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         PropertyBuilder property) =>
         builder.ImplementsIFormattable(backingType, property.Name);
 
@@ -94,7 +94,7 @@ public static class TypeBuilderFormattableExtensions
     /// </summary>
     public static TypeBuilder ImplementsIFormattable(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         FieldBuilder field) =>
         builder.ImplementsIFormattable(backingType, field.Name);
 }

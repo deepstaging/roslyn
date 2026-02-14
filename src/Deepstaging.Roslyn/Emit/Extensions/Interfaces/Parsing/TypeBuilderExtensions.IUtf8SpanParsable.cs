@@ -20,7 +20,7 @@ public static class TypeBuilderUtf8SpanParsableExtensions
     /// <returns>The modified type builder (unchanged if backing type doesn't support UTF-8 parsing).</returns>
     public static TypeBuilder ImplementsIUtf8SpanParsable(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType)
+        TypeSnapshot backingType)
     {
         var typeName = builder.Name;
         var info = Utf8SpanParsableTypeInfo.From(backingType);

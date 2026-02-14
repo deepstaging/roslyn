@@ -18,7 +18,7 @@ public static class TypeBuilderSpanParsableExtensions
     /// <returns>The modified type builder.</returns>
     public static TypeBuilder ImplementsISpanParsable(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType)
+        TypeSnapshot backingType)
     {
         var typeName = builder.Name;
         var info = SpanParsableTypeInfo.From(backingType);

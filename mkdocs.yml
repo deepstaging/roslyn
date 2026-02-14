@@ -72,6 +72,7 @@ nav:
     - Project Organization: guides/project-organization.md
     - Projection Pattern: guides/projection-pattern.md
     - Generators: guides/generators.md
+    - Customizable Templates: guides/customizable-templates.md
     - Analyzers: guides/analyzers.md
     - CodeFixes: guides/codefixes.md
     - Testing: guides/testing.md

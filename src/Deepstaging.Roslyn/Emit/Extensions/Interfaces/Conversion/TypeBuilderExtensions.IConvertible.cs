@@ -21,7 +21,7 @@ public static class TypeBuilderConvertibleExtensions
     /// <returns>The modified type builder.</returns>
     public static TypeBuilder ImplementsIConvertible(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         string valueAccessor)
     {
         var info = BackingTypeCore.From(backingType);
@@ -125,7 +125,7 @@ public static class TypeBuilderConvertibleExtensions
     /// </summary>
     public static TypeBuilder ImplementsIConvertible(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         PropertyBuilder property) =>
         builder.ImplementsIConvertible(backingType, property.Name);
 
@@ -134,7 +134,7 @@ public static class TypeBuilderConvertibleExtensions
     /// </summary>
     public static TypeBuilder ImplementsIConvertible(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         FieldBuilder field) =>
         builder.ImplementsIConvertible(backingType, field.Name);
 }

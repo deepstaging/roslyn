@@ -19,11 +19,11 @@ public static class TypeBuilderBackingConversionsExtensions
     /// <returns>The modified type builder.</returns>
     public static TypeBuilder WithBackingConversions(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         string valueAccessor)
     {
         var typeName = builder.Name;
-        var backingTypeName = backingType.GloballyQualifiedName;
+        var backingTypeName = backingType.CodeName;
 
         return builder
             .AddImplicitConversion(backingTypeName, op => op
@@ -64,10 +64,10 @@ public static class TypeBuilderBackingConversionsExtensions
     /// <returns>The modified type builder.</returns>
     public static TypeBuilder WithImplicitConversionFromBacking(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType)
+        TypeSnapshot backingType)
     {
         var typeName = builder.Name;
-        var backingTypeName = backingType.GloballyQualifiedName;
+        var backingTypeName = backingType.CodeName;
 
         return builder
             .AddImplicitConversion(backingTypeName, op => op
@@ -85,11 +85,11 @@ public static class TypeBuilderBackingConversionsExtensions
     /// <returns>The modified type builder.</returns>
     public static TypeBuilder WithExplicitConversionToBacking(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         string valueAccessor)
     {
         var typeName = builder.Name;
-        var backingTypeName = backingType.GloballyQualifiedName;
+        var backingTypeName = backingType.CodeName;
 
         return builder
             .AddExplicitConversionTo(backingTypeName, op => op
@@ -102,7 +102,7 @@ public static class TypeBuilderBackingConversionsExtensions
     /// </summary>
     public static TypeBuilder WithBackingConversions(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         PropertyBuilder property) =>
         builder.WithBackingConversions(backingType, property.Name);
 
@@ -111,7 +111,7 @@ public static class TypeBuilderBackingConversionsExtensions
     /// </summary>
     public static TypeBuilder WithBackingConversions(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         FieldBuilder field) =>
         builder.WithBackingConversions(backingType, field.Name);
 
@@ -120,7 +120,7 @@ public static class TypeBuilderBackingConversionsExtensions
     /// </summary>
     public static TypeBuilder WithExplicitConversionToBacking(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         PropertyBuilder property) =>
         builder.WithExplicitConversionToBacking(backingType, property.Name);
 
@@ -129,7 +129,7 @@ public static class TypeBuilderBackingConversionsExtensions
     /// </summary>
     public static TypeBuilder WithExplicitConversionToBacking(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         FieldBuilder field) =>
         builder.WithExplicitConversionToBacking(backingType, field.Name);
 }

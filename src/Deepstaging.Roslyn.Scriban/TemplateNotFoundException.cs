@@ -13,22 +13,6 @@ namespace Deepstaging.Roslyn.Scriban;
 /// <param name="name">The name of the template that could not be found.</param>
 public sealed class TemplateNotFoundException(string name) : Exception
 {
-    /// <summary>
-    /// Canonical Scriban template file extensions supported by the framework.
-    /// </summary>
-    private static readonly string[] TemplateExtensions =
-    [
-        // Plain scriban scripts
-        ".scriban", ".sbn",
-        // Mixed scriban and HTML
-        ".scriban-html", ".scriban-htm", ".sbn-html", ".sbn-htm", ".sbnhtml", ".sbnhtm",
-        // Mixed scriban and text
-        ".scriban-txt", ".sbn-txt", ".sbntxt",
-        // Mixed scriban and C#
-        ".scriban-cs", ".sbn-cs", ".sbncs",
-        // Liquid templates
-        ".liquid"
-    ];
 
     /// <summary>
     /// Gets a detailed error message listing available Scriban templates from loaded assemblies.
@@ -71,17 +55,12 @@ public sealed class TemplateNotFoundException(string name) : Exception
         try
         {
             return assembly.GetManifestResourceNames()
-                .Where(IsTemplateResource);
+                .Where(ScribanExtension.IsKnownSuffix);
         }
         catch
         {
             // Some assemblies may not allow resource enumeration
             return [];
         }
-    }
-
-    private static bool IsTemplateResource(string resourceName)
-    {
-        return TemplateExtensions.Any(ext => resourceName.EndsWith(ext, StringComparison.OrdinalIgnoreCase));
     }
 }

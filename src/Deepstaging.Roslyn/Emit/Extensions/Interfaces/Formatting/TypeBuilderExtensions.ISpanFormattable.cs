@@ -19,7 +19,7 @@ public static class TypeBuilderSpanFormattableExtensions
     /// <returns>The modified type builder.</returns>
     public static TypeBuilder ImplementsISpanFormattable(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         string valueAccessor)
     {
         var info = SpanFormattableTypeInfo.From(backingType);
@@ -130,7 +130,7 @@ public static class TypeBuilderSpanFormattableExtensions
     /// </summary>
     public static TypeBuilder ImplementsISpanFormattable(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         PropertyBuilder property) =>
         builder.ImplementsISpanFormattable(backingType, property.Name);
 
@@ -139,7 +139,7 @@ public static class TypeBuilderSpanFormattableExtensions
     /// </summary>
     public static TypeBuilder ImplementsISpanFormattable(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         FieldBuilder field) =>
         builder.ImplementsISpanFormattable(backingType, field.Name);
 }

@@ -19,7 +19,7 @@ public static class TypeBuilderUtf8SpanFormattableExtensions
     /// <returns>The modified type builder.</returns>
     public static TypeBuilder ImplementsIUtf8SpanFormattable(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         string valueAccessor)
     {
         var info = Utf8SpanFormattableTypeInfo.From(backingType);
@@ -83,7 +83,7 @@ public static class TypeBuilderUtf8SpanFormattableExtensions
     /// </summary>
     public static TypeBuilder ImplementsIUtf8SpanFormattable(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         PropertyBuilder property) =>
         builder.ImplementsIUtf8SpanFormattable(backingType, property.Name);
 
@@ -92,7 +92,7 @@ public static class TypeBuilderUtf8SpanFormattableExtensions
     /// </summary>
     public static TypeBuilder ImplementsIUtf8SpanFormattable(
         this TypeBuilder builder,
-        ValidSymbol<INamedTypeSymbol> backingType,
+        TypeSnapshot backingType,
         FieldBuilder field) =>
         builder.ImplementsIUtf8SpanFormattable(backingType, field.Name);
 }

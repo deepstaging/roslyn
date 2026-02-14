@@ -43,7 +43,7 @@ internal readonly struct ArithmeticTypeInfo
     /// <summary>
     /// Creates an ArithmeticTypeInfo from the given type symbol.
     /// </summary>
-    public static ArithmeticTypeInfo From(ValidSymbol<INamedTypeSymbol> type)
+    public static ArithmeticTypeInfo From(TypeSnapshot type)
     {
         return new ArithmeticTypeInfo(BackingTypeCore.From(type));
     }
