@@ -68,6 +68,19 @@ public sealed record Template(TemplateName Name, object? Context = null)
         return RenderTemplate(new Template(named, context));
     }
 
+    /// <summary>
+    ///     Renders a template from raw text (not an embedded resource).
+    ///     Used for user-provided templates discovered via AdditionalTexts.
+    /// </summary>
+    /// <param name="text">The Scriban template text.</param>
+    /// <param name="name">A display name for the template (used in diagnostics).</param>
+    /// <param name="context">Optional render context (will be converted to ScriptObject if needed).</param>
+    /// <returns>A RenderResult indicating success or failure.</returns>
+    public static RenderResult RenderFromText(string text, string name, object? context = null)
+    {
+        return Render(name, text, context);
+    }
+
     #endregion
 
     #region Private Render Logic
@@ -83,6 +96,15 @@ public sealed record Template(TemplateName Name, object? Context = null)
     /// </summary>
     private static RenderResult Render(TemplateName name, string text, object? context = null)
     {
+        return Render(name.Value, text, context);
+    }
+
+    /// <summary>
+    ///     Core rendering logic: parses Scriban template and renders with context.
+    ///     Uses caching for both template text and parsed templates.
+    /// </summary>
+    private static RenderResult Render(string name, string text, object? context = null)
+    {
         try
         {
             // Get or parse the template (cache hit avoids 5-10ms parse time)
@@ -92,7 +114,7 @@ public sealed record Template(TemplateName Name, object? Context = null)
 
             var scriptObject = DeepstagingTemplateObject.From(context);
             return new RenderResult.Success(scribanTemplate.Render(scriptObject), context)
-                { TemplateName = name.Value };
+                { TemplateName = name };
         }
         catch (Exception e)
         {
@@ -100,7 +122,7 @@ public sealed record Template(TemplateName Name, object? Context = null)
                 Rules.TemplateRenderError,
                 null, e.GetType().Name, e.Message);
 
-            return new RenderResult.Failure(diagnostic) { TemplateName = name.Value };
+            return new RenderResult.Failure(diagnostic) { TemplateName = name };
         }
     }
 
@@ -109,12 +131,20 @@ public sealed record Template(TemplateName Name, object? Context = null)
     /// </summary>
     private static RenderResult CreateParseErrorResult(TemplateName name, global::Scriban.Template template)
     {
+        return CreateParseErrorResult(name.Value, template);
+    }
+
+    /// <summary>
+    ///     Creates a diagnostic result for template parsing errors.
+    /// </summary>
+    private static RenderResult CreateParseErrorResult(string name, global::Scriban.Template template)
+    {
         var diagnostic = Diagnostic.Create(
             Rules.TemplateRenderError,
             null, "ParsingError",
             $"'{name}' has errors during parsing. Errors: {string.Join(", ", template.Messages)}");
 
-        return new RenderResult.Failure(diagnostic) { TemplateName = name.Value };
+        return new RenderResult.Failure(diagnostic) { TemplateName = name };
     }
 
     #endregion

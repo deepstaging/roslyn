@@ -1,0 +1,99 @@
+// SPDX-FileCopyrightText: 2024-present Deepstaging
+// SPDX-License-Identifier: RPL-1.5
+
+using Deepstaging.Roslyn.Emit;
+using Microsoft.CodeAnalysis.CSharp;
+
+namespace Deepstaging.Roslyn.Scriban;
+
+/// <summary>
+/// Bridges <see cref="OptionalEmit"/> with user-customizable Scriban templates.
+/// Wraps a default emit result and a template definition, resolving to a user-provided
+/// template when available or falling back to the default emit.
+/// </summary>
+public readonly struct CustomizableEmit
+{
+    /// <summary>
+    /// Gets the default emit result produced by the generator's writer.
+    /// </summary>
+    public OptionalEmit DefaultEmit { get; }
+
+    /// <summary>
+    /// Gets the namespaced template name (e.g., "Deepstaging.Ids/StrongId").
+    /// </summary>
+    public string TemplateName { get; }
+
+    /// <summary>
+    /// Gets the model object used for both the default emit and template rendering.
+    /// </summary>
+    public object? Model { get; }
+
+    internal CustomizableEmit(OptionalEmit defaultEmit, string templateName, object? model)
+    {
+        DefaultEmit = defaultEmit;
+        TemplateName = templateName;
+        Model = model;
+    }
+
+    /// <summary>
+    /// Resolves this customizable emit against user templates.
+    /// If a matching user template exists, renders it with the model and validates the output.
+    /// Otherwise, returns the default emit unchanged.
+    /// </summary>
+    /// <param name="templates">User templates discovered from AdditionalTexts.</param>
+    public OptionalEmit ResolveFrom(UserTemplates templates)
+    {
+        // Default emit must be valid — if not, report those diagnostics
+        if (DefaultEmit.IsNotValid(out _))
+            return DefaultEmit;
+
+        var rendered = templates.TryRender(TemplateName, Model);
+        if (rendered is null)
+            return DefaultEmit;
+
+        return rendered switch
+        {
+            RenderResult.Success s => ValidateRenderedOutput(s.Text),
+            RenderResult.Failure f => OptionalEmit.FromFailure([f.Diagnostic]),
+            _ => DefaultEmit,
+        };
+    }
+
+    /// <summary>
+    /// Resolves this customizable emit and adds the result as generated source.
+    /// Convenience method combining <see cref="ResolveFrom"/> and AddSourceTo.
+    /// </summary>
+    /// <param name="ctx">The source production context.</param>
+    /// <param name="filename">Unique hint name for the generated file.</param>
+    /// <param name="templates">User templates discovered from AdditionalTexts.</param>
+    public void AddSourceTo(SourceProductionContext ctx, string filename, UserTemplates templates)
+    {
+        var resolved = ResolveFrom(templates);
+
+        if (resolved.IsNotValid(out var validCode))
+        {
+            foreach (var diagnostic in resolved.Diagnostics)
+                ctx.ReportDiagnostic(diagnostic);
+            return;
+        }
+
+        ctx.AddSource(filename, validCode.Code);
+    }
+
+    /// <summary>
+    /// Validates rendered Scriban output as C# source code.
+    /// Applies the same syntax validation that TypeBuilder.Emit() uses.
+    /// </summary>
+    private static OptionalEmit ValidateRenderedOutput(string code)
+    {
+        var tree = CSharpSyntaxTree.ParseText(code);
+        var root = tree.GetCompilationUnitRoot();
+        var diagnostics = root.GetDiagnostics()
+            .Where(d => d.Severity == DiagnosticSeverity.Error)
+            .ToImmutableArray();
+
+        return diagnostics.Any()
+            ? OptionalEmit.FromDiagnostics(root, code, diagnostics)
+            : OptionalEmit.FromSuccess(root, code);
+    }
+}

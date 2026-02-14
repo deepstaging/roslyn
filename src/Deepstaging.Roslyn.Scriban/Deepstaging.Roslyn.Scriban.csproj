@@ -8,6 +8,11 @@
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
 
+        <!-- PolySharp polyfills must be internal to avoid type conflicts with consuming projects -->
+        <PolySharpUsePublicAccessibilityForGeneratedTypes>false</PolySharpUsePublicAccessibilityForGeneratedTypes>
+        <!-- Only include the polyfills that the old Polyfills.cs provided -->
+        <PolySharpIncludeGeneratedTypes>System.Index;System.Range;System.Runtime.CompilerServices.IsExternalInit;System.Runtime.CompilerServices.RequiredMemberAttribute;System.Runtime.CompilerServices.CompilerFeatureRequiredAttribute;System.Diagnostics.CodeAnalysis.SetsRequiredMembersAttribute</PolySharpIncludeGeneratedTypes>
+
         <!-- Generate XML documentation for IntelliSense -->
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
@@ -22,6 +27,7 @@
 
     <ItemGroup>
         <None Include="README.md" Pack="true" PackagePath="\"/>
+        <None Include="buildTransitive/Deepstaging.Roslyn.Scriban.targets" Pack="true" PackagePath="buildTransitive\"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -38,6 +44,10 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Scriban" PrivateAssets="all"/>
+        <PackageReference Include="PolySharp">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
