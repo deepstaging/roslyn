@@ -151,6 +151,22 @@ public readonly record struct TypeRef
     /// <summary>Gets a <c>CancellationToken</c> type reference.</summary>
     public static TypeRef CancellationToken => new("global::System.Threading.CancellationToken");
 
+    // ── LINQ (System.Linq) ──────────────────────────────────────────────
+
+    /// <summary>Creates an <c>IQueryable&lt;T&gt;</c> type reference.</summary>
+    public static TypeRef IQueryable(TypeRef elementType) =>
+        new($"global::System.Linq.IQueryable<{elementType.Value}>");
+
+    /// <summary>Creates an <c>IOrderedQueryable&lt;T&gt;</c> type reference.</summary>
+    public static TypeRef IOrderedQueryable(TypeRef elementType) =>
+        new($"global::System.Linq.IOrderedQueryable<{elementType.Value}>");
+
+    // ── LINQ Expressions (System.Linq.Expressions) ──────────────────────
+
+    /// <summary>Creates an <c>Expression&lt;TDelegate&gt;</c> type reference.</summary>
+    public static TypeRef Expression(TypeRef delegateType) =>
+        new($"global::System.Linq.Expressions.Expression<{delegateType.Value}>");
+
     // ── Delegates ───────────────────────────────────────────────────────
 
     /// <summary>Creates a <c>Func&lt;...&gt;</c> delegate type reference. The last type argument is the return type.</summary>
