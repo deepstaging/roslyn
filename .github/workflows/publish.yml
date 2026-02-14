@@ -95,6 +95,11 @@ jobs:
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "Published version: $VERSION"
 
+      - name: Wait for NuGet indexing
+        run: |
+          echo "Waiting for NuGet to index packages (typically 2-5 minutes)..."
+          sleep 300
+
       - name: Dispatch to deepstaging
         uses: peter-evans/repository-dispatch@v4
         with:
