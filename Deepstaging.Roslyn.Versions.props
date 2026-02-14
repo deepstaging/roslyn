@@ -14,7 +14,7 @@
 -->
 <Project>
   <PropertyGroup>
-    <DeepstagingRoslynVersion>1.0.0-dev.102</DeepstagingRoslynVersion>
+    <DeepstagingRoslynVersion>1.0.0-dev.118</DeepstagingRoslynVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Deepstaging.Roslyn" Version="$(DeepstagingRoslynVersion)" />
