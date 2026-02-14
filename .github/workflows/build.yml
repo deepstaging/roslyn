@@ -18,4 +18,4 @@ jobs:
           dotnet-version: '10.0.x'
       - run: dotnet restore Deepstaging.Roslyn.slnx
       - run: dotnet build Deepstaging.Roslyn.slnx -c Release --no-restore
-      - run: dotnet test --solution Deepstaging.Roslyn.slnx -c Release --no-build
+      - run: dotnet test src/Deepstaging.Roslyn.Tests -c Release --no-build
