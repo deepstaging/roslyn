@@ -16,10 +16,10 @@
     <!-- Templating -->
     <PackageVersion Include="Scriban" Version="6.5.2" />
     <!-- Testing -->
-    <PackageVersion Include="TUnit" Version="1.12.125" />
-    <PackageVersion Include="TUnit.Engine" Version="1.12.125" />
-    <PackageVersion Include="Verify" Version="31.10.0" />
-    <PackageVersion Include="Verify.TUnit" Version="31.10.0" />
+    <PackageVersion Include="TUnit" Version="1.13.60" />
+    <PackageVersion Include="TUnit.Engine" Version="1.13.60" />
+    <PackageVersion Include="Verify" Version="31.12.5" />
+    <PackageVersion Include="Verify.TUnit" Version="31.12.5" />
     <PackageVersion Include="Microsoft.Testing.Platform" Version="2.0.2" />
     <PackageVersion Include="Microsoft.Testing.Platform.MSBuild" Version="2.0.2" />
     <!-- SourceLink -->
