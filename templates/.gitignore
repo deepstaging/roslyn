@@ -37,3 +37,6 @@ Thumbs.db
 
 # Husky marker file (created on first build)
 .husky/.installed
+
+# Local development overrides
+Directory.Build.Dev.props

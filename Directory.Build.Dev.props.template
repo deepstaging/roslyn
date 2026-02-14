@@ -1,0 +1,23 @@
+<!-- SPDX-FileCopyrightText: 2024-present Deepstaging -->
+<!-- SPDX-License-Identifier: RPL-1.5 -->
+<Project>
+    <!--
+      Directory.Build.Dev.props
+
+      Copy this file to Directory.Build.Dev.props to enable local development overrides.
+      Directory.Build.Dev.props is git-ignored and only imported during Debug builds.
+    -->
+
+    <PropertyGroup>
+        <!-- Override the default package output path -->
+        <!-- <PackageOutputPath>$(HOME)/.local/nuget-packages/</PackageOutputPath> -->
+
+        <!-- Enable additional diagnostic warnings -->
+        <!-- <WarningsAsErrors /> -->
+    </PropertyGroup>
+
+    <!-- Add a local NuGet package source -->
+    <!-- <ItemGroup>
+        <PackageReference Update="SomePackage" Version="1.0.0-local" />
+    </ItemGroup> -->
+</Project>
