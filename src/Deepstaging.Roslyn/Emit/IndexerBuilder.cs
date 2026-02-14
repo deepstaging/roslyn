@@ -55,6 +55,9 @@ public record struct IndexerBuilder()
     /// <summary>Gets the preprocessor directive condition for conditional compilation.</summary>
     public Directive? Condition { get; init; }
 
+    /// <summary>Gets the region name for grouping this member in a #region block.</summary>
+    public string? Region { get; init; }
+
     #region Factory Methods
 
     /// <summary>
@@ -72,6 +75,13 @@ public record struct IndexerBuilder()
             Accessibility = Accessibility.Public
         };
     }
+
+    /// <summary>
+    /// Creates an indexer builder using a symbol's globally qualified name as the return type.
+    /// </summary>
+    /// <param name="type">The indexer return type symbol.</param>
+    public static IndexerBuilder For<T>(ValidSymbol<T> type) where T : class, ITypeSymbol
+        => For(type.GloballyQualifiedName);
 
     #endregion
 
@@ -114,6 +124,13 @@ public record struct IndexerBuilder()
     public IndexerBuilder When(Directive directive) =>
         this with { Condition = directive };
 
+    /// <summary>
+    /// Assigns this indexer to a named region for grouping in #region/#endregion blocks.
+    /// </summary>
+    /// <param name="regionName">The region name (e.g., "Indexers").</param>
+    public IndexerBuilder InRegion(string regionName) =>
+        this with { Region = regionName };
+
     #endregion
 
     #region Parameters
@@ -140,6 +157,18 @@ public record struct IndexerBuilder()
         var parameters = Parameters.IsDefault ? [] : Parameters;
         return this with { Parameters = parameters.Add(configure(ParameterBuilder.For(name, type))) };
     }
+
+    /// <summary>
+    /// Adds an index parameter using a symbol's globally qualified name as the type.
+    /// </summary>
+    public IndexerBuilder AddParameter<T>(string name, ValidSymbol<T> type) where T : class, ITypeSymbol
+        => AddParameter(name, type.GloballyQualifiedName);
+
+    /// <summary>
+    /// Adds an index parameter using a symbol's globally qualified name, with configuration.
+    /// </summary>
+    public IndexerBuilder AddParameter<T>(string name, ValidSymbol<T> type, Func<ParameterBuilder, ParameterBuilder> configure) where T : class, ITypeSymbol
+        => AddParameter(name, type.GloballyQualifiedName, configure);
 
     /// <summary>
     /// Adds a pre-configured parameter to the indexer.

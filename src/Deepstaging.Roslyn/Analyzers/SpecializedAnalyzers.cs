@@ -42,3 +42,21 @@ public abstract class NamespaceAnalyzer : SymbolAnalyzer<INamespaceSymbol>;
 /// Base class for analyzers that report diagnostics on type parameter symbols (generic constraints).
 /// </summary>
 public abstract class TypeParameterAnalyzer : SymbolAnalyzer<ITypeParameterSymbol>;
+
+/// <summary>
+/// Base class for analyzers that report multiple diagnostics on type symbols (one per item).
+/// </summary>
+/// <typeparam name="TItem">The item type representing each diagnostic occurrence.</typeparam>
+public abstract class MultiDiagnosticTypeAnalyzer<TItem> : MultiDiagnosticSymbolAnalyzer<INamedTypeSymbol, TItem>;
+
+/// <summary>
+/// Base class for analyzers that report multiple diagnostics on method symbols (one per item).
+/// </summary>
+/// <typeparam name="TItem">The item type representing each diagnostic occurrence.</typeparam>
+public abstract class MultiDiagnosticMethodAnalyzer<TItem> : MultiDiagnosticSymbolAnalyzer<IMethodSymbol, TItem>;
+
+/// <summary>
+/// Base class for analyzers that report multiple diagnostics on property symbols (one per item).
+/// </summary>
+/// <typeparam name="TItem">The item type representing each diagnostic occurrence.</typeparam>
+public abstract class MultiDiagnosticPropertyAnalyzer<TItem> : MultiDiagnosticSymbolAnalyzer<IPropertySymbol, TItem>;

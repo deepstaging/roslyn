@@ -23,18 +23,16 @@
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <EmbedAllSources>true</EmbedAllSources>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    
+    <!-- 
+      Embedded PDB: Includes debugging symbols directly in the DLL
+      so consumers can step into source without configuring a symbol server.
+      Combined with EmbedAllSources, this provides full source-level debugging.
+    -->
+    <DebugType>embedded</DebugType>
   </PropertyGroup>
   
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="all" />
   </ItemGroup>
-    
-  <PropertyGroup>
-    <!-- 
-      Symbol packages (.snupkg): Separate package with debugging symbols
-      Upload to nuget.org alongside your .nupkg for debugging published packages
-    -->
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-  </PropertyGroup>
 </Project>

@@ -48,6 +48,10 @@ public record struct PropertyBuilder
     public XmlDocumentationBuilder? XmlDoc { get; init; }
     /// <summary>Gets the preprocessor directive condition for conditional compilation.</summary>
     public Directive? Condition { get; init; }
+    /// <summary>Gets the region name for grouping this member in a #region block.</summary>
+    public string? Region { get; init; }
+    /// <summary>Gets user-defined metadata that does not affect code generation.</summary>
+    public ImmutableDictionary<string, object?>? Metadata { get; init; }
 
     #region Factory Methods
 
@@ -70,6 +74,14 @@ public record struct PropertyBuilder
             Accessibility = Accessibility.Public
         };
     }
+
+    /// <summary>
+    /// Creates a property builder using a symbol's globally qualified name as the type.
+    /// </summary>
+    /// <param name="name">The property name (e.g., "UserId", "Name").</param>
+    /// <param name="type">The property type symbol.</param>
+    public static PropertyBuilder For<T>(string name, ValidSymbol<T> type) where T : class, ITypeSymbol
+        => For(name, type.GloballyQualifiedName);
 
     /// <summary>
     /// Creates a property builder by parsing a C# property signature.
@@ -204,6 +216,13 @@ public record struct PropertyBuilder
     public readonly PropertyBuilder When(Directive directive) =>
         this with { Condition = directive };
 
+    /// <summary>
+    /// Assigns this property to a named region for grouping in #region/#endregion blocks.
+    /// </summary>
+    /// <param name="regionName">The region name (e.g., "Properties", "Configuration").</param>
+    public readonly PropertyBuilder InRegion(string regionName) =>
+        this with { Region = regionName };
+
     #endregion
 
     #region Initialization
@@ -320,6 +339,29 @@ public record struct PropertyBuilder
         var usings = Usings.IsDefault ? [] : Usings;
         return this with { Usings = usings.Add(@namespace) };
     }
+
+    #endregion
+
+    #region Metadata
+
+    /// <summary>
+    /// Attaches a metadata entry to this builder. Metadata does not affect code generation.
+    /// </summary>
+    /// <param name="key">The metadata key.</param>
+    /// <param name="value">The metadata value.</param>
+    public readonly PropertyBuilder WithMetadata(string key, object? value) =>
+        this with { Metadata = (Metadata ?? ImmutableDictionary<string, object?>.Empty).SetItem(key, value) };
+
+    /// <summary>
+    /// Retrieves a metadata entry by key.
+    /// </summary>
+    /// <typeparam name="T">The expected metadata type.</typeparam>
+    /// <param name="key">The metadata key.</param>
+    /// <returns>The metadata value cast to <typeparamref name="T"/>.</returns>
+    /// <exception cref="KeyNotFoundException">Thrown when the key is not found.</exception>
+    /// <exception cref="InvalidCastException">Thrown when the value is not of the expected type.</exception>
+    public readonly T GetMetadata<T>(string key) where T : class =>
+        (T)(Metadata ?? throw new KeyNotFoundException($"Metadata key '{key}' not found."))[key]!;
 
     #endregion
 

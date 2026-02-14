@@ -11,7 +11,14 @@ public static class ValidPropertySymbolExtensions
     extension(ValidSymbol<IPropertySymbol> property)
     {
         /// <summary>
-        /// Gets the type of the property.
+        /// Gets the type of the property as a validated projected symbol.
+        /// Properties always have a type, so this returns a non-nullable ValidSymbol.
+        /// </summary>
+        public ValidSymbol<ITypeSymbol> Type =>
+            ValidSymbol<ITypeSymbol>.From(property.Value.Type);
+
+        /// <summary>
+        /// Gets the type of the property as a named type.
         /// Properties always have a type in Roslyn's object model.
         /// </summary>
         public ValidSymbol<INamedTypeSymbol> ReturnType =>

@@ -46,6 +46,13 @@ public sealed class EmitOptions
                                                  """;
 
     /// <summary>
+    /// Gets or sets whether to automatically wrap each member category
+    /// (Fields, Properties, Methods, etc.) in #region/#endregion blocks.
+    /// Default is false.
+    /// </summary>
+    public bool UseRegions { get; set; }
+
+    /// <summary>
     /// Creates default emit options with syntax validation and standard formatting.
     /// </summary>
     public static EmitOptions Default => new();

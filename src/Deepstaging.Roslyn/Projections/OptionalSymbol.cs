@@ -274,7 +274,6 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
         SymbolDisplayGenericsOptions.IncludeTypeParameters,
         miscellaneousOptions: SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier |
                               SymbolDisplayMiscellaneousOptions.AllowDefaultLiteral |
-                              SymbolDisplayMiscellaneousOptions.IncludeNotNullableReferenceTypeModifier |
                               SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
 
     private static readonly SymbolDisplayFormat GloballyQualifiedFormatWithNullability = new(
@@ -283,7 +282,6 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
         SymbolDisplayGenericsOptions.IncludeTypeParameters,
         miscellaneousOptions: SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier |
                               SymbolDisplayMiscellaneousOptions.AllowDefaultLiteral |
-                              SymbolDisplayMiscellaneousOptions.IncludeNotNullableReferenceTypeModifier |
                               SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
 
     /// <summary>
@@ -881,4 +879,10 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
     }
 
     #endregion
+
+    /// <summary>
+    /// Returns the globally qualified name of the symbol if present, or an empty string.
+    /// Safe for use in string interpolation.
+    /// </summary>
+    public override string ToString() => GloballyQualifiedName ?? string.Empty;
 }

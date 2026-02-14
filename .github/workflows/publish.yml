@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2024-present Deepstaging
+# SPDX-License-Identifier: RPL-1.5
 name: Publish NuGet Packages
 
 on:
@@ -20,32 +22,34 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       id-token: write  # Required for OIDC Trusted Publishing
-      contents: read
+      contents: write  # Required for committing Versions.props
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for accurate commit count
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.0.x'
+          dotnet-version: '10.0.x'
 
       - name: Create artifacts directory
-        run: mkdir -p /home/runner/work/artifacts/packages
+        run: mkdir -p ./artifacts/packages
 
       - name: Build and Pack
         run: |
           if [[ "${{ github.ref_type }}" == "tag" ]]; then
             # Tag push - release build without version suffix
-            ./build/pack.sh --no-version-suffix --output ./artifacts/packages
+            ./build/pack.sh --no-version-suffix --update-versions --output ./artifacts/packages
           elif [[ "${{ github.event_name }}" == "push" ]]; then
-            # Branch push - dev build with version suffix
-            ./build/pack.sh --output ./artifacts/packages
+            # Branch push - dev build with commit-count suffix
+            ./build/pack.sh --ci --output ./artifacts/packages
           elif [[ -n "${{ github.event.inputs.version-suffix }}" ]]; then
             # Manual trigger with suffix
-            ./build/pack.sh --version-suffix "${{ github.event.inputs.version-suffix }}" --output ./artifacts/packages
+            ./build/pack.sh --version-suffix "${{ github.event.inputs.version-suffix }}" --update-versions --output ./artifacts/packages
           else
             # Manual trigger without suffix - release build
-            ./build/pack.sh --no-version-suffix --output ./artifacts/packages
+            ./build/pack.sh --no-version-suffix --update-versions --output ./artifacts/packages
           fi
 
       - name: Upload packages artifact
@@ -70,6 +74,39 @@ jobs:
               --source https://api.nuget.org/v3/index.json \
               --skip-duplicate
           done
+
+      - name: Commit updated Versions.props
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Deepstaging.Roslyn.Versions.props templates/templates/roslynkit/Directory.Packages.props
+          if git diff --cached --quiet; then
+            echo "No version files changed, skipping commit"
+          else
+            VERSION=$(grep -oP '(?<=<DeepstagingRoslynVersion>).*(?=</DeepstagingRoslynVersion>)' Deepstaging.Roslyn.Versions.props)
+            git commit -m "chore: update Versions.props to $VERSION [skip ci]"
+            git push
+          fi
+
+      - name: Extract published version
+        id: version
+        run: |
+          VERSION=$(grep -oP '(?<=<DeepstagingRoslynVersion>).*(?=</DeepstagingRoslynVersion>)' Deepstaging.Roslyn.Versions.props)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Published version: $VERSION"
+
+      - name: Dispatch to deepstaging
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.DISPATCH_TOKEN }}
+          repository: deepstaging/deepstaging
+          event-type: roslyn-published
+          client-payload: >-
+            {
+              "version": "${{ steps.version.outputs.version }}",
+              "ref": "${{ github.ref }}",
+              "sha": "${{ github.sha }}"
+            }
 
       # Future: Uncomment when code signing certificate is available
       # - name: Sign NuGet Packages

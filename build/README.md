@@ -29,7 +29,9 @@ NuGet package metadata and versioning:
 - Package metadata (Authors, Company, Description, etc.)
 - License and repository URLs
 - Package tags and assets (README, icon)
-- Version prefix
+- Version prefix and suffix
+
+**Versioning:** `VersionPrefix` (e.g., `1.0.0`) is the base version. Dev builds use `pack.sh` which derives the suffix from git commit count, producing versions like `1.0.0-dev.42`. Release builds (via `--no-version-suffix`) use the `VersionPrefix` alone. You can also set a manual suffix like `alpha.1` or `rc.1` in this file for staged prereleases.
 
 **When to edit:** Customizing package information before publishing
 
@@ -68,8 +70,6 @@ To add a new category:
 
 You can use this code, modify it, and share it freely. But when you deploy it — internally or externally, as a service or within your company — you share your improvements back under the same license.
 
-Why? We believe if you benefit from this code, the community should benefit from your improvements. That's the deal we think is fair.
-
-**Personal research and experimentation? No obligations.** Go learn, explore, and build.
+See [LICENSE](../LICENSE) for the full legal text.
 
 See [LICENSE](../LICENSE) for the full legal text.

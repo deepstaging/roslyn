@@ -34,7 +34,7 @@ public static class WithMethods
                 .ThatArePublic()
                 .ThatAreInstance()
                 .ThatAreReadWrite()
-                .Select(p => new WithPropertyModel { Name = p.Name, TypeName = p.Type?.FullyQualifiedName! });
+                .Select(p => new WithPropertyModel { Name = p.Name, TypeName = p.Type.FullyQualifiedName });
 
             if (props.IsDefaultOrEmpty)
                 return null;

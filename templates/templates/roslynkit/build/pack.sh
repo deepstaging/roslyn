@@ -6,7 +6,7 @@
 # Usage:
 #   ./build/pack.sh                    # Build Release with dev version suffix
 #   ./build/pack.sh --configuration Debug
-#   ./build/pack.sh --version-suffix dev-20260202
+#   ./build/pack.sh --version-suffix dev.42
 #   ./build/pack.sh --no-version-suffix  # Pack without version suffix (release)
 #
 # Output: artifacts/packages/
@@ -22,7 +22,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # Default values
 CONFIGURATION="Release"
-VERSION_SUFFIX="dev-$(date +%Y%m%d%H%M%S)"
+VERSION_SUFFIX="dev.$(git -C "$REPO_ROOT" rev-list --count HEAD)"
 OUTPUT_DIR="$REPO_ROOT/artifacts/packages"
 
 # Parse arguments
@@ -49,7 +49,7 @@ while [[ $# -gt 0 ]]; do
             echo ""
             echo "Options:"
             echo "  -c, --configuration <config>  Build configuration (default: Release)"
-            echo "  --version-suffix <suffix>     Version suffix (default: dev-YYYYMMDDHHMMSS)"
+            echo "  --version-suffix <suffix>     Version suffix (default: dev.<commit-count>)"
             echo "  --no-version-suffix           Pack without version suffix (for release)"
             echo "  -o, --output <dir>            Output directory (default: artifacts/packages)"
             echo "  -h, --help                    Show this help message"
@@ -93,4 +93,8 @@ dotnet pack $(build_pack_args "$REPO_ROOT/src/Deepstaging.RoslynKit.CodeFixes/De
 
 echo ""
 echo "Packages created in: $OUTPUT_DIR"
-ls -la "$OUTPUT_DIR"/Deepstaging.RoslynKit*.nupkg 2>/dev/null || echo "No .nupkg files found"
+
+# Clean up old package versions (keep only last 3 per package)
+for prefix in $(ls "$OUTPUT_DIR"/*.nupkg 2>/dev/null | xargs -n1 basename | sed 's/\.[0-9][0-9]*\..*//' | sort -u); do
+    ls -t "$OUTPUT_DIR/$prefix".[0-9]*.nupkg 2>/dev/null | tail -n +4 | xargs rm -f
+done

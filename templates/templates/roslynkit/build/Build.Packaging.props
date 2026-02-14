@@ -58,8 +58,8 @@
       VersionPrefix: Base version for your package (SemVer format: major.minor.patch)
       VersionSuffix: Prerelease suffix (e.g., alpha.1, beta.1, rc.1)
       
-      For dev builds, the workspace automatically appends a timestamp suffix like:
-      1.0.0-dev-20260107120000
+      For dev builds, pack.sh derives the suffix from git commit count:
+      1.0.0-dev.42
       
       Update this when you want to release a new version.
     -->

@@ -52,7 +52,7 @@ public static class AutoNotify
                     .ToString()
                     .ToPascalCase(),
                 FieldName = field.Name,
-                TypeName = field.Type?.FullyQualifiedName!,
+                TypeName = field.Type.FullyQualifiedName,
                 IsFieldPrivate = field.IsPrivate,
                 AlsoNotify =
                 [

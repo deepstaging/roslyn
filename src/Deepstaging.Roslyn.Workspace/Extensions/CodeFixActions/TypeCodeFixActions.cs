@@ -105,6 +105,51 @@ public static class TypeCodeFixActions
 
         #endregion
 
+        #region Member Insertion Helpers
+
+        /// <summary>
+        /// Creates a code action that adds new members to a type declaration.
+        /// </summary>
+        /// <param name="typeDecl">The validated type declaration syntax.</param>
+        /// <param name="title">The title for the code action.</param>
+        /// <param name="members">The member declarations to insert.</param>
+        public CodeAction AddMembersAction<T>(
+            ValidSyntax<T> typeDecl,
+            string title,
+            params MemberDeclarationSyntax[] members)
+            where T : TypeDeclarationSyntax
+        {
+            return CodeAction.Create(
+                title,
+                ct => AddMembersAsync(document, typeDecl, members, ct),
+                title);
+        }
+
+        /// <summary>
+        /// Creates a code action that adds new members (parsed from source text) to a type declaration.
+        /// </summary>
+        /// <param name="typeDecl">The validated type declaration syntax.</param>
+        /// <param name="title">The title for the code action.</param>
+        /// <param name="memberSource">The C# source text of the members to insert.</param>
+        public CodeAction AddMembersFromSourceAction<T>(
+            ValidSyntax<T> typeDecl,
+            string title,
+            string memberSource)
+            where T : TypeDeclarationSyntax
+        {
+            var members = SyntaxFactory.ParseCompilationUnit($"class __Temp {{ {memberSource} }}")
+                .Members.OfType<TypeDeclarationSyntax>()
+                .SelectMany(t => t.Members)
+                .ToArray();
+
+            return CodeAction.Create(
+                title,
+                ct => AddMembersAsync(document, typeDecl, members, ct),
+                title);
+        }
+
+        #endregion
+
         #region Type Rename Helpers
 
         /// <summary>
@@ -169,6 +214,23 @@ public static class TypeCodeFixActions
     }
 
     #region Private Helper Methods
+
+    private static async Task<Document> AddMembersAsync<T>(
+        Document document,
+        ValidSyntax<T> typeDecl,
+        MemberDeclarationSyntax[] members,
+        CancellationToken cancellationToken)
+        where T : TypeDeclarationSyntax
+    {
+        var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+        if (root is null)
+            return document;
+
+        var node = typeDecl.Node;
+        var newNode = node.AddMembers(members);
+        var newRoot = root.ReplaceNode(node, newNode);
+        return document.WithSyntaxRoot(newRoot);
+    }
 
     private static async Task<Document> AddBaseTypeAsync<T>(
         Document document,

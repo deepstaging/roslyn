@@ -63,6 +63,9 @@ public record struct FieldBuilder
     /// <summary>Gets the preprocessor directive condition for conditional compilation.</summary>
     public Directive? Condition { get; init; }
 
+    /// <summary>Gets the region name for grouping this member in a #region block.</summary>
+    public string? Region { get; init; }
+
     #region Factory Methods
 
     /// <summary>
@@ -84,6 +87,14 @@ public record struct FieldBuilder
             Accessibility = Accessibility.Private
         };
     }
+
+    /// <summary>
+    /// Creates a field builder using a symbol's globally qualified name as the type.
+    /// </summary>
+    /// <param name="name">The field name (e.g., "_value", "_name").</param>
+    /// <param name="type">The field type symbol.</param>
+    public static FieldBuilder For<T>(string name, ValidSymbol<T> type) where T : class, ITypeSymbol
+        => For(name, type.GloballyQualifiedName);
 
     /// <summary>
     /// Creates a field builder by parsing a C# field signature.
@@ -143,6 +154,13 @@ public record struct FieldBuilder
     /// <param name="directive">The directive condition (e.g., Directives.Net6OrGreater).</param>
     public FieldBuilder When(Directive directive) =>
         this with { Condition = directive };
+
+    /// <summary>
+    /// Assigns this field to a named region for grouping in #region/#endregion blocks.
+    /// </summary>
+    /// <param name="regionName">The region name (e.g., "Fields", "Constants").</param>
+    public FieldBuilder InRegion(string regionName) =>
+        this with { Region = regionName };
 
     #endregion
 

@@ -1,0 +1,16 @@
+# SPDX-FileCopyrightText: 2024-present Deepstaging
+# SPDX-License-Identifier: RPL-1.5
+name: Build & Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    uses: deepstaging/.github/.github/workflows/dotnet-build.yml@main
+    with:
+      solution: Deepstaging.Roslyn.slnx
+      dotnet-version: '10.0.x'

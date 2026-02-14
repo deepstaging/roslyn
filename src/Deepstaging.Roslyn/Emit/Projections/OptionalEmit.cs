@@ -125,8 +125,11 @@ public readonly struct OptionalEmit : IValidatableProjection<CompilationUnitSynt
         {
             var errorCount = Errors.Count();
             var errorMessages = string.Join("\n  ", Errors.Select(d => d.ToString()));
+            var codeSection = _code != null
+                ? $"\n\nGenerated code:\n{_code}"
+                : "\n\nNo code was generated.";
             throw new InvalidOperationException(
-                message ?? $"Emit failed with {errorCount} error(s):\n  {errorMessages}");
+                message ?? $"Emit failed with {errorCount} error(s):\n  {errorMessages}{codeSection}");
         }
 
         return ValidEmit.From(_syntax!, _code!);
@@ -248,7 +251,8 @@ public readonly struct OptionalEmit : IValidatableProjection<CompilationUnitSynt
             return _code!;
 
         var errorCount = Errors.Count();
-        return $"Emit failed with {errorCount} error(s)";
+        var summary = $"Emit failed with {errorCount} error(s)";
+        return _code != null ? $"{summary}\n\nGenerated code:\n{_code}" : summary;
     }
 
     #endregion

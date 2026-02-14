@@ -63,6 +63,9 @@ public record struct OperatorBuilder
     /// <summary>Gets the preprocessor directive condition for conditional compilation.</summary>
     public Directive? Condition { get; init; }
 
+    /// <summary>Gets the region name for grouping this member in a #region block.</summary>
+    public string? Region { get; init; }
+
     #region Factory Methods - Comparison Operators
 
     /// <summary>
@@ -397,6 +400,13 @@ public record struct OperatorBuilder
     /// <param name="directive">The directive condition (e.g., Directives.Net6OrGreater).</param>
     public OperatorBuilder When(Directive directive) =>
         this with { Condition = directive };
+
+    /// <summary>
+    /// Assigns this operator to a named region for grouping in #region/#endregion blocks.
+    /// </summary>
+    /// <param name="regionName">The region name (e.g., "Operators").</param>
+    public OperatorBuilder InRegion(string regionName) =>
+        this with { Region = regionName };
 
     #endregion
 

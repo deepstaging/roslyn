@@ -214,7 +214,6 @@ public readonly struct ValidSymbol<TSymbol> : IProjection<TSymbol>
         SymbolDisplayGenericsOptions.IncludeTypeParameters,
         miscellaneousOptions: SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier |
                               SymbolDisplayMiscellaneousOptions.AllowDefaultLiteral |
-                              SymbolDisplayMiscellaneousOptions.IncludeNotNullableReferenceTypeModifier |
                               SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
 
     private static readonly SymbolDisplayFormat GloballyQualifiedFormatWithNullability = new(
@@ -223,7 +222,6 @@ public readonly struct ValidSymbol<TSymbol> : IProjection<TSymbol>
         SymbolDisplayGenericsOptions.IncludeTypeParameters,
         miscellaneousOptions: SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier |
                               SymbolDisplayMiscellaneousOptions.AllowDefaultLiteral |
-                              SymbolDisplayMiscellaneousOptions.IncludeNotNullableReferenceTypeModifier |
                               SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
 
     /// <summary>
@@ -237,20 +235,6 @@ public readonly struct ValidSymbol<TSymbol> : IProjection<TSymbol>
     /// Includes nullable reference type annotations (e.g., "global::System.String?").
     /// </summary>
     public string GloballyQualifiedName => _symbol.ToDisplayString(GloballyQualifiedFormatWithNullability);
-
-    /// <summary>
-    /// Gets the type of the property or field as a ValidSymbol.
-    /// Returns null for symbols that don't have an associated type.
-    /// </summary>
-    public ValidSymbol<ITypeSymbol>? Type => _symbol switch
-    {
-        IPropertySymbol prop => ValidSymbol<ITypeSymbol>.TryFrom(prop.Type),
-        IFieldSymbol fieldSymbol => ValidSymbol<ITypeSymbol>.TryFrom(fieldSymbol.Type),
-        IParameterSymbol param => ValidSymbol<ITypeSymbol>.TryFrom(param.Type),
-        ILocalSymbol local => ValidSymbol<ITypeSymbol>.TryFrom(local.Type),
-        IEventSymbol evt => ValidSymbol<ITypeSymbol>.TryFrom(evt.Type),
-        _ => null
-    };
 
     /// <summary>
     /// Gets the display name (namespace.name) of the symbol.
@@ -818,4 +802,9 @@ public readonly struct ValidSymbol<TSymbol> : IProjection<TSymbol>
     public bool HasXmlDocumentation => !string.IsNullOrWhiteSpace(XmlDocumentationRaw);
 
     #endregion
+
+    /// <summary>
+    /// Returns the globally qualified name of the symbol, safe for use in string interpolation.
+    /// </summary>
+    public override string ToString() => GloballyQualifiedName;
 }

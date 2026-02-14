@@ -43,6 +43,9 @@ public record struct EventBuilder
     /// <summary>Gets the preprocessor directive condition for conditional compilation.</summary>
     public Directive? Condition { get; init; }
 
+    /// <summary>Gets the region name for grouping this member in a #region block.</summary>
+    public string? Region { get; init; }
+
     #region Factory Methods
 
     /// <summary>
@@ -64,6 +67,14 @@ public record struct EventBuilder
             Accessibility = Accessibility.Public
         };
     }
+
+    /// <summary>
+    /// Creates an event builder using a symbol's globally qualified name as the type.
+    /// </summary>
+    /// <param name="name">The event name (e.g., "PropertyChanged", "Clicked").</param>
+    /// <param name="type">The event handler type symbol.</param>
+    public static EventBuilder For<T>(string name, ValidSymbol<T> type) where T : class, ITypeSymbol
+        => For(name, type.GloballyQualifiedName);
 
     #endregion
 
@@ -105,6 +116,13 @@ public record struct EventBuilder
     /// <param name="directive">The directive condition (e.g., Directives.Net6OrGreater).</param>
     public readonly EventBuilder When(Directive directive) =>
         this with { Condition = directive };
+
+    /// <summary>
+    /// Assigns this event to a named region for grouping in #region/#endregion blocks.
+    /// </summary>
+    /// <param name="regionName">The region name (e.g., "Events").</param>
+    public readonly EventBuilder InRegion(string regionName) =>
+        this with { Region = regionName };
 
     #endregion
 

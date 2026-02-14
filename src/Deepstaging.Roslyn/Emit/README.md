@@ -82,7 +82,49 @@ var service = TypeBuilder.Parse("public sealed class CustomerService : ICustomer
 
 ### Configuration
 
-- **EmitOptions** - Formatting (indentation, line endings) and validation levels
+- **EmitOptions** - Formatting (indentation, line endings), validation levels, and region support
+
+## Region Support
+
+Group generated members in `#region`/`#endregion` blocks using three complementary approaches:
+
+### Auto-Regions (category-based)
+
+Automatically wraps each member category (Fields, Properties, Methods, etc.) in a named region:
+
+```csharp
+TypeBuilder.Class("Customer")
+    .AddField("_name", "string", f => f)
+    .AddProperty("Name", "string", p => p.WithAutoPropertyAccessors())
+    .AddMethod("GetName", m => m.WithExpressionBody("_name"))
+    .Emit(new EmitOptions { UseRegions = true });
+// Produces: #region Fields ... #endregion  #region Properties ... #endregion  etc.
+```
+
+### Tag-Per-Member (InRegion)
+
+Tag individual members with custom region names:
+
+```csharp
+.AddProperty("Name", "string", p => p.WithAutoPropertyAccessors().InRegion("Identity"))
+.AddProperty("Email", "string", p => p.WithAutoPropertyAccessors().InRegion("Identity"))
+.AddProperty("Age", "int", p => p.WithAutoPropertyAccessors().InRegion("Demographics"))
+```
+
+### Lambda Grouping (AddRegion)
+
+Ergonomic sugar for adding multiple members to the same region:
+
+```csharp
+TypeBuilder.Class("Customer")
+    .AddRegion("Identity", r => r
+        .AddProperty("Name", "string", p => p.WithAutoPropertyAccessors())
+        .AddProperty("Email", "string", p => p.WithAutoPropertyAccessors()))
+    .AddRegion("Methods", r => r
+        .AddMethod("Validate", m => m.WithExpressionBody("true")));
+```
+
+All three approaches compose: explicit tags override auto-regions for tagged members.
 
 ## Three Builder Patterns
 
@@ -140,7 +182,8 @@ See **[Emit documentation](https://deepstaging.github.io/roslyn/api/emit/)** for
 ✅ String-based body building (simple, maintainable)  
 ✅ Syntax validation (default, opt-out)  
 ✅ Generates valid, compilable C# code  
-✅ **Parse API** - Build from C# signature strings
+✅ **Parse API** - Build from C# signature strings  
+✅ **Region support** - Group members in `#region`/`#endregion` blocks
 
 ## Status
 

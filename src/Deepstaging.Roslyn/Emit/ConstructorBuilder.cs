@@ -39,6 +39,9 @@ public record struct ConstructorBuilder
     /// <summary>Gets the preprocessor directive condition for conditional compilation.</summary>
     public Directive? Condition { get; init; }
 
+    /// <summary>Gets the region name for grouping this member in a #region block.</summary>
+    public string? Region { get; init; }
+
     #region Factory Methods
 
     /// <summary>
@@ -95,6 +98,13 @@ public record struct ConstructorBuilder
     public ConstructorBuilder When(Directive directive) =>
         this with { Condition = directive };
 
+    /// <summary>
+    /// Assigns this constructor to a named region for grouping in #region/#endregion blocks.
+    /// </summary>
+    /// <param name="regionName">The region name (e.g., "Constructors").</param>
+    public ConstructorBuilder InRegion(string regionName) =>
+        this with { Region = regionName };
+
     #endregion
 
     #region Parameters
@@ -123,6 +133,18 @@ public record struct ConstructorBuilder
         var parameters = Parameters.IsDefault ? [] : Parameters;
         return this with { Parameters = parameters.Add(parameter) };
     }
+
+    /// <summary>
+    /// Adds a parameter using a symbol's globally qualified name as the type.
+    /// </summary>
+    public ConstructorBuilder AddParameter<T>(string name, ValidSymbol<T> type) where T : class, ITypeSymbol
+        => AddParameter(name, type.GloballyQualifiedName);
+
+    /// <summary>
+    /// Adds a parameter using a symbol's globally qualified name, with configuration.
+    /// </summary>
+    public ConstructorBuilder AddParameter<T>(string name, ValidSymbol<T> type, Func<ParameterBuilder, ParameterBuilder> configure) where T : class, ITypeSymbol
+        => AddParameter(name, type.GloballyQualifiedName, configure);
 
     /// <summary>
     /// Adds a pre-configured parameter to the constructor.

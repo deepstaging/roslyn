@@ -60,6 +60,12 @@ public record struct MethodBuilder
     /// <summary>Gets the preprocessor directive condition for conditional compilation.</summary>
     public Directive? Condition { get; init; }
 
+    /// <summary>Gets the region name for grouping this member in a #region block.</summary>
+    public string? Region { get; init; }
+
+    /// <summary>Gets user-defined metadata that does not affect code generation.</summary>
+    public ImmutableDictionary<string, object?>? Metadata { get; init; }
+
     #region Factory Methods
 
     /// <summary>
@@ -114,6 +120,12 @@ public record struct MethodBuilder
     {
         return this with { ReturnType = returnType };
     }
+
+    /// <summary>
+    /// Sets the return type using a symbol's globally qualified name.
+    /// </summary>
+    public MethodBuilder WithReturnType<T>(ValidSymbol<T> returnType) where T : class, ITypeSymbol
+        => WithReturnType(returnType.GloballyQualifiedName);
 
     #endregion
 
@@ -184,6 +196,15 @@ public record struct MethodBuilder
         return this with { Condition = directive };
     }
 
+    /// <summary>
+    /// Assigns this method to a named region for grouping in #region/#endregion blocks.
+    /// </summary>
+    /// <param name="regionName">The region name (e.g., "Methods", "Helpers").</param>
+    public MethodBuilder InRegion(string regionName)
+    {
+        return this with { Region = regionName };
+    }
+
     #endregion
 
     #region Type Parameters
@@ -248,6 +269,18 @@ public record struct MethodBuilder
         var parameters = Parameters.IsDefault ? [] : Parameters;
         return this with { Parameters = parameters.Add(parameter) };
     }
+
+    /// <summary>
+    /// Adds a parameter using a symbol's globally qualified name as the type.
+    /// </summary>
+    public MethodBuilder AddParameter<T>(string name, ValidSymbol<T> type) where T : class, ITypeSymbol
+        => AddParameter(name, type.GloballyQualifiedName);
+
+    /// <summary>
+    /// Adds a parameter using a symbol's globally qualified name, with configuration.
+    /// </summary>
+    public MethodBuilder AddParameter<T>(string name, ValidSymbol<T> type, Func<ParameterBuilder, ParameterBuilder> configure) where T : class, ITypeSymbol
+        => AddParameter(name, type.GloballyQualifiedName, configure);
 
     /// <summary>
     /// Adds a pre-configured parameter to the method.
@@ -432,6 +465,29 @@ public record struct MethodBuilder
         var usings = Usings.IsDefault ? [] : Usings;
         return this with { Usings = usings.AddRange(namespaces) };
     }
+
+    #endregion
+
+    #region Metadata
+
+    /// <summary>
+    /// Attaches a metadata entry to this builder. Metadata does not affect code generation.
+    /// </summary>
+    /// <param name="key">The metadata key.</param>
+    /// <param name="value">The metadata value.</param>
+    public MethodBuilder WithMetadata(string key, object? value) =>
+        this with { Metadata = (Metadata ?? ImmutableDictionary<string, object?>.Empty).SetItem(key, value) };
+
+    /// <summary>
+    /// Retrieves a metadata entry by key.
+    /// </summary>
+    /// <typeparam name="T">The expected metadata type.</typeparam>
+    /// <param name="key">The metadata key.</param>
+    /// <returns>The metadata value cast to <typeparamref name="T"/>.</returns>
+    /// <exception cref="KeyNotFoundException">Thrown when the key is not found.</exception>
+    /// <exception cref="InvalidCastException">Thrown when the value is not of the expected type.</exception>
+    public T GetMetadata<T>(string key) where T : class =>
+        (T)(Metadata ?? throw new KeyNotFoundException($"Metadata key '{key}' not found."))[key]!;
 
     #endregion
 

@@ -35,7 +35,7 @@ public class ProjectionsTests : RoslynTestBase
     #region OptionalEmit Failure Cases
 
     [Test]
-    public async Task OptionalEmit_Failure_has_null_code()
+    public async Task OptionalEmit_Failure_preserves_code_for_debugging()
     {
         var method = MethodBuilder
             .For("Invalid")
@@ -47,7 +47,8 @@ public class ProjectionsTests : RoslynTestBase
             .Emit();
 
         await Assert.That(result.Success).IsFalse();
-        await Assert.That(result.Code).IsNull();
+        await Assert.That(result.Code).IsNotNull();
+        await Assert.That(result.Code).Contains("class MyClass");
     }
 
     [Test]

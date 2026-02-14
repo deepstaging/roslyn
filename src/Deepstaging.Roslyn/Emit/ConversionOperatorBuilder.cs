@@ -50,6 +50,9 @@ public record struct ConversionOperatorBuilder
     /// <summary>Gets the preprocessor directive condition for conditional compilation.</summary>
     public Directive? Condition { get; init; }
 
+    /// <summary>Gets the region name for grouping this member in a #region block.</summary>
+    public string? Region { get; init; }
+
     #region Factory Methods
 
     /// <summary>
@@ -124,6 +127,13 @@ public record struct ConversionOperatorBuilder
     /// <param name="directive">The directive condition (e.g., Directives.Net6OrGreater).</param>
     public ConversionOperatorBuilder When(Directive directive) =>
         this with { Condition = directive };
+
+    /// <summary>
+    /// Assigns this conversion operator to a named region for grouping in #region/#endregion blocks.
+    /// </summary>
+    /// <param name="regionName">The region name (e.g., "Conversions").</param>
+    public ConversionOperatorBuilder InRegion(string regionName) =>
+        this with { Region = regionName };
 
     #endregion
 

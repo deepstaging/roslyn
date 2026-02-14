@@ -89,9 +89,13 @@ public abstract class SymbolAnalyzer<TSymbol> : DiagnosticAnalyzer
         return symbol.Location;
     }
 
-    private static SymbolKind InferSymbolKind()
+    /// <summary>
+    /// Infers the <see cref="SymbolKind"/> from the given symbol type parameter.
+    /// Used internally by analyzer base classes.
+    /// </summary>
+    internal static SymbolKind InferSymbolKindFor<T>() where T : class, ISymbol
     {
-        var symbolType = typeof(TSymbol);
+        var symbolType = typeof(T);
 
         if (symbolType == typeof(INamedTypeSymbol)) return SymbolKind.NamedType;
         if (symbolType == typeof(IMethodSymbol)) return SymbolKind.Method;
@@ -104,4 +108,6 @@ public abstract class SymbolAnalyzer<TSymbol> : DiagnosticAnalyzer
         throw new InvalidOperationException(
             $"Cannot infer SymbolKind from {symbolType.Name}. Use a more specific symbol type.");
     }
+
+    private static SymbolKind InferSymbolKind() => InferSymbolKindFor<TSymbol>();
 }

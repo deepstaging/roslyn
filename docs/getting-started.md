@@ -66,7 +66,7 @@ file static class AutoNotifyExtensions
                 .Select(f => new FieldModel(
                     f.Name,
                     f.Name.TrimStart('_').ToPascalCase(),
-                    f.Type?.FullyQualifiedName ?? "object")));
+                    f.Type.FullyQualifiedName)));
     }
 
     extension(AutoNotifyModel model)
@@ -100,6 +100,10 @@ The `ForAttribute` extension simplifies attribute-based symbol discovery:
 ```csharp
 // By generic type (requires attribute assembly reference)
 context.ForAttribute<MyAttribute>()
+    .Map((ctx, ct) => BuildModel(ctx));
+
+// By Type — useful for generic attributes without backtick-arity strings
+context.ForAttribute(typeof(MyAttribute<>))
     .Map((ctx, ct) => BuildModel(ctx));
 
 // By fully qualified name (no assembly reference needed)

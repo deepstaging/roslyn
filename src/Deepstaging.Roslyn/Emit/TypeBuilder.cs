@@ -76,6 +76,9 @@ public record struct TypeBuilder
     /// <summary>Gets the primary constructor.</summary>
     public ConstructorBuilder? PrimaryConstructor { get; init; }
 
+    /// <summary>Gets user-defined metadata that does not affect code generation.</summary>
+    public ImmutableDictionary<string, object?>? Metadata { get; init; }
+
     #region Factory Methods
 
     /// <summary>
@@ -316,6 +319,12 @@ public record struct TypeBuilder
     }
 
     /// <summary>
+    /// Adds a property using a symbol's globally qualified name as the type.
+    /// </summary>
+    public TypeBuilder AddProperty<T>(string name, ValidSymbol<T> type, Func<PropertyBuilder, PropertyBuilder> configure) where T : class, ITypeSymbol
+        => AddProperty(name, type.GloballyQualifiedName, configure);
+
+    /// <summary>
     /// Adds a pre-configured property.
     /// </summary>
     public TypeBuilder AddProperty(PropertyBuilder property)
@@ -337,6 +346,12 @@ public record struct TypeBuilder
         var fields = Fields.IsDefault ? [] : Fields;
         return this with { Fields = fields.Add(field) };
     }
+
+    /// <summary>
+    /// Adds a field using a symbol's globally qualified name as the type.
+    /// </summary>
+    public TypeBuilder AddField<T>(string name, ValidSymbol<T> type, Func<FieldBuilder, FieldBuilder> configure) where T : class, ITypeSymbol
+        => AddField(name, type.GloballyQualifiedName, configure);
 
     /// <summary>
     /// Adds a pre-configured field.
@@ -363,6 +378,12 @@ public record struct TypeBuilder
         var events = Events.IsDefault ? [] : Events;
         return this with { Events = events.Add(@event) };
     }
+
+    /// <summary>
+    /// Adds an event using a symbol's globally qualified name as the type.
+    /// </summary>
+    public TypeBuilder AddEvent<T>(string name, ValidSymbol<T> type, Func<EventBuilder, EventBuilder> configure) where T : class, ITypeSymbol
+        => AddEvent(name, type.GloballyQualifiedName, configure);
 
     /// <summary>
     /// Adds a pre-configured event.
@@ -650,6 +671,120 @@ public record struct TypeBuilder
 
     #endregion
 
+    #region Metadata
+
+    /// <summary>
+    /// Attaches a metadata entry to this builder. Metadata does not affect code generation.
+    /// </summary>
+    /// <param name="key">The metadata key.</param>
+    /// <param name="value">The metadata value.</param>
+    public TypeBuilder WithMetadata(string key, object? value) =>
+        this with { Metadata = (Metadata ?? ImmutableDictionary<string, object?>.Empty).SetItem(key, value) };
+
+    /// <summary>
+    /// Retrieves a metadata entry by key.
+    /// </summary>
+    /// <typeparam name="T">The expected metadata type.</typeparam>
+    /// <param name="key">The metadata key.</param>
+    /// <returns>The metadata value cast to <typeparamref name="T"/>.</returns>
+    /// <exception cref="KeyNotFoundException">Thrown when the key is not found.</exception>
+    /// <exception cref="InvalidCastException">Thrown when the value is not of the expected type.</exception>
+    public T GetMetadata<T>(string key) where T : class =>
+        (T)(Metadata ?? throw new KeyNotFoundException($"Metadata key '{key}' not found."))[key]!;
+
+    #endregion
+
+    #region Region Grouping
+
+    /// <summary>
+    /// Adds members to a named region. All members added within the configure action
+    /// are automatically tagged with the specified region name.
+    /// </summary>
+    /// <param name="regionName">The region name (e.g., "Properties", "Helpers").</param>
+    /// <param name="configure">Action to add members that will be grouped in the region.</param>
+    /// <example>
+    /// <code>
+    /// TypeBuilder.Class("Customer")
+    ///     .AddRegion("Properties", r => r
+    ///         .AddProperty("Name", "string", p => p.WithAutoPropertyAccessors())
+    ///         .AddProperty("Age", "int", p => p.WithAutoPropertyAccessors()))
+    ///     .AddRegion("Methods", r => r
+    ///         .AddMethod("ToString", m => m.WithExpressionBody("Name")));
+    /// </code>
+    /// </example>
+    public TypeBuilder AddRegion(string regionName, Func<TypeBuilder, TypeBuilder> configure)
+    {
+        if (string.IsNullOrWhiteSpace(regionName))
+            throw new ArgumentException("Region name cannot be null or empty.", nameof(regionName));
+
+        // Snapshot current member counts
+        var snapshot = this;
+        var result = configure(this);
+
+        // Tag all newly added members with the region name
+        result = TagNewMembers(snapshot, result, regionName);
+
+        return result;
+    }
+
+    /// <summary>
+    /// Tags any members added between snapshot and current with the given region name.
+    /// </summary>
+    private static TypeBuilder TagNewMembers(TypeBuilder snapshot, TypeBuilder current, string regionName)
+    {
+        current = TagNew(snapshot.Fields, current.Fields,
+            (f, r) => f with { Region = r }, regionName,
+            tagged => current with { Fields = tagged });
+
+        current = TagNew(snapshot.Events, current.Events,
+            (e, r) => e with { Region = r }, regionName,
+            tagged => current with { Events = tagged });
+
+        current = TagNew(snapshot.Constructors, current.Constructors,
+            (c, r) => c with { Region = r }, regionName,
+            tagged => current with { Constructors = tagged });
+
+        current = TagNew(snapshot.Properties, current.Properties,
+            (p, r) => p with { Region = r }, regionName,
+            tagged => current with { Properties = tagged });
+
+        current = TagNew(snapshot.Methods, current.Methods,
+            (m, r) => m with { Region = r }, regionName,
+            tagged => current with { Methods = tagged });
+
+        current = TagNew(snapshot.Operators, current.Operators,
+            (o, r) => o with { Region = r }, regionName,
+            tagged => current with { Operators = tagged });
+
+        current = TagNew(snapshot.ConversionOperators, current.ConversionOperators,
+            (c, r) => c with { Region = r }, regionName,
+            tagged => current with { ConversionOperators = tagged });
+
+        return current;
+    }
+
+    private static TypeBuilder TagNew<T>(
+        ImmutableArray<T> snapshotArray,
+        ImmutableArray<T> currentArray,
+        Func<T, string, T> setRegion,
+        string regionName,
+        Func<ImmutableArray<T>, TypeBuilder> apply)
+    {
+        var oldCount = snapshotArray.IsDefault ? 0 : snapshotArray.Length;
+        var newCount = currentArray.IsDefault ? 0 : currentArray.Length;
+
+        if (newCount <= oldCount)
+            return apply(currentArray);
+
+        var builder = currentArray.ToBuilder();
+        for (var i = oldCount; i < newCount; i++)
+            builder[i] = setRegion(builder[i], regionName);
+
+        return apply(builder.ToImmutable());
+    }
+
+    #endregion
+
     #region Emit
 
     /// <summary>
@@ -687,7 +822,8 @@ public record struct TypeBuilder
             {
                 var diagnostics = Validate(formatted, options.ValidationLevel);
                 if (diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error))
-                    return OptionalEmit.FromFailure(diagnostics);
+                    return OptionalEmit.FromDiagnostics(
+                        compilationUnit, formatted, WrapValidationErrors(diagnostics, formatted));
 
                 return diagnostics.Any()
                     ? OptionalEmit.FromDiagnostics(compilationUnit, formatted, diagnostics)
@@ -742,7 +878,7 @@ public record struct TypeBuilder
         }
 
         // Build type declaration
-        var typeDecl = BuildTypeDeclaration();
+        var typeDecl = BuildTypeDeclaration(options);
 
         // Wrap in namespace if specified
         if (!string.IsNullOrWhiteSpace(Namespace))
@@ -790,7 +926,7 @@ public record struct TypeBuilder
         return compilationUnit;
     }
 
-    private TypeDeclarationSyntax BuildTypeDeclaration()
+    private TypeDeclarationSyntax BuildTypeDeclaration(EmitOptions? options = null)
     {
         TypeDeclarationSyntax typeDecl = IsRecord
             ? SyntaxFactory.RecordDeclaration(SyntaxFactory.Token(SyntaxKind.RecordKeyword), Name)
@@ -859,31 +995,8 @@ public record struct TypeBuilder
             }
         }
 
-        // Add members in logical order: fields, events, constructors, properties, methods, operators, conversion operators
-        var fields = Fields.IsDefault ? [] : Fields;
-        foreach (var field in fields) typeDecl = typeDecl.AddMembers(field.Build());
-
-        var events = Events.IsDefault ? [] : Events;
-        foreach (var @event in events) typeDecl = typeDecl.AddMembers(@event.Build());
-
-        var constructors = Constructors.IsDefault ? [] : Constructors;
-        foreach (var constructor in constructors) typeDecl = typeDecl.AddMembers(constructor.Build());
-
-        var properties = Properties.IsDefault ? [] : Properties;
-        foreach (var property in properties) typeDecl = typeDecl.AddMembers(property.Build());
-
-        var methods = Methods.IsDefault ? [] : Methods;
-        foreach (var method in methods) typeDecl = typeDecl.AddMembers(method.Build());
-
-        var operators = Operators.IsDefault ? [] : Operators;
-        foreach (var op in operators) typeDecl = typeDecl.AddMembers(op.Build());
-
-        var conversionOperators = ConversionOperators.IsDefault ? [] : ConversionOperators;
-        foreach (var convOp in conversionOperators) typeDecl = typeDecl.AddMembers(convOp.Build());
-
-        var nestedTypes = NestedTypes.IsDefault ? [] : NestedTypes;
-        foreach (var nestedType in nestedTypes)
-            typeDecl = typeDecl.AddMembers(nestedType.BuildNestedTypeDeclaration());
+        // Add members in logical order, with optional region grouping
+        typeDecl = AddMembersWithRegions(typeDecl, options);
 
         // Add XML documentation
         if (XmlDoc.HasValue && XmlDoc.Value.HasContent)
@@ -901,6 +1014,179 @@ public record struct TypeBuilder
     internal TypeDeclarationSyntax BuildNestedTypeDeclaration()
     {
         return BuildTypeDeclaration();
+    }
+
+    /// <summary>
+    /// Adds members to the type declaration, applying #region/#endregion grouping as needed.
+    /// Members with explicit Region tags are grouped under their named region.
+    /// When UseRegions is enabled, remaining untagged members are grouped by category.
+    /// </summary>
+    private TypeDeclarationSyntax AddMembersWithRegions(
+        TypeDeclarationSyntax typeDecl,
+        EmitOptions? options)
+    {
+        var useRegions = options?.UseRegions ?? false;
+
+        var categories = CollectMemberCategories();
+
+        // If no regions needed, add members directly
+        if (!useRegions && !HasAnyExplicitRegions(categories))
+        {
+            foreach (var (_, _, members) in categories)
+            {
+                foreach (var member in members)
+                    typeDecl = typeDecl.AddMembers(member);
+            }
+
+            return typeDecl;
+        }
+
+        // Collect all members with their region assignments
+        var regionGroups = new List<(string regionName, List<MemberDeclarationSyntax> members)>();
+        var currentRegion = (string?)null;
+        List<MemberDeclarationSyntax>? currentMembers = null;
+
+        foreach (var (categoryName, explicitRegion, members) in categories)
+        {
+            foreach (var member in members)
+            {
+                var regionName = explicitRegion ?? (useRegions ? categoryName : null);
+
+                if (regionName != currentRegion)
+                {
+                    if (currentMembers != null && currentRegion != null)
+                        regionGroups.Add((currentRegion, currentMembers));
+                    else if (currentMembers != null)
+                        regionGroups.Add(("", currentMembers));
+
+                    currentRegion = regionName;
+                    currentMembers = [];
+                }
+
+                currentMembers ??= [];
+                currentMembers.Add(member);
+            }
+        }
+
+        // Flush last group
+        if (currentMembers is { Count: > 0 })
+        {
+            if (currentRegion != null)
+                regionGroups.Add((currentRegion, currentMembers));
+            else
+                regionGroups.Add(("", currentMembers));
+        }
+
+        // Emit each group, wrapping in regions where appropriate
+        foreach (var (regionName, groupMembers) in regionGroups)
+        {
+            if (!string.IsNullOrEmpty(regionName))
+            {
+                var wrapped = RegionHelper.WrapMembersInRegion(
+                    [..groupMembers], regionName);
+                typeDecl = typeDecl.AddMembers(wrapped);
+            }
+            else
+            {
+                foreach (var member in groupMembers)
+                    typeDecl = typeDecl.AddMembers(member);
+            }
+        }
+
+        return typeDecl;
+    }
+
+    /// <summary>
+    /// Collects all members organized by category, in the standard emission order.
+    /// Each entry is (categoryName, explicitRegion, builtMembers).
+    /// </summary>
+    private List<(string Category, string? ExplicitRegion, MemberDeclarationSyntax[] Members)>
+        CollectMemberCategories()
+    {
+        var categories =
+            new List<(string Category, string? ExplicitRegion, MemberDeclarationSyntax[] Members)>();
+
+        var fields = Fields.IsDefault ? [] : Fields;
+        AddCategory(categories, fields, "Fields",
+            f => f.Region, f => f.Build());
+
+        var events = Events.IsDefault ? [] : Events;
+        AddCategory(categories, events, "Events",
+            e => e.Region, e => e.Build());
+
+        var constructors = Constructors.IsDefault ? [] : Constructors;
+        AddCategory(categories, constructors, "Constructors",
+            c => c.Region, c => c.Build());
+
+        var properties = Properties.IsDefault ? [] : Properties;
+        AddCategory(categories, properties, "Properties",
+            p => p.Region, p => p.Build());
+
+        var methods = Methods.IsDefault ? [] : Methods;
+        AddCategory(categories, methods, "Methods",
+            m => m.Region, m => m.Build());
+
+        var operators = Operators.IsDefault ? [] : Operators;
+        AddCategory(categories, operators, "Operators",
+            o => o.Region, o => o.Build());
+
+        var conversionOperators = ConversionOperators.IsDefault ? [] : ConversionOperators;
+        AddCategory(categories, conversionOperators, "Conversion Operators",
+            c => c.Region, c => c.Build());
+
+        var nestedTypes = NestedTypes.IsDefault ? [] : NestedTypes;
+        if (nestedTypes.Length > 0)
+        {
+            categories.Add(("Nested Types", null,
+                nestedTypes.Select(t => (MemberDeclarationSyntax)t.BuildNestedTypeDeclaration())
+                    .ToArray()));
+        }
+
+        return categories;
+    }
+
+    private static void AddCategory<T>(
+        List<(string Category, string? ExplicitRegion, MemberDeclarationSyntax[] Members)> categories,
+        ImmutableArray<T> builders,
+        string categoryName,
+        Func<T, string?> getRegion,
+        Func<T, MemberDeclarationSyntax> build)
+    {
+        if (builders.Length == 0) return;
+
+        // Group consecutive builders by their explicit region
+        string? currentRegion = null;
+        var currentGroup = new List<MemberDeclarationSyntax>();
+        var isFirst = true;
+
+        foreach (var builder in builders)
+        {
+            var region = getRegion(builder);
+
+            if (isFirst)
+            {
+                currentRegion = region;
+                isFirst = false;
+            }
+            else if (region != currentRegion)
+            {
+                if (currentGroup.Count > 0)
+                    categories.Add((categoryName, currentRegion, [..currentGroup]));
+                currentGroup = [];
+                currentRegion = region;
+            }
+
+            currentGroup.Add(build(builder));
+        }
+
+        if (currentGroup.Count > 0)
+            categories.Add((categoryName, currentRegion, [..currentGroup]));
+    }
+
+    private static bool HasAnyExplicitRegions(
+        List<(string Category, string? ExplicitRegion, MemberDeclarationSyntax[] Members)> categories)
+    {
+        return categories.Any(c => c.ExplicitRegion != null);
     }
 
     /// <summary>
@@ -1181,70 +1467,7 @@ public record struct TypeBuilder
     {
         // First normalize whitespace for proper indentation
         var normalized = compilationUnit.NormalizeWhitespace(options.Indentation, options.EndOfLine);
-
-        // Then add blank lines between members (NormalizeWhitespace strips them)
-        var withBlankLines = AddBlankLinesBetweenMembers(normalized, options.EndOfLine);
-
-        return withBlankLines.ToFullString();
-    }
-
-    private static CompilationUnitSyntax AddBlankLinesBetweenMembers(CompilationUnitSyntax root, string endOfLine)
-    {
-        return (CompilationUnitSyntax)new BlankLineRewriter(endOfLine).Visit(root);
-    }
-
-    private sealed class BlankLineRewriter(string endOfLine) : CSharpSyntaxRewriter
-    {
-        private readonly SyntaxTrivia _blankLine = SyntaxFactory.EndOfLine(endOfLine);
-
-        public override SyntaxNode? VisitClassDeclaration(ClassDeclarationSyntax node)
-        {
-            var visited = (ClassDeclarationSyntax?)base.VisitClassDeclaration(node);
-            return visited == null ? null : AddBlankLines(visited);
-        }
-
-        public override SyntaxNode? VisitStructDeclaration(StructDeclarationSyntax node)
-        {
-            var visited = (StructDeclarationSyntax?)base.VisitStructDeclaration(node);
-            return visited == null ? null : AddBlankLines(visited);
-        }
-
-        public override SyntaxNode? VisitInterfaceDeclaration(InterfaceDeclarationSyntax node)
-        {
-            var visited = (InterfaceDeclarationSyntax?)base.VisitInterfaceDeclaration(node);
-            return visited == null ? null : AddBlankLines(visited);
-        }
-
-        public override SyntaxNode? VisitRecordDeclaration(RecordDeclarationSyntax node)
-        {
-            var visited = (RecordDeclarationSyntax?)base.VisitRecordDeclaration(node);
-            return visited == null ? null : AddBlankLines(visited);
-        }
-
-        private T AddBlankLines<T>(T node) where T : TypeDeclarationSyntax
-        {
-            if (node.Members.Count < 2)
-                return node;
-
-            var newMembers = new List<MemberDeclarationSyntax>(node.Members.Count);
-
-            for (var i = 0; i < node.Members.Count; i++)
-            {
-                var member = node.Members[i];
-
-                if (i > 0)
-                {
-                    // Prepend a blank line to existing leading trivia
-                    var existingTrivia = member.GetLeadingTrivia();
-                    var newTrivia = existingTrivia.Insert(0, _blankLine);
-                    member = member.WithLeadingTrivia(newTrivia);
-                }
-
-                newMembers.Add(member);
-            }
-
-            return (T)node.WithMembers(SyntaxFactory.List(newMembers));
-        }
+        return normalized.ToFullString();
     }
 
     private ImmutableArray<Diagnostic> Validate(string code, ValidationLevel level)
@@ -1254,15 +1477,45 @@ public record struct TypeBuilder
 
         if (level == ValidationLevel.Syntax)
         {
-            // Parse and check for syntax errors
-            var tree = CSharpSyntaxTree.ParseText(code);
-            var diagnostics = tree.GetDiagnostics();
-            return diagnostics.ToImmutableArray();
+            var parseOptions = CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.Latest);
+            return [..CSharpSyntaxTree.ParseText(code, parseOptions).GetDiagnostics()];
         }
 
         // Semantic and Full validation require Compilation (Phase 2)
         // For now, return empty diagnostics
         return ImmutableArray<Diagnostic>.Empty;
+    }
+
+    private static readonly DiagnosticDescriptor EmitValidationFailed = new(
+#pragma warning disable RS2008 // Emit diagnostics don't need analyzer release tracking
+        "EMIT002",
+#pragma warning restore RS2008
+        "Generated code failed syntax validation",
+        "TypeBuilder '{0}' produced invalid C# with {1} syntax error(s). First error: {2}. Code preview: {3}.",
+        "Deepstaging.Emit",
+        DiagnosticSeverity.Error,
+        isEnabledByDefault: true,
+        description: "The Emit API produced C# code that could not be parsed. This typically indicates a bug in the code generation logic.");
+
+    private ImmutableArray<Diagnostic> WrapValidationErrors(
+        ImmutableArray<Diagnostic> rawDiagnostics, string code)
+    {
+        var errors = rawDiagnostics.Where(d => d.Severity == DiagnosticSeverity.Error).ToList();
+        if (errors.Count == 0) return rawDiagnostics;
+
+        var firstError = errors[0].GetMessage();
+        var codePreview = string.Join(" | ",
+            code.Split('\n').Where(l => !string.IsNullOrWhiteSpace(l)).Take(5).Select(l => l.Trim()));
+
+        var summary = Diagnostic.Create(
+            EmitValidationFailed,
+            Location.None,
+            Name,
+            errors.Count,
+            firstError,
+            codePreview);
+
+        return [summary, ..rawDiagnostics];
     }
 
     private static SyntaxKind AccessibilityToSyntaxKind(Accessibility accessibility)

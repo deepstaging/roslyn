@@ -142,3 +142,58 @@ builder.Kind    // TypeKind — class, interface, struct, etc.
 OptionalEmit result = builder.Emit();
 OptionalEmit result = builder.Emit(EmitOptions.Default);
 ```
+
+## Region Support
+
+Group members in `#region`/`#endregion` blocks using three approaches.
+
+### Auto-Regions
+
+Enable `UseRegions` in `EmitOptions` to automatically wrap each member category:
+
+```csharp
+TypeBuilder.Class("Customer")
+    .AddField("_name", "string", f => f)
+    .AddProperty("Name", "string", p => p.WithAutoPropertyAccessors())
+    .AddMethod("GetName", m => m.WithExpressionBody("_name"))
+    .Emit(new EmitOptions { UseRegions = true });
+```
+
+Generates `#region Fields`, `#region Properties`, `#region Methods` around each group.
+
+### Tag-Per-Member (InRegion)
+
+Tag individual members with custom region names using `.InRegion()`:
+
+```csharp
+.AddProperty("Name", "string", p => p.WithAutoPropertyAccessors().InRegion("Identity"))
+.AddProperty("Age", "int", p => p.WithAutoPropertyAccessors().InRegion("Demographics"))
+```
+
+Available on all member builders: `PropertyBuilder`, `MethodBuilder`, `FieldBuilder`, `ConstructorBuilder`, `EventBuilder`, `OperatorBuilder`, `ConversionOperatorBuilder`, `IndexerBuilder`.
+
+### Lambda Grouping (AddRegion)
+
+Add multiple members to the same region in one call:
+
+```csharp
+TypeBuilder.Class("Customer")
+    .AddRegion("Identity", r => r
+        .AddProperty("Name", "string", p => p.WithAutoPropertyAccessors())
+        .AddProperty("Email", "string", p => p.WithAutoPropertyAccessors()))
+    .AddRegion("Behavior", r => r
+        .AddMethod("Validate", m => m.WithExpressionBody("true")))
+```
+
+### Composing Approaches
+
+All three compose naturally. Explicit tags override auto-regions for tagged members:
+
+```csharp
+TypeBuilder.Class("Customer")
+    .AddField("_name", "string", f => f)                    // auto: #region Fields
+    .AddProperty("Name", "string", p => p
+        .WithAutoPropertyAccessors().InRegion("Custom"))     // explicit: #region Custom
+    .AddMethod("GetName", m => m.WithExpressionBody("_name"))// auto: #region Methods
+    .Emit(new EmitOptions { UseRegions = true });
+```

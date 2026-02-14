@@ -4,38 +4,15 @@
   <!-- 
     Build.Paths.props
     
-    Controls where MSBuild outputs compiled files, intermediate objects, and NuGet packages.
+    Controls where NuGet packages are output.
     
     Imported by: Directory.Build.props
   -->
   
   <PropertyGroup>
     <!-- 
-      ArtifactsDir: Centralized location for all build outputs
-      
-      - If DEEPSTAGING_ARTIFACTS_DIR environment variable is set, builds go to workspace-wide artifacts
-      - Otherwise, builds go to local ./artifacts directory
-      
-      Recommendation: Use local artifacts (default) for repository portability
-    -->
-    <ArtifactsDir Condition="'$(DEEPSTAGING_ARTIFACTS_DIR)' != ''">$(DEEPSTAGING_ARTIFACTS_DIR)</ArtifactsDir>
-    <ArtifactsDir Condition="'$(DEEPSTAGING_ARTIFACTS_DIR)' == ''">$(MSBuildThisFileDirectory)../../../artifacts</ArtifactsDir>
-    
-    <!-- 
-      BaseOutputPath: Where compiled binaries (.dll, .exe) go
-      Example: artifacts/bin/MyProject/Debug/net10.0/
-    -->
-    <BaseOutputPath>$(ArtifactsDir)/bin/$(MSBuildProjectName)/</BaseOutputPath>
-    
-    <!-- 
-      BaseIntermediateOutputPath: Where temporary build files (.obj) go
-      These are safe to delete - MSBuild will recreate them
-    -->
-    <BaseIntermediateOutputPath>$(ArtifactsDir)/obj/$(MSBuildProjectName)/</BaseIntermediateOutputPath>
-    
-    <!-- 
       PackageOutputPath: Where NuGet packages (.nupkg) go when you run 'dotnet pack'
     -->
-    <PackageOutputPath>$(ArtifactsDir)/packages/</PackageOutputPath>
+    <PackageOutputPath>$(MSBuildThisFileDirectory)../../../artifacts/packages/</PackageOutputPath>
   </PropertyGroup>
 </Project>

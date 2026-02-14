@@ -51,6 +51,14 @@ public record struct ParameterBuilder
         };
     }
 
+    /// <summary>
+    /// Creates a parameter builder using a symbol's globally qualified name as the type.
+    /// </summary>
+    /// <param name="name">The parameter name (e.g., "value", "id").</param>
+    /// <param name="type">The parameter type symbol.</param>
+    public static ParameterBuilder For<T>(string name, ValidSymbol<T> type) where T : class, ITypeSymbol
+        => For(name, type.GloballyQualifiedName);
+
     #endregion
 
     #region Configuration

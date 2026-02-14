@@ -1,0 +1,25 @@
+<!-- SPDX-FileCopyrightText: 2024-present Deepstaging -->
+<!-- SPDX-License-Identifier: RPL-1.5 -->
+<!--
+  Deepstaging.Roslyn.Versions.props
+
+  Centralized version definitions for Deepstaging.Roslyn NuGet packages.
+  This file is automatically updated by CI after publishing to nuget.org.
+
+  Consumer repos import this conditionally in their Directory.Packages.props:
+    <Import Project="../roslyn/Deepstaging.Roslyn.Versions.props" Condition="Exists('...')" />
+
+  For local development, pack.sh writes Deepstaging.Roslyn.Versions.local.props
+  (gitignored) which overrides the version below with a local.TIMESTAMP suffix.
+-->
+<Project>
+  <PropertyGroup>
+    <DeepstagingRoslynVersion>1.0.0-dev.74</DeepstagingRoslynVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="Deepstaging.Roslyn" Version="$(DeepstagingRoslynVersion)" />
+    <PackageVersion Include="Deepstaging.Roslyn.Scriban" Version="$(DeepstagingRoslynVersion)" />
+    <PackageVersion Include="Deepstaging.Roslyn.Testing" Version="$(DeepstagingRoslynVersion)" />
+    <PackageVersion Include="Deepstaging.Roslyn.Workspace" Version="$(DeepstagingRoslynVersion)" />
+  </ItemGroup>
+</Project>

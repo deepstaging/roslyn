@@ -41,10 +41,11 @@
     <RepositoryType>git</RepositoryType>
 
     <!-- 
-      Package assets (README)
+      Package assets (README and icon)
       These files are included in the NuGet package for display on nuget.org
     -->
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
 
     <!-- 
       PackageTags: Semicolon-separated tags for discoverability on nuget.org
@@ -59,12 +60,20 @@
       VersionPrefix: Base version for your package (SemVer format: major.minor.patch)
       VersionSuffix: Prerelease suffix (e.g., alpha.1, beta.1, rc.1)
       
-      For dev builds, the workspace automatically appends a timestamp suffix like:
-      1.0.0-dev-20260107120000
+      pack.sh derives the suffix automatically:
+        Local:  local.YYYYMMDDHHMMSS  (e.g., 1.0.0-local.20260214015000)
+        CI:     dev.N                  (e.g., 1.0.0-dev.75)
+        Release: no suffix             (e.g., 1.0.0, via git tag)
       
-      Update this when you want to release a new version.
+      Update VersionPrefix when you want to release a new major/minor/patch version.
     -->
     <VersionPrefix>1.0.0</VersionPrefix>
     <VersionSuffix>alpha.1</VersionSuffix>
   </PropertyGroup>
+
+  <!-- Include per-project icon.png in packages (each packable project has its own icon) -->
+  <ItemGroup>
+    <None Include="$(MSBuildProjectDirectory)/icon.png" Pack="true" PackagePath="\" Visible="false"
+          Condition="Exists('$(MSBuildProjectDirectory)/icon.png')" />
+  </ItemGroup>
 </Project>

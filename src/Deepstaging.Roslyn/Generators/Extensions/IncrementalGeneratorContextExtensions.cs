@@ -21,6 +21,22 @@ public static class IncrementalGeneratorContextExtensions
         }
 
         /// <summary>
+        /// Starts a fluent mapping chain for an attribute by <see cref="Type"/>.
+        /// Supports open generic attribute types (e.g., <c>typeof(MyAttribute&lt;&gt;)</c>)
+        /// without requiring backtick-arity syntax.
+        /// </summary>
+        /// <param name="attributeType">The attribute type, which may be an open generic type</param>
+        /// <returns>A fluent mapping builder</returns>
+        public AttributeMapper ForAttribute(Type attributeType)
+        {
+            var type = attributeType.IsGenericType && !attributeType.IsGenericTypeDefinition
+                ? attributeType.GetGenericTypeDefinition()
+                : attributeType;
+
+            return new AttributeMapper(context, type.FullName!);
+        }
+
+        /// <summary>
         /// Starts a fluent mapping chain for an attribute by name. The model type is inferred from the builder.
         /// </summary>
         /// <param name="fullyQualifiedAttributeName">Fully qualified name of the attribute (e.g., "MyApp.MyAttribute")</param>
