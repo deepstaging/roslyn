@@ -18,6 +18,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Deepstaging.Roslyn" Version="$(DeepstagingRoslynVersion)" />
+    <PackageVersion Include="Deepstaging.Roslyn.LanguageExt" Version="$(DeepstagingRoslynVersion)" />
     <PackageVersion Include="Deepstaging.Roslyn.Testing" Version="$(DeepstagingRoslynVersion)" />
   </ItemGroup>
 </Project>

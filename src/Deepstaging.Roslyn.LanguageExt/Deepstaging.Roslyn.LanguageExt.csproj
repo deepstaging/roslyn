@@ -1,0 +1,28 @@
+<!-- SPDX-FileCopyrightText: 2024-present Deepstaging -->
+<!-- SPDX-License-Identifier: RPL-1.5 -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <RootNamespace>Deepstaging.Roslyn.LanguageExt</RootNamespace>
+
+        <!-- Package metadata -->
+        <IsPackable>true</IsPackable>
+        <PackageId>Deepstaging.Roslyn.LanguageExt</PackageId>
+        <Title>Deepstaging.Roslyn.LanguageExt</Title>
+        <Description>LanguageExt type references and emit patterns for Roslyn source generators.</Description>
+        <PackageTags>deepstaging;roslyn;source-generator;languageext;functional</PackageTags>
+
+        <!-- Generate XML documentation for IntelliSense -->
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Deepstaging.Roslyn\Deepstaging.Roslyn.csproj"/>
+    </ItemGroup>
+
+</Project>

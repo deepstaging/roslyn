@@ -112,6 +112,10 @@ echo "Packing Deepstaging.Roslyn..."
 dotnet pack $(build_pack_args "$REPO_ROOT/src/Deepstaging.Roslyn/Deepstaging.Roslyn.csproj")
 
 echo ""
+echo "Packing Deepstaging.Roslyn.LanguageExt..."
+dotnet pack $(build_pack_args "$REPO_ROOT/src/Deepstaging.Roslyn.LanguageExt/Deepstaging.Roslyn.LanguageExt.csproj")
+
+echo ""
 echo "Packing Deepstaging.Roslyn.Testing..."
 dotnet pack $(build_pack_args "$REPO_ROOT/src/Deepstaging.Roslyn.Testing/Deepstaging.Roslyn.Testing.csproj")
 
@@ -158,6 +162,7 @@ if [[ -n "$NUPKG" ]]; then
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Deepstaging.Roslyn" Version="\$(DeepstagingRoslynVersion)" />
+    <PackageVersion Include="Deepstaging.Roslyn.LanguageExt" Version="\$(DeepstagingRoslynVersion)" />
     <PackageVersion Include="Deepstaging.Roslyn.Testing" Version="\$(DeepstagingRoslynVersion)" />
   </ItemGroup>
 </Project>
@@ -169,6 +174,7 @@ EOF
         TEMPLATE_PACKAGES="$REPO_ROOT/templates/templates/roslynkit/Directory.Packages.props"
         if [[ -f "$TEMPLATE_PACKAGES" ]]; then
             sed -i.bak "s|Include=\"Deepstaging\.Roslyn\" Version=\"[^\"]*\"|Include=\"Deepstaging.Roslyn\" Version=\"$PACK_VERSION\"|g" "$TEMPLATE_PACKAGES"
+            sed -i.bak "s|Include=\"Deepstaging\.Roslyn\.LanguageExt\" Version=\"[^\"]*\"|Include=\"Deepstaging.Roslyn.LanguageExt\" Version=\"$PACK_VERSION\"|g" "$TEMPLATE_PACKAGES"
             sed -i.bak "s|Include=\"Deepstaging\.Roslyn\.Testing\" Version=\"[^\"]*\"|Include=\"Deepstaging.Roslyn.Testing\" Version=\"$PACK_VERSION\"|g" "$TEMPLATE_PACKAGES"
             rm -f "$TEMPLATE_PACKAGES.bak"
             echo "Updated template Directory.Packages.props to $PACK_VERSION"
