@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Analyzers;
 
 /// <summary>
@@ -8,9 +9,15 @@ namespace Deepstaging.Roslyn.Analyzers;
 /// </summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 [Reports(DiagnosticId, "Pipeline model property uses ISymbol",
-    Message = "Property '{0}' on pipeline model '{1}' uses an ISymbol type which retains the Compilation — extract data during the projection step",
     Category = "PipelineModel",
-    Description = "ISymbol types retain the entire Compilation in memory, preventing garbage collection. Extract the needed data into plain types during the projection step.")]
+    Description =
+        """
+        ISymbol types retain the entire Compilation in memory, preventing garbage collection. 
+        Extract the needed data into plain types during the projection step.
+        """,
+    Message =
+        "Property '{0}' on pipeline model '{1}' uses an ISymbol type which retains the Compilation — extract data during the projection step"
+)]
 public sealed class PipelineModelSymbolAnalyzer : MultiDiagnosticTypeAnalyzer<ValidSymbol<IPropertySymbol>>
 {
     /// <summary>Diagnostic ID for ISymbol usage in pipeline models.</summary>

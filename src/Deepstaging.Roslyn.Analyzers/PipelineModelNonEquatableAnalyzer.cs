@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Analyzers;
 
 /// <summary>
@@ -8,12 +9,16 @@ namespace Deepstaging.Roslyn.Analyzers;
 /// </summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 [Reports(DiagnosticId, "Pipeline model property type lacks IEquatable<T>",
-    Message =
-        "Property '{0}' on pipeline model '{1}' has type '{2}' which does not implement IEquatable<T> — equality will be broken",
     Category = "PipelineModel",
     Severity = DiagnosticSeverity.Warning,
     Description =
-        "Pipeline model properties must have types that implement IEquatable<T> for correct record equality. Types without IEquatable<T> fall back to reference equality, breaking incremental generator caching.")]
+        """
+        Pipeline model properties must have types that implement IEquatable<T> for correct record equality.
+        Types without IEquatable<T> fall back to reference equality, breaking incremental generator caching.
+        """,
+    Message =
+        "Property '{0}' on pipeline model '{1}' has type '{2}' which does not implement IEquatable<T> — equality will be broken"
+)]
 public sealed class PipelineModelNonEquatableAnalyzer : MultiDiagnosticTypeAnalyzer<ValidSymbol<IPropertySymbol>>
 {
     /// <summary>Diagnostic ID for non-IEquatable property types in pipeline models.</summary>
@@ -30,25 +35,26 @@ public sealed class PipelineModelNonEquatableAnalyzer : MultiDiagnosticTypeAnaly
             .Where(x =>
                 // Exclude types already reported by their own dedicated analyzers
                 !x.Type.IsImmutableArrayType() // DSRK001
-                && !x.Type.IsValidSymbolType() // DSRK002
-                && !x.Type.IsRoslynSymbolType() // DSRK003
-                
+                &&
+                !x.Type.IsValidSymbolType() // DSRK002
+                &&
+                !x.Type.IsRoslynSymbolType() // DSRK003
+
                 // Report if the type does not implement IEquatable<T>
-                && !x.Type.ImplementsIEquatable());
+                &&
+                !x.Type.ImplementsIEquatable());
 
         foreach (var property in properties.GetAll())
             yield return property;
     }
 
     /// <inheritdoc />
-    protected override object[] GetMessageArgs(ValidSymbol<INamedTypeSymbol> symbol, ValidSymbol<IPropertySymbol> item)
-    {
-        return [item.Name, symbol.Name, item.Type.Value.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)];
-    }
+    protected override object[] GetMessageArgs(ValidSymbol<INamedTypeSymbol> symbol, ValidSymbol<IPropertySymbol> item) =>
+    [
+        item.Name, symbol.Name, item.Type.Value.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)
+    ];
 
     /// <inheritdoc />
-    protected override Location GetLocation(ValidSymbol<INamedTypeSymbol> symbol, ValidSymbol<IPropertySymbol> item)
-    {
-        return item.Location;
-    }
+    protected override Location GetLocation(ValidSymbol<INamedTypeSymbol> symbol, ValidSymbol<IPropertySymbol> item) =>
+        item.Location;
 }

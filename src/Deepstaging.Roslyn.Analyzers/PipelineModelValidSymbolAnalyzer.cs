@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
+
 namespace Deepstaging.Roslyn.Analyzers;
 
 /// <summary>
@@ -8,9 +9,15 @@ namespace Deepstaging.Roslyn.Analyzers;
 /// </summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 [Reports(DiagnosticId, "Pipeline model property uses ValidSymbol<T>",
-    Message = "Property '{0}' on pipeline model '{1}' uses ValidSymbol<T> which retains the Compilation — use a snapshot type instead",
     Category = "PipelineModel",
-    Description = "ValidSymbol<T> holds a reference to ISymbol which retains the entire Compilation, preventing garbage collection across edits. Use TypeSnapshot, MethodSnapshot, or other snapshot types.")]
+    Description =
+        """
+        ValidSymbol<T> holds a reference to ISymbol which retains the entire Compilation,
+        preventing garbage collection across edits. Use TypeSnapshot, MethodSnapshot, or other snapshot types.
+        """,
+    Message =
+        "Property '{0}' on pipeline model '{1}' uses ValidSymbol<T> which retains the Compilation — use a snapshot type instead"
+)]
 public sealed class PipelineModelValidSymbolAnalyzer : MultiDiagnosticTypeAnalyzer<ValidSymbol<IPropertySymbol>>
 {
     /// <summary>Diagnostic ID for ValidSymbol usage in pipeline models.</summary>

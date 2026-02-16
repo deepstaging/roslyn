@@ -9,11 +9,15 @@ namespace Deepstaging.Roslyn.Analyzers;
 /// </summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 [Reports(DiagnosticId, "Pipeline model property uses ImmutableArray<T>",
-    Message =
-        "Property '{0}' on pipeline model '{1}' uses ImmutableArray<T> which has reference equality — use EquatableArray<T> instead",
     Category = "PipelineModel",
     Description =
-        "ImmutableArray<T> uses reference equality in record types, breaking incremental generator caching. Replace with EquatableArray<T> which implements sequence equality.")]
+        """
+        ImmutableArray<T> uses reference equality in record types, breaking incremental generator caching.
+        Replace with EquatableArray<T> which implements sequence equality.
+        """,
+    Message =
+        "Property '{0}' on pipeline model '{1}' uses ImmutableArray<T> which has reference equality — use EquatableArray<T> instead"
+)]
 public sealed class PipelineModelImmutableArrayAnalyzer : MultiDiagnosticTypeAnalyzer<ValidSymbol<IPropertySymbol>>
 {
     /// <summary>Diagnostic ID for ImmutableArray usage in pipeline models.</summary>
@@ -28,20 +32,16 @@ public sealed class PipelineModelImmutableArrayAnalyzer : MultiDiagnosticTypeAna
         var properties = type.QueryProperties()
             .ThatAreInstance()
             .Where(x => x.Type.IsImmutableArrayType());
-        
+
         foreach (var property in properties.GetAll())
             yield return property;
     }
 
     /// <inheritdoc />
-    protected override object[] GetMessageArgs(ValidSymbol<INamedTypeSymbol> symbol, ValidSymbol<IPropertySymbol> item)
-    {
-        return [item.Name, symbol.Name];
-    }
+    protected override object[] GetMessageArgs(ValidSymbol<INamedTypeSymbol> symbol, ValidSymbol<IPropertySymbol> item) =>
+        [item.Name, symbol.Name];
 
     /// <inheritdoc />
-    protected override Location GetLocation(ValidSymbol<INamedTypeSymbol> symbol, ValidSymbol<IPropertySymbol> item)
-    {
-        return item.Location;
-    }
+    protected override Location GetLocation(ValidSymbol<INamedTypeSymbol> symbol, ValidSymbol<IPropertySymbol> item) =>
+        item.Location;
 }
