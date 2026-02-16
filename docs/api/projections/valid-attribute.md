@@ -29,6 +29,18 @@ For generic attributes, type arguments return `ValidSymbol`:
 ImmutableArray<ValidSymbol<INamedTypeSymbol>> typeArgs = validAttr.GetTypeArguments();
 ```
 
+## Type Checking
+
+Check or narrow the attribute type:
+
+```csharp
+// Check if this attribute is a specific type
+bool isRetry = validAttr.Is<RetryAttribute>();
+
+// Narrow to OptionalAttribute if it matches (empty if not)
+OptionalAttribute optional = validAttr.As<RetryAttribute>();
+```
+
 ## Converting to Query Types
 
 Use `AsQuery<TQuery>()` to convert to a strongly-typed query wrapper:

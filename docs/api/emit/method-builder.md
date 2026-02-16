@@ -32,6 +32,17 @@ method.AsAbstract()
 method.Async()
 ```
 
+## Explicit Interface Implementation
+
+Generate methods with explicit interface syntax (`IInterface.Method`):
+
+```csharp
+method.ExplicitlyImplements("IMyInterface")
+// Produces: void IMyInterface.DoWork() { ... }
+```
+
+Explicit implementations automatically have no accessibility modifier.
+
 ## Type Parameters
 
 ```csharp

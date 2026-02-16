@@ -20,6 +20,7 @@ Emit builders construct Roslyn syntax trees using a fluent, immutable API. Where
 | [BodyBuilder](body-builder.md) | Create method/property bodies |
 | [Patterns](patterns.md) | Builder, Singleton, ToString extensions |
 | [Directives](directives.md) | Preprocessor directives for conditional compilation |
+| [TypeRef](type-ref.md) | Globally-qualified type references for generated code |
 | [Support Types](support-types.md) | AttributeBuilder, XmlDocumentationBuilder, EmitOptions |
 
 All builders are **immutable** — each method returns a new instance.
@@ -131,6 +132,32 @@ if (result.IsNotValid(out var diagnostics))
 
 // Get diagnostics (warnings even if valid)
 ImmutableArray<Diagnostic> diags = result.Diagnostics;
+```
+
+### ValidEmit Part Extraction
+
+Once validated, `ValidEmit` exposes structured access to the generated compilation unit:
+
+```csharp
+valid.Usings          // ImmutableArray<UsingDirectiveSyntax>
+valid.Types           // ImmutableArray<MemberDeclarationSyntax> (unwrapped from namespaces)
+valid.Namespace       // string? — the namespace name, or null for global scope
+valid.LeadingTrivia   // SyntaxTriviaList — header comments, nullable directives, etc.
+```
+
+### Combining Emit Results
+
+Use `Combine()` to merge multiple emit results into a single compilation unit. Usings are deduplicated and types are grouped by namespace.
+
+```csharp
+// Combine two ValidEmit results
+var combined = emitA.Combine(emitB);
+
+// Chain multiple
+var all = emitA.Combine(emitB).Combine(emitC);
+
+// Works with OptionalEmit too — propagates failures and aggregates diagnostics
+OptionalEmit merged = optionalA.Combine(optionalB);
 ```
 
 ---

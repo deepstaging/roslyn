@@ -112,6 +112,7 @@ nav:
       - BodyBuilder: api/emit/body-builder.md
       - Patterns: api/emit/patterns.md
       - Directives: api/emit/directives.md
+      - TypeRef: api/emit/type-ref.md
       - Support Types: api/emit/support-types.md
     - Extensions:
       - Overview: api/extensions/index.md
