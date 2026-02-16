@@ -125,6 +125,7 @@ nav:
         - System: api/emit/refs/system.md
         - Diagnostics: api/emit/refs/diagnostics.md
         - Entity Framework: api/emit/refs/efcore.md
+      - GlobalUsings: api/emit/global-usings.md
       - Support Types: api/emit/support-types.md
     - Extensions:
       - Overview: api/extensions/index.md

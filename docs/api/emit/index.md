@@ -22,6 +22,7 @@ Emit builders construct Roslyn syntax trees using a fluent, immutable API. Where
 | [Directives](directives.md) | Preprocessor directives for conditional compilation |
 | [TypeRef](type-ref.md) | Type-safe primitives for type, expression, and attribute references |
 | [Refs](refs/index.md) | Pre-built references for common .NET namespaces |
+| [GlobalUsings](global-usings.md) | Emit `global using` directives as a complete source file |
 | [Support Types](support-types.md) | AttributeBuilder, XmlDocumentationBuilder, EmitOptions |
 
 All builders are **immutable** — each method returns a new instance.

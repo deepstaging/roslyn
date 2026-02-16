@@ -28,6 +28,7 @@ Async types and well-known API calls for `System.Threading.Tasks` and `System.Th
 | Method | Returns | Produces |
 |--------|---------|----------|
 | `FromResult(value)` | `ExpressionRef` | `Task.FromResult(value)` |
+| `FromResult(resultType, value)` | `ExpressionRef` | `Task.FromResult<T>(value)` |
 | `Run(expression)` | `ExpressionRef` | `Task.Run(expression)` |
 | `Delay(delay)` | `ExpressionRef` | `Task.Delay(delay)` |
 | `WhenAll(tasks...)` | `ExpressionRef` | `Task.WhenAll(tasks...)` |
@@ -64,6 +65,10 @@ TypeRef.From("OnSave").Invoke("id").OrDefault(TaskRefs.CompletedTask)
 // Task.FromResult
 body.AddReturn(TaskRefs.FromResult("result"))
 // → return global::System.Threading.Tasks.Task.FromResult(result)
+
+// Task.FromResult<T> (generic overload)
+body.AddReturn(TaskRefs.FromResult(TypeRef.From("string"), "default!"))
+// → return global::System.Threading.Tasks.Task.FromResult<string>(default!)
 
 // Task.WhenAll
 body.AddStatement($"await {TaskRefs.WhenAll("task1", "task2")}")
