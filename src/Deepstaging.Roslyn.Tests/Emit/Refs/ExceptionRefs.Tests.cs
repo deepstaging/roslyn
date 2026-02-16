@@ -10,7 +10,7 @@ public class ExceptionRefsTests
     {
         TypeRef typeRef = ExceptionRefs.ArgumentNull;
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.ArgumentNullException");
+        await Assert.That(typeRef).IsEqualTo("global::System.ArgumentNullException");
     }
 
     [Test]
@@ -18,7 +18,7 @@ public class ExceptionRefsTests
     {
         TypeRef typeRef = ExceptionRefs.Argument;
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.ArgumentException");
+        await Assert.That(typeRef).IsEqualTo("global::System.ArgumentException");
     }
 
     [Test]
@@ -26,7 +26,7 @@ public class ExceptionRefsTests
     {
         TypeRef typeRef = ExceptionRefs.ArgumentOutOfRange;
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.ArgumentOutOfRangeException");
+        await Assert.That(typeRef).IsEqualTo("global::System.ArgumentOutOfRangeException");
     }
 
     [Test]
@@ -34,7 +34,7 @@ public class ExceptionRefsTests
     {
         TypeRef typeRef = ExceptionRefs.InvalidOperation;
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.InvalidOperationException");
+        await Assert.That(typeRef).IsEqualTo("global::System.InvalidOperationException");
     }
 
     [Test]
@@ -42,7 +42,7 @@ public class ExceptionRefsTests
     {
         TypeRef typeRef = ExceptionRefs.InvalidCast;
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.InvalidCastException");
+        await Assert.That(typeRef).IsEqualTo("global::System.InvalidCastException");
     }
 
     [Test]
@@ -50,7 +50,7 @@ public class ExceptionRefsTests
     {
         TypeRef typeRef = ExceptionRefs.Format;
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.FormatException");
+        await Assert.That(typeRef).IsEqualTo("global::System.FormatException");
     }
 
     [Test]
@@ -58,7 +58,7 @@ public class ExceptionRefsTests
     {
         TypeRef typeRef = ExceptionRefs.NotSupported;
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.NotSupportedException");
+        await Assert.That(typeRef).IsEqualTo("global::System.NotSupportedException");
     }
 
     [Test]
@@ -66,6 +66,6 @@ public class ExceptionRefsTests
     {
         TypeRef typeRef = ExceptionRefs.NotImplemented;
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.NotImplementedException");
+        await Assert.That(typeRef).IsEqualTo("global::System.NotImplementedException");
     }
 }

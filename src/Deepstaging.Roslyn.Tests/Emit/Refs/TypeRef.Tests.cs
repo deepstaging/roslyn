@@ -12,7 +12,7 @@ public class TypeRefTests
     {
         TypeRef typeRef = TypeRef.From("string");
 
-        await Assert.That((string)typeRef).IsEqualTo("string");
+        await Assert.That(typeRef).IsEqualTo("string");
     }
 
     [Test]
@@ -20,7 +20,7 @@ public class TypeRefTests
     {
         TypeRef typeRef = TypeRef.From("System.Collections.Generic.List");
 
-        await Assert.That((string)typeRef).IsEqualTo("System.Collections.Generic.List");
+        await Assert.That(typeRef).IsEqualTo("System.Collections.Generic.List");
     }
 
     [Test]
@@ -28,7 +28,7 @@ public class TypeRefTests
     {
         TypeRef typeRef = TypeRef.Global("System.String");
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.String");
+        await Assert.That(typeRef).IsEqualTo("global::System.String");
     }
 
     #endregion
@@ -40,7 +40,7 @@ public class TypeRefTests
     {
         TypeRef typeRef = TypeRef.From("string").Nullable();
 
-        await Assert.That((string)typeRef).IsEqualTo("string?");
+        await Assert.That(typeRef).IsEqualTo("string?");
     }
 
     [Test]
@@ -48,7 +48,7 @@ public class TypeRefTests
     {
         TypeRef typeRef = TypeRef.From("int").Nullable();
 
-        await Assert.That((string)typeRef).IsEqualTo("int?");
+        await Assert.That(typeRef).IsEqualTo("int?");
     }
 
     #endregion
@@ -60,7 +60,7 @@ public class TypeRefTests
     {
         TypeRef typeRef = TypeRef.From("string").Array();
 
-        await Assert.That((string)typeRef).IsEqualTo("string[]");
+        await Assert.That(typeRef).IsEqualTo("string[]");
     }
 
     [Test]
@@ -68,7 +68,7 @@ public class TypeRefTests
     {
         TypeRef typeRef = TypeRef.From("int").Array(1);
 
-        await Assert.That((string)typeRef).IsEqualTo("int[]");
+        await Assert.That(typeRef).IsEqualTo("int[]");
     }
 
     [Test]
@@ -76,7 +76,7 @@ public class TypeRefTests
     {
         TypeRef typeRef = TypeRef.From("int").Array(2);
 
-        await Assert.That((string)typeRef).IsEqualTo("int[,]");
+        await Assert.That(typeRef).IsEqualTo("int[,]");
     }
 
     [Test]
@@ -84,7 +84,7 @@ public class TypeRefTests
     {
         TypeRef typeRef = TypeRef.From("int").Array(3);
 
-        await Assert.That((string)typeRef).IsEqualTo("int[,,]");
+        await Assert.That(typeRef).IsEqualTo("int[,,]");
     }
 
     #endregion
@@ -96,7 +96,7 @@ public class TypeRefTests
     {
         TypeRef typeRef = TypeRef.From("List").Of("string");
 
-        await Assert.That((string)typeRef).IsEqualTo("List<string>");
+        await Assert.That(typeRef).IsEqualTo("List<string>");
     }
 
     [Test]
@@ -104,7 +104,7 @@ public class TypeRefTests
     {
         TypeRef typeRef = TypeRef.From("Dictionary").Of("string", "int");
 
-        await Assert.That((string)typeRef).IsEqualTo("Dictionary<string, int>");
+        await Assert.That(typeRef).IsEqualTo("Dictionary<string, int>");
     }
 
     [Test]
@@ -114,7 +114,7 @@ public class TypeRefTests
             "string",
             TypeRef.From("List").Of("int"));
 
-        await Assert.That((string)typeRef).IsEqualTo("Dictionary<string, List<int>>");
+        await Assert.That(typeRef).IsEqualTo("Dictionary<string, List<int>>");
     }
 
     #endregion
@@ -126,7 +126,7 @@ public class TypeRefTests
     {
         TypeRef typeRef = TypeRef.Tuple(("string", "Name"), ("int", "Age"));
 
-        await Assert.That((string)typeRef).IsEqualTo("(string Name, int Age)");
+        await Assert.That(typeRef).IsEqualTo("(string Name, int Age)");
     }
 
     [Test]
@@ -137,7 +137,7 @@ public class TypeRefTests
             ("string", "Last"),
             ("int", "Age"));
 
-        await Assert.That((string)typeRef).IsEqualTo("(string First, string Last, int Age)");
+        await Assert.That(typeRef).IsEqualTo("(string First, string Last, int Age)");
     }
 
     #endregion
@@ -149,7 +149,7 @@ public class TypeRefTests
     {
         ExpressionRef expr = TypeRef.From("OnSave").Invoke();
 
-        await Assert.That((string)expr).IsEqualTo("OnSave?.Invoke()");
+        await Assert.That(expr).IsEqualTo("OnSave?.Invoke()");
     }
 
     [Test]
@@ -157,7 +157,7 @@ public class TypeRefTests
     {
         ExpressionRef expr = TypeRef.From("OnSave").Invoke("id");
 
-        await Assert.That((string)expr).IsEqualTo("OnSave?.Invoke(id)");
+        await Assert.That(expr).IsEqualTo("OnSave?.Invoke(id)");
     }
 
     [Test]
@@ -165,7 +165,7 @@ public class TypeRefTests
     {
         ExpressionRef expr = TypeRef.From("OnSendEmail").Invoke("to", "body");
 
-        await Assert.That((string)expr).IsEqualTo("OnSendEmail?.Invoke(to, body)");
+        await Assert.That(expr).IsEqualTo("OnSendEmail?.Invoke(to, body)");
     }
 
     [Test]
@@ -175,7 +175,7 @@ public class TypeRefTests
             .Invoke("to", "body")
             .OrDefault(TaskRefs.CompletedTask);
 
-        await Assert.That((string)expr).IsEqualTo("OnSendEmail?.Invoke(to, body) ?? global::System.Threading.Tasks.Task.CompletedTask");
+        await Assert.That(expr).IsEqualTo("OnSendEmail?.Invoke(to, body) ?? global::System.Threading.Tasks.Task.CompletedTask");
     }
 
     [Test]
@@ -185,7 +185,7 @@ public class TypeRefTests
             .Invoke()
             .OrDefault("default!");
 
-        await Assert.That((string)expr).IsEqualTo("OnGetName?.Invoke() ?? default!");
+        await Assert.That(expr).IsEqualTo("OnGetName?.Invoke() ?? default!");
     }
 
     #endregion
@@ -197,7 +197,7 @@ public class TypeRefTests
     {
         TypeRef typeRef = TypeRef.From("List").Of("string").Nullable().Array();
 
-        await Assert.That((string)typeRef).IsEqualTo("List<string>?[]");
+        await Assert.That(typeRef).IsEqualTo("List<string>?[]");
     }
 
     [Test]
@@ -205,7 +205,7 @@ public class TypeRefTests
     {
         TypeRef typeRef = TypeRef.Global("System.Collections.Generic.List").Of("string").Nullable();
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Generic.List<string>?");
+        await Assert.That(typeRef).IsEqualTo("global::System.Collections.Generic.List<string>?");
     }
 
     #endregion
@@ -225,7 +225,7 @@ public class TypeRefTests
     {
         TypeRef typeRef = "string";
 
-        await Assert.That((string)typeRef).IsEqualTo("string");
+        await Assert.That(typeRef).IsEqualTo("string");
     }
 
     [Test]
@@ -234,7 +234,7 @@ public class TypeRefTests
         // strings implicitly convert to TypeRef in Of() params
         TypeRef typeRef = TypeRef.From("List").Of("string");
 
-        await Assert.That((string)typeRef).IsEqualTo("List<string>");
+        await Assert.That(typeRef).IsEqualTo("List<string>");
     }
 
     #endregion

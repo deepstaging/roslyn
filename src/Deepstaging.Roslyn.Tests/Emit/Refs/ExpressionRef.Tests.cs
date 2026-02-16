@@ -12,7 +12,7 @@ public class ExpressionRefTests
     {
         ExpressionRef expr = ExpressionRef.From("value");
 
-        await Assert.That((string)expr).IsEqualTo("value");
+        await Assert.That(expr).IsEqualTo("value");
     }
 
     [Test]
@@ -36,7 +36,7 @@ public class ExpressionRefTests
     {
         ExpressionRef expr = "value + 1";
 
-        await Assert.That((string)expr).IsEqualTo("value + 1");
+        await Assert.That(expr).IsEqualTo("value + 1");
     }
 
     [Test]
@@ -52,7 +52,7 @@ public class ExpressionRefTests
     {
         ExpressionRef expr = TypeRef.From("string");
 
-        await Assert.That((string)expr).IsEqualTo("string");
+        await Assert.That(expr).IsEqualTo("string");
     }
 
     [Test]
@@ -60,7 +60,7 @@ public class ExpressionRefTests
     {
         ExpressionRef expr = CollectionRefs.List("int");
 
-        await Assert.That((string)expr).IsEqualTo("global::System.Collections.Generic.List<int>");
+        await Assert.That(expr).IsEqualTo("global::System.Collections.Generic.List<int>");
     }
 
     #endregion
@@ -72,7 +72,7 @@ public class ExpressionRefTests
     {
         ExpressionRef expr = CollectionRefs.List("string").New();
 
-        await Assert.That((string)expr).IsEqualTo("new global::System.Collections.Generic.List<string>()");
+        await Assert.That(expr).IsEqualTo("new global::System.Collections.Generic.List<string>()");
     }
 
     [Test]
@@ -80,7 +80,7 @@ public class ExpressionRefTests
     {
         ExpressionRef expr = ExceptionRefs.ArgumentNull.New("nameof(value)");
 
-        await Assert.That((string)expr).IsEqualTo("new global::System.ArgumentNullException(nameof(value))");
+        await Assert.That(expr).IsEqualTo("new global::System.ArgumentNullException(nameof(value))");
     }
 
     [Test]
@@ -88,7 +88,7 @@ public class ExpressionRefTests
     {
         ExpressionRef expr = TypeRef.From("KeyValuePair").New("key", "value");
 
-        await Assert.That((string)expr).IsEqualTo("new KeyValuePair(key, value)");
+        await Assert.That(expr).IsEqualTo("new KeyValuePair(key, value)");
     }
 
     #endregion
@@ -100,7 +100,7 @@ public class ExpressionRefTests
     {
         ExpressionRef expr = TaskRefs.Task().Call("CompletedTask");
 
-        await Assert.That((string)expr).IsEqualTo("global::System.Threading.Tasks.Task.CompletedTask()");
+        await Assert.That(expr).IsEqualTo("global::System.Threading.Tasks.Task.CompletedTask()");
     }
 
     [Test]
@@ -108,7 +108,7 @@ public class ExpressionRefTests
     {
         ExpressionRef expr = TypeRef.From("Guid").Call("Parse", "input");
 
-        await Assert.That((string)expr).IsEqualTo("Guid.Parse(input)");
+        await Assert.That(expr).IsEqualTo("Guid.Parse(input)");
     }
 
     [Test]
@@ -116,7 +116,7 @@ public class ExpressionRefTests
     {
         ExpressionRef expr = TypeRef.From("int").Call("Parse", "input", "provider");
 
-        await Assert.That((string)expr).IsEqualTo("int.Parse(input, provider)");
+        await Assert.That(expr).IsEqualTo("int.Parse(input, provider)");
     }
 
     [Test]
@@ -124,7 +124,7 @@ public class ExpressionRefTests
     {
         ExpressionRef expr = ExceptionRefs.ArgumentNull.Call("ThrowIfNull", "param");
 
-        await Assert.That((string)expr).IsEqualTo("global::System.ArgumentNullException.ThrowIfNull(param)");
+        await Assert.That(expr).IsEqualTo("global::System.ArgumentNullException.ThrowIfNull(param)");
     }
 
     #endregion
@@ -136,7 +136,7 @@ public class ExpressionRefTests
     {
         ExpressionRef expr = TypeRef.From("string").Member("Empty");
 
-        await Assert.That((string)expr).IsEqualTo("string.Empty");
+        await Assert.That(expr).IsEqualTo("string.Empty");
     }
 
     [Test]
@@ -144,7 +144,7 @@ public class ExpressionRefTests
     {
         ExpressionRef expr = TypeRef.Global("System.Text.Encoding").Member("UTF8");
 
-        await Assert.That((string)expr).IsEqualTo("global::System.Text.Encoding.UTF8");
+        await Assert.That(expr).IsEqualTo("global::System.Text.Encoding.UTF8");
     }
 
     #endregion
@@ -156,7 +156,7 @@ public class ExpressionRefTests
     {
         ExpressionRef expr = TypeRef.From("string").TypeOf();
 
-        await Assert.That((string)expr).IsEqualTo("typeof(string)");
+        await Assert.That(expr).IsEqualTo("typeof(string)");
     }
 
     [Test]
@@ -164,7 +164,7 @@ public class ExpressionRefTests
     {
         ExpressionRef expr = JsonRefs.Converter("OrderId").TypeOf();
 
-        await Assert.That((string)expr).IsEqualTo("typeof(global::System.Text.Json.Serialization.JsonConverter<OrderId>)");
+        await Assert.That(expr).IsEqualTo("typeof(global::System.Text.Json.Serialization.JsonConverter<OrderId>)");
     }
 
     [Test]
@@ -172,7 +172,7 @@ public class ExpressionRefTests
     {
         ExpressionRef expr = TaskRefs.CancellationToken.Default();
 
-        await Assert.That((string)expr).IsEqualTo("default(global::System.Threading.CancellationToken)");
+        await Assert.That(expr).IsEqualTo("default(global::System.Threading.CancellationToken)");
     }
 
     [Test]
@@ -180,7 +180,7 @@ public class ExpressionRefTests
     {
         ExpressionRef expr = TypeRef.From("CustomerId").NameOf();
 
-        await Assert.That((string)expr).IsEqualTo("nameof(CustomerId)");
+        await Assert.That(expr).IsEqualTo("nameof(CustomerId)");
     }
 
     #endregion
@@ -194,7 +194,7 @@ public class ExpressionRefTests
             .Call("ToString")
             .Call("Trim");
 
-        await Assert.That((string)expr).IsEqualTo("value.ToString().Trim()");
+        await Assert.That(expr).IsEqualTo("value.ToString().Trim()");
     }
 
     [Test]
@@ -202,7 +202,7 @@ public class ExpressionRefTests
     {
         ExpressionRef expr = ExpressionRef.From("list").Call("Add", "item");
 
-        await Assert.That((string)expr).IsEqualTo("list.Add(item)");
+        await Assert.That(expr).IsEqualTo("list.Add(item)");
     }
 
     #endregion
@@ -216,7 +216,7 @@ public class ExpressionRefTests
             .Member("Name")
             .Member("Length");
 
-        await Assert.That((string)expr).IsEqualTo("value.Name.Length");
+        await Assert.That(expr).IsEqualTo("value.Name.Length");
     }
 
     [Test]
@@ -226,7 +226,7 @@ public class ExpressionRefTests
             .Member("Name")
             .Call("ToUpper");
 
-        await Assert.That((string)expr).IsEqualTo("value.Name.ToUpper()");
+        await Assert.That(expr).IsEqualTo("value.Name.ToUpper()");
     }
 
     #endregion
@@ -238,7 +238,7 @@ public class ExpressionRefTests
     {
         ExpressionRef expr = ExpressionRef.From("obj").As("string");
 
-        await Assert.That((string)expr).IsEqualTo("obj as string");
+        await Assert.That(expr).IsEqualTo("obj as string");
     }
 
     [Test]
@@ -246,7 +246,7 @@ public class ExpressionRefTests
     {
         ExpressionRef expr = ExpressionRef.From("obj").Cast("int");
 
-        await Assert.That((string)expr).IsEqualTo("(int)obj");
+        await Assert.That(expr).IsEqualTo("(int)obj");
     }
 
     [Test]
@@ -254,7 +254,7 @@ public class ExpressionRefTests
     {
         ExpressionRef expr = ExpressionRef.From("obj").Is("string");
 
-        await Assert.That((string)expr).IsEqualTo("obj is string");
+        await Assert.That(expr).IsEqualTo("obj is string");
     }
 
     [Test]
@@ -262,7 +262,7 @@ public class ExpressionRefTests
     {
         ExpressionRef expr = ExpressionRef.From("obj").Is(TypeRef.From("string"), "text");
 
-        await Assert.That((string)expr).IsEqualTo("obj is string text");
+        await Assert.That(expr).IsEqualTo("obj is string text");
     }
 
     #endregion
@@ -274,7 +274,7 @@ public class ExpressionRefTests
     {
         ExpressionRef expr = ExpressionRef.From("value").OrDefault("fallback");
 
-        await Assert.That((string)expr).IsEqualTo("value ?? fallback");
+        await Assert.That(expr).IsEqualTo("value ?? fallback");
     }
 
     [Test]
@@ -282,7 +282,7 @@ public class ExpressionRefTests
     {
         ExpressionRef expr = ExpressionRef.From("value").NullForgiving();
 
-        await Assert.That((string)expr).IsEqualTo("value!");
+        await Assert.That(expr).IsEqualTo("value!");
     }
 
     [Test]
@@ -290,7 +290,7 @@ public class ExpressionRefTests
     {
         ExpressionRef expr = ExpressionRef.From("handler").NullConditionalMember("Name");
 
-        await Assert.That((string)expr).IsEqualTo("handler?.Name");
+        await Assert.That(expr).IsEqualTo("handler?.Name");
     }
 
     [Test]
@@ -298,7 +298,7 @@ public class ExpressionRefTests
     {
         ExpressionRef expr = ExpressionRef.From("handler").NullConditionalCall("Dispose");
 
-        await Assert.That((string)expr).IsEqualTo("handler?.Dispose()");
+        await Assert.That(expr).IsEqualTo("handler?.Dispose()");
     }
 
     #endregion
@@ -310,7 +310,7 @@ public class ExpressionRefTests
     {
         ExpressionRef expr = ExpressionRef.From("task").Await();
 
-        await Assert.That((string)expr).IsEqualTo("await task");
+        await Assert.That(expr).IsEqualTo("await task");
     }
 
     [Test]
@@ -320,7 +320,7 @@ public class ExpressionRefTests
             .Call("FlushAsync")
             .ConfigureAwait(false);
 
-        await Assert.That((string)expr).IsEqualTo("stream.FlushAsync().ConfigureAwait(false)");
+        await Assert.That(expr).IsEqualTo("stream.FlushAsync().ConfigureAwait(false)");
     }
 
     [Test]
@@ -330,7 +330,7 @@ public class ExpressionRefTests
             .Call("FlushAsync")
             .ConfigureAwait(true);
 
-        await Assert.That((string)expr).IsEqualTo("stream.FlushAsync().ConfigureAwait(true)");
+        await Assert.That(expr).IsEqualTo("stream.FlushAsync().ConfigureAwait(true)");
     }
 
     [Test]
@@ -341,7 +341,7 @@ public class ExpressionRefTests
             .ConfigureAwait(false)
             .Await();
 
-        await Assert.That((string)expr).IsEqualTo("await disposable.DisposeAsync().ConfigureAwait(false)");
+        await Assert.That(expr).IsEqualTo("await disposable.DisposeAsync().ConfigureAwait(false)");
     }
 
     #endregion
@@ -353,7 +353,7 @@ public class ExpressionRefTests
     {
         ExpressionRef expr = ExpressionRef.From("a + b").Parenthesize();
 
-        await Assert.That((string)expr).IsEqualTo("(a + b)");
+        await Assert.That(expr).IsEqualTo("(a + b)");
     }
 
     [Test]
@@ -364,7 +364,7 @@ public class ExpressionRefTests
             .Parenthesize()
             .NullForgiving();
 
-        await Assert.That((string)expr).IsEqualTo("(value as string)!");
+        await Assert.That(expr).IsEqualTo("(value as string)!");
     }
 
     #endregion
@@ -377,7 +377,7 @@ public class ExpressionRefTests
         ExpressionRef expr = ExceptionRefs.ArgumentNull
             .New(TypeRef.From("value").NameOf());
 
-        await Assert.That((string)expr).IsEqualTo("new global::System.ArgumentNullException(nameof(value))");
+        await Assert.That(expr).IsEqualTo("new global::System.ArgumentNullException(nameof(value))");
     }
 
     [Test]
@@ -388,7 +388,7 @@ public class ExpressionRefTests
             .OrDefault(TaskRefs.CompletedTask)
             .Await();
 
-        await Assert.That((string)expr).IsEqualTo("await OnSaveAsync?.Invoke(entity) ?? global::System.Threading.Tasks.Task.CompletedTask");
+        await Assert.That(expr).IsEqualTo("await OnSaveAsync?.Invoke(entity) ?? global::System.Threading.Tasks.Task.CompletedTask");
     }
 
     [Test]
@@ -396,7 +396,7 @@ public class ExpressionRefTests
     {
         ExpressionRef expr = TypeRef.From("Guid").Call("Parse", "input", "provider");
 
-        await Assert.That((string)expr).IsEqualTo("Guid.Parse(input, provider)");
+        await Assert.That(expr).IsEqualTo("Guid.Parse(input, provider)");
     }
 
     [Test]
@@ -404,7 +404,7 @@ public class ExpressionRefTests
     {
         ExpressionRef expr = ExceptionRefs.ArgumentNull.Call("ThrowIfNull", "value");
 
-        await Assert.That((string)expr).IsEqualTo("global::System.ArgumentNullException.ThrowIfNull(value)");
+        await Assert.That(expr).IsEqualTo("global::System.ArgumentNullException.ThrowIfNull(value)");
     }
 
     [Test]
@@ -412,7 +412,7 @@ public class ExpressionRefTests
     {
         ExpressionRef expr = JsonRefs.Converter("CustomerId").TypeOf();
 
-        await Assert.That((string)expr).IsEqualTo("typeof(global::System.Text.Json.Serialization.JsonConverter<CustomerId>)");
+        await Assert.That(expr).IsEqualTo("typeof(global::System.Text.Json.Serialization.JsonConverter<CustomerId>)");
     }
 
     [Test]

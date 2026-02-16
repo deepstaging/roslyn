@@ -10,7 +10,7 @@ public class DelegateRefsTests
     {
         TypeRef typeRef = DelegateRefs.Func("int");
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Func<int>");
+        await Assert.That(typeRef).IsEqualTo("global::System.Func<int>");
     }
 
     [Test]
@@ -18,7 +18,7 @@ public class DelegateRefsTests
     {
         TypeRef typeRef = DelegateRefs.Func("int", "string");
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Func<int, string>");
+        await Assert.That(typeRef).IsEqualTo("global::System.Func<int, string>");
     }
 
     [Test]
@@ -26,7 +26,7 @@ public class DelegateRefsTests
     {
         TypeRef typeRef = DelegateRefs.Func("int", "string", "bool");
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Func<int, string, bool>");
+        await Assert.That(typeRef).IsEqualTo("global::System.Func<int, string, bool>");
     }
 
     [Test]
@@ -34,7 +34,7 @@ public class DelegateRefsTests
     {
         TypeRef typeRef = DelegateRefs.Action();
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Action");
+        await Assert.That(typeRef).IsEqualTo("global::System.Action");
     }
 
     [Test]
@@ -42,7 +42,7 @@ public class DelegateRefsTests
     {
         TypeRef typeRef = DelegateRefs.Action("string");
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Action<string>");
+        await Assert.That(typeRef).IsEqualTo("global::System.Action<string>");
     }
 
     [Test]
@@ -50,7 +50,7 @@ public class DelegateRefsTests
     {
         TypeRef typeRef = DelegateRefs.Action("string", "int");
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Action<string, int>");
+        await Assert.That(typeRef).IsEqualTo("global::System.Action<string, int>");
     }
 
     #region Composition
@@ -60,7 +60,7 @@ public class DelegateRefsTests
     {
         TypeRef typeRef = DelegateRefs.Func("string", "bool").Nullable();
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Func<string, bool>?");
+        await Assert.That(typeRef).IsEqualTo("global::System.Func<string, bool>?");
     }
 
     [Test]
@@ -70,7 +70,7 @@ public class DelegateRefsTests
             TypeRef.From("List").Of("string"),
             TypeRef.From("int"));
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Func<List<string>, int>");
+        await Assert.That(typeRef).IsEqualTo("global::System.Func<List<string>, int>");
     }
 
     #endregion

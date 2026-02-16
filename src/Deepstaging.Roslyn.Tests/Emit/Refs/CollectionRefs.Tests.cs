@@ -10,7 +10,7 @@ public class CollectionRefsTests
     {
         TypeRef typeRef = CollectionRefs.List("string");
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Generic.List<string>");
+        await Assert.That(typeRef).IsEqualTo("global::System.Collections.Generic.List<string>");
     }
 
     [Test]
@@ -18,7 +18,7 @@ public class CollectionRefsTests
     {
         TypeRef typeRef = CollectionRefs.Dictionary("string", "int");
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Generic.Dictionary<string, int>");
+        await Assert.That(typeRef).IsEqualTo("global::System.Collections.Generic.Dictionary<string, int>");
     }
 
     [Test]
@@ -26,7 +26,7 @@ public class CollectionRefsTests
     {
         TypeRef typeRef = CollectionRefs.HashSet("int");
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Generic.HashSet<int>");
+        await Assert.That(typeRef).IsEqualTo("global::System.Collections.Generic.HashSet<int>");
     }
 
     [Test]
@@ -34,7 +34,7 @@ public class CollectionRefsTests
     {
         TypeRef typeRef = CollectionRefs.KeyValuePair("string", "int");
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Generic.KeyValuePair<string, int>");
+        await Assert.That(typeRef).IsEqualTo("global::System.Collections.Generic.KeyValuePair<string, int>");
     }
 
     [Test]
@@ -42,7 +42,7 @@ public class CollectionRefsTests
     {
         TypeRef typeRef = CollectionRefs.IEnumerable("string");
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Generic.IEnumerable<string>");
+        await Assert.That(typeRef).IsEqualTo("global::System.Collections.Generic.IEnumerable<string>");
     }
 
     [Test]
@@ -50,7 +50,7 @@ public class CollectionRefsTests
     {
         TypeRef typeRef = CollectionRefs.ICollection("string");
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Generic.ICollection<string>");
+        await Assert.That(typeRef).IsEqualTo("global::System.Collections.Generic.ICollection<string>");
     }
 
     [Test]
@@ -58,7 +58,7 @@ public class CollectionRefsTests
     {
         TypeRef typeRef = CollectionRefs.IList("string");
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Generic.IList<string>");
+        await Assert.That(typeRef).IsEqualTo("global::System.Collections.Generic.IList<string>");
     }
 
     [Test]
@@ -66,7 +66,7 @@ public class CollectionRefsTests
     {
         TypeRef typeRef = CollectionRefs.IDictionary("string", "int");
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Generic.IDictionary<string, int>");
+        await Assert.That(typeRef).IsEqualTo("global::System.Collections.Generic.IDictionary<string, int>");
     }
 
     [Test]
@@ -74,7 +74,7 @@ public class CollectionRefsTests
     {
         TypeRef typeRef = CollectionRefs.ISet("int");
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Generic.ISet<int>");
+        await Assert.That(typeRef).IsEqualTo("global::System.Collections.Generic.ISet<int>");
     }
 
     [Test]
@@ -82,7 +82,7 @@ public class CollectionRefsTests
     {
         TypeRef typeRef = CollectionRefs.IReadOnlyList("string");
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Generic.IReadOnlyList<string>");
+        await Assert.That(typeRef).IsEqualTo("global::System.Collections.Generic.IReadOnlyList<string>");
     }
 
     [Test]
@@ -90,7 +90,7 @@ public class CollectionRefsTests
     {
         TypeRef typeRef = CollectionRefs.IReadOnlyCollection("string");
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Generic.IReadOnlyCollection<string>");
+        await Assert.That(typeRef).IsEqualTo("global::System.Collections.Generic.IReadOnlyCollection<string>");
     }
 
     [Test]
@@ -98,7 +98,7 @@ public class CollectionRefsTests
     {
         TypeRef typeRef = CollectionRefs.IReadOnlyDictionary("string", "int");
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Generic.IReadOnlyDictionary<string, int>");
+        await Assert.That(typeRef).IsEqualTo("global::System.Collections.Generic.IReadOnlyDictionary<string, int>");
     }
 
     #region Composition
@@ -108,7 +108,7 @@ public class CollectionRefsTests
     {
         TypeRef typeRef = CollectionRefs.List("string").Nullable();
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Generic.List<string>?");
+        await Assert.That(typeRef).IsEqualTo("global::System.Collections.Generic.List<string>?");
     }
 
     [Test]
@@ -116,7 +116,7 @@ public class CollectionRefsTests
     {
         TypeRef typeRef = CollectionRefs.Dictionary("string", CollectionRefs.List("int"));
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Generic.Dictionary<string, global::System.Collections.Generic.List<int>>");
+        await Assert.That(typeRef).IsEqualTo("global::System.Collections.Generic.Dictionary<string, global::System.Collections.Generic.List<int>>");
     }
 
     [Test]
@@ -124,7 +124,7 @@ public class CollectionRefsTests
     {
         TypeRef typeRef = CollectionRefs.IReadOnlyList("int").Array();
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Generic.IReadOnlyList<int>[]");
+        await Assert.That(typeRef).IsEqualTo("global::System.Collections.Generic.IReadOnlyList<int>[]");
     }
 
     #endregion

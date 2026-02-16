@@ -10,7 +10,7 @@ public class HttpRefsTests
     {
         TypeRef typeRef = HttpRefs.Client;
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.HttpClient");
+        await Assert.That(typeRef).IsEqualTo("global::System.Net.Http.HttpClient");
     }
 
     [Test]
@@ -18,7 +18,7 @@ public class HttpRefsTests
     {
         TypeRef typeRef = HttpRefs.RequestMessage;
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.HttpRequestMessage");
+        await Assert.That(typeRef).IsEqualTo("global::System.Net.Http.HttpRequestMessage");
     }
 
     [Test]
@@ -26,7 +26,7 @@ public class HttpRefsTests
     {
         TypeRef typeRef = HttpRefs.ResponseMessage;
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.HttpResponseMessage");
+        await Assert.That(typeRef).IsEqualTo("global::System.Net.Http.HttpResponseMessage");
     }
 
     [Test]
@@ -34,7 +34,7 @@ public class HttpRefsTests
     {
         TypeRef typeRef = HttpRefs.Method;
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.HttpMethod");
+        await Assert.That(typeRef).IsEqualTo("global::System.Net.Http.HttpMethod");
     }
 
     [Test]
@@ -42,7 +42,7 @@ public class HttpRefsTests
     {
         TypeRef typeRef = HttpRefs.Verb("Get");
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.HttpMethod.Get");
+        await Assert.That(typeRef).IsEqualTo("global::System.Net.Http.HttpMethod.Get");
     }
 
     [Test]
@@ -56,7 +56,7 @@ public class HttpRefsTests
     {
         TypeRef typeRef = HttpRefs.Get;
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.HttpMethod.Get");
+        await Assert.That(typeRef).IsEqualTo("global::System.Net.Http.HttpMethod.Get");
     }
 
     [Test]
@@ -64,7 +64,7 @@ public class HttpRefsTests
     {
         TypeRef typeRef = HttpRefs.Post;
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.HttpMethod.Post");
+        await Assert.That(typeRef).IsEqualTo("global::System.Net.Http.HttpMethod.Post");
     }
 
     [Test]
@@ -72,7 +72,7 @@ public class HttpRefsTests
     {
         TypeRef typeRef = HttpRefs.Content;
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.HttpContent");
+        await Assert.That(typeRef).IsEqualTo("global::System.Net.Http.HttpContent");
     }
 
     [Test]
@@ -80,7 +80,7 @@ public class HttpRefsTests
     {
         TypeRef typeRef = HttpRefs.StringContent;
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.StringContent");
+        await Assert.That(typeRef).IsEqualTo("global::System.Net.Http.StringContent");
     }
 
     [Test]
@@ -88,7 +88,7 @@ public class HttpRefsTests
     {
         TypeRef typeRef = HttpRefs.ByteArrayContent;
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.ByteArrayContent");
+        await Assert.That(typeRef).IsEqualTo("global::System.Net.Http.ByteArrayContent");
     }
 
     [Test]
@@ -96,6 +96,6 @@ public class HttpRefsTests
     {
         TypeRef typeRef = HttpRefs.StreamContent;
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.StreamContent");
+        await Assert.That(typeRef).IsEqualTo("global::System.Net.Http.StreamContent");
     }
 }

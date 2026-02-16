@@ -10,7 +10,7 @@ public class ImmutableCollectionRefsTests
     {
         TypeRef typeRef = ImmutableCollectionRefs.ImmutableArray("string");
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Immutable.ImmutableArray<string>");
+        await Assert.That(typeRef).IsEqualTo("global::System.Collections.Immutable.ImmutableArray<string>");
     }
 
     [Test]
@@ -18,7 +18,7 @@ public class ImmutableCollectionRefsTests
     {
         TypeRef typeRef = ImmutableCollectionRefs.ImmutableList("string");
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Immutable.ImmutableList<string>");
+        await Assert.That(typeRef).IsEqualTo("global::System.Collections.Immutable.ImmutableList<string>");
     }
 
     [Test]
@@ -26,6 +26,6 @@ public class ImmutableCollectionRefsTests
     {
         TypeRef typeRef = ImmutableCollectionRefs.ImmutableDictionary("string", "int");
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Immutable.ImmutableDictionary<string, int>");
+        await Assert.That(typeRef).IsEqualTo("global::System.Collections.Immutable.ImmutableDictionary<string, int>");
     }
 }

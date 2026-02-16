@@ -10,7 +10,7 @@ public class EncodingRefsTests
     {
         TypeRef typeRef = EncodingRefs.UTF8;
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Text.Encoding.UTF8");
+        await Assert.That(typeRef).IsEqualTo("global::System.Text.Encoding.UTF8");
     }
 
     [Test]
@@ -18,7 +18,7 @@ public class EncodingRefsTests
     {
         TypeRef typeRef = EncodingRefs.ASCII;
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Text.Encoding.ASCII");
+        await Assert.That(typeRef).IsEqualTo("global::System.Text.Encoding.ASCII");
     }
 
     [Test]
@@ -26,6 +26,6 @@ public class EncodingRefsTests
     {
         TypeRef typeRef = EncodingRefs.Unicode;
 
-        await Assert.That((string)typeRef).IsEqualTo("global::System.Text.Encoding.Unicode");
+        await Assert.That(typeRef).IsEqualTo("global::System.Text.Encoding.Unicode");
     }
 }
