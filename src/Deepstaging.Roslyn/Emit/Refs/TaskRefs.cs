@@ -29,10 +29,12 @@ public static class TaskRefs
         Namespace.GlobalType($"ValueTask<{resultType.Value}>");
 
     /// <summary>Gets a <c>Task.CompletedTask</c> expression for use in return statements.</summary>
-    public static ExpressionRef CompletedTask => ExpressionRef.From("global::System.Threading.Tasks.Task.CompletedTask");
+    public static ExpressionRef CompletedTask =>
+        ExpressionRef.From("global::System.Threading.Tasks.Task.CompletedTask");
 
     /// <summary>Gets a <c>ValueTask.CompletedTask</c> expression for use in return statements.</summary>
-    public static ExpressionRef CompletedValueTask => ExpressionRef.From("global::System.Threading.Tasks.ValueTask.CompletedTask");
+    public static ExpressionRef CompletedValueTask =>
+        ExpressionRef.From("global::System.Threading.Tasks.ValueTask.CompletedTask");
 
     /// <summary>Gets a <c>CancellationToken</c> type reference.</summary>
     public static TypeRef CancellationToken => ThreadingNamespace.GlobalType("CancellationToken");

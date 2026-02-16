@@ -45,7 +45,7 @@ public class AttributeRefTests
     [Test]
     public async Task WithArgument_returns_AttributeBuilder()
     {
-        AttributeBuilder builder = AttributeRef.Global("System.ObsoleteAttribute")
+        var builder = AttributeRef.Global("System.ObsoleteAttribute")
             .WithArgument("\"Use NewMethod instead\"");
 
         await Assert.That(builder.Name).IsEqualTo("global::System.ObsoleteAttribute");
@@ -55,7 +55,7 @@ public class AttributeRefTests
     [Test]
     public async Task WithArguments_returns_AttributeBuilder()
     {
-        AttributeBuilder builder = AttributeRef.Global("System.ObsoleteAttribute")
+        var builder = AttributeRef.Global("System.ObsoleteAttribute")
             .WithArguments("\"Use NewMethod instead\"", "true");
 
         await Assert.That(builder.Arguments).Count().IsEqualTo(2);
@@ -64,7 +64,7 @@ public class AttributeRefTests
     [Test]
     public async Task WithNamedArgument_returns_AttributeBuilder()
     {
-        AttributeBuilder builder = AttributeRef.Global("System.ObsoleteAttribute")
+        var builder = AttributeRef.Global("System.ObsoleteAttribute")
             .WithNamedArgument("DiagnosticId", "\"OBS001\"");
 
         await Assert.That(builder.NamedArguments).Count().IsEqualTo(1);
@@ -73,7 +73,7 @@ public class AttributeRefTests
     [Test]
     public async Task AddUsing_returns_AttributeBuilder()
     {
-        AttributeBuilder builder = AttributeRef.Global("System.ObsoleteAttribute")
+        var builder = AttributeRef.Global("System.ObsoleteAttribute")
             .AddUsing("System.Linq");
 
         await Assert.That(builder.Usings).Count().IsEqualTo(1);
@@ -128,6 +128,7 @@ public class AttributeRefTests
     [Test]
     public async Task EntityFrameworkRefs_Key_is_AttributeRef()
     {
+        // ReSharper disable once SuggestVarOrType_SimpleTypes
         AttributeRef attr = EntityFrameworkRefs.Key;
 
         await Assert.That(attr.Value).IsEqualTo("global::System.ComponentModel.DataAnnotations.KeyAttribute");
@@ -136,17 +137,20 @@ public class AttributeRefTests
     [Test]
     public async Task EntityFrameworkRefs_Column_bridges_to_builder()
     {
+        // ReSharper disable once SuggestVarOrType_SimpleTypes
         AttributeBuilder builder = EntityFrameworkRefs.Column
             .WithArgument("\"name\"");
 
         await Assert.That(builder.Name)
             .IsEqualTo("global::System.ComponentModel.DataAnnotations.Schema.ColumnAttribute");
+
         await Assert.That(builder.Arguments).Count().IsEqualTo(1);
     }
 
     [Test]
     public async Task JsonRefs_Converter_is_AttributeRef()
     {
+        // ReSharper disable once SuggestVarOrType_SimpleTypes
         AttributeRef attr = JsonRefs.Converter;
 
         await Assert.That(attr.Value).IsEqualTo("global::System.Text.Json.Serialization.JsonConverter");

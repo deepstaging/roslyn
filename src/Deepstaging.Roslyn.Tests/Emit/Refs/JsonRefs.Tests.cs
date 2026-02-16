@@ -48,6 +48,7 @@ public class JsonRefsTests
     [Test]
     public async Task Converter_creates_globally_qualified_attribute()
     {
+        // ReSharper disable once SuggestVarOrType_SimpleTypes
         AttributeRef attr = JsonRefs.Converter;
 
         await Assert.That(attr.Value).IsEqualTo("global::System.Text.Json.Serialization.JsonConverter");
