@@ -119,12 +119,80 @@ public class TypeRefTests
 
     #endregion
 
+    #region Exceptions
+
+    [Test]
+    public async Task Exceptions_ArgumentNull_creates_globally_qualified_type()
+    {
+        TypeRef typeRef = TypeRef.Exceptions.ArgumentNull;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.ArgumentNullException");
+    }
+
+    [Test]
+    public async Task Exceptions_Argument_creates_globally_qualified_type()
+    {
+        TypeRef typeRef = TypeRef.Exceptions.Argument;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.ArgumentException");
+    }
+
+    [Test]
+    public async Task Exceptions_ArgumentOutOfRange_creates_globally_qualified_type()
+    {
+        TypeRef typeRef = TypeRef.Exceptions.ArgumentOutOfRange;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.ArgumentOutOfRangeException");
+    }
+
+    [Test]
+    public async Task Exceptions_InvalidOperation_creates_globally_qualified_type()
+    {
+        TypeRef typeRef = TypeRef.Exceptions.InvalidOperation;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.InvalidOperationException");
+    }
+
+    [Test]
+    public async Task Exceptions_InvalidCast_creates_globally_qualified_type()
+    {
+        TypeRef typeRef = TypeRef.Exceptions.InvalidCast;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.InvalidCastException");
+    }
+
+    [Test]
+    public async Task Exceptions_Format_creates_globally_qualified_type()
+    {
+        TypeRef typeRef = TypeRef.Exceptions.Format;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.FormatException");
+    }
+
+    [Test]
+    public async Task Exceptions_NotSupported_creates_globally_qualified_type()
+    {
+        TypeRef typeRef = TypeRef.Exceptions.NotSupported;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.NotSupportedException");
+    }
+
+    [Test]
+    public async Task Exceptions_NotImplemented_creates_globally_qualified_type()
+    {
+        TypeRef typeRef = TypeRef.Exceptions.NotImplemented;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.NotImplementedException");
+    }
+
+    #endregion
+
     #region Collections
 
     [Test]
     public async Task List_creates_globally_qualified_type()
     {
-        TypeRef typeRef = TypeRef.List("string");
+        TypeRef typeRef = TypeRef.Collections.List("string");
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Generic.List<string>");
     }
@@ -132,7 +200,7 @@ public class TypeRefTests
     [Test]
     public async Task Dictionary_creates_globally_qualified_type()
     {
-        TypeRef typeRef = TypeRef.Dictionary("string", "int");
+        TypeRef typeRef = TypeRef.Collections.Dictionary("string", "int");
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Generic.Dictionary<string, int>");
     }
@@ -140,7 +208,7 @@ public class TypeRefTests
     [Test]
     public async Task HashSet_creates_globally_qualified_type()
     {
-        TypeRef typeRef = TypeRef.HashSet("int");
+        TypeRef typeRef = TypeRef.Collections.HashSet("int");
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Generic.HashSet<int>");
     }
@@ -148,7 +216,7 @@ public class TypeRefTests
     [Test]
     public async Task KeyValuePair_creates_globally_qualified_type()
     {
-        TypeRef typeRef = TypeRef.KeyValuePair("string", "int");
+        TypeRef typeRef = TypeRef.Collections.KeyValuePair("string", "int");
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Generic.KeyValuePair<string, int>");
     }
@@ -156,7 +224,7 @@ public class TypeRefTests
     [Test]
     public async Task IEnumerable_creates_globally_qualified_type()
     {
-        TypeRef typeRef = TypeRef.IEnumerable("string");
+        TypeRef typeRef = TypeRef.Collections.IEnumerable("string");
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Generic.IEnumerable<string>");
     }
@@ -164,7 +232,7 @@ public class TypeRefTests
     [Test]
     public async Task ICollection_creates_globally_qualified_type()
     {
-        TypeRef typeRef = TypeRef.ICollection("string");
+        TypeRef typeRef = TypeRef.Collections.ICollection("string");
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Generic.ICollection<string>");
     }
@@ -172,7 +240,7 @@ public class TypeRefTests
     [Test]
     public async Task IList_creates_globally_qualified_type()
     {
-        TypeRef typeRef = TypeRef.IList("string");
+        TypeRef typeRef = TypeRef.Collections.IList("string");
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Generic.IList<string>");
     }
@@ -180,7 +248,7 @@ public class TypeRefTests
     [Test]
     public async Task IDictionary_creates_globally_qualified_type()
     {
-        TypeRef typeRef = TypeRef.IDictionary("string", "int");
+        TypeRef typeRef = TypeRef.Collections.IDictionary("string", "int");
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Generic.IDictionary<string, int>");
     }
@@ -188,7 +256,7 @@ public class TypeRefTests
     [Test]
     public async Task ISet_creates_globally_qualified_type()
     {
-        TypeRef typeRef = TypeRef.ISet("int");
+        TypeRef typeRef = TypeRef.Collections.ISet("int");
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Generic.ISet<int>");
     }
@@ -196,7 +264,7 @@ public class TypeRefTests
     [Test]
     public async Task IReadOnlyList_creates_globally_qualified_type()
     {
-        TypeRef typeRef = TypeRef.IReadOnlyList("string");
+        TypeRef typeRef = TypeRef.Collections.IReadOnlyList("string");
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Generic.IReadOnlyList<string>");
     }
@@ -204,7 +272,7 @@ public class TypeRefTests
     [Test]
     public async Task IReadOnlyCollection_creates_globally_qualified_type()
     {
-        TypeRef typeRef = TypeRef.IReadOnlyCollection("string");
+        TypeRef typeRef = TypeRef.Collections.IReadOnlyCollection("string");
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Generic.IReadOnlyCollection<string>");
     }
@@ -212,7 +280,7 @@ public class TypeRefTests
     [Test]
     public async Task IReadOnlyDictionary_creates_globally_qualified_type()
     {
-        TypeRef typeRef = TypeRef.IReadOnlyDictionary("string", "int");
+        TypeRef typeRef = TypeRef.Collections.IReadOnlyDictionary("string", "int");
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Generic.IReadOnlyDictionary<string, int>");
     }
@@ -224,7 +292,7 @@ public class TypeRefTests
     [Test]
     public async Task ImmutableArray_creates_globally_qualified_type()
     {
-        TypeRef typeRef = TypeRef.ImmutableArray("string");
+        TypeRef typeRef = TypeRef.Immutable.ImmutableArray("string");
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Immutable.ImmutableArray<string>");
     }
@@ -232,7 +300,7 @@ public class TypeRefTests
     [Test]
     public async Task ImmutableList_creates_globally_qualified_type()
     {
-        TypeRef typeRef = TypeRef.ImmutableList("string");
+        TypeRef typeRef = TypeRef.Immutable.ImmutableList("string");
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Immutable.ImmutableList<string>");
     }
@@ -240,7 +308,7 @@ public class TypeRefTests
     [Test]
     public async Task ImmutableDictionary_creates_globally_qualified_type()
     {
-        TypeRef typeRef = TypeRef.ImmutableDictionary("string", "int");
+        TypeRef typeRef = TypeRef.Immutable.ImmutableDictionary("string", "int");
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Immutable.ImmutableDictionary<string, int>");
     }
@@ -252,7 +320,7 @@ public class TypeRefTests
     [Test]
     public async Task Task_non_generic()
     {
-        TypeRef typeRef = TypeRef.Task();
+        TypeRef typeRef = TypeRef.Tasks.Task();
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Threading.Tasks.Task");
     }
@@ -260,7 +328,7 @@ public class TypeRefTests
     [Test]
     public async Task Task_generic()
     {
-        TypeRef typeRef = TypeRef.Task("string");
+        TypeRef typeRef = TypeRef.Tasks.Task("string");
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Threading.Tasks.Task<string>");
     }
@@ -268,7 +336,7 @@ public class TypeRefTests
     [Test]
     public async Task ValueTask_non_generic()
     {
-        TypeRef typeRef = TypeRef.ValueTask();
+        TypeRef typeRef = TypeRef.Tasks.ValueTask();
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Threading.Tasks.ValueTask");
     }
@@ -276,7 +344,7 @@ public class TypeRefTests
     [Test]
     public async Task ValueTask_generic()
     {
-        TypeRef typeRef = TypeRef.ValueTask("int");
+        TypeRef typeRef = TypeRef.Tasks.ValueTask("int");
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Threading.Tasks.ValueTask<int>");
     }
@@ -284,7 +352,7 @@ public class TypeRefTests
     [Test]
     public async Task CompletedTask_expression()
     {
-        TypeRef typeRef = TypeRef.CompletedTask;
+        TypeRef typeRef = TypeRef.Tasks.CompletedTask;
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Threading.Tasks.Task.CompletedTask");
     }
@@ -292,7 +360,7 @@ public class TypeRefTests
     [Test]
     public async Task CompletedValueTask_expression()
     {
-        TypeRef typeRef = TypeRef.CompletedValueTask;
+        TypeRef typeRef = TypeRef.Tasks.CompletedValueTask;
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Threading.Tasks.ValueTask.CompletedTask");
     }
@@ -304,9 +372,187 @@ public class TypeRefTests
     [Test]
     public async Task CancellationToken_creates_globally_qualified_type()
     {
-        TypeRef typeRef = TypeRef.CancellationToken;
+        TypeRef typeRef = TypeRef.Tasks.CancellationToken;
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Threading.CancellationToken");
+    }
+
+    #endregion
+
+    #region JSON Types
+
+    [Test]
+    public async Task JsonSerializer_creates_globally_qualified_type()
+    {
+        TypeRef typeRef = TypeRef.Json.Serializer;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.Text.Json.JsonSerializer");
+    }
+
+    [Test]
+    public async Task JsonSerializerOptions_creates_globally_qualified_type()
+    {
+        TypeRef typeRef = TypeRef.Json.SerializerOptions;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.Text.Json.JsonSerializerOptions");
+    }
+
+    [Test]
+    public async Task Utf8JsonReader_creates_globally_qualified_type()
+    {
+        TypeRef typeRef = TypeRef.Json.Reader;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.Text.Json.Utf8JsonReader");
+    }
+
+    [Test]
+    public async Task Utf8JsonWriter_creates_globally_qualified_type()
+    {
+        TypeRef typeRef = TypeRef.Json.Writer;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.Text.Json.Utf8JsonWriter");
+    }
+
+    [Test]
+    public async Task JsonConverter_creates_generic_globally_qualified_type()
+    {
+        TypeRef typeRef = TypeRef.Json.Converter("CustomerId");
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.Text.Json.Serialization.JsonConverter<CustomerId>");
+    }
+
+    [Test]
+    public async Task JsonConverterAttribute_creates_globally_qualified_type()
+    {
+        TypeRef typeRef = TypeRef.Json.ConverterAttribute;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.Text.Json.Serialization.JsonConverter");
+    }
+
+    #endregion
+
+    #region Encoding Types
+
+    [Test]
+    public async Task Encoding_UTF8_creates_globally_qualified_expression()
+    {
+        TypeRef typeRef = TypeRef.Encoding.UTF8;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.Text.Encoding.UTF8");
+    }
+
+    [Test]
+    public async Task Encoding_ASCII_creates_globally_qualified_expression()
+    {
+        TypeRef typeRef = TypeRef.Encoding.ASCII;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.Text.Encoding.ASCII");
+    }
+
+    [Test]
+    public async Task Encoding_Unicode_creates_globally_qualified_expression()
+    {
+        TypeRef typeRef = TypeRef.Encoding.Unicode;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.Text.Encoding.Unicode");
+    }
+
+    #endregion
+
+    #region HTTP Types
+
+    [Test]
+    public async Task HttpClient_creates_globally_qualified_type()
+    {
+        TypeRef typeRef = TypeRef.Http.Client;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.HttpClient");
+    }
+
+    [Test]
+    public async Task HttpRequestMessage_creates_globally_qualified_type()
+    {
+        TypeRef typeRef = TypeRef.Http.RequestMessage;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.HttpRequestMessage");
+    }
+
+    [Test]
+    public async Task HttpResponseMessage_creates_globally_qualified_type()
+    {
+        TypeRef typeRef = TypeRef.Http.ResponseMessage;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.HttpResponseMessage");
+    }
+
+    [Test]
+    public async Task HttpMethod_creates_globally_qualified_type()
+    {
+        TypeRef typeRef = TypeRef.Http.Method;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.HttpMethod");
+    }
+
+    [Test]
+    public async Task HttpVerb_creates_method_expression()
+    {
+        TypeRef typeRef = TypeRef.Http.Verb("Get");
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.HttpMethod.Get");
+    }
+
+    [Test]
+    public void HttpVerb_throws_on_unknown_verb()
+    {
+        Assert.Throws<ArgumentException>(() => TypeRef.Http.Verb("Yeet"));
+    }
+
+    [Test]
+    public async Task HttpGet_creates_method_expression()
+    {
+        TypeRef typeRef = TypeRef.Http.Get;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.HttpMethod.Get");
+    }
+
+    [Test]
+    public async Task HttpPost_creates_method_expression()
+    {
+        TypeRef typeRef = TypeRef.Http.Post;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.HttpMethod.Post");
+    }
+
+    [Test]
+    public async Task HttpContent_creates_globally_qualified_type()
+    {
+        TypeRef typeRef = TypeRef.Http.Content;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.HttpContent");
+    }
+
+    [Test]
+    public async Task StringContent_creates_globally_qualified_type()
+    {
+        TypeRef typeRef = TypeRef.Http.StringContent;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.StringContent");
+    }
+
+    [Test]
+    public async Task ByteArrayContent_creates_globally_qualified_type()
+    {
+        TypeRef typeRef = TypeRef.Http.ByteArrayContent;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.ByteArrayContent");
+    }
+
+    [Test]
+    public async Task StreamContent_creates_globally_qualified_type()
+    {
+        TypeRef typeRef = TypeRef.Http.StreamContent;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.StreamContent");
     }
 
     #endregion
@@ -316,7 +562,7 @@ public class TypeRefTests
     [Test]
     public async Task List_nullable()
     {
-        TypeRef typeRef = TypeRef.List("string").Nullable();
+        TypeRef typeRef = TypeRef.Collections.List("string").Nullable();
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Generic.List<string>?");
     }
@@ -324,7 +570,7 @@ public class TypeRefTests
     [Test]
     public async Task Dictionary_with_nested_list()
     {
-        TypeRef typeRef = TypeRef.Dictionary("string", TypeRef.List("int"));
+        TypeRef typeRef = TypeRef.Collections.Dictionary("string", TypeRef.Collections.List("int"));
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Generic.Dictionary<string, global::System.Collections.Generic.List<int>>");
     }
@@ -332,7 +578,7 @@ public class TypeRefTests
     [Test]
     public async Task Task_of_list()
     {
-        TypeRef typeRef = TypeRef.Task(TypeRef.List("string"));
+        TypeRef typeRef = TypeRef.Tasks.Task(TypeRef.Collections.List("string"));
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Threading.Tasks.Task<global::System.Collections.Generic.List<string>>");
     }
@@ -340,7 +586,7 @@ public class TypeRefTests
     [Test]
     public async Task IReadOnlyList_array()
     {
-        TypeRef typeRef = TypeRef.IReadOnlyList("int").Array();
+        TypeRef typeRef = TypeRef.Collections.IReadOnlyList("int").Array();
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Collections.Generic.IReadOnlyList<int>[]");
     }
@@ -378,7 +624,7 @@ public class TypeRefTests
     {
         TypeRef typeRef = TypeRef.From("OnSendEmail")
             .Invoke("to", "body")
-            .OrDefault(TypeRef.CompletedTask);
+            .OrDefault(TypeRef.Tasks.CompletedTask);
 
         await Assert.That((string)typeRef).IsEqualTo("OnSendEmail?.Invoke(to, body) ?? global::System.Threading.Tasks.Task.CompletedTask");
     }
@@ -400,7 +646,7 @@ public class TypeRefTests
     [Test]
     public async Task Func_with_return_type_only()
     {
-        TypeRef typeRef = TypeRef.Func("int");
+        TypeRef typeRef = TypeRef.Delegates.Func("int");
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Func<int>");
     }
@@ -408,7 +654,7 @@ public class TypeRefTests
     [Test]
     public async Task Func_with_parameter_and_return_type()
     {
-        TypeRef typeRef = TypeRef.Func("int", "string");
+        TypeRef typeRef = TypeRef.Delegates.Func("int", "string");
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Func<int, string>");
     }
@@ -416,7 +662,7 @@ public class TypeRefTests
     [Test]
     public async Task Func_with_multiple_parameters()
     {
-        TypeRef typeRef = TypeRef.Func("int", "string", "bool");
+        TypeRef typeRef = TypeRef.Delegates.Func("int", "string", "bool");
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Func<int, string, bool>");
     }
@@ -424,7 +670,7 @@ public class TypeRefTests
     [Test]
     public async Task Action_with_no_arguments()
     {
-        TypeRef typeRef = TypeRef.Action();
+        TypeRef typeRef = TypeRef.Delegates.Action();
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Action");
     }
@@ -432,7 +678,7 @@ public class TypeRefTests
     [Test]
     public async Task Action_with_single_argument()
     {
-        TypeRef typeRef = TypeRef.Action("string");
+        TypeRef typeRef = TypeRef.Delegates.Action("string");
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Action<string>");
     }
@@ -440,7 +686,7 @@ public class TypeRefTests
     [Test]
     public async Task Action_with_multiple_arguments()
     {
-        TypeRef typeRef = TypeRef.Action("string", "int");
+        TypeRef typeRef = TypeRef.Delegates.Action("string", "int");
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Action<string, int>");
     }
@@ -475,7 +721,7 @@ public class TypeRefTests
     [Test]
     public async Task Nullable_func_delegate()
     {
-        TypeRef typeRef = TypeRef.Func("string", "bool").Nullable();
+        TypeRef typeRef = TypeRef.Delegates.Func("string", "bool").Nullable();
 
         await Assert.That((string)typeRef).IsEqualTo("global::System.Func<string, bool>?");
     }
@@ -483,7 +729,7 @@ public class TypeRefTests
     [Test]
     public async Task Func_with_generic_arguments()
     {
-        TypeRef typeRef = TypeRef.Func(
+        TypeRef typeRef = TypeRef.Delegates.Func(
             TypeRef.From("List").Of("string"),
             TypeRef.From("int"));
 
@@ -544,7 +790,7 @@ public class TypeRefTests
     {
         var result = TypeBuilder
             .Class("Handler")
-            .AddProperty("Callback", TypeRef.Func("string", "bool").Nullable(),
+            .AddProperty("Callback", TypeRef.Delegates.Func("string", "bool").Nullable(),
                 p => p.WithAutoPropertyAccessors())
             .Emit();
 
@@ -590,7 +836,7 @@ public class TypeRefTests
     [Test]
     public void Func_throws_on_no_arguments()
     {
-        Assert.Throws<ArgumentException>(() => TypeRef.Func());
+        Assert.Throws<ArgumentException>(() => TypeRef.Delegates.Func());
     }
 
     [Test]

@@ -144,6 +144,23 @@ public static class ValidAttributeExtensions
         }
 
         /// <summary>
+        /// Checks whether this attribute is of the specified attribute type.
+        /// </summary>
+        public bool Is<TAttribute>() where TAttribute : Attribute
+        {
+            return attribute.Value.Is<TAttribute>();
+        }
+
+        /// <summary>
+        /// Checks whether this attribute is of the specified type, returning an OptionalAttribute
+        /// with the value if it matches, or empty if it does not.
+        /// </summary>
+        public OptionalAttribute As<TAttribute>() where TAttribute : Attribute
+        {
+            return attribute.Value.As<TAttribute>();
+        }
+
+        /// <summary>
         /// Checks if this attribute matches the specified attribute name (with or without "Attribute" suffix).
         /// </summary>
         public bool MatchesName(string name)

@@ -11,8 +11,6 @@
 #
 # Output: ../../artifacts/packages/
 #   - Deepstaging.Roslyn.{version}.nupkg
-#   - Deepstaging.Roslyn.Scriban.{version}.nupkg
-#   - Deepstaging.Roslyn.Workspace.{version}.nupkg
 #   - Deepstaging.Roslyn.Testing.{version}.nupkg
 #
 # After packing, automatically updates Deepstaging.Roslyn.Versions.props
@@ -114,14 +112,6 @@ echo "Packing Deepstaging.Roslyn..."
 dotnet pack $(build_pack_args "$REPO_ROOT/src/Deepstaging.Roslyn/Deepstaging.Roslyn.csproj")
 
 echo ""
-echo "Packing Deepstaging.Roslyn.Scriban..."
-dotnet pack $(build_pack_args "$REPO_ROOT/src/Deepstaging.Roslyn.Scriban/Deepstaging.Roslyn.Scriban.csproj")
-
-echo ""
-echo "Packing Deepstaging.Roslyn.Workspace..."
-dotnet pack $(build_pack_args "$REPO_ROOT/src/Deepstaging.Roslyn.Workspace/Deepstaging.Roslyn.Workspace.csproj")
-
-echo ""
 echo "Packing Deepstaging.Roslyn.Testing..."
 dotnet pack $(build_pack_args "$REPO_ROOT/src/Deepstaging.Roslyn.Testing/Deepstaging.Roslyn.Testing.csproj")
 
@@ -168,9 +158,7 @@ if [[ -n "$NUPKG" ]]; then
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Deepstaging.Roslyn" Version="\$(DeepstagingRoslynVersion)" />
-    <PackageVersion Include="Deepstaging.Roslyn.Scriban" Version="\$(DeepstagingRoslynVersion)" />
     <PackageVersion Include="Deepstaging.Roslyn.Testing" Version="\$(DeepstagingRoslynVersion)" />
-    <PackageVersion Include="Deepstaging.Roslyn.Workspace" Version="\$(DeepstagingRoslynVersion)" />
   </ItemGroup>
 </Project>
 EOF
@@ -181,9 +169,7 @@ EOF
         TEMPLATE_PACKAGES="$REPO_ROOT/templates/templates/roslynkit/Directory.Packages.props"
         if [[ -f "$TEMPLATE_PACKAGES" ]]; then
             sed -i.bak "s|Include=\"Deepstaging\.Roslyn\" Version=\"[^\"]*\"|Include=\"Deepstaging.Roslyn\" Version=\"$PACK_VERSION\"|g" "$TEMPLATE_PACKAGES"
-            sed -i.bak "s|Include=\"Deepstaging\.Roslyn\.Scriban\" Version=\"[^\"]*\"|Include=\"Deepstaging.Roslyn.Scriban\" Version=\"$PACK_VERSION\"|g" "$TEMPLATE_PACKAGES"
             sed -i.bak "s|Include=\"Deepstaging\.Roslyn\.Testing\" Version=\"[^\"]*\"|Include=\"Deepstaging.Roslyn.Testing\" Version=\"$PACK_VERSION\"|g" "$TEMPLATE_PACKAGES"
-            sed -i.bak "s|Include=\"Deepstaging\.Roslyn\.Workspace\" Version=\"[^\"]*\"|Include=\"Deepstaging.Roslyn.Workspace\" Version=\"$PACK_VERSION\"|g" "$TEMPLATE_PACKAGES"
             rm -f "$TEMPLATE_PACKAGES.bak"
             echo "Updated template Directory.Packages.props to $PACK_VERSION"
         fi

@@ -9,17 +9,13 @@
         <Nullable>enable</Nullable>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
-        <!-- Package metadata -->
-        <IsPackable>true</IsPackable>
-        <PackageId>Deepstaging.Roslyn.Workspace</PackageId>
-        <Title>Deepstaging.Roslyn.Workspace</Title>
-        <Description>Roslyn Workspace utilities for code fixes and refactoring.</Description>
-        <PackageTags>deepstaging;roslyn;workspace;codefix</PackageTags>
+        <!-- Bundled into Deepstaging.Roslyn package -->
+        <IsPackable>false</IsPackable>
 
     </PropertyGroup>
 
     <ItemGroup>
-        <None Include="README.md" Pack="true" PackagePath="\"/>
+        <None Include="README.md"/>
     </ItemGroup>
 
     <ItemGroup>

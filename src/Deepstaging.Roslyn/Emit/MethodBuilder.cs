@@ -57,6 +57,9 @@ public record struct MethodBuilder
     /// <summary>Gets the XML documentation builder.</summary>
     public XmlDocumentationBuilder? XmlDoc { get; init; }
 
+    /// <summary>Gets the explicit interface type for explicit interface implementation (e.g., "IMyInterface").</summary>
+    public string? ExplicitInterface { get; init; }
+
     /// <summary>Gets the preprocessor directive condition for conditional compilation.</summary>
     public Directive? Condition { get; init; }
 
@@ -146,6 +149,16 @@ public record struct MethodBuilder
     /// </summary>
     public MethodBuilder WithAccessibility(string accessibilityKeyword) =>
         WithAccessibility(AccessibilityHelper.Parse(accessibilityKeyword));
+
+    /// <summary>
+    /// Marks the method as an explicit interface implementation.
+    /// Explicit implementations have no accessibility modifier and use <c>IInterface.Method</c> syntax.
+    /// </summary>
+    /// <param name="interfaceType">The interface type name (e.g., "IMyInterface", "global::MyApp.IService").</param>
+    public MethodBuilder ExplicitlyImplements(string interfaceType)
+    {
+        return this with { ExplicitInterface = interfaceType, Accessibility = Accessibility.NotApplicable };
+    }
 
     /// <summary>
     /// Marks the method as static.
@@ -520,15 +533,25 @@ public record struct MethodBuilder
 
         // Add modifiers
         var modifiers = new List<SyntaxKind>();
-        modifiers.Add(AccessibilityToSyntaxKind(Accessibility));
+        if (ExplicitInterface is null)
+            modifiers.Add(AccessibilityToSyntaxKind(Accessibility));
         if (IsStatic) modifiers.Add(SyntaxKind.StaticKeyword);
         if (IsAsync) modifiers.Add(SyntaxKind.AsyncKeyword);
         if (IsVirtual) modifiers.Add(SyntaxKind.VirtualKeyword);
         if (IsOverride) modifiers.Add(SyntaxKind.OverrideKeyword);
         if (IsAbstract) modifiers.Add(SyntaxKind.AbstractKeyword);
 
-        method = method.WithModifiers(
-            SyntaxFactory.TokenList(modifiers.Select(SyntaxFactory.Token)));
+        if (modifiers.Count > 0)
+            method = method.WithModifiers(
+                SyntaxFactory.TokenList(modifiers.Select(SyntaxFactory.Token)));
+
+        // Add explicit interface specifier
+        if (ExplicitInterface is not null)
+        {
+            method = method.WithExplicitInterfaceSpecifier(
+                SyntaxFactory.ExplicitInterfaceSpecifier(
+                    SyntaxFactory.ParseName(ExplicitInterface)));
+        }
 
         // Add type parameters
         var typeParameters = TypeParameters.IsDefault ? [] : TypeParameters;

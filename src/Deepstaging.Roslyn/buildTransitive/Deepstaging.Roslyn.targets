@@ -1,0 +1,13 @@
+<!-- SPDX-FileCopyrightText: 2024-present Deepstaging -->
+<!-- SPDX-License-Identifier: RPL-1.5 -->
+<Project>
+    <!--
+        Auto-discovers Scriban templates in the consuming project's Templates/ directory
+        and feeds them to source generators as AdditionalFiles.
+        Consumers just create Templates/{ProjectPrefix}/{Name}.scriban-cs — no csproj edits needed.
+    -->
+    <ItemGroup>
+        <AdditionalFiles Include="Templates/**/*.scriban-cs"
+                         Condition="Exists('Templates')" />
+    </ItemGroup>
+</Project>

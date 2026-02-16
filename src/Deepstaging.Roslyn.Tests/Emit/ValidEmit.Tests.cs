@@ -94,20 +94,6 @@ public class ValidEmitTests : RoslynTestBase
     #region Combine
 
     [Test]
-    public async Task Combine_single_emit_returns_same_emit()
-    {
-        var emit = TypeBuilder
-            .Class("MyClass")
-            .InNamespace("MyApp")
-            .Emit()
-            .ValidateOrThrow();
-
-        var combined = ValidEmit.Combine(emit);
-
-        await Assert.That(combined.Types.Length).IsEqualTo(1);
-    }
-
-    [Test]
     public async Task Combine_merges_types_from_same_namespace()
     {
         var emit1 = TypeBuilder
@@ -122,7 +108,7 @@ public class ValidEmitTests : RoslynTestBase
             .Emit()
             .ValidateOrThrow();
 
-        var combined = ValidEmit.Combine(emit1, emit2);
+        var combined = emit1.Combine(emit2);
 
         await Assert.That(combined.Types.Length).IsEqualTo(2);
         await Assert.That(combined.Code).Contains("class ClassA");
@@ -144,7 +130,7 @@ public class ValidEmitTests : RoslynTestBase
             .Emit()
             .ValidateOrThrow();
 
-        var combined = ValidEmit.Combine(emit1, emit2);
+        var combined = emit1.Combine(emit2);
 
         await Assert.That(combined.Code).Contains("namespace MyApp.Domain");
         await Assert.That(combined.Code).Contains("namespace MyApp.Services");
@@ -169,7 +155,7 @@ public class ValidEmitTests : RoslynTestBase
             .Emit()
             .ValidateOrThrow();
 
-        var combined = ValidEmit.Combine(emit1, emit2);
+        var combined = emit1.Combine(emit2);
 
         await Assert.That(combined.Usings.Length).IsEqualTo(3);
     }
@@ -193,7 +179,7 @@ public class ValidEmitTests : RoslynTestBase
             .Emit()
             .ValidateOrThrow();
 
-        var combined = ValidEmit.Combine(emit1, emit2);
+        var combined = emit1.Combine(emit2);
 
         // Should have 2 regular + 2 static = 4 usings
         await Assert.That(combined.Usings.Length).IsEqualTo(4);
@@ -220,7 +206,7 @@ public class ValidEmitTests : RoslynTestBase
             .Emit()
             .ValidateOrThrow();
 
-        var combined = ValidEmit.Combine(emit1, emit2);
+        var combined = emit1.Combine(emit2);
 
         // Combined emit should have the auto-generated header from first emit
         await Assert.That(combined.LeadingTrivia.ToFullString()).Contains("auto-generated");
@@ -243,7 +229,7 @@ public class ValidEmitTests : RoslynTestBase
             .Emit()
             .ValidateOrThrow();
 
-        var combined = ValidEmit.Combine(emit1, emit2);
+        var combined = emit1.Combine(emit2);
 
         var compilation = CompilationFor(combined.Code);
         var errors = compilation.GetDiagnostics()
@@ -253,24 +239,15 @@ public class ValidEmitTests : RoslynTestBase
     }
 
     [Test]
-    public async Task Combine_with_enumerable_works()
+    public async Task Combine_chains_three_emits()
     {
-        var emits = new[]
-        {
-            TypeBuilder.Class("A").Emit().ValidateOrThrow(),
-            TypeBuilder.Class("B").Emit().ValidateOrThrow(),
-            TypeBuilder.Class("C").Emit().ValidateOrThrow()
-        };
+        var a = TypeBuilder.Class("A").Emit().ValidateOrThrow();
+        var b = TypeBuilder.Class("B").Emit().ValidateOrThrow();
+        var c = TypeBuilder.Class("C").Emit().ValidateOrThrow();
 
-        var combined = ValidEmit.Combine(emits);
+        var combined = a.Combine(b).Combine(c);
 
         await Assert.That(combined.Types.Length).IsEqualTo(3);
-    }
-
-    [Test]
-    public void Combine_throws_on_empty_collection()
-    {
-        Assert.Throws<ArgumentException>(() => ValidEmit.Combine(Array.Empty<ValidEmit>()));
     }
 
     #endregion
@@ -291,7 +268,7 @@ public class OptionalEmitCombineTests : RoslynTestBase
             .InNamespace("MyApp")
             .Emit();
 
-        var combined = OptionalEmit.Combine(emit1, emit2);
+        var combined = emit1.Combine(emit2);
 
         await Assert.That(combined.Success).IsTrue();
         await Assert.That(combined.Code).Contains("class ClassA");
@@ -310,7 +287,7 @@ public class OptionalEmitCombineTests : RoslynTestBase
             .AddMethod(MethodBuilder.For("Bad").WithBody(b => b.AddStatement("invalid syntax here")))
             .Emit();
 
-        var combined = OptionalEmit.Combine(successEmit, failedEmit);
+        var combined = successEmit.Combine(failedEmit);
 
         await Assert.That(combined.Success).IsFalse();
         await Assert.That(combined.Diagnostics).IsNotEmpty();
@@ -329,7 +306,7 @@ public class OptionalEmitCombineTests : RoslynTestBase
             .AddMethod(MethodBuilder.For("Bad2").WithBody(b => b.AddStatement("another invalid syntax")))
             .Emit();
 
-        var combined = OptionalEmit.Combine(fail1, fail2);
+        var combined = fail1.Combine(fail2);
 
         await Assert.That(combined.Success).IsFalse();
         // Should have diagnostics from both failed emits
@@ -342,7 +319,7 @@ public class OptionalEmitCombineTests : RoslynTestBase
         var emit1 = TypeBuilder.Class("A").InNamespace("MyApp").Emit();
         var emit2 = TypeBuilder.Class("B").InNamespace("MyApp").Emit();
 
-        var combined = OptionalEmit.Combine(emit1, emit2);
+        var combined = emit1.Combine(emit2);
 
         await Assert.That(combined.IsValid(out var valid)).IsTrue();
         await Assert.That(valid.Types.Length).IsEqualTo(2);
@@ -363,7 +340,7 @@ public class OptionalEmitCombineTests : RoslynTestBase
             .AddProperty("Value", "int", p => p.WithAutoPropertyAccessors())
             .Emit();
 
-        var combined = OptionalEmit.Combine(emit1, emit2);
+        var combined = emit1.Combine(emit2);
 
         await Assert.That(combined.Success).IsTrue();
 
@@ -372,21 +349,5 @@ public class OptionalEmitCombineTests : RoslynTestBase
             .Where(d => d.Severity == DiagnosticSeverity.Error);
 
         await Assert.That(errors).IsEmpty();
-    }
-
-    [Test]
-    public void Combine_throws_on_empty_collection()
-    {
-        Assert.Throws<ArgumentException>(() => OptionalEmit.Combine(Array.Empty<OptionalEmit>()));
-    }
-
-    [Test]
-    public async Task Combine_with_single_emit_returns_same_result()
-    {
-        var emit = TypeBuilder.Class("MyClass").Emit();
-
-        var combined = OptionalEmit.Combine(emit);
-
-        await Assert.That(combined.Success).IsEqualTo(emit.Success);
     }
 }
