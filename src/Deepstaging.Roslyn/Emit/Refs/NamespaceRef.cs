@@ -57,6 +57,12 @@ public readonly record struct NamespaceRef
     public AttributeRef GlobalAttribute(string typeName) => AttributeRef.Global($"{Value}.{typeName}");
 
     /// <summary>
+    /// Creates a child namespace by appending a segment (e.g., <c>System</c> → <c>System.Linq</c>).
+    /// </summary>
+    /// <param name="segment">The namespace segment to append (e.g., "Linq", "Collections.Generic").</param>
+    public NamespaceRef Append(string segment) => From($"{Value}.{segment}");
+
+    /// <summary>
     /// Returns a static using string for this namespace (e.g., <c>static System.Math</c>).
     /// </summary>
     public string AsStatic() => $"static {Value}";

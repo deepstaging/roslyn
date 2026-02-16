@@ -250,17 +250,22 @@ A lightweight primitive representing a .NET namespace. Central factory for creat
 
 | Method | Returns | Description |
 |--------|---------|-------------|
+| `Append(segment)` | `NamespaceRef` | Child namespace: `Namespace.Segment` |
 | `AsStatic()` | `string` | `static Namespace` (for static usings) |
 | `Value` | `string` | The raw namespace string |
 
 ### Examples
 
 ```csharp
-var ns = NamespaceRef.From("MyCompany.Domain.Events");
+var ns = NamespaceRef.From("MyCompany.Domain");
+
+// Child namespaces
+NamespaceRef events = ns.Append("Events");          // MyCompany.Domain.Events
+NamespaceRef models = ns.Append("Models");           // MyCompany.Domain.Models
 
 // Type references
-TypeRef eventType = ns.Type("OrderCreated");        // MyCompany.Domain.Events.OrderCreated
-TypeRef globalType = ns.GlobalType("OrderCreated");  // global::MyCompany.Domain.Events.OrderCreated
+TypeRef eventType = events.Type("OrderCreated");     // MyCompany.Domain.Events.OrderCreated
+TypeRef globalType = events.GlobalType("OrderCreated"); // global::MyCompany.Domain.Events.OrderCreated
 
 // Attribute references
 AttributeRef attr = ns.Attribute("MyAttribute");        // MyCompany.Domain.Events.MyAttribute
