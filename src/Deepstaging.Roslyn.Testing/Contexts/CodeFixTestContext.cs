@@ -55,10 +55,7 @@ public class CodeFixTestContext
     /// </summary>
     /// <param name="diagnosticId">The diagnostic ID that should be fixed.</param>
     /// <returns>A context for making assertions about the fixed code.</returns>
-    public CodeFixAssertion ForDiagnostic(string diagnosticId)
-    {
-        return new CodeFixAssertion(this, diagnosticId);
-    }
+    public CodeFixAssertion ForDiagnostic(string diagnosticId) => new(this, diagnosticId);
 
     /// <summary>
     /// Get the code fix provider being tested.
@@ -122,16 +119,14 @@ public class CodeFixAssertion
     /// Assert that the code fix adds an additional document to the project.
     /// Use this for code fixes that create new files (e.g., template scaffolds).
     /// </summary>
-    public AdditionalDocumentAssertion ShouldAddAdditionalDocument()
-    {
-        return new AdditionalDocumentAssertion(this);
-    }
+    public AdditionalDocumentAssertion ShouldAddAdditionalDocument() => new(this);
 
     internal async Task<Solution> ApplyFirstFixAsync()
     {
         var (document, diagnostic) = await GetDocumentAndDiagnosticAsync();
 
         var codeActions = new List<CodeAction>();
+
         var context = new CodeFixContext(
             document,
             diagnostic,
@@ -144,6 +139,7 @@ public class CodeFixAssertion
             Assert.Fail($"Code fix provider did not register any fixes for diagnostic '{_diagnosticId}'");
 
         var operations = await codeActions[0].GetOperationsAsync(CancellationToken.None);
+
         var solution = operations
             .OfType<ApplyChangesOperation>()
             .FirstOrDefault()
@@ -188,10 +184,12 @@ public class CodeFixAssertion
             var allDiagnostics = await compilationWithAnalyzers.GetAllDiagnosticsAsync();
 
             var analyzerDiagnostic = allDiagnostics.FirstOrDefault(d => d.Id == _diagnosticId);
+
             if (analyzerDiagnostic == null)
                 return null;
 
             var documentTree = await document.GetSyntaxTreeAsync();
+
             if (documentTree == null)
                 return null;
 
@@ -207,6 +205,7 @@ public class CodeFixAssertion
         else
         {
             var semanticModel = await document.GetSemanticModelAsync();
+
             if (semanticModel == null)
             {
                 Assert.Fail("Failed to get semantic model from document");
@@ -242,10 +241,7 @@ public class CodeFixAssertion
         return document;
     }
 
-    private static string NormalizeLineEndings(string text)
-    {
-        return text.Replace("\r\n", "\n").Replace("\r", "\n").Trim();
-    }
+    private static string NormalizeLineEndings(string text) => text.Replace("\r\n", "\n").Replace("\r", "\n").Trim();
 }
 
 /// <summary>
@@ -256,10 +252,7 @@ public class AdditionalDocumentAssertion
     private readonly CodeFixAssertion _parent;
     private string? _expectedPathContains;
 
-    internal AdditionalDocumentAssertion(CodeFixAssertion parent)
-    {
-        _parent = parent;
-    }
+    internal AdditionalDocumentAssertion(CodeFixAssertion parent) => _parent = parent;
 
     /// <summary>
     /// Assert the added document's path contains the specified substring.
@@ -303,10 +296,7 @@ public class AdditionalDocumentAssertion
     /// <summary>
     /// Enables awaiting on the assertion to verify all conditions (without content check).
     /// </summary>
-    public TaskAwaiter GetAwaiter()
-    {
-        return VerifyAsync().GetAwaiter();
-    }
+    public TaskAwaiter GetAwaiter() => VerifyAsync().GetAwaiter();
 
     private async Task VerifyAsync()
     {
@@ -321,6 +311,7 @@ public class AdditionalDocumentAssertion
         if (_expectedPathContains != null)
         {
             var doc = additionalDocs[0];
+
             if (!doc.Name.Contains(_expectedPathContains))
                 Assert.Fail(
                     $"Expected additional document path to contain '{_expectedPathContains}', " +

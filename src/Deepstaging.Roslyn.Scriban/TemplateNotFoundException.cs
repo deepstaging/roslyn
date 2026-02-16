@@ -13,7 +13,6 @@ namespace Deepstaging.Roslyn.Scriban;
 /// <param name="name">The name of the template that could not be found.</param>
 public sealed class TemplateNotFoundException(string name) : Exception
 {
-
     /// <summary>
     /// Gets a detailed error message listing available Scriban templates from loaded assemblies.
     /// Filters for all canonical Scriban template extensions including plain (.scriban, .sbn),
@@ -40,15 +39,12 @@ public sealed class TemplateNotFoundException(string name) : Exception
         return message.ToString();
     }
 
-    private static string[] FindAvailableTemplates()
-    {
-        return
-        [
-            ..AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(GetTemplateResourcesFromAssembly)
-                .OrderBy(resourceName => resourceName)
-        ];
-    }
+    private static string[] FindAvailableTemplates() =>
+    [
+        ..AppDomain.CurrentDomain.GetAssemblies()
+            .SelectMany(GetTemplateResourcesFromAssembly)
+            .OrderBy(resourceName => resourceName)
+    ];
 
     private static IEnumerable<string> GetTemplateResourcesFromAssembly(Assembly assembly)
     {

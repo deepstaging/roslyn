@@ -40,6 +40,7 @@ public static class TemplateScaffold
             .ToList();
 
         var result = valid.Code;
+
         foreach (var binding in sorted)
             result = result.Replace(binding.Value, $"{{{{ {binding.PropertyPath} }}}}");
 

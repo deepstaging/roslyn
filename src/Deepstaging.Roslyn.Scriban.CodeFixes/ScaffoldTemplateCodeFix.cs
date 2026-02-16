@@ -37,8 +37,6 @@ public sealed class ScaffoldTemplateCodeFix : AdditionalDocumentCodeFix
     }
 
     /// <inheritdoc />
-    protected override string GetTitle(AdditionalDocument document, Diagnostic diagnostic)
-    {
-        return $"Create template: {document.Path}";
-    }
+    protected override string GetTitle(AdditionalDocument document, Diagnostic diagnostic) =>
+        $"Create template: {document.Path}";
 }

@@ -17,38 +17,26 @@ public static partial class alidSymbolFieldAssertions
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [GenerateAssertion(ExpectationMessage = "to be read-only")]
-    public static bool IsReadOnlySymbol(this ValidSymbol<IFieldSymbol> symbol)
-    {
-        return symbol.IsReadOnly;
-    }
+    public static bool IsReadOnlySymbol(this ValidSymbol<IFieldSymbol> symbol) => symbol.IsReadOnly;
 
     /// <summary>
     /// Asserts that the field symbol is const.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [GenerateAssertion(ExpectationMessage = "to be const")]
-    public static bool IsConst(this ValidSymbol<IFieldSymbol> symbol)
-    {
-        return symbol.Value.IsConst;
-    }
+    public static bool IsConst(this ValidSymbol<IFieldSymbol> symbol) => symbol.Value.IsConst;
 
     /// <summary>
     /// Asserts that the field symbol is volatile.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [GenerateAssertion(ExpectationMessage = "to be volatile")]
-    public static bool IsVolatile(this ValidSymbol<IFieldSymbol> symbol)
-    {
-        return symbol.Value.IsVolatile;
-    }
+    public static bool IsVolatile(this ValidSymbol<IFieldSymbol> symbol) => symbol.Value.IsVolatile;
 
     /// <summary>
     /// Asserts that the field symbol has a constant value.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [GenerateAssertion(ExpectationMessage = "to have a constant value")]
-    public static bool HasConstantValue(this ValidSymbol<IFieldSymbol> symbol)
-    {
-        return symbol.Value.HasConstantValue;
-    }
+    public static bool HasConstantValue(this ValidSymbol<IFieldSymbol> symbol) => symbol.Value.HasConstantValue;
 }

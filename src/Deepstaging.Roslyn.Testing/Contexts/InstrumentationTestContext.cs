@@ -171,18 +171,12 @@ public sealed class InstrumentationTestContext : IDisposable
     /// <summary>
     /// Gets a tag value by key.
     /// </summary>
-    public object? GetTag(string key)
-    {
-        return Tags.TryGetValue(key, out var value) ? value : null;
-    }
+    public object? GetTag(string key) => Tags.TryGetValue(key, out var value) ? value : null;
 
     /// <summary>
     /// Tries to get a tag value by key.
     /// </summary>
-    public bool TryGetTag(string key, out object? value)
-    {
-        return Tags.TryGetValue(key, out value);
-    }
+    public bool TryGetTag(string key, out object? value) => Tags.TryGetValue(key, out value);
 
     public void Dispose()
     {

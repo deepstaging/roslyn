@@ -22,45 +22,41 @@ public static class PropertyCodeFixActions
         /// </summary>
         public CodeAction AddPartialModifierAction(
             ValidSyntax<PropertyDeclarationSyntax> propertyDecl,
-            string title = "Add 'partial' modifier")
-        {
-            return CodeAction.Create(
+            string title = "Add 'partial' modifier") =>
+            CodeAction.Create(
                 title,
                 ct => document.ReplaceNode(
                     propertyDecl.Node,
                     AddModifierWithOrdering(propertyDecl.Node, SyntaxKind.PartialKeyword),
                     ct),
                 title);
-        }
 
         /// <summary>
         /// Creates a code action that adds the 'required' modifier to a property.
         /// </summary>
         public CodeAction AddRequiredModifierAction(
             ValidSyntax<PropertyDeclarationSyntax> propertyDecl,
-            string title = "Add 'required' modifier")
-        {
-            return CodeAction.Create(
+            string title = "Add 'required' modifier") =>
+            CodeAction.Create(
                 title,
                 ct => document.ReplaceNode(
                     propertyDecl.Node,
                     propertyDecl.Node.AddModifiers(SyntaxFactory.Token(SyntaxKind.RequiredKeyword)),
                     ct),
                 title);
-        }
 
         /// <summary>
         /// Creates a code action that adds init accessor to property (replaces set with init).
         /// </summary>
         public CodeAction MakePropertyInitOnlyAction(
             ValidSyntax<PropertyDeclarationSyntax> propertyDecl,
-            string title = "Make property init-only")
-        {
-            return CodeAction.Create(
+            string title = "Make property init-only") =>
+            CodeAction.Create(
                 title,
                 ct =>
                 {
                     var accessors = propertyDecl.Node.AccessorList?.Accessors ?? [];
+
                     var newAccessors = accessors.Select(a =>
                         a.IsKind(SyntaxKind.SetAccessorDeclaration)
                             ? SyntaxFactory.AccessorDeclaration(SyntaxKind.InitAccessorDeclaration)
@@ -75,7 +71,6 @@ public static class PropertyCodeFixActions
                     return document.ReplaceNode(propertyDecl.Node, newProperty, ct);
                 },
                 title);
-        }
 
         #endregion
 
@@ -93,6 +88,7 @@ public static class PropertyCodeFixActions
             string? title = null)
         {
             title ??= $"Rename to '{newName}'";
+
             return CodeAction.Create(
                 title,
                 ct => document.ReplaceNode(
@@ -136,19 +132,19 @@ public static class PropertyCodeFixActions
         {
             // Accessibility modifiers come first
             SyntaxKind.PublicKeyword or
-            SyntaxKind.PrivateKeyword or
-            SyntaxKind.ProtectedKeyword or
-            SyntaxKind.InternalKeyword => 0,
+                SyntaxKind.PrivateKeyword or
+                SyntaxKind.ProtectedKeyword or
+                SyntaxKind.InternalKeyword => 0,
 
             // Then static/abstract/sealed/virtual/override/new/readonly/required
             SyntaxKind.StaticKeyword or
-            SyntaxKind.AbstractKeyword or
-            SyntaxKind.SealedKeyword or
-            SyntaxKind.VirtualKeyword or
-            SyntaxKind.OverrideKeyword or
-            SyntaxKind.NewKeyword or
-            SyntaxKind.ReadOnlyKeyword or
-            SyntaxKind.RequiredKeyword => 1,
+                SyntaxKind.AbstractKeyword or
+                SyntaxKind.SealedKeyword or
+                SyntaxKind.VirtualKeyword or
+                SyntaxKind.OverrideKeyword or
+                SyntaxKind.NewKeyword or
+                SyntaxKind.ReadOnlyKeyword or
+                SyntaxKind.RequiredKeyword => 1,
 
             // Then partial
             SyntaxKind.PartialKeyword => 2,

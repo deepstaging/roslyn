@@ -20,42 +20,32 @@ public static class MethodCodeFixActions
         /// <summary>
         /// Creates a code action that adds the 'partial' modifier to a method declaration.
         /// </summary>
-        public CodeAction AddPartialModifierAction(ValidSyntax<MethodDeclarationSyntax> methodDecl)
-        {
-            return document.AddMethodModifierAction(methodDecl, SyntaxKind.PartialKeyword, "Add 'partial' modifier");
-        }
+        public CodeAction AddPartialModifierAction(ValidSyntax<MethodDeclarationSyntax> methodDecl) =>
+            document.AddMethodModifierAction(methodDecl, SyntaxKind.PartialKeyword, "Add 'partial' modifier");
 
         /// <summary>
         /// Creates a code action that adds the 'async' modifier to a method declaration.
         /// </summary>
-        public CodeAction AddAsyncModifierAction(ValidSyntax<MethodDeclarationSyntax> methodDecl)
-        {
-            return document.AddMethodModifierAction(methodDecl, SyntaxKind.AsyncKeyword, "Add 'async' modifier");
-        }
+        public CodeAction AddAsyncModifierAction(ValidSyntax<MethodDeclarationSyntax> methodDecl) =>
+            document.AddMethodModifierAction(methodDecl, SyntaxKind.AsyncKeyword, "Add 'async' modifier");
 
         /// <summary>
         /// Creates a code action that adds the 'virtual' modifier to a method declaration.
         /// </summary>
-        public CodeAction AddVirtualModifierAction(ValidSyntax<MethodDeclarationSyntax> methodDecl)
-        {
-            return document.AddMethodModifierAction(methodDecl, SyntaxKind.VirtualKeyword, "Add 'virtual' modifier");
-        }
+        public CodeAction AddVirtualModifierAction(ValidSyntax<MethodDeclarationSyntax> methodDecl) =>
+            document.AddMethodModifierAction(methodDecl, SyntaxKind.VirtualKeyword, "Add 'virtual' modifier");
 
         /// <summary>
         /// Creates a code action that adds the 'override' modifier to a method declaration.
         /// </summary>
-        public CodeAction AddOverrideModifierAction(ValidSyntax<MethodDeclarationSyntax> methodDecl)
-        {
-            return document.AddMethodModifierAction(methodDecl, SyntaxKind.OverrideKeyword, "Add 'override' modifier");
-        }
+        public CodeAction AddOverrideModifierAction(ValidSyntax<MethodDeclarationSyntax> methodDecl) =>
+            document.AddMethodModifierAction(methodDecl, SyntaxKind.OverrideKeyword, "Add 'override' modifier");
 
         /// <summary>
         /// Creates a code action that adds the 'static' modifier to a method declaration.
         /// </summary>
-        public CodeAction AddStaticMethodModifierAction(ValidSyntax<MethodDeclarationSyntax> methodDecl)
-        {
-            return document.AddMethodModifierAction(methodDecl, SyntaxKind.StaticKeyword, "Add 'static' modifier");
-        }
+        public CodeAction AddStaticMethodModifierAction(ValidSyntax<MethodDeclarationSyntax> methodDecl) =>
+            document.AddMethodModifierAction(methodDecl, SyntaxKind.StaticKeyword, "Add 'static' modifier");
 
         /// <summary>
         /// Creates a code action that adds a modifier to a method declaration.
@@ -63,16 +53,14 @@ public static class MethodCodeFixActions
         public CodeAction AddMethodModifierAction(
             ValidSyntax<MethodDeclarationSyntax> methodDecl,
             SyntaxKind modifier,
-            string title)
-        {
-            return CodeAction.Create(
+            string title) =>
+            CodeAction.Create(
                 title,
                 ct => document.ReplaceNode(
                     methodDecl.Node,
                     AddModifierWithOrdering(methodDecl.Node, modifier),
                     ct),
                 title);
-        }
 
         /// <summary>
         /// Creates a code action that removes a modifier from a method declaration.
@@ -80,19 +68,18 @@ public static class MethodCodeFixActions
         public CodeAction RemoveMethodModifierAction(
             ValidSyntax<MethodDeclarationSyntax> methodDecl,
             SyntaxKind modifier,
-            string title)
-        {
-            return CodeAction.Create(
+            string title) =>
+            CodeAction.Create(
                 title,
                 ct =>
                 {
                     var newModifiers = methodDecl.Node.Modifiers
                         .Where(m => !m.IsKind(modifier));
+
                     var newNode = methodDecl.Node.WithModifiers(SyntaxFactory.TokenList(newModifiers));
                     return document.ReplaceNode(methodDecl.Node, newNode, ct);
                 },
                 title);
-        }
 
         #endregion
 
@@ -110,6 +97,7 @@ public static class MethodCodeFixActions
             string? title = null)
         {
             title ??= $"Rename to '{newName}'";
+
             return CodeAction.Create(
                 title,
                 ct => document.ReplaceNode(
@@ -134,9 +122,11 @@ public static class MethodCodeFixActions
         public CodeAction RemoveAsyncSuffixAction(ValidSyntax<MethodDeclarationSyntax> methodDecl)
         {
             var currentName = methodDecl.Node.Identifier.Text;
+
             var newName = currentName.EndsWith("Async")
                 ? currentName.Substring(0, currentName.Length - 5)
                 : currentName;
+
             return document.RenameMethodAction(methodDecl, newName, $"Rename to '{newName}'");
         }
 
@@ -153,11 +143,13 @@ public static class MethodCodeFixActions
             string? title = null)
         {
             title ??= $"Change return type to '{newReturnType}'";
+
             return CodeAction.Create(
                 title,
                 ct => document.ReplaceNode(
                     methodDecl.Node,
-                    methodDecl.Node.WithReturnType(SyntaxFactory.ParseTypeName(newReturnType).WithTrailingTrivia(SyntaxFactory.Space)),
+                    methodDecl.Node.WithReturnType(SyntaxFactory.ParseTypeName(newReturnType)
+                        .WithTrailingTrivia(SyntaxFactory.Space)),
                     ct),
                 title);
         }
@@ -206,22 +198,22 @@ public static class MethodCodeFixActions
         {
             // Accessibility modifiers come first
             SyntaxKind.PublicKeyword or
-            SyntaxKind.PrivateKeyword or
-            SyntaxKind.ProtectedKeyword or
-            SyntaxKind.InternalKeyword => 0,
+                SyntaxKind.PrivateKeyword or
+                SyntaxKind.ProtectedKeyword or
+                SyntaxKind.InternalKeyword => 0,
 
             // Then static/abstract/sealed/virtual/override/new/readonly
             SyntaxKind.StaticKeyword or
-            SyntaxKind.AbstractKeyword or
-            SyntaxKind.SealedKeyword or
-            SyntaxKind.VirtualKeyword or
-            SyntaxKind.OverrideKeyword or
-            SyntaxKind.NewKeyword or
-            SyntaxKind.ReadOnlyKeyword => 1,
+                SyntaxKind.AbstractKeyword or
+                SyntaxKind.SealedKeyword or
+                SyntaxKind.VirtualKeyword or
+                SyntaxKind.OverrideKeyword or
+                SyntaxKind.NewKeyword or
+                SyntaxKind.ReadOnlyKeyword => 1,
 
             // Then async/extern
             SyntaxKind.AsyncKeyword or
-            SyntaxKind.ExternKeyword => 2,
+                SyntaxKind.ExternKeyword => 2,
 
             // Then partial
             SyntaxKind.PartialKeyword => 3,

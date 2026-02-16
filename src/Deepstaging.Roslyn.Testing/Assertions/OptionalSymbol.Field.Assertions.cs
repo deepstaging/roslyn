@@ -17,38 +17,27 @@ public static partial class OptionalSymbolFieldAssertions
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [GenerateAssertion(ExpectationMessage = "to be read-only")]
-    public static bool IsReadOnlySymbol(this OptionalSymbol<IFieldSymbol> symbol)
-    {
-        return symbol.IsReadOnly;
-    }
+    public static bool IsReadOnlySymbol(this OptionalSymbol<IFieldSymbol> symbol) => symbol.IsReadOnly;
 
     /// <summary>
     /// Asserts that the field symbol is const (returns false if empty).
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [GenerateAssertion(ExpectationMessage = "to be const")]
-    public static bool IsConst(this OptionalSymbol<IFieldSymbol> symbol)
-    {
-        return symbol.Map(x => x.Value.IsConst).Value;
-    }
+    public static bool IsConst(this OptionalSymbol<IFieldSymbol> symbol) => symbol.Map(x => x.Value.IsConst).Value;
 
     /// <summary>
     /// Asserts that the field symbol is volatile (returns false if empty).
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [GenerateAssertion(ExpectationMessage = "to be volatile")]
-    public static bool IsVolatile(this OptionalSymbol<IFieldSymbol> symbol)
-    {
-        return symbol.Map(x => x.Value.IsVolatile).Value;
-    }
+    public static bool IsVolatile(this OptionalSymbol<IFieldSymbol> symbol) => symbol.Map(x => x.Value.IsVolatile).Value;
 
     /// <summary>
     /// Asserts that the field symbol has a constant value (returns false if empty).
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [GenerateAssertion(ExpectationMessage = "to have a constant value")]
-    public static bool HasConstantValue(this OptionalSymbol<IFieldSymbol> symbol)
-    {
-        return symbol.Map(x => x.Value.HasConstantValue).Value;
-    }
+    public static bool HasConstantValue(this OptionalSymbol<IFieldSymbol> symbol) =>
+        symbol.Map(x => x.Value.HasConstantValue).Value;
 }

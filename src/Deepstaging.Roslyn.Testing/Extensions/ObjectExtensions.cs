@@ -49,7 +49,9 @@ public static class ObjectExtensions
         /// });
         /// </code>
         /// </example>
-        public string AsJsonString(bool indented = true, JsonNamingPolicy? namingPolicy = null,
+        public string AsJsonString(
+            bool indented = true,
+            JsonNamingPolicy? namingPolicy = null,
             Action<JsonSerializerOptions>? configure = null)
         {
             JsonSerializerOptions options = new()
@@ -59,6 +61,7 @@ public static class ObjectExtensions
                 IgnoreReadOnlyProperties = true,
                 IncludeFields = false
             };
+
             configure?.Invoke(options);
             return JsonSerializer.Serialize(obj, options);
         }
@@ -68,9 +71,6 @@ public static class ObjectExtensions
         /// </summary>
         /// <param name="info">The JsonTypeInfo to use for serialization.</param>
         /// <returns>A JSON string representation of the object.</returns>
-        public string AsJson(JsonTypeInfo<T> info)
-        {
-            return JsonSerializer.Serialize(obj, info);
-        }
+        public string AsJson(JsonTypeInfo<T> info) => JsonSerializer.Serialize(obj, info);
     }
 }

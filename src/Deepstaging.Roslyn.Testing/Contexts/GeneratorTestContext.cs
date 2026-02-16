@@ -49,10 +49,7 @@ public class GeneratorTestContext
     /// <summary>
     /// Assert that the generator should produce output.
     /// </summary>
-    public GeneratorAssertions ShouldGenerate()
-    {
-        return new GeneratorAssertions(this, true);
-    }
+    public GeneratorAssertions ShouldGenerate() => new(this, true);
 
     /// <summary>
     /// Assert that the generator should NOT produce output.
@@ -80,6 +77,7 @@ public class GeneratorTestContext
 
         // All generators now implement IIncrementalGenerator directly
         GeneratorDriver driver;
+
         if (_generator is IIncrementalGenerator incrementalGenerator)
             // Standard incremental generator
             driver = CSharpGeneratorDriver.Create(incrementalGenerator)
@@ -106,10 +104,8 @@ public class GeneratorTestContext
             options);
     }
 
-    private static CSharpParseOptions GetParseOptions()
-    {
-        return CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.CSharp13);
-    }
+    private static CSharpParseOptions GetParseOptions() =>
+        CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.CSharp13);
 
     private static IEnumerable<MetadataReference> GetDefaultReferences()
     {
@@ -134,6 +130,7 @@ public class GeneratorTestContext
                     .Where(f =>
                     {
                         var name = Path.GetFileNameWithoutExtension(f);
+
                         return !name.EndsWith(".Generators") &&
                                !name.EndsWith(".Analyzers") &&
                                !name.EndsWith(".CodeFixes") &&
@@ -248,18 +245,13 @@ public class GeneratorAssertions
     /// <summary>
     /// Assert that no error diagnostics were emitted.
     /// </summary>
-    public GeneratorAssertions WithNoErrors()
-    {
-        return WithNoDiagnostics(filter => filter.WithSeverity(DiagnosticSeverity.Error));
-    }
+    public GeneratorAssertions WithNoErrors() => WithNoDiagnostics(filter => filter.WithSeverity(DiagnosticSeverity.Error));
 
     /// <summary>
     /// Assert that no warning diagnostics were emitted.
     /// </summary>
-    public GeneratorAssertions WithNoWarnings()
-    {
-        return WithNoDiagnostics(filter => filter.WithSeverity(DiagnosticSeverity.Warning));
-    }
+    public GeneratorAssertions WithNoWarnings() =>
+        WithNoDiagnostics(filter => filter.WithSeverity(DiagnosticSeverity.Warning));
 
     /// <summary>
     /// Assert that the generated code compiles successfully without errors.
@@ -292,10 +284,7 @@ public class GeneratorAssertions
     /// <summary>
     /// Enables awaiting on the assertions to verify all conditions.
     /// </summary>
-    public TaskAwaiter GetAwaiter()
-    {
-        return VerifyAsync().GetAwaiter();
-    }
+    public TaskAwaiter GetAwaiter() => VerifyAsync().GetAwaiter();
 
     private async Task VerifyAsync()
     {
@@ -315,6 +304,7 @@ public class GeneratorAssertions
         if (_expectedFileCount.HasValue)
         {
             var actualCount = result.GeneratedTrees.Length;
+
             if (actualCount != _expectedFileCount.Value)
                 Assert.Fail(
                     $"Expected {_expectedFileCount.Value} generated file(s), but found {actualCount}.");
@@ -386,6 +376,7 @@ public class GeneratorAssertions
 
         // Add runtime assemblies
         var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+
         var runtimeAssemblies = assemblies
             .Where(a => !string.IsNullOrEmpty(a.Location))
             .Distinct()
@@ -410,6 +401,7 @@ public class GeneratorAssertions
 
         // Build detailed error message
         var filterDescription = _diagnosticFilter?.GetDescription() ?? "any";
+
         var diagnosticDetails = string.Join("\n", diagnostics.Select(d =>
             $"  [{d.Severity}] {d.Id}: {d.GetMessage()} at {d.Location.GetLineSpan()}"));
 

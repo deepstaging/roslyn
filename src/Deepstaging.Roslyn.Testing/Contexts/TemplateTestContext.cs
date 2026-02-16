@@ -78,10 +78,7 @@ public class TemplateRenderContext
     /// <summary>
     /// Assert that the template should render successfully.
     /// </summary>
-    public TemplateRenderAssertions ShouldRender()
-    {
-        return new TemplateRenderAssertions(this, true);
-    }
+    public TemplateRenderAssertions ShouldRender() => new(this, true);
 
     /// <summary>
     /// Assert that the template should fail to render.
@@ -94,10 +91,7 @@ public class TemplateRenderContext
             Assert.Fail($"Expected template '{_templateName}' to fail, but it rendered successfully.");
     }
 
-    internal Task<RenderResult> GetRenderResultAsync()
-    {
-        return GetResultAsync();
-    }
+    internal Task<RenderResult> GetRenderResultAsync() => GetResultAsync();
 }
 
 /// <summary>
@@ -148,10 +142,7 @@ public class TemplateRenderAssertions
     /// <summary>
     /// Enables awaiting on the assertions to verify all conditions.
     /// </summary>
-    public TaskAwaiter GetAwaiter()
-    {
-        return VerifyAsync().GetAwaiter();
-    }
+    public TaskAwaiter GetAwaiter() => VerifyAsync().GetAwaiter();
 
     private async Task VerifyAsync()
     {
@@ -168,8 +159,10 @@ public class TemplateRenderAssertions
             if (result is not RenderResult.Success success)
             {
                 var failure = (RenderResult.Failure)result;
+
                 Assert.Fail(
                     $"Expected template to render successfully, but got error: {failure.Diagnostic.GetMessage()}");
+
                 return; // Unreachable but helps compiler
             }
 

@@ -20,6 +20,7 @@ public static class ScaffoldMetadata
     {
         var assemblyMetadataType = compilation.GetTypeByMetadataName(
             "System.Reflection.AssemblyMetadataAttribute");
+
         if (assemblyMetadataType is null)
             return [];
 
@@ -37,6 +38,7 @@ public static class ScaffoldMetadata
 
             var key = attr.ConstructorArguments[0].Value as string;
             var value = attr.ConstructorArguments[1].Value as string;
+
             if (key is null || value is null)
                 continue;
 
@@ -49,6 +51,7 @@ public static class ScaffoldMetadata
             {
                 var templateName = remainder.Substring(
                     0, remainder.Length - ScaffoldEmitter.ContentKeySuffix.Length);
+
                 contentMap[templateName] = value;
             }
             else

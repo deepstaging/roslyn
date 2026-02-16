@@ -17,79 +17,58 @@ public static partial class ValidSymbolMethodAssertions
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [GenerateAssertion(ExpectationMessage = "to be async")]
-    public static bool IsAsyncSymbol(this ValidSymbol<IMethodSymbol> symbol)
-    {
-        return symbol.IsAsync;
-    }
+    public static bool IsAsyncSymbol(this ValidSymbol<IMethodSymbol> symbol) => symbol.IsAsync;
 
     /// <summary>
     /// Asserts that the method symbol returns void.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [GenerateAssertion(ExpectationMessage = "to return void")]
-    public static bool ReturnsVoid(this ValidSymbol<IMethodSymbol> symbol)
-    {
-        return symbol.Value.ReturnsVoid;
-    }
+    public static bool ReturnsVoid(this ValidSymbol<IMethodSymbol> symbol) => symbol.Value.ReturnsVoid;
 
     /// <summary>
     /// Asserts that the method symbol has the specified number of parameters.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [GenerateAssertion(ExpectationMessage = "to have {count} parameters")]
-    public static bool HasParameterCount(this ValidSymbol<IMethodSymbol> symbol, int count)
-    {
-        return symbol.GetTypeParameters().Count() == count;
-    }
+    public static bool HasParameterCount(this ValidSymbol<IMethodSymbol> symbol, int count) =>
+        symbol.GetTypeParameters().Count() == count;
 
     /// <summary>
     /// Asserts that the method symbol is an extension method.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [GenerateAssertion(ExpectationMessage = "to be an extension method")]
-    public static bool IsExtension(this ValidSymbol<IMethodSymbol> symbol)
-    {
-        return symbol.IsExtensionMethod;
-    }
+    public static bool IsExtension(this ValidSymbol<IMethodSymbol> symbol) => symbol.IsExtensionMethod;
 
     /// <summary>
     /// Asserts that the method symbol is generic.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [GenerateAssertion(ExpectationMessage = "to be generic")]
-    public static bool IsGeneric(this ValidSymbol<IMethodSymbol> symbol)
-    {
-        return symbol.Value.IsGenericMethod;
-    }
+    public static bool IsGeneric(this ValidSymbol<IMethodSymbol> symbol) => symbol.Value.IsGenericMethod;
 
     /// <summary>
     /// Asserts that the method symbol is a constructor.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [GenerateAssertion(ExpectationMessage = "to be a constructor")]
-    public static bool IsConstructor(this ValidSymbol<IMethodSymbol> symbol)
-    {
-        return symbol.Value.MethodKind == MethodKind.Constructor;
-    }
+    public static bool IsConstructor(this ValidSymbol<IMethodSymbol> symbol) =>
+        symbol.Value.MethodKind == MethodKind.Constructor;
 
     /// <summary>
     /// Asserts that the method symbol is an operator.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [GenerateAssertion(ExpectationMessage = "to be an operator")]
-    public static bool IsOperator(this ValidSymbol<IMethodSymbol> symbol)
-    {
-        return symbol.Value.MethodKind == MethodKind.UserDefinedOperator ||
-               symbol.Value.MethodKind == MethodKind.BuiltinOperator;
-    }
+    public static bool IsOperator(this ValidSymbol<IMethodSymbol> symbol) =>
+        symbol.Value.MethodKind == MethodKind.UserDefinedOperator ||
+        symbol.Value.MethodKind == MethodKind.BuiltinOperator;
 
     /// <summary>
     /// Asserts that the method symbol has a return type.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [GenerateAssertion(ExpectationMessage = "to have a return type")]
-    public static bool HasReturnType(this ValidSymbol<IMethodSymbol> symbol)
-    {
-        return !symbol.Value.ReturnsVoid;
-    }
+    public static bool HasReturnType(this ValidSymbol<IMethodSymbol> symbol) => !symbol.Value.ReturnsVoid;
 }

@@ -20,8 +20,5 @@ public sealed class CodeFixAttribute : Attribute
     /// Initializes a new instance of the <see cref="CodeFixAttribute"/> class.
     /// </summary>
     /// <param name="diagnosticId">The diagnostic ID to fix.</param>
-    public CodeFixAttribute(string diagnosticId)
-    {
-        DiagnosticId = diagnosticId;
-    }
+    public CodeFixAttribute(string diagnosticId) => DiagnosticId = diagnosticId;
 }

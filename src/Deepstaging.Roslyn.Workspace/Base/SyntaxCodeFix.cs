@@ -23,10 +23,7 @@ public abstract class SyntaxCodeFix<TSyntax> : CodeFixProvider
     public sealed override ImmutableArray<string> FixableDiagnosticIds { get; }
 
     /// <inheritdoc />
-    public override FixAllProvider GetFixAllProvider()
-    {
-        return WellKnownFixAllProviders.BatchFixer;
-    }
+    public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SyntaxCodeFix{TSyntax}"/> class.
@@ -48,10 +45,12 @@ public abstract class SyntaxCodeFix<TSyntax> : CodeFixProvider
     public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
     {
         var result = await context.FindDeclaration<TSyntax>().ConfigureAwait(false);
+
         if (result.IsNotValid(out var syntax))
             return;
 
         var codeAction = CreateFix(context.Document, syntax);
+
         if (codeAction is null)
             return;
 

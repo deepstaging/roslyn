@@ -76,6 +76,7 @@ public abstract class AdditionalDocumentCodeFix : CodeFixProvider
     public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
     {
         var diagnostic = context.Diagnostics[0];
+
         var compilation = await context.Document.Project
             .GetCompilationAsync(context.CancellationToken)
             .ConfigureAwait(false);
@@ -91,7 +92,7 @@ public abstract class AdditionalDocumentCodeFix : CodeFixProvider
             CodeAction.Create(
                 title,
                 _ => Task.FromResult(AddDocument(context.Document.Project, doc)),
-                equivalenceKey: title),
+                title),
             diagnostic);
     }
 
@@ -109,17 +110,12 @@ public abstract class AdditionalDocumentCodeFix : CodeFixProvider
     /// </summary>
     /// <param name="document">The document that will be created.</param>
     /// <param name="diagnostic">The diagnostic being fixed.</param>
-    protected virtual string GetTitle(AdditionalDocument document, Diagnostic diagnostic)
-    {
-        return $"Create file: {document.Path}";
-    }
+    protected virtual string GetTitle(AdditionalDocument document, Diagnostic diagnostic) => $"Create file: {document.Path}";
 
-    private static Solution AddDocument(Project project, AdditionalDocument doc)
-    {
-        return project.Solution.AddAdditionalDocument(
+    private static Solution AddDocument(Project project, AdditionalDocument doc) =>
+        project.Solution.AddAdditionalDocument(
             DocumentId.CreateNewId(project.Id),
             doc.Path,
             SourceText.From(doc.Content),
             filePath: doc.Path);
-    }
 }

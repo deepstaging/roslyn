@@ -55,6 +55,7 @@ public static class ReferenceConfiguration
         {
             AdditionalReferences.AddRange(
                 assemblyPaths.Select(path => MetadataReference.CreateFromFile(path)));
+
             _isConfigured = true;
         }
     }

@@ -63,10 +63,8 @@ public sealed record Template(TemplateName Name, object? Context = null)
     /// <param name="named">The name of the template to render</param>
     /// <param name="context">Optional render context (will be converted to ScriptObject if needed)</param>
     /// <returns>A RenderResult indicating success or failure</returns>
-    public static RenderResult RenderTemplate(TemplateName named, object? context = null)
-    {
-        return RenderTemplate(new Template(named, context));
-    }
+    public static RenderResult RenderTemplate(TemplateName named, object? context = null) =>
+        RenderTemplate(new Template(named, context));
 
     /// <summary>
     ///     Renders a template from raw text (not an embedded resource).
@@ -76,28 +74,20 @@ public sealed record Template(TemplateName Name, object? Context = null)
     /// <param name="name">A display name for the template (used in diagnostics).</param>
     /// <param name="context">Optional render context (will be converted to ScriptObject if needed).</param>
     /// <returns>A RenderResult indicating success or failure.</returns>
-    public static RenderResult RenderFromText(string text, string name, object? context = null)
-    {
-        return Render(name, text, context);
-    }
+    public static RenderResult RenderFromText(string text, string name, object? context = null) => Render(name, text, context);
 
     #endregion
 
     #region Private Render Logic
 
-    private static RenderResult RenderTemplate(Template template)
-    {
-        return Render(template.Name, template.Text, template.Context);
-    }
+    private static RenderResult RenderTemplate(Template template) => Render(template.Name, template.Text, template.Context);
 
     /// <summary>
     ///     Core rendering logic: parses Scriban template and renders with context.
     ///     Uses caching for both template text and parsed templates.
     /// </summary>
-    private static RenderResult Render(TemplateName name, string text, object? context = null)
-    {
-        return Render(name.Value, text, context);
-    }
+    private static RenderResult Render(TemplateName name, string text, object? context = null) =>
+        Render(name.Value, text, context);
 
     /// <summary>
     ///     Core rendering logic: parses Scriban template and renders with context.
@@ -109,10 +99,12 @@ public sealed record Template(TemplateName Name, object? Context = null)
         {
             // Get or parse the template (cache hit avoids 5-10ms parse time)
             var scribanTemplate = ParsedTemplateCache.GetOrAdd(text, t => global::Scriban.Template.Parse(t));
+
             if (scribanTemplate.HasErrors)
                 return CreateParseErrorResult(name, scribanTemplate);
 
             var scriptObject = DeepstagingTemplateObject.From(context);
+
             return new RenderResult.Success(scribanTemplate.Render(scriptObject), context)
                 { TemplateName = name };
         }
@@ -129,10 +121,8 @@ public sealed record Template(TemplateName Name, object? Context = null)
     /// <summary>
     ///     Creates a diagnostic result for template parsing errors.
     /// </summary>
-    private static RenderResult CreateParseErrorResult(TemplateName name, global::Scriban.Template template)
-    {
-        return CreateParseErrorResult(name.Value, template);
-    }
+    private static RenderResult CreateParseErrorResult(TemplateName name, global::Scriban.Template template) =>
+        CreateParseErrorResult(name.Value, template);
 
     /// <summary>
     ///     Creates a diagnostic result for template parsing errors.

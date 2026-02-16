@@ -17,88 +17,68 @@ public static partial class OptionalSymbolNamedTypeAssertions
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [GenerateAssertion(ExpectationMessage = "to be a class")]
-    public static bool IsClassSymbol(this OptionalSymbol<INamedTypeSymbol> symbol)
-    {
-        return symbol.Map(x => x.Value.TypeKind == TypeKind.Class).Value;
-    }
+    public static bool IsClassSymbol(this OptionalSymbol<INamedTypeSymbol> symbol) =>
+        symbol.Map(x => x.Value.TypeKind == TypeKind.Class).Value;
 
     /// <summary>
     /// Asserts that the type symbol is an interface (returns false if empty).
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [GenerateAssertion(ExpectationMessage = "to be an interface")]
-    public static bool IsInterfaceSymbol(this OptionalSymbol<INamedTypeSymbol> symbol)
-    {
-        return symbol.Map(x => x.Value.TypeKind == TypeKind.Interface).Value;
-    }
+    public static bool IsInterfaceSymbol(this OptionalSymbol<INamedTypeSymbol> symbol) =>
+        symbol.Map(x => x.Value.TypeKind == TypeKind.Interface).Value;
 
     /// <summary>
     /// Asserts that the type symbol is a struct (returns false if empty).
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [GenerateAssertion(ExpectationMessage = "to be a struct")]
-    public static bool IsStructSymbol(this OptionalSymbol<INamedTypeSymbol> symbol)
-    {
-        return symbol.Map(x => x.Value.TypeKind == TypeKind.Struct).Value;
-    }
+    public static bool IsStructSymbol(this OptionalSymbol<INamedTypeSymbol> symbol) =>
+        symbol.Map(x => x.Value.TypeKind == TypeKind.Struct).Value;
 
     /// <summary>
     /// Asserts that the type symbol is a record (returns false if empty).
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [GenerateAssertion(ExpectationMessage = "to be a record")]
-    public static bool IsRecordSymbol(this OptionalSymbol<INamedTypeSymbol> symbol)
-    {
-        return symbol.Map(x => x.Value.IsRecord).Value;
-    }
+    public static bool IsRecordSymbol(this OptionalSymbol<INamedTypeSymbol> symbol) => symbol.Map(x => x.Value.IsRecord).Value;
 
     /// <summary>
     /// Asserts that the type symbol is partial (returns false if empty).
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [GenerateAssertion(ExpectationMessage = "to be partial")]
-    public static bool IsPartialSymbol(this OptionalSymbol<INamedTypeSymbol> symbol)
-    {
-        return symbol.Map(x => x.Value.DeclaringSyntaxReferences.Length > 1).Value;
-    }
+    public static bool IsPartialSymbol(this OptionalSymbol<INamedTypeSymbol> symbol) =>
+        symbol.Map(x => x.Value.DeclaringSyntaxReferences.Length > 1).Value;
 
     /// <summary>
     /// Asserts that the type symbol is an enum (returns false if empty).
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [GenerateAssertion(ExpectationMessage = "to be an enum")]
-    public static bool IsEnumSymbol(this OptionalSymbol<INamedTypeSymbol> symbol)
-    {
-        return symbol.Map(x => x.Value.TypeKind == TypeKind.Enum).Value;
-    }
+    public static bool IsEnumSymbol(this OptionalSymbol<INamedTypeSymbol> symbol) =>
+        symbol.Map(x => x.Value.TypeKind == TypeKind.Enum).Value;
 
     /// <summary>
     /// Asserts that the type symbol is a delegate (returns false if empty).
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [GenerateAssertion(ExpectationMessage = "to be a delegate")]
-    public static bool IsDelegateSymbol(this OptionalSymbol<INamedTypeSymbol> symbol)
-    {
-        return symbol.Map(x => x.Value.TypeKind == TypeKind.Delegate).Value;
-    }
+    public static bool IsDelegateSymbol(this OptionalSymbol<INamedTypeSymbol> symbol) =>
+        symbol.Map(x => x.Value.TypeKind == TypeKind.Delegate).Value;
 
     /// <summary>
     /// Asserts that the type symbol is generic (returns false if empty).
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [GenerateAssertion(ExpectationMessage = "to be generic")]
-    public static bool IsGenericSymbol(this OptionalSymbol<INamedTypeSymbol> symbol)
-    {
-        return symbol.IsGenericType;
-    }
+    public static bool IsGenericSymbol(this OptionalSymbol<INamedTypeSymbol> symbol) => symbol.IsGenericType;
 
     /// <summary>
     /// Asserts that the type symbol has the specified number of type parameters (returns false if empty).
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [GenerateAssertion(ExpectationMessage = "to have {count} type parameters")]
-    public static bool HasTypeParameterCount(this OptionalSymbol<INamedTypeSymbol> symbol, int count)
-    {
-        return symbol.GetTypeParameters().Count() == count;
-    }
+    public static bool HasTypeParameterCount(this OptionalSymbol<INamedTypeSymbol> symbol, int count) =>
+        symbol.GetTypeParameters().Count() == count;
 }

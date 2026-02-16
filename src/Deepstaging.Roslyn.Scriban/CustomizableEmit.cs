@@ -36,7 +36,10 @@ public readonly struct CustomizableEmit
     /// </summary>
     public IReadOnlyList<TemplateBinding> Bindings { get; }
 
-    internal CustomizableEmit(OptionalEmit defaultEmit, string templateName, object? model,
+    internal CustomizableEmit(
+        OptionalEmit defaultEmit,
+        string templateName,
+        object? model,
         IReadOnlyList<TemplateBinding>? bindings = null)
     {
         DefaultEmit = defaultEmit;
@@ -58,6 +61,7 @@ public readonly struct CustomizableEmit
             return DefaultEmit;
 
         var rendered = templates.TryRender(TemplateName, Model);
+
         if (rendered is null)
             return DefaultEmit;
 
@@ -67,7 +71,7 @@ public readonly struct CustomizableEmit
         {
             RenderResult.Success s => ValidateRenderedOutput(s.Text, location),
             RenderResult.Failure f => CreateScribanErrorResult(f, location),
-            _ => DefaultEmit,
+            _ => DefaultEmit
         };
     }
 
@@ -86,6 +90,7 @@ public readonly struct CustomizableEmit
         {
             foreach (var diagnostic in resolved.Diagnostics)
                 ctx.ReportDiagnostic(diagnostic);
+
             return;
         }
 
@@ -101,6 +106,7 @@ public readonly struct CustomizableEmit
     {
         var tree = CSharpSyntaxTree.ParseText(code);
         var root = tree.GetCompilationUnitRoot();
+
         var errors = root.GetDiagnostics()
             .Where(d => d.Severity == DiagnosticSeverity.Error)
             .ToImmutableArray();
@@ -140,6 +146,7 @@ public readonly struct CustomizableEmit
     private Location? CreateTemplateLocation(UserTemplates templates)
     {
         var filePath = templates.GetFilePath(TemplateName);
+
         if (filePath is null)
             return null;
 

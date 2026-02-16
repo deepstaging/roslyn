@@ -31,10 +31,10 @@ public static class CustomizableEmitExtensions
         /// These bindings define which model values become template placeholders when scaffolding.
         /// </param>
         public CustomizableEmit WithUserTemplate<TModel>(
-            string templateName, TModel model, TemplateMap<TModel> map)
-        {
-            return new CustomizableEmit(emit, templateName, model, map.Bindings);
-        }
+            string templateName,
+            TModel model,
+            TemplateMap<TModel> map) =>
+            new(emit, templateName, model, map.Bindings);
 
         /// <summary>
         /// Defines a user-customizable template for this emit result without explicit bindings.
@@ -47,9 +47,6 @@ public static class CustomizableEmitExtensions
         /// <param name="model">
         /// The model object passed to the Scriban template.
         /// </param>
-        public CustomizableEmit WithUserTemplate(string templateName, object? model)
-        {
-            return new CustomizableEmit(emit, templateName, model);
-        }
+        public CustomizableEmit WithUserTemplate(string templateName, object? model) => new(emit, templateName, model);
     }
 }

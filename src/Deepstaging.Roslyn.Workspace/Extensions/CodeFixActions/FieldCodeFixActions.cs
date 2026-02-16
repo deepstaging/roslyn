@@ -24,32 +24,28 @@ public static class FieldCodeFixActions
         /// <param name="title">Optional title for the code action. Defaults to "Make field private".</param>
         public CodeAction MakeFieldPrivateAction(
             ValidSyntax<FieldDeclarationSyntax> fieldDecl,
-            string title = "Make field private")
-        {
-            return CodeAction.Create(
+            string title = "Make field private") =>
+            CodeAction.Create(
                 title,
                 ct => document.ReplaceNode(
                     fieldDecl.Node,
                     MakeFieldPrivate(fieldDecl.Node),
                     ct),
                 title);
-        }
 
         /// <summary>
         /// Creates a code action that adds the 'readonly' modifier to a field.
         /// </summary>
         public CodeAction AddFieldReadonlyModifierAction(
             ValidSyntax<FieldDeclarationSyntax> fieldDecl,
-            string title = "Add 'readonly' modifier")
-        {
-            return CodeAction.Create(
+            string title = "Add 'readonly' modifier") =>
+            CodeAction.Create(
                 title,
                 ct => document.ReplaceNode(
                     fieldDecl.Node,
                     fieldDecl.Node.AddModifiers(SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)),
                     ct),
                 title);
-        }
 
         #endregion
 
@@ -69,6 +65,7 @@ public static class FieldCodeFixActions
             string? title = null)
         {
             title ??= $"Rename to '{newName}'";
+
             return CodeAction.Create(
                 title,
                 ct =>
@@ -89,10 +86,8 @@ public static class FieldCodeFixActions
         public CodeAction RenameFieldAction(
             ValidSyntax<FieldDeclarationSyntax> fieldDecl,
             string newName,
-            string? title = null)
-        {
-            return document.RenameFieldAction(fieldDecl, 0, newName, title);
-        }
+            string? title = null) =>
+            document.RenameFieldAction(fieldDecl, 0, newName, title);
 
         #endregion
     }

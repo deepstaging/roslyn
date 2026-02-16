@@ -17,18 +17,12 @@ public static partial class OptionalSymbolAssertions
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [GenerateAssertion(ExpectationMessage = "to have a value")]
-    public static bool HasValue<T>(this OptionalSymbol<T> symbol) where T : class, ISymbol
-    {
-        return symbol.HasValue;
-    }
+    public static bool HasValue<T>(this OptionalSymbol<T> symbol) where T : class, ISymbol => symbol.HasValue;
 
     /// <summary>
     /// Asserts that the OptionalSymbol is empty.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [GenerateAssertion(ExpectationMessage = "to be empty")]
-    public static bool IsEmpty<T>(this OptionalSymbol<T> symbol) where T : class, ISymbol
-    {
-        return symbol.IsEmpty;
-    }
+    public static bool IsEmpty<T>(this OptionalSymbol<T> symbol) where T : class, ISymbol => symbol.IsEmpty;
 }

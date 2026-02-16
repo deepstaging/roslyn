@@ -56,7 +56,9 @@ public static class ScriptObjectExtensions
     /// <param name="scriptObject">The target ScriptObject</param>
     /// <param name="obj">The object to import</param>
     /// <param name="renamer">Optional member renamer (defaults to preserving original names)</param>
-    public static ScriptObject ImportDeep(this ScriptObject scriptObject, object? obj,
+    public static ScriptObject ImportDeep(
+        this ScriptObject scriptObject,
+        object? obj,
         MemberRenamerDelegate? renamer = null)
     {
         if (obj == null)

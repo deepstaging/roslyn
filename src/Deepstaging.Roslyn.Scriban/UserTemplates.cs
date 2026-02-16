@@ -16,10 +16,7 @@ public sealed class UserTemplates
 
     private readonly ImmutableDictionary<string, UserTemplateEntry> _templates;
 
-    private UserTemplates(ImmutableDictionary<string, UserTemplateEntry> templates)
-    {
-        _templates = templates;
-    }
+    private UserTemplates(ImmutableDictionary<string, UserTemplateEntry> templates) => _templates = templates;
 
     /// <summary>
     /// Creates a <see cref="UserTemplates"/> instance from AdditionalTexts provided by the compiler.
@@ -36,10 +33,12 @@ public sealed class UserTemplates
                 continue;
 
             var name = ExtractTemplateName(text.Path);
+
             if (name is null)
                 continue;
 
             var content = text.GetText()?.ToString();
+
             if (content is not null)
                 builder[name] = new UserTemplateEntry(content, text.Path);
         }
@@ -83,6 +82,7 @@ public sealed class UserTemplates
 
         const string marker = "Templates/";
         var idx = normalized.LastIndexOf(marker, StringComparison.OrdinalIgnoreCase);
+
         if (idx < 0)
             return null;
 
@@ -90,6 +90,7 @@ public sealed class UserTemplates
 
         // Strip extension (.scriban-cs)
         const string extension = ".scriban-cs";
+
         if (relative.EndsWith(extension, StringComparison.OrdinalIgnoreCase))
             relative = relative[..^extension.Length];
 

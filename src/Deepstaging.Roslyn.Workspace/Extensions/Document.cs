@@ -26,6 +26,7 @@ public static class DocumentExtensions
             CancellationToken token = default) where TSyntax : SyntaxNode
         {
             var root = await document.GetSyntaxRootAsync(token).ConfigureAwait(false);
+
             if (root is null)
                 return document;
 

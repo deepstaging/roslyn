@@ -1,0 +1,26 @@
+[*]
+
+# Microsoft .NET properties
+csharp_preferred_modifier_order = internal, public, protected, private, file, new, sealed, abstract, virtual, static, readonly, override, extern, unsafe, volatile, async, required:suggestion
+csharp_using_directive_placement = inside_namespace:silent
+csharp_style_expression_bodied_methods = true
+csharp_style_prefer_method_group_conversion = true
+csharp_style_prefer_primary_constructors = true
+
+# ReSharper properties
+resharper_arguments_anonymous_function = positional
+resharper_arguments_other = positional
+resharper_arguments_skip_single = true
+resharper_csharp_max_line_length = 127
+resharper_csharp_wrap_after_declaration_lpar = true
+resharper_csharp_wrap_parameters_style = chop_if_long
+resharper_instance_members_qualify_declared_in = base_class
+resharper_method_or_operator_body = expression_body
+resharper_parentheses_redundancy_style = remove
+resharper_place_expr_method_on_single_line = if_owner_is_single_line
+resharper_place_simple_embedded_statement_on_same_line = true
+resharper_wrap_after_invocation_lpar = false
+resharper_wrap_arguments_style = wrap_if_long
+resharper_wrap_before_invocation_rpar = false
+resharper_wrap_chained_binary_expressions = chop_if_long
+resharper_convert_closure_to_method_group_highlighting = true

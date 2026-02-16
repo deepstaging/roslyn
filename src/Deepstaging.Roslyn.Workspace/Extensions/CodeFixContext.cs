@@ -25,10 +25,12 @@ public static class CodeFixContextExtensions
         public async Task<OptionalSyntax<TSyntax>> FindDeclaration<TSyntax>() where TSyntax : SyntaxNode
         {
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+
             if (root is null)
                 return OptionalSyntax<TSyntax>.Empty();
 
             var span = context.Diagnostics[0].Location.SourceSpan;
+
             var node = root.FindToken(span.Start)
                 .Parent?
                 .AncestorsAndSelf()
@@ -43,10 +45,8 @@ public static class CodeFixContextExtensions
         /// </summary>
         /// <typeparam name="TSyntax">The type of type declaration syntax to find.</typeparam>
         /// <returns>An OptionalSyntax that can be validated to a ValidTypeSyntax.</returns>
-        public async Task<OptionalSyntax<TSyntax>> FindTypeDeclaration<TSyntax>() where TSyntax : TypeDeclarationSyntax
-        {
-            return await context.FindDeclaration<TSyntax>().ConfigureAwait(false);
-        }
+        public async Task<OptionalSyntax<TSyntax>> FindTypeDeclaration<TSyntax>() where TSyntax : TypeDeclarationSyntax =>
+            await context.FindDeclaration<TSyntax>().ConfigureAwait(false);
 
         #endregion
 
@@ -55,42 +55,32 @@ public static class CodeFixContextExtensions
         /// <summary>
         /// Finds a class declaration from the first diagnostic's location.
         /// </summary>
-        public async Task<OptionalSyntax<ClassDeclarationSyntax>> FindClass()
-        {
-            return await context.FindDeclaration<ClassDeclarationSyntax>().ConfigureAwait(false);
-        }
+        public async Task<OptionalSyntax<ClassDeclarationSyntax>> FindClass() =>
+            await context.FindDeclaration<ClassDeclarationSyntax>().ConfigureAwait(false);
 
         /// <summary>
         /// Finds a struct declaration from the first diagnostic's location.
         /// </summary>
-        public async Task<OptionalSyntax<StructDeclarationSyntax>> FindStruct()
-        {
-            return await context.FindDeclaration<StructDeclarationSyntax>().ConfigureAwait(false);
-        }
+        public async Task<OptionalSyntax<StructDeclarationSyntax>> FindStruct() =>
+            await context.FindDeclaration<StructDeclarationSyntax>().ConfigureAwait(false);
 
         /// <summary>
         /// Finds an interface declaration from the first diagnostic's location.
         /// </summary>
-        public async Task<OptionalSyntax<InterfaceDeclarationSyntax>> FindInterface()
-        {
-            return await context.FindDeclaration<InterfaceDeclarationSyntax>().ConfigureAwait(false);
-        }
+        public async Task<OptionalSyntax<InterfaceDeclarationSyntax>> FindInterface() =>
+            await context.FindDeclaration<InterfaceDeclarationSyntax>().ConfigureAwait(false);
 
         /// <summary>
         /// Finds a record declaration from the first diagnostic's location.
         /// </summary>
-        public async Task<OptionalSyntax<RecordDeclarationSyntax>> FindRecord()
-        {
-            return await context.FindDeclaration<RecordDeclarationSyntax>().ConfigureAwait(false);
-        }
+        public async Task<OptionalSyntax<RecordDeclarationSyntax>> FindRecord() =>
+            await context.FindDeclaration<RecordDeclarationSyntax>().ConfigureAwait(false);
 
         /// <summary>
         /// Finds an enum declaration from the first diagnostic's location.
         /// </summary>
-        public async Task<OptionalSyntax<EnumDeclarationSyntax>> FindEnum()
-        {
-            return await context.FindDeclaration<EnumDeclarationSyntax>().ConfigureAwait(false);
-        }
+        public async Task<OptionalSyntax<EnumDeclarationSyntax>> FindEnum() =>
+            await context.FindDeclaration<EnumDeclarationSyntax>().ConfigureAwait(false);
 
         #endregion
 
@@ -99,50 +89,38 @@ public static class CodeFixContextExtensions
         /// <summary>
         /// Finds a method declaration from the first diagnostic's location.
         /// </summary>
-        public async Task<OptionalSyntax<MethodDeclarationSyntax>> FindMethod()
-        {
-            return await context.FindDeclaration<MethodDeclarationSyntax>().ConfigureAwait(false);
-        }
+        public async Task<OptionalSyntax<MethodDeclarationSyntax>> FindMethod() =>
+            await context.FindDeclaration<MethodDeclarationSyntax>().ConfigureAwait(false);
 
         /// <summary>
         /// Finds a property declaration from the first diagnostic's location.
         /// </summary>
-        public async Task<OptionalSyntax<PropertyDeclarationSyntax>> FindProperty()
-        {
-            return await context.FindDeclaration<PropertyDeclarationSyntax>().ConfigureAwait(false);
-        }
+        public async Task<OptionalSyntax<PropertyDeclarationSyntax>> FindProperty() =>
+            await context.FindDeclaration<PropertyDeclarationSyntax>().ConfigureAwait(false);
 
         /// <summary>
         /// Finds a field declaration from the first diagnostic's location.
         /// </summary>
-        public async Task<OptionalSyntax<FieldDeclarationSyntax>> FindField()
-        {
-            return await context.FindDeclaration<FieldDeclarationSyntax>().ConfigureAwait(false);
-        }
+        public async Task<OptionalSyntax<FieldDeclarationSyntax>> FindField() =>
+            await context.FindDeclaration<FieldDeclarationSyntax>().ConfigureAwait(false);
 
         /// <summary>
         /// Finds a constructor declaration from the first diagnostic's location.
         /// </summary>
-        public async Task<OptionalSyntax<ConstructorDeclarationSyntax>> FindConstructor()
-        {
-            return await context.FindDeclaration<ConstructorDeclarationSyntax>().ConfigureAwait(false);
-        }
+        public async Task<OptionalSyntax<ConstructorDeclarationSyntax>> FindConstructor() =>
+            await context.FindDeclaration<ConstructorDeclarationSyntax>().ConfigureAwait(false);
 
         /// <summary>
         /// Finds an event declaration from the first diagnostic's location.
         /// </summary>
-        public async Task<OptionalSyntax<EventDeclarationSyntax>> FindEvent()
-        {
-            return await context.FindDeclaration<EventDeclarationSyntax>().ConfigureAwait(false);
-        }
+        public async Task<OptionalSyntax<EventDeclarationSyntax>> FindEvent() =>
+            await context.FindDeclaration<EventDeclarationSyntax>().ConfigureAwait(false);
 
         /// <summary>
         /// Finds a parameter from the first diagnostic's location.
         /// </summary>
-        public async Task<OptionalSyntax<ParameterSyntax>> FindParameter()
-        {
-            return await context.FindDeclaration<ParameterSyntax>().ConfigureAwait(false);
-        }
+        public async Task<OptionalSyntax<ParameterSyntax>> FindParameter() =>
+            await context.FindDeclaration<ParameterSyntax>().ConfigureAwait(false);
 
         #endregion
     }

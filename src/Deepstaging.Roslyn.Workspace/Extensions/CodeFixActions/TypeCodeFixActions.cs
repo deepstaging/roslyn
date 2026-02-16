@@ -21,45 +21,35 @@ public static class TypeCodeFixActions
         /// Creates a code action that adds the 'partial' modifier to a type declaration.
         /// </summary>
         public CodeAction AddPartialModifierAction<T>(ValidSyntax<T> typeDecl)
-            where T : TypeDeclarationSyntax
-        {
-            return document.AddModifierAction(typeDecl, SyntaxKind.PartialKeyword, "Add 'partial' modifier");
-        }
+            where T : TypeDeclarationSyntax =>
+            document.AddModifierAction(typeDecl, SyntaxKind.PartialKeyword, "Add 'partial' modifier");
 
         /// <summary>
         /// Creates a code action that adds the 'sealed' modifier to a type declaration.
         /// </summary>
         public CodeAction AddSealedModifierAction<T>(ValidSyntax<T> typeDecl)
-            where T : TypeDeclarationSyntax
-        {
-            return document.AddModifierAction(typeDecl, SyntaxKind.SealedKeyword, "Add 'sealed' modifier");
-        }
+            where T : TypeDeclarationSyntax =>
+            document.AddModifierAction(typeDecl, SyntaxKind.SealedKeyword, "Add 'sealed' modifier");
 
         /// <summary>
         /// Creates a code action that adds the 'static' modifier to a type declaration.
         /// </summary>
         public CodeAction AddStaticModifierAction<T>(ValidSyntax<T> typeDecl)
-            where T : TypeDeclarationSyntax
-        {
-            return document.AddModifierAction(typeDecl, SyntaxKind.StaticKeyword, "Add 'static' modifier");
-        }
+            where T : TypeDeclarationSyntax =>
+            document.AddModifierAction(typeDecl, SyntaxKind.StaticKeyword, "Add 'static' modifier");
 
         /// <summary>
         /// Creates a code action that adds the 'abstract' modifier to a type declaration.
         /// </summary>
         public CodeAction AddAbstractModifierAction<T>(ValidSyntax<T> typeDecl)
-            where T : TypeDeclarationSyntax
-        {
-            return document.AddModifierAction(typeDecl, SyntaxKind.AbstractKeyword, "Add 'abstract' modifier");
-        }
+            where T : TypeDeclarationSyntax =>
+            document.AddModifierAction(typeDecl, SyntaxKind.AbstractKeyword, "Add 'abstract' modifier");
 
         /// <summary>
         /// Creates a code action that adds the 'readonly' modifier to a struct declaration.
         /// </summary>
-        public CodeAction AddReadonlyModifierAction(ValidSyntax<StructDeclarationSyntax> structDecl)
-        {
-            return document.AddModifierAction(structDecl, SyntaxKind.ReadOnlyKeyword, "Add 'readonly' modifier");
-        }
+        public CodeAction AddReadonlyModifierAction(ValidSyntax<StructDeclarationSyntax> structDecl) =>
+            document.AddModifierAction(structDecl, SyntaxKind.ReadOnlyKeyword, "Add 'readonly' modifier");
 
         /// <summary>
         /// Creates a code action that adds a modifier to a type declaration.
@@ -71,16 +61,14 @@ public static class TypeCodeFixActions
             ValidSyntax<T> typeDecl,
             SyntaxKind modifier,
             string title)
-            where T : TypeDeclarationSyntax
-        {
-            return CodeAction.Create(
+            where T : TypeDeclarationSyntax =>
+            CodeAction.Create(
                 title,
                 ct => document.ReplaceNode(
                     typeDecl.Node,
                     typeDecl.AddModifier(modifier),
                     ct),
                 title);
-        }
 
         /// <summary>
         /// Creates a code action that removes a modifier from a type declaration.
@@ -92,16 +80,14 @@ public static class TypeCodeFixActions
             ValidSyntax<T> typeDecl,
             SyntaxKind modifier,
             string title)
-            where T : TypeDeclarationSyntax
-        {
-            return CodeAction.Create(
+            where T : TypeDeclarationSyntax =>
+            CodeAction.Create(
                 title,
                 ct => document.ReplaceNode(
                     typeDecl.Node,
                     typeDecl.RemoveModifier(modifier),
                     ct),
                 title);
-        }
 
         #endregion
 
@@ -117,13 +103,11 @@ public static class TypeCodeFixActions
             ValidSyntax<T> typeDecl,
             string title,
             params MemberDeclarationSyntax[] members)
-            where T : TypeDeclarationSyntax
-        {
-            return CodeAction.Create(
+            where T : TypeDeclarationSyntax =>
+            CodeAction.Create(
                 title,
                 ct => AddMembersAsync(document, typeDecl, members, ct),
                 title);
-        }
 
         /// <summary>
         /// Creates a code action that adds new members (parsed from source text) to a type declaration.
@@ -165,6 +149,7 @@ public static class TypeCodeFixActions
             where T : TypeDeclarationSyntax
         {
             title ??= $"Rename to '{newName}'";
+
             return CodeAction.Create(
                 title,
                 ct => document.ReplaceNode(
@@ -189,6 +174,7 @@ public static class TypeCodeFixActions
             where T : TypeDeclarationSyntax
         {
             var title = $"Add '{baseTypeName}'";
+
             return CodeAction.Create(
                 title,
                 ct => AddBaseTypeAsync(document, typeDecl, baseTypeName, ct),
@@ -204,6 +190,7 @@ public static class TypeCodeFixActions
             where T : TypeDeclarationSyntax
         {
             var title = $"Implement '{interfaceName}'";
+
             return CodeAction.Create(
                 title,
                 ct => AddBaseTypeAsync(document, typeDecl, interfaceName, ct),
@@ -223,6 +210,7 @@ public static class TypeCodeFixActions
         where T : TypeDeclarationSyntax
     {
         var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+
         if (root is null)
             return document;
 
@@ -240,6 +228,7 @@ public static class TypeCodeFixActions
         where T : TypeDeclarationSyntax
     {
         var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+
         if (root is null)
             return document;
 
@@ -247,11 +236,13 @@ public static class TypeCodeFixActions
         var baseType = SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName(baseTypeName));
 
         TypeDeclarationSyntax newNode;
+
         if (node.BaseList is null)
         {
             var baseList = SyntaxFactory.BaseList(
                     SyntaxFactory.SingletonSeparatedList<BaseTypeSyntax>(baseType))
                 .WithLeadingTrivia(SyntaxFactory.Space);
+
             newNode = node.WithBaseList(baseList);
         }
         else

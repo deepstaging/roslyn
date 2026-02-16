@@ -63,18 +63,12 @@ public class AnalyzerTestContext
     /// <summary>
     /// Assert that diagnostics should be reported.
     /// </summary>
-    public DiagnosticsAssertion ShouldHaveDiagnostics()
-    {
-        return new DiagnosticsAssertion(this, true);
-    }
+    public DiagnosticsAssertion ShouldHaveDiagnostics() => new(this, true);
 
     /// <summary>
     /// Assert that no diagnostics should be reported.
     /// </summary>
-    public Task ShouldHaveNoDiagnostics()
-    {
-        return new DiagnosticsAssertion(this, false).VerifyAsync();
-    }
+    public Task ShouldHaveNoDiagnostics() => new DiagnosticsAssertion(this, false).VerifyAsync();
 
     /// <summary>
     /// Get all diagnostics produced by the analyzer for the source code.
@@ -148,10 +142,7 @@ public class DiagnosticsAssertion
     /// <summary>
     /// Enables awaiting on the assertion to verify all conditions.
     /// </summary>
-    public TaskAwaiter GetAwaiter()
-    {
-        return VerifyAsync().GetAwaiter();
-    }
+    public TaskAwaiter GetAwaiter() => VerifyAsync().GetAwaiter();
 
     internal async Task VerifyAsync()
     {
@@ -163,6 +154,7 @@ public class DiagnosticsAssertion
             {
                 var diagnosticDetails = string.Join(Environment.NewLine,
                     diagnostics.Select(d => $"  - {d.Id}: {d.GetMessage()} at {d.Location.GetLineSpan()}"));
+
                 Assert.Fail(
                     $"Expected no diagnostics, but found {diagnostics.Length} diagnostic(s):{Environment.NewLine}" +
                     diagnosticDetails);
@@ -197,6 +189,7 @@ public class DiagnosticsAssertion
         {
             var message = diagnostic.GetMessage();
             var pattern = _messagePattern.Replace("*", ".*");
+
             if (!System.Text.RegularExpressions.Regex.IsMatch(message, pattern))
                 Assert.Fail(
                     $"Expected diagnostic '{_diagnosticId}' message to match pattern '{_messagePattern}', " +
@@ -244,10 +237,7 @@ public class DiagnosticAssertion
     /// <summary>
     /// Enables awaiting on the assertion to verify all conditions.
     /// </summary>
-    public TaskAwaiter GetAwaiter()
-    {
-        return VerifyAsync().GetAwaiter();
-    }
+    public TaskAwaiter GetAwaiter() => VerifyAsync().GetAwaiter();
 
     private async Task VerifyAsync()
     {
@@ -275,6 +265,7 @@ public class DiagnosticAssertion
             {
                 var message = diagnostic.GetMessage();
                 var pattern = _messagePattern.Replace("*", ".*");
+
                 if (!System.Text.RegularExpressions.Regex.IsMatch(message, pattern))
                     Assert.Fail(
                         $"Expected diagnostic '{_diagnosticId}' message to match pattern '{_messagePattern}', " +

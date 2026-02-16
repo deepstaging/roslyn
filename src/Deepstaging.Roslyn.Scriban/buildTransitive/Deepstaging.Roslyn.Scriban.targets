@@ -8,6 +8,6 @@
     -->
     <ItemGroup>
         <AdditionalFiles Include="Templates/**/*.scriban-cs"
-                         Condition="Exists('Templates')" />
+                         Condition="Exists('Templates')"/>
     </ItemGroup>
 </Project>

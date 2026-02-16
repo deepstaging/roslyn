@@ -37,7 +37,8 @@ public static class EffectInstrumentationExtensions
         /// to determine if the effect failed.
         /// </remarks>
         /// <exception cref="Exception">Propagates any exceptions thrown during effect execution setup.</exception>
-        public async Task<InstrumentationTestContext> CaptureInstrumentation(TRuntime runtime,
+        public async Task<InstrumentationTestContext> CaptureInstrumentation(
+            TRuntime runtime,
             ActivitySource activitySource)
         {
             Activity? capturedActivity = null;
@@ -64,8 +65,8 @@ public static class EffectInstrumentationExtensions
 
                     foreach (var tag in activity.Tags) capturedTags[tag.Key] = tag.Value;
 
-                    if (capturedTags.TryGetValue("operation.duration_ms", out var durationValue)
-                        && durationValue is long duration)
+                    if (capturedTags.TryGetValue("operation.duration_ms", out var durationValue) &&
+                        durationValue is long duration)
                         durationMs = duration;
                 }
             };

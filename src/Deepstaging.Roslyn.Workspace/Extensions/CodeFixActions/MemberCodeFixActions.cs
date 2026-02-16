@@ -32,7 +32,9 @@ public static class MemberCodeFixActions
             var shortName = attributeName.Contains('.')
                 ? attributeName.Substring(attributeName.LastIndexOf('.') + 1)
                 : attributeName;
+
             var title = $"Add [{shortName}] attribute";
+
             return CodeAction.Create(
                 title,
                 ct => AddAttributeAsync(document, memberDecl, attributeName, attributeArguments, ct),
@@ -52,7 +54,9 @@ public static class MemberCodeFixActions
             var shortName = attributeName.Contains('.')
                 ? attributeName.Substring(attributeName.LastIndexOf('.') + 1)
                 : attributeName;
+
             var title = $"Remove [{shortName}] attribute";
+
             return CodeAction.Create(
                 title,
                 ct => RemoveAttributeAsync(document, memberDecl, attributeName, ct),
@@ -73,22 +77,19 @@ public static class MemberCodeFixActions
         where T : MemberDeclarationSyntax
     {
         var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+
         if (root is null)
             return document;
 
         var node = memberDecl.Node;
 
         AttributeSyntax attribute;
+
         if (attributeArguments is not null)
-        {
             attribute = SyntaxFactory.Attribute(
                 SyntaxFactory.ParseName(attributeName),
                 SyntaxFactory.ParseAttributeArgumentList($"({attributeArguments})"));
-        }
-        else
-        {
-            attribute = SyntaxFactory.Attribute(SyntaxFactory.ParseName(attributeName));
-        }
+        else attribute = SyntaxFactory.Attribute(SyntaxFactory.ParseName(attributeName));
 
         // Get leading trivia from first existing attribute or the member itself
         var leadingTrivia = node.AttributeLists.Count > 0
@@ -100,6 +101,7 @@ public static class MemberCodeFixActions
             .WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed);
 
         MemberDeclarationSyntax newNode;
+
         if (node.AttributeLists.Count > 0)
         {
             // Remove leading trivia from first existing attribute to avoid duplication
@@ -126,10 +128,12 @@ public static class MemberCodeFixActions
         where T : MemberDeclarationSyntax
     {
         var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+
         if (root is null)
             return document;
 
         var node = memberDecl.Node;
+
         var shortName = attributeName.Contains('.')
             ? attributeName.Substring(attributeName.LastIndexOf('.') + 1)
             : attributeName;
@@ -140,12 +144,14 @@ public static class MemberCodeFixActions
             : shortName;
 
         var newAttributeLists = new List<AttributeListSyntax>();
+
         foreach (var attrList in node.AttributeLists)
         {
             var remainingAttrs = attrList.Attributes
                 .Where(a =>
                 {
                     var name = a.Name.ToString();
+
                     return name != shortName &&
                            name != attributeName &&
                            name != nameWithoutSuffix;
@@ -153,9 +159,7 @@ public static class MemberCodeFixActions
                 .ToList();
 
             if (remainingAttrs.Count > 0)
-            {
                 newAttributeLists.Add(attrList.WithAttributes(SyntaxFactory.SeparatedList(remainingAttrs)));
-            }
         }
 
         var newNode = node.WithAttributeLists(SyntaxFactory.List(newAttributeLists));

@@ -24,6 +24,7 @@ public static class DocumentCodeFixActions
         public CodeAction AddUsingAction(string namespaceName)
         {
             var title = $"Add 'using {namespaceName};'";
+
             return CodeAction.Create(
                 title,
                 ct => AddUsingDirectiveAsync(document, namespaceName, ct),
@@ -41,6 +42,7 @@ public static class DocumentCodeFixActions
         public CodeAction SuppressWithPragmaAction(Diagnostic diagnostic)
         {
             var title = $"Suppress '{diagnostic.Id}' with #pragma";
+
             return CodeAction.Create(
                 title,
                 ct => SuppressWithPragmaAsync(document, diagnostic, ct),
@@ -58,6 +60,7 @@ public static class DocumentCodeFixActions
         CancellationToken cancellationToken)
     {
         var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+
         if (root is not CompilationUnitSyntax compilationUnit)
             return document;
 
@@ -79,6 +82,7 @@ public static class DocumentCodeFixActions
         CancellationToken cancellationToken)
     {
         var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+
         if (root is null)
             return document;
 

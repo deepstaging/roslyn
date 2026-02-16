@@ -27,9 +27,9 @@ public sealed class ScaffoldAvailableAnalyzer : DiagnosticAnalyzer
         "Type '{0}' supports a customizable template '{1}'. Add a template to override the default generated code.",
         "CodeGeneration",
         DiagnosticSeverity.Info,
-        isEnabledByDefault: true,
-        description: "A source generator for this type supports customizable templates via Scriban. " +
-                     "Create a template file to customize the generated output.");
+        true,
+        "A source generator for this type supports customizable templates via Scriban. " +
+        "Create a template file to customize the generated output.");
 
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => [Rule];
@@ -60,6 +60,7 @@ public sealed class ScaffoldAvailableAnalyzer : DiagnosticAnalyzer
 
         // Build a lookup from trigger attribute name → scaffold info
         var triggerLookup = new Dictionary<string, ScaffoldInfo>(StringComparer.Ordinal);
+
         foreach (var scaffold in uncovered)
             triggerLookup[scaffold.TriggerAttributeName] = scaffold;
 
@@ -70,6 +71,14 @@ public sealed class ScaffoldAvailableAnalyzer : DiagnosticAnalyzer
         SymbolAnalysisContext context,
         Dictionary<string, ScaffoldInfo> triggerLookup)
     {
+        // context.Symbol.AsNamedType()
+        //     .GetAttributes()
+        //     .Where(attr =>
+        //     {
+        //         
+        //         return attr.AttributeClass.Name == "TemplateAttribute";
+        //     })
+
         var type = (INamedTypeSymbol)context.Symbol;
 
         foreach (var attr in type.GetAttributes())
@@ -88,10 +97,10 @@ public sealed class ScaffoldAvailableAnalyzer : DiagnosticAnalyzer
                 var diagnostic = Diagnostic.Create(
                     Rule,
                     type.Locations.FirstOrDefault() ?? Location.None,
-                    properties: ImmutableDictionary.CreateRange(
+                    ImmutableDictionary.CreateRange(
                     [
                         new KeyValuePair<string, string?>("TemplateName", scaffold.TemplateName),
-                        new KeyValuePair<string, string?>("TriggerAttributeName", scaffold.TriggerAttributeName),
+                        new KeyValuePair<string, string?>("TriggerAttributeName", scaffold.TriggerAttributeName)
                     ]),
                     type.Name,
                     scaffold.TemplateName);

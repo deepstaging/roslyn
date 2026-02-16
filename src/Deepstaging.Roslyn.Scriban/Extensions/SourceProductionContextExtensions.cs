@@ -47,8 +47,12 @@ public static class SourceProductionContextExtensions
         /// <param name="context">Optional data context to pass to the template for rendering.</param>
         /// <param name="diagnostics">Optional diagnostics to report. If any are present, generation is skipped.</param>
         /// <param name="format">If true, formats the generated C# code using Roslyn's syntax tree normalization.</param>
-        public void AddFromTemplate(TemplateName template, string hintName, object? context = null,
-            IReadOnlyList<Diagnostic>? diagnostics = null, bool format = false)
+        public void AddFromTemplate(
+            TemplateName template,
+            string hintName,
+            object? context = null,
+            IReadOnlyList<Diagnostic>? diagnostics = null,
+            bool format = false)
         {
             if (diagnostics is not null && diagnostics.Any())
             {
