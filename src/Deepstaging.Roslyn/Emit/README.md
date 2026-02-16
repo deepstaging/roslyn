@@ -4,7 +4,8 @@ Fluent builders for generating C# code using Roslyn's SyntaxFactory.
 
 📚 **[Full Documentation](https://deepstaging.github.io/roslyn/api/emit/)**
 
-> **See also:** [Queries](https://deepstaging.github.io/roslyn/api/queries/) | [Projections](https://deepstaging.github.io/roslyn/api/projections/) | [Roslyn Toolkit](https://deepstaging.github.io/roslyn/)
+> **See also:
+** [Queries](https://deepstaging.github.io/roslyn/api/queries/) | [Projections](https://deepstaging.github.io/roslyn/api/projections/) | [Roslyn Toolkit](https://deepstaging.github.io/roslyn/)
 
 ## Quick Start
 
@@ -169,7 +170,8 @@ The Emit API is the **write counterpart** to the read API:
 
 ## Complete Documentation
 
-See **[Emit documentation](https://deepstaging.github.io/roslyn/api/emit/)** for comprehensive examples for every builder and feature.
+See **[Emit documentation](https://deepstaging.github.io/roslyn/api/emit/)** for comprehensive examples for every
+builder and feature.
 
 ## Features
 

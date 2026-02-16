@@ -65,7 +65,11 @@ public static class TypeBuilderEquatableExtensions
                 .WithExpressionBody(hashCodeExpression));
     }
 
-    private static MethodBuilder BuildEqualsMethod(string typeName, EquatableTypeInfo info, string valueAccessor, StringComparison stringComparison)
+    private static MethodBuilder BuildEqualsMethod(
+        string typeName,
+        EquatableTypeInfo info,
+        string valueAccessor,
+        StringComparison stringComparison)
     {
         var method = MethodBuilder
             .Parse($"public bool Equals({typeName} other)")
@@ -74,45 +78,51 @@ public static class TypeBuilderEquatableExtensions
         if (info.RequiresNullHandling)
         {
             var comparisonName = $"global::System.StringComparison.{stringComparison}";
+
             // Null-safe pattern for reference types
             return method.WithBody(b => b.AddStatements($$"""
-                return ({{valueAccessor}}, other.{{valueAccessor}}) switch
-                {
-                    (null, null) => true,
-                    (null, _) => false,
-                    (_, null) => false,
-                    (_, _) => {{valueAccessor}}.Equals(other.{{valueAccessor}}, {{comparisonName}}),
-                };
-                """));
+                                                          return ({{valueAccessor}}, other.{{valueAccessor}}) switch
+                                                          {
+                                                              (null, null) => true,
+                                                              (null, _) => false,
+                                                              (_, null) => false,
+                                                              (_, _) => {{valueAccessor}}.Equals(other.{{valueAccessor}}, {{comparisonName}}),
+                                                          };
+                                                          """));
         }
 
         // Simple delegation for value types
         return method.WithExpressionBody($"{valueAccessor}.Equals(other.{valueAccessor})");
     }
 
-    private static MethodBuilder BuildEqualsObjectMethod(string typeName)
-    {
-        return MethodBuilder
+    private static MethodBuilder BuildEqualsObjectMethod(string typeName) =>
+        MethodBuilder
             .Parse("public override bool Equals(object? obj)")
             .WithBody(b => b
                 .AddStatement("if (ReferenceEquals(null, obj)) return false;")
                 .AddStatement($"return obj is {typeName} other && Equals(other);"));
-    }
 
-    private static MethodBuilder BuildGetHashCodeMethod(EquatableTypeInfo info, string valueAccessor, StringComparison stringComparison)
+    private static MethodBuilder BuildGetHashCodeMethod(
+        EquatableTypeInfo info,
+        string valueAccessor,
+        StringComparison stringComparison)
     {
         if (info.RequiresNullHandling)
         {
             // For case-insensitive comparisons, we need a case-insensitive hash
-            if (stringComparison is StringComparison.OrdinalIgnoreCase or StringComparison.CurrentCultureIgnoreCase or StringComparison.InvariantCultureIgnoreCase)
+            if (stringComparison is StringComparison.OrdinalIgnoreCase or StringComparison.CurrentCultureIgnoreCase
+                or StringComparison.InvariantCultureIgnoreCase)
             {
                 var comparerName = stringComparison switch
                 {
                     StringComparison.OrdinalIgnoreCase => "global::System.StringComparer.OrdinalIgnoreCase",
-                    StringComparison.CurrentCultureIgnoreCase => "global::System.StringComparer.CurrentCultureIgnoreCase",
-                    StringComparison.InvariantCultureIgnoreCase => "global::System.StringComparer.InvariantCultureIgnoreCase",
+                    StringComparison.CurrentCultureIgnoreCase =>
+                        "global::System.StringComparer.CurrentCultureIgnoreCase",
+                    StringComparison.InvariantCultureIgnoreCase =>
+                        "global::System.StringComparer.InvariantCultureIgnoreCase",
                     _ => "global::System.StringComparer.Ordinal"
                 };
+
                 return MethodBuilder
                     .Parse("public override int GetHashCode()")
                     .WithExpressionBody($"{valueAccessor} is null ? 0 : {comparerName}.GetHashCode({valueAccessor})");

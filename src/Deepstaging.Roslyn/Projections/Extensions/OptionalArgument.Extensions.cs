@@ -15,12 +15,9 @@ public static class ProjectedArgumentExtensions
     /// <typeparam name="T">The expected type of the constant value.</typeparam>
     /// <param name="constant">The typed constant to wrap.</param>
     /// <returns>An OptionalArgument containing the value, or Empty if null or wrong type.</returns>
-    public static OptionalArgument<T> Query<T>(this TypedConstant constant)
-    {
-        return constant.Value is T typedValue
-            ? OptionalArgument<T>.WithValue(typedValue)
-            : OptionalArgument<T>.Empty();
-    }
+    public static OptionalArgument<T> Query<T>(this TypedConstant constant) => constant.Value is T typedValue
+        ? OptionalArgument<T>.WithValue(typedValue)
+        : OptionalArgument<T>.Empty();
 
     /// <summary>
     /// Creates an OptionalArgument from a nullable value.
@@ -28,10 +25,8 @@ public static class ProjectedArgumentExtensions
     /// <typeparam name="TSource">The source type.</typeparam>
     /// <param name="value">The nullable value.</param>
     /// <returns>OptionalArgument with value if not null, Empty otherwise.</returns>
-    public static OptionalArgument<TSource> ToOptionalArgument<TSource>(this TSource? value) where TSource : class
-    {
-        return value != null ? OptionalArgument<TSource>.WithValue(value) : OptionalArgument<TSource>.Empty();
-    }
+    public static OptionalArgument<TSource> ToOptionalArgument<TSource>(this TSource? value) where TSource : class =>
+        value != null ? OptionalArgument<TSource>.WithValue(value) : OptionalArgument<TSource>.Empty();
 
     /// <summary>
     /// Creates an OptionalArgument from a nullable struct.
@@ -39,10 +34,8 @@ public static class ProjectedArgumentExtensions
     /// <typeparam name="TSource">The source type.</typeparam>
     /// <param name="value">The nullable struct.</param>
     /// <returns>OptionalArgument with value if HasValue, Empty otherwise.</returns>
-    public static OptionalArgument<TSource> ToOptionalArgument<TSource>(this TSource? value) where TSource : struct
-    {
-        return value.HasValue ? OptionalArgument<TSource>.WithValue(value.Value) : OptionalArgument<TSource>.Empty();
-    }
+    public static OptionalArgument<TSource> ToOptionalArgument<TSource>(this TSource? value) where TSource : struct =>
+        value.HasValue ? OptionalArgument<TSource>.WithValue(value.Value) : OptionalArgument<TSource>.Empty();
 
     /// <summary>
     /// Maps each element in the projected collection and returns an ImmutableArray of results.
@@ -61,6 +54,7 @@ public static class ProjectedArgumentExtensions
             return ImmutableArray<TResult>.Empty;
 
         var collection = source.OrNull();
+
         if (collection == null)
             return ImmutableArray<TResult>.Empty;
 
@@ -84,6 +78,7 @@ public static class ProjectedArgumentExtensions
             return ImmutableArray<TResult>.Empty;
 
         var array = source.OrNull();
+
         if (array.IsDefaultOrEmpty)
             return ImmutableArray<TResult>.Empty;
 

@@ -8,7 +8,7 @@ public class EncodingRefsTests
     [Test]
     public async Task UTF8_creates_globally_qualified_expression()
     {
-        TypeRef typeRef = EncodingRefs.UTF8;
+        var typeRef = EncodingRefs.UTF8;
 
         await Assert.That(typeRef).IsEqualTo("global::System.Text.Encoding.UTF8");
     }
@@ -16,7 +16,7 @@ public class EncodingRefsTests
     [Test]
     public async Task ASCII_creates_globally_qualified_expression()
     {
-        TypeRef typeRef = EncodingRefs.ASCII;
+        var typeRef = EncodingRefs.ASCII;
 
         await Assert.That(typeRef).IsEqualTo("global::System.Text.Encoding.ASCII");
     }
@@ -24,7 +24,7 @@ public class EncodingRefsTests
     [Test]
     public async Task Unicode_creates_globally_qualified_expression()
     {
-        TypeRef typeRef = EncodingRefs.Unicode;
+        var typeRef = EncodingRefs.Unicode;
 
         await Assert.That(typeRef).IsEqualTo("global::System.Text.Encoding.Unicode");
     }

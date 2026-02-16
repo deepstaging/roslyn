@@ -54,7 +54,7 @@ public static class ValidSymbolSnapshotExtensions
                 IsValueType = symbol.IsValueType,
                 IsReferenceType = symbol.IsReferenceType,
                 IsNullable = symbol.IsNullable,
-                Documentation = symbol.XmlDocumentation.ToSnapshot(),
+                Documentation = symbol.XmlDocumentation.ToSnapshot()
             };
     }
 
@@ -83,7 +83,7 @@ public static class ValidSymbolSnapshotExtensions
                 : null,
             InterfaceNames = symbol.Interfaces
                 .Select(i => i.GloballyQualifiedName)
-                .ToEquatableArray(),
+                .ToEquatableArray()
         });
     }
 
@@ -107,7 +107,7 @@ public static class ValidSymbolSnapshotExtensions
             IsAsync = method.IsAsync(),
             Parameters = method.Parameters
                 .Select(p => p.ToSnapshot())
-                .ToEquatableArray(),
+                .ToEquatableArray()
         });
     }
 
@@ -125,7 +125,7 @@ public static class ValidSymbolSnapshotExtensions
                 : null,
             RefKind = parameter.Value.RefKind,
             IsParams = parameter.Value.IsParams,
-            IsOptional = parameter.Value.IsOptional,
+            IsOptional = parameter.Value.IsOptional
         });
     }
 
@@ -146,7 +146,7 @@ public static class ValidSymbolSnapshotExtensions
                 ? property.Value.Parameters
                     .Select(p => ValidSymbol<IParameterSymbol>.From(p).ToSnapshot())
                     .ToEquatableArray()
-                : [],
+                : []
         });
     }
 
@@ -163,7 +163,7 @@ public static class ValidSymbolSnapshotExtensions
             HasConstantValue = field.Value.HasConstantValue,
             ConstantValueExpression = field.Value.HasConstantValue
                 ? FormatDefaultValue(field.Value.ConstantValue, field.Value.Type)
-                : null,
+                : null
         });
     }
 
@@ -174,16 +174,15 @@ public static class ValidSymbolSnapshotExtensions
         /// </summary>
         public EventSnapshot ToSnapshot() => @event.WithBaseProperties(new EventSnapshot
         {
-            Type = @event.Type.GloballyQualifiedName,
+            Type = @event.Type.GloballyQualifiedName
         });
     }
 
     /// <summary>
     /// Formats a constant/default value as a C# expression string.
     /// </summary>
-    private static string? FormatDefaultValue(object? value, ITypeSymbol type)
-    {
-        return value switch
+    private static string? FormatDefaultValue(object? value, ITypeSymbol type) =>
+        value switch
         {
             null => "default",
             string s => $"\"{s}\"",
@@ -191,5 +190,4 @@ public static class ValidSymbolSnapshotExtensions
             bool b => b ? "true" : "false",
             _ => value.ToString()
         };
-    }
 }

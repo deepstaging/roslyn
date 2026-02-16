@@ -14,257 +14,169 @@ public static class SymbolExtensions
         /// <summary>
         /// Checks if this symbol equals another symbol using semantic comparison.
         /// </summary>
-        public bool IsSymbol(ISymbol? other)
-        {
-            return SymbolEqualityComparer.Default.Equals(symbol, other);
-        }
+        public bool IsSymbol(ISymbol? other) => SymbolEqualityComparer.Default.Equals(symbol, other);
 
         /// <summary>
         /// Checks if this symbol does not equal another symbol using semantic comparison.
         /// </summary>
-        public bool DoesNotEqual(ISymbol? other)
-        {
-            return !SymbolEqualityComparer.Default.Equals(symbol, other);
-        }
+        public bool DoesNotEqual(ISymbol? other) => !SymbolEqualityComparer.Default.Equals(symbol, other);
 
         /// <summary>
         /// Gets all attributes on the symbol as validated attribute projections.
         /// </summary>
-        public IEnumerable<ValidAttribute> GetAttributes()
-        {
-            return symbol.GetAttributes().Select(ValidAttribute.From);
-        }
+        public IEnumerable<ValidAttribute> GetAttributes() => symbol.GetAttributes().Select(ValidAttribute.From);
 
         /// <summary>
         /// Gets attributes by name (supports both "Name" and "NameAttribute" forms).
         /// </summary>
-        public IEnumerable<ValidAttribute> GetAttributesByName(string attributeName)
-        {
-            return symbol.GetAttributes().GetByName(attributeName);
-        }
+        public IEnumerable<ValidAttribute> GetAttributesByName(string attributeName) =>
+            symbol.GetAttributes().GetByName(attributeName);
 
         /// <summary>
         /// Gets attributes by type.
         /// </summary>
         public IEnumerable<ValidAttribute> GetAttributesByType<TAttribute>()
-            where TAttribute : Attribute
-        {
-            return symbol.GetAttributesByName(typeof(TAttribute).Name);
-        }
+            where TAttribute : Attribute => symbol.GetAttributesByName(typeof(TAttribute).Name);
 
         /// <summary>
         /// Gets attributes by System.Type, supporting open generic types.
         /// For generic attributes, use typeof(MyAttribute&lt;&gt;) to match any instantiation.
         /// </summary>
         /// <param name="attributeType">The attribute type. Can be an open generic like typeof(MyAttribute&lt;&gt;).</param>
-        public IEnumerable<ValidAttribute> GetAttributesByType(Type attributeType)
-        {
-            return symbol.GetAttributes().GetByType(attributeType);
-        }
+        public IEnumerable<ValidAttribute> GetAttributesByType(Type attributeType) =>
+            symbol.GetAttributes().GetByType(attributeType);
 
         /// <summary>
         /// Gets attributes by metadata name (supports generic arity notation like "MyAttribute`1").
         /// </summary>
-        public IEnumerable<ValidAttribute> GetAttributesByMetadataName(string metadataName)
-        {
-            return symbol.GetAttributes().GetByMetadataName(metadataName);
-        }
+        public IEnumerable<ValidAttribute> GetAttributesByMetadataName(string metadataName) =>
+            symbol.GetAttributes().GetByMetadataName(metadataName);
 
         /// <summary>
         /// Checks if the symbol is public.
         /// </summary>
-        public bool IsPublic()
-        {
-            return symbol.DeclaredAccessibility == Accessibility.Public;
-        }
+        public bool IsPublic() => symbol.DeclaredAccessibility == Accessibility.Public;
 
         /// <summary>
         /// Checks if the symbol is private.
         /// </summary>
-        public bool IsPrivate()
-        {
-            return symbol.DeclaredAccessibility == Accessibility.Private;
-        }
+        public bool IsPrivate() => symbol.DeclaredAccessibility == Accessibility.Private;
 
         /// <summary>
         /// Checks if the symbol is protected.
         /// </summary>
-        public bool IsProtected()
-        {
-            return symbol.DeclaredAccessibility == Accessibility.Protected;
-        }
+        public bool IsProtected() => symbol.DeclaredAccessibility == Accessibility.Protected;
 
         /// <summary>
         /// Checks if the symbol is internal.
         /// </summary>
-        public bool IsInternal()
-        {
-            return symbol.DeclaredAccessibility == Accessibility.Internal;
-        }
+        public bool IsInternal() => symbol.DeclaredAccessibility == Accessibility.Internal;
 
         /// <summary>
         /// Checks if the symbol is protected internal.
         /// </summary>
-        public bool IsProtectedInternal()
-        {
-            return symbol.DeclaredAccessibility == Accessibility.ProtectedOrInternal;
-        }
+        public bool IsProtectedInternal() => symbol.DeclaredAccessibility == Accessibility.ProtectedOrInternal;
 
         /// <summary>
         /// Checks if the symbol is private protected.
         /// </summary>
-        public bool IsPrivateProtected()
-        {
-            return symbol.DeclaredAccessibility == Accessibility.ProtectedAndInternal;
-        }
+        public bool IsPrivateProtected() => symbol.DeclaredAccessibility == Accessibility.ProtectedAndInternal;
 
         /// <summary>
         /// Checks if the symbol is marked as virtual.
         /// </summary>
-        public bool IsVirtual()
-        {
-            return symbol.IsVirtual;
-        }
+        public bool IsVirtual() => symbol.IsVirtual;
 
         /// <summary>
         /// Checks if the symbol is marked as override.
         /// </summary>
-        public bool IsOverride()
-        {
-            return symbol.IsOverride;
-        }
+        public bool IsOverride() => symbol.IsOverride;
 
         /// <summary>
         /// Checks if the symbol is marked as sealed.
         /// </summary>
-        public bool IsSealed()
-        {
-            return symbol.IsSealed;
-        }
+        public bool IsSealed() => symbol.IsSealed;
 
         /// <summary>
         /// Checks if the symbol is marked as abstract.
         /// </summary>
-        public bool IsAbstract()
-        {
-            return symbol.IsAbstract;
-        }
+        public bool IsAbstract() => symbol.IsAbstract;
 
         /// <summary>
         /// Checks if the symbol is marked as static.
         /// </summary>
-        public bool IsStatic()
-        {
-            return symbol.IsStatic;
-        }
+        public bool IsStatic() => symbol.IsStatic;
 
         /// <summary>
         /// Checks if the symbol is marked as extern.
         /// </summary>
-        public bool IsExtern()
-        {
-            return symbol.IsExtern;
-        }
+        public bool IsExtern() => symbol.IsExtern;
 
         /// <summary>
         /// Checks if the symbol is obsolete (has ObsoleteAttribute).
         /// </summary>
-        public bool IsObsolete()
-        {
-            return symbol.GetAttributes().Any(a => a.AttributeClass?.Name == "ObsoleteAttribute");
-        }
+        public bool IsObsolete() => symbol.GetAttributes().Any(a => a.AttributeClass?.Name == "ObsoleteAttribute");
 
         /// <summary>
         /// Checks if the symbol is implicitly declared (compiler-generated).
         /// </summary>
-        public bool IsImplicitlyDeclared()
-        {
-            return symbol.IsImplicitlyDeclared;
-        }
+        public bool IsImplicitlyDeclared() => symbol.IsImplicitlyDeclared;
 
         /// <summary>
         /// Checks if the symbol is defined in source code (not from metadata).
         /// </summary>
-        public bool IsFromSource()
-        {
-            return symbol.Locations.Any(l => l.IsInSource);
-        }
+        public bool IsFromSource() => symbol.Locations.Any(l => l.IsInSource);
 
         /// <summary>
         /// Checks if the symbol is defined in a referenced assembly (from metadata).
         /// </summary>
-        public bool IsFromMetadata()
-        {
-            return symbol.Locations.Any(l => l.IsInMetadata);
-        }
+        public bool IsFromMetadata() => symbol.Locations.Any(l => l.IsInMetadata);
 
         /// <summary>
         /// Checks if the symbol has any attributes.
         /// </summary>
-        public bool HasAttributes()
-        {
-            return symbol.GetAttributes().Length > 0;
-        }
+        public bool HasAttributes() => symbol.GetAttributes().Length > 0;
 
         /// <summary>
         /// Checks if the symbol has an attribute with the specified name.
         /// Supports both "Name" and "NameAttribute" forms.
         /// </summary>
-        public bool HasAttribute(string attributeName)
-        {
-            return symbol.GetAttributesByName(attributeName).Any();
-        }
+        public bool HasAttribute(string attributeName) => symbol.GetAttributesByName(attributeName).Any();
 
         /// <summary>
         /// Checks if the symbol has an attribute of the specified type.
         /// </summary>
-        public bool HasAttribute<TAttribute>() where TAttribute : Attribute
-        {
-            return symbol.GetAttributesByType<TAttribute>().Any();
-        }
+        public bool HasAttribute<TAttribute>() where TAttribute : Attribute =>
+            symbol.GetAttributesByType<TAttribute>().Any();
 
         /// <summary>
         /// Checks if the symbol has an attribute of the specified System.Type.
         /// Supports open generic types - use typeof(MyAttribute&lt;&gt;) to match any instantiation.
         /// </summary>
         /// <param name="attributeType">The attribute type. Can be an open generic like typeof(MyAttribute&lt;&gt;).</param>
-        public bool HasAttribute(Type attributeType)
-        {
-            return symbol.GetAttributesByType(attributeType).Any();
-        }
+        public bool HasAttribute(Type attributeType) => symbol.GetAttributesByType(attributeType).Any();
 
         /// <summary>
         /// Checks if the symbol has no attributes.
         /// </summary>
-        public bool LacksAttributes()
-        {
-            return symbol.GetAttributes().Length == 0;
-        }
+        public bool LacksAttributes() => symbol.GetAttributes().Length == 0;
 
         /// <summary>
         /// Checks if the symbol does not have an attribute with the specified name.
         /// </summary>
-        public bool LacksAttribute(string attributeName)
-        {
-            return !symbol.GetAttributesByName(attributeName).Any();
-        }
+        public bool LacksAttribute(string attributeName) => !symbol.GetAttributesByName(attributeName).Any();
 
         /// <summary>
         /// Checks if the symbol does not have an attribute of the specified type.
         /// </summary>
-        public bool LacksAttribute<TAttribute>() where TAttribute : Attribute
-        {
-            return !symbol.GetAttributesByType<TAttribute>().Any();
-        }
+        public bool LacksAttribute<TAttribute>() where TAttribute : Attribute =>
+            !symbol.GetAttributesByType<TAttribute>().Any();
 
         /// <summary>
         /// Checks if the symbol does not have an attribute of the specified System.Type.
         /// Supports open generic types - use typeof(MyAttribute&lt;&gt;) to match any instantiation.
         /// </summary>
         /// <param name="attributeType">The attribute type. Can be an open generic like typeof(MyAttribute&lt;&gt;).</param>
-        public bool LacksAttribute(Type attributeType)
-        {
-            return !symbol.GetAttributesByType(attributeType).Any();
-        }
+        public bool LacksAttribute(Type attributeType) => !symbol.GetAttributesByType(attributeType).Any();
     }
 }

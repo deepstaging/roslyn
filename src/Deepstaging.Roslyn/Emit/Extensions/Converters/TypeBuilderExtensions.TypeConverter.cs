@@ -42,25 +42,27 @@ public static class TypeBuilderTypeConverterExtensions
         var converterType = TypeBuilder
             .Parse($"public partial class {converterName} : global::System.ComponentModel.TypeConverter")
             .AddMethod(MethodBuilder
-                .Parse("public override bool CanConvertFrom(global::System.ComponentModel.ITypeDescriptorContext? context, global::System.Type sourceType)")
+                .Parse(
+                    "public override bool CanConvertFrom(global::System.ComponentModel.ITypeDescriptorContext? context, global::System.Type sourceType)")
                 .WithBody(b => b.AddStatements(canConvertFromBody)))
             .AddMethod(MethodBuilder
-                .Parse("public override object? ConvertFrom(global::System.ComponentModel.ITypeDescriptorContext? context, global::System.Globalization.CultureInfo? culture, object value)")
+                .Parse(
+                    "public override object? ConvertFrom(global::System.ComponentModel.ITypeDescriptorContext? context, global::System.Globalization.CultureInfo? culture, object value)")
                 .WithBody(b => b.AddStatements(convertFromBody)))
             .AddMethod(MethodBuilder
-                .Parse("public override bool CanConvertTo(global::System.ComponentModel.ITypeDescriptorContext? context, global::System.Type? sourceType)")
+                .Parse(
+                    "public override bool CanConvertTo(global::System.ComponentModel.ITypeDescriptorContext? context, global::System.Type? sourceType)")
                 .WithBody(b => b.AddStatements(canConvertToBody)))
             .AddMethod(MethodBuilder
-                .Parse("public override object? ConvertTo(global::System.ComponentModel.ITypeDescriptorContext? context, global::System.Globalization.CultureInfo? culture, object? value, global::System.Type destinationType)")
+                .Parse(
+                    "public override object? ConvertTo(global::System.ComponentModel.ITypeDescriptorContext? context, global::System.Globalization.CultureInfo? culture, object? value, global::System.Type destinationType)")
                 .WithBody(b => b.AddStatements(convertToBody)));
 
         var result = builder.AddNestedType(converterType);
 
         if (addAttribute)
-        {
             result = result.WithAttribute("global::System.ComponentModel.TypeConverter", a => a
                 .WithArgument($"typeof({converterName})"));
-        }
 
         return result;
     }
@@ -84,10 +86,8 @@ public static class TypeBuilderTypeConverterExtensions
         var result = builder.AddNestedType(converterType);
 
         if (addAttribute)
-        {
             result = result.WithAttribute("global::System.ComponentModel.TypeConverter", a => a
                 .WithArgument($"typeof({converterName})"));
-        }
 
         return result;
     }

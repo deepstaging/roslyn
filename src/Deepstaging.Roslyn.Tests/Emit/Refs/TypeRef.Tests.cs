@@ -10,7 +10,7 @@ public class TypeRefTests
     [Test]
     public async Task From_creates_simple_type()
     {
-        TypeRef typeRef = TypeRef.From("string");
+        var typeRef = TypeRef.From("string");
 
         await Assert.That(typeRef).IsEqualTo("string");
     }
@@ -18,7 +18,7 @@ public class TypeRefTests
     [Test]
     public async Task From_creates_qualified_type()
     {
-        TypeRef typeRef = TypeRef.From("System.Collections.Generic.List");
+        var typeRef = TypeRef.From("System.Collections.Generic.List");
 
         await Assert.That(typeRef).IsEqualTo("System.Collections.Generic.List");
     }
@@ -26,7 +26,7 @@ public class TypeRefTests
     [Test]
     public async Task Global_adds_global_prefix()
     {
-        TypeRef typeRef = TypeRef.Global("System.String");
+        var typeRef = TypeRef.Global("System.String");
 
         await Assert.That(typeRef).IsEqualTo("global::System.String");
     }
@@ -38,7 +38,7 @@ public class TypeRefTests
     [Test]
     public async Task Nullable_appends_question_mark()
     {
-        TypeRef typeRef = TypeRef.From("string").Nullable();
+        var typeRef = TypeRef.From("string").Nullable();
 
         await Assert.That(typeRef).IsEqualTo("string?");
     }
@@ -46,7 +46,7 @@ public class TypeRefTests
     [Test]
     public async Task Nullable_on_value_type()
     {
-        TypeRef typeRef = TypeRef.From("int").Nullable();
+        var typeRef = TypeRef.From("int").Nullable();
 
         await Assert.That(typeRef).IsEqualTo("int?");
     }
@@ -58,7 +58,7 @@ public class TypeRefTests
     [Test]
     public async Task Array_appends_brackets()
     {
-        TypeRef typeRef = TypeRef.From("string").Array();
+        var typeRef = TypeRef.From("string").Array();
 
         await Assert.That(typeRef).IsEqualTo("string[]");
     }
@@ -66,7 +66,7 @@ public class TypeRefTests
     [Test]
     public async Task Array_with_rank_1()
     {
-        TypeRef typeRef = TypeRef.From("int").Array(1);
+        var typeRef = TypeRef.From("int").Array(1);
 
         await Assert.That(typeRef).IsEqualTo("int[]");
     }
@@ -74,7 +74,7 @@ public class TypeRefTests
     [Test]
     public async Task Array_with_rank_2()
     {
-        TypeRef typeRef = TypeRef.From("int").Array(2);
+        var typeRef = TypeRef.From("int").Array(2);
 
         await Assert.That(typeRef).IsEqualTo("int[,]");
     }
@@ -82,7 +82,7 @@ public class TypeRefTests
     [Test]
     public async Task Array_with_rank_3()
     {
-        TypeRef typeRef = TypeRef.From("int").Array(3);
+        var typeRef = TypeRef.From("int").Array(3);
 
         await Assert.That(typeRef).IsEqualTo("int[,,]");
     }
@@ -94,7 +94,7 @@ public class TypeRefTests
     [Test]
     public async Task Of_single_type_argument()
     {
-        TypeRef typeRef = TypeRef.From("List").Of("string");
+        var typeRef = TypeRef.From("List").Of("string");
 
         await Assert.That(typeRef).IsEqualTo("List<string>");
     }
@@ -102,7 +102,7 @@ public class TypeRefTests
     [Test]
     public async Task Of_multiple_type_arguments()
     {
-        TypeRef typeRef = TypeRef.From("Dictionary").Of("string", "int");
+        var typeRef = TypeRef.From("Dictionary").Of("string", "int");
 
         await Assert.That(typeRef).IsEqualTo("Dictionary<string, int>");
     }
@@ -110,7 +110,7 @@ public class TypeRefTests
     [Test]
     public async Task Of_nested_generics()
     {
-        TypeRef typeRef = TypeRef.From("Dictionary").Of(
+        var typeRef = TypeRef.From("Dictionary").Of(
             "string",
             TypeRef.From("List").Of("int"));
 
@@ -124,7 +124,7 @@ public class TypeRefTests
     [Test]
     public async Task Tuple_with_two_elements()
     {
-        TypeRef typeRef = TypeRef.Tuple(("string", "Name"), ("int", "Age"));
+        var typeRef = TypeRef.Tuple(("string", "Name"), ("int", "Age"));
 
         await Assert.That(typeRef).IsEqualTo("(string Name, int Age)");
     }
@@ -132,7 +132,7 @@ public class TypeRefTests
     [Test]
     public async Task Tuple_with_three_elements()
     {
-        TypeRef typeRef = TypeRef.Tuple(
+        var typeRef = TypeRef.Tuple(
             ("string", "First"),
             ("string", "Last"),
             ("int", "Age"));
@@ -147,7 +147,7 @@ public class TypeRefTests
     [Test]
     public async Task Invoke_with_no_arguments()
     {
-        ExpressionRef expr = TypeRef.From("OnSave").Invoke();
+        var expr = TypeRef.From("OnSave").Invoke();
 
         await Assert.That(expr).IsEqualTo("OnSave?.Invoke()");
     }
@@ -155,7 +155,7 @@ public class TypeRefTests
     [Test]
     public async Task Invoke_with_single_argument()
     {
-        ExpressionRef expr = TypeRef.From("OnSave").Invoke("id");
+        var expr = TypeRef.From("OnSave").Invoke("id");
 
         await Assert.That(expr).IsEqualTo("OnSave?.Invoke(id)");
     }
@@ -163,7 +163,7 @@ public class TypeRefTests
     [Test]
     public async Task Invoke_with_multiple_arguments()
     {
-        ExpressionRef expr = TypeRef.From("OnSendEmail").Invoke("to", "body");
+        var expr = TypeRef.From("OnSendEmail").Invoke("to", "body");
 
         await Assert.That(expr).IsEqualTo("OnSendEmail?.Invoke(to, body)");
     }
@@ -171,17 +171,18 @@ public class TypeRefTests
     [Test]
     public async Task Invoke_with_OrDefault()
     {
-        ExpressionRef expr = TypeRef.From("OnSendEmail")
+        var expr = TypeRef.From("OnSendEmail")
             .Invoke("to", "body")
             .OrDefault(TaskRefs.CompletedTask);
 
-        await Assert.That(expr).IsEqualTo("OnSendEmail?.Invoke(to, body) ?? global::System.Threading.Tasks.Task.CompletedTask");
+        await Assert.That(expr)
+            .IsEqualTo("OnSendEmail?.Invoke(to, body) ?? global::System.Threading.Tasks.Task.CompletedTask");
     }
 
     [Test]
     public async Task OrDefault_with_string_fallback()
     {
-        ExpressionRef expr = TypeRef.From("OnGetName")
+        var expr = TypeRef.From("OnGetName")
             .Invoke()
             .OrDefault("default!");
 
@@ -195,7 +196,7 @@ public class TypeRefTests
     [Test]
     public async Task Nullable_generic_array()
     {
-        TypeRef typeRef = TypeRef.From("List").Of("string").Nullable().Array();
+        var typeRef = TypeRef.From("List").Of("string").Nullable().Array();
 
         await Assert.That(typeRef).IsEqualTo("List<string>?[]");
     }
@@ -203,7 +204,7 @@ public class TypeRefTests
     [Test]
     public async Task Global_generic_nullable()
     {
-        TypeRef typeRef = TypeRef.Global("System.Collections.Generic.List").Of("string").Nullable();
+        var typeRef = TypeRef.Global("System.Collections.Generic.List").Of("string").Nullable();
 
         await Assert.That(typeRef).IsEqualTo("global::System.Collections.Generic.List<string>?");
     }
@@ -232,7 +233,7 @@ public class TypeRefTests
     public async Task Implicit_conversion_in_Of()
     {
         // strings implicitly convert to TypeRef in Of() params
-        TypeRef typeRef = TypeRef.From("List").Of("string");
+        var typeRef = TypeRef.From("List").Of("string");
 
         await Assert.That(typeRef).IsEqualTo("List<string>");
     }
@@ -272,40 +273,22 @@ public class TypeRefTests
     #region Edge Cases
 
     [Test]
-    public void From_throws_on_null()
-    {
-        Assert.Throws<ArgumentException>(() => TypeRef.From((string)null!));
-    }
+    public void From_throws_on_null() => Assert.Throws<ArgumentException>(() => TypeRef.From((string)null!));
 
     [Test]
-    public void From_throws_on_empty()
-    {
-        Assert.Throws<ArgumentException>(() => TypeRef.From(""));
-    }
+    public void From_throws_on_empty() => Assert.Throws<ArgumentException>(() => TypeRef.From(""));
 
     [Test]
-    public void From_throws_on_whitespace()
-    {
-        Assert.Throws<ArgumentException>(() => TypeRef.From("  "));
-    }
+    public void From_throws_on_whitespace() => Assert.Throws<ArgumentException>(() => TypeRef.From("  "));
 
     [Test]
-    public void Tuple_throws_on_single_element()
-    {
-        Assert.Throws<ArgumentException>(() => TypeRef.Tuple(("string", "Name")));
-    }
+    public void Tuple_throws_on_single_element() => Assert.Throws<ArgumentException>(() => TypeRef.Tuple(("string", "Name")));
 
     [Test]
-    public void Of_throws_on_no_arguments()
-    {
-        Assert.Throws<ArgumentException>(() => TypeRef.From("List").Of());
-    }
+    public void Of_throws_on_no_arguments() => Assert.Throws<ArgumentException>(() => TypeRef.From("List").Of());
 
     [Test]
-    public void Array_throws_on_zero_rank()
-    {
-        Assert.Throws<ArgumentOutOfRangeException>(() => TypeRef.From("int").Array(0));
-    }
+    public void Array_throws_on_zero_rank() => Assert.Throws<ArgumentOutOfRangeException>(() => TypeRef.From("int").Array(0));
 
     [Test]
     public async Task ToString_returns_value()

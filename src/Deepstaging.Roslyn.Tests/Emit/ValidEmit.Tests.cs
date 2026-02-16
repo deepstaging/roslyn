@@ -21,8 +21,10 @@ public class ValidEmitTests : RoslynTestBase
             .ValidateOrThrow();
 
         await Assert.That(emit.Usings.Length).IsEqualTo(2);
+
         await Assert.That(emit.Usings.Select(u => u.Name?.ToString()))
             .Contains("System");
+
         await Assert.That(emit.Usings.Select(u => u.Name?.ToString()))
             .Contains("System.Collections.Generic");
     }
@@ -232,6 +234,7 @@ public class ValidEmitTests : RoslynTestBase
         var combined = emit1.Combine(emit2);
 
         var compilation = CompilationFor(combined.Code);
+
         var errors = compilation.GetDiagnostics()
             .Where(d => d.Severity == DiagnosticSeverity.Error);
 
@@ -345,6 +348,7 @@ public class OptionalEmitCombineTests : RoslynTestBase
         await Assert.That(combined.Success).IsTrue();
 
         var compilation = CompilationFor(combined.Code!);
+
         var errors = compilation.GetDiagnostics()
             .Where(d => d.Severity == DiagnosticSeverity.Error);
 

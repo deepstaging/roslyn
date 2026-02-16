@@ -32,16 +32,10 @@ internal readonly struct SpanParsableTypeInfo
     /// <summary>Gets the C# keyword for the type, or null if none.</summary>
     public string? CSharpKeyword => Core.CSharpKeyword;
 
-    private SpanParsableTypeInfo(BackingTypeCore core)
-    {
-        Core = core;
-    }
+    private SpanParsableTypeInfo(BackingTypeCore core) => Core = core;
 
     /// <summary>
     /// Creates a SpanParsableTypeInfo from the given type symbol.
     /// </summary>
-    public static SpanParsableTypeInfo From(TypeSnapshot type)
-    {
-        return new SpanParsableTypeInfo(BackingTypeCore.From(type));
-    }
+    public static SpanParsableTypeInfo From(TypeSnapshot type) => new(BackingTypeCore.From(type));
 }

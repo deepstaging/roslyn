@@ -25,7 +25,9 @@ public static class TypeBuilderDivisionOperatorExtensions
             return builder;
 
         return builder
-            .Implements($"global::System.Numerics.IDivisionOperators<{typeName}, {typeName}, {typeName}>", Directives.Net7OrGreater)
+            .Implements(
+                $"global::System.Numerics.IDivisionOperators<{typeName}, {typeName}, {typeName}>",
+                Directives.Net7OrGreater)
             .AddOperator(OperatorBuilder
                 .Division(typeName)
                 .When(Directives.Net7OrGreater)
@@ -42,7 +44,9 @@ public static class TypeBuilderDivisionOperatorExtensions
         var typeName = builder.Name;
 
         return builder
-            .Implements($"global::System.Numerics.IDivisionOperators<{typeName}, {typeName}, {typeName}>", Directives.Net7OrGreater)
+            .Implements(
+                $"global::System.Numerics.IDivisionOperators<{typeName}, {typeName}, {typeName}>",
+                Directives.Net7OrGreater)
             .AddOperator(OperatorBuilder
                 .Division(typeName)
                 .When(Directives.Net7OrGreater)

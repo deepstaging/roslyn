@@ -29,8 +29,8 @@ public abstract class SymbolAnalyzer<TSymbol> : DiagnosticAnalyzer
     /// </summary>
     protected SymbolAnalyzer()
     {
-        var reportsAttr = GetType().GetCustomAttribute<ReportsAttribute>()
-                          ?? throw new InvalidOperationException(
+        var reportsAttr = GetType().GetCustomAttribute<ReportsAttribute>() ??
+                          throw new InvalidOperationException(
                               $"Analyzer {GetType().Name} must have a [Reports] attribute.");
 
         _rule = reportsAttr.ToDescriptor();
@@ -51,6 +51,7 @@ public abstract class SymbolAnalyzer<TSymbol> : DiagnosticAnalyzer
             return;
 
         var valid = ValidSymbol<TSymbol>.From(symbol);
+
         if (!ShouldReport(valid))
             return;
 
@@ -73,10 +74,7 @@ public abstract class SymbolAnalyzer<TSymbol> : DiagnosticAnalyzer
     /// </summary>
     /// <param name="symbol">The validated symbol.</param>
     /// <returns>The message format arguments.</returns>
-    protected virtual object[] GetMessageArgs(ValidSymbol<TSymbol> symbol)
-    {
-        return [symbol.Name];
-    }
+    protected virtual object[] GetMessageArgs(ValidSymbol<TSymbol> symbol) => [symbol.Name];
 
     /// <summary>
     /// Gets the location for the diagnostic.
@@ -84,10 +82,7 @@ public abstract class SymbolAnalyzer<TSymbol> : DiagnosticAnalyzer
     /// </summary>
     /// <param name="symbol">The validated symbol.</param>
     /// <returns>The diagnostic location.</returns>
-    protected virtual Location GetLocation(ValidSymbol<TSymbol> symbol)
-    {
-        return symbol.Location;
-    }
+    protected virtual Location GetLocation(ValidSymbol<TSymbol> symbol) => symbol.Location;
 
     /// <summary>
     /// Infers the <see cref="SymbolKind"/> from the given symbol type parameter.

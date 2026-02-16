@@ -21,81 +21,52 @@ public readonly struct FieldQuery
     /// <summary>
     /// Creates a new field query for the specified type symbol.
     /// </summary>
-    public static FieldQuery From(ITypeSymbol typeSymbol)
-    {
-        return new FieldQuery(typeSymbol, ImmutableArray<Func<IFieldSymbol, bool>>.Empty);
-    }
+    public static FieldQuery From(ITypeSymbol typeSymbol) =>
+        new(typeSymbol, ImmutableArray<Func<IFieldSymbol, bool>>.Empty);
 
-    private FieldQuery AddFilter(Func<IFieldSymbol, bool> filter)
-    {
-        return new FieldQuery(_typeSymbol, _filters.Add(filter));
-    }
+    private FieldQuery AddFilter(Func<IFieldSymbol, bool> filter) => new(_typeSymbol, _filters.Add(filter));
 
     #region Accessibility Filters
 
     /// <summary>
     /// Filters for public fields.
     /// </summary>
-    public FieldQuery ThatArePublic()
-    {
-        return AddFilter(f => f.DeclaredAccessibility == Accessibility.Public);
-    }
+    public FieldQuery ThatArePublic() => AddFilter(f => f.DeclaredAccessibility == Accessibility.Public);
 
     /// <summary>
     /// Filters for non-public fields.
     /// </summary>
-    public FieldQuery ThatAreNotPublic()
-    {
-        return AddFilter(f => f.DeclaredAccessibility != Accessibility.Public);
-    }
+    public FieldQuery ThatAreNotPublic() => AddFilter(f => f.DeclaredAccessibility != Accessibility.Public);
 
     /// <summary>
     /// Filters for private fields.
     /// </summary>
-    public FieldQuery ThatArePrivate()
-    {
-        return AddFilter(f => f.DeclaredAccessibility == Accessibility.Private);
-    }
+    public FieldQuery ThatArePrivate() => AddFilter(f => f.DeclaredAccessibility == Accessibility.Private);
 
     /// <summary>
     /// Filters for non-private fields.
     /// </summary>
-    public FieldQuery ThatAreNotPrivate()
-    {
-        return AddFilter(f => f.DeclaredAccessibility != Accessibility.Private);
-    }
+    public FieldQuery ThatAreNotPrivate() => AddFilter(f => f.DeclaredAccessibility != Accessibility.Private);
 
     /// <summary>
     /// Filters for protected fields.
     /// </summary>
-    public FieldQuery ThatAreProtected()
-    {
-        return AddFilter(f => f.DeclaredAccessibility == Accessibility.Protected);
-    }
+    public FieldQuery ThatAreProtected() => AddFilter(f => f.DeclaredAccessibility == Accessibility.Protected);
 
     /// <summary>
     /// Filters for non-protected fields.
     /// </summary>
-    public FieldQuery ThatAreNotProtected()
-    {
-        return AddFilter(f => f.DeclaredAccessibility != Accessibility.Protected);
-    }
+    public FieldQuery ThatAreNotProtected() => AddFilter(f => f.DeclaredAccessibility != Accessibility.Protected);
 
     /// <summary>
     /// Filters for internal fields.
     /// </summary>
-    public FieldQuery ThatAreInternal()
-    {
-        return AddFilter(f => f.DeclaredAccessibility == Accessibility.Internal);
-    }
+    public FieldQuery ThatAreInternal() => AddFilter(f => f.DeclaredAccessibility == Accessibility.Internal);
 
     /// <summary>
     /// Filters for non-internal fields.
     /// </summary>
-    public FieldQuery ThatAreNotInternal()
-    {
-        return AddFilter(f => f.DeclaredAccessibility != Accessibility.Internal);
-    }
+    public FieldQuery ThatAreNotInternal() => AddFilter(f => f.DeclaredAccessibility != Accessibility.Internal);
 
     #endregion
 
@@ -104,66 +75,42 @@ public readonly struct FieldQuery
     /// <summary>
     /// Filters for static fields.
     /// </summary>
-    public FieldQuery ThatAreStatic()
-    {
-        return AddFilter(f => f.IsStatic);
-    }
+    public FieldQuery ThatAreStatic() => AddFilter(f => f.IsStatic);
 
     /// <summary>
     /// Filters for instance fields (non-static).
     /// </summary>
-    public FieldQuery ThatAreInstance()
-    {
-        return AddFilter(f => !f.IsStatic);
-    }
+    public FieldQuery ThatAreInstance() => AddFilter(f => !f.IsStatic);
 
     /// <summary>
     /// Filters for readonly fields.
     /// </summary>
-    public FieldQuery ThatAreReadOnly()
-    {
-        return AddFilter(f => f.IsReadOnly);
-    }
+    public FieldQuery ThatAreReadOnly() => AddFilter(f => f.IsReadOnly);
 
     /// <summary>
     /// Filters for non-readonly fields.
     /// </summary>
-    public FieldQuery ThatAreNotReadOnly()
-    {
-        return AddFilter(f => !f.IsReadOnly);
-    }
+    public FieldQuery ThatAreNotReadOnly() => AddFilter(f => !f.IsReadOnly);
 
     /// <summary>
     /// Filters for const fields.
     /// </summary>
-    public FieldQuery ThatAreConst()
-    {
-        return AddFilter(f => f.IsConst);
-    }
+    public FieldQuery ThatAreConst() => AddFilter(f => f.IsConst);
 
     /// <summary>
     /// Filters for non-const fields.
     /// </summary>
-    public FieldQuery ThatAreNotConst()
-    {
-        return AddFilter(f => !f.IsConst);
-    }
+    public FieldQuery ThatAreNotConst() => AddFilter(f => !f.IsConst);
 
     /// <summary>
     /// Filters for volatile fields.
     /// </summary>
-    public FieldQuery ThatAreVolatile()
-    {
-        return AddFilter(f => f.IsVolatile);
-    }
+    public FieldQuery ThatAreVolatile() => AddFilter(f => f.IsVolatile);
 
     /// <summary>
     /// Filters for non-volatile fields.
     /// </summary>
-    public FieldQuery ThatAreNotVolatile()
-    {
-        return AddFilter(f => !f.IsVolatile);
-    }
+    public FieldQuery ThatAreNotVolatile() => AddFilter(f => !f.IsVolatile);
 
     #endregion
 
@@ -172,34 +119,22 @@ public readonly struct FieldQuery
     /// <summary>
     /// Filters for fields with the exact name.
     /// </summary>
-    public FieldQuery WithName(string name)
-    {
-        return AddFilter(f => f.Name == name);
-    }
+    public FieldQuery WithName(string name) => AddFilter(f => f.Name == name);
 
     /// <summary>
     /// Filters for fields with names starting with the specified prefix.
     /// </summary>
-    public FieldQuery WithNamePrefix(string prefix)
-    {
-        return AddFilter(f => f.Name.StartsWith(prefix));
-    }
+    public FieldQuery WithNamePrefix(string prefix) => AddFilter(f => f.Name.StartsWith(prefix));
 
     /// <summary>
     /// Filters for fields with names ending with the specified suffix.
     /// </summary>
-    public FieldQuery WithNameSuffix(string suffix)
-    {
-        return AddFilter(f => f.Name.EndsWith(suffix));
-    }
+    public FieldQuery WithNameSuffix(string suffix) => AddFilter(f => f.Name.EndsWith(suffix));
 
     /// <summary>
     /// Filters for fields with names matching a predicate.
     /// </summary>
-    public FieldQuery WithNameMatching(Func<string, bool> predicate)
-    {
-        return AddFilter(f => predicate(f.Name));
-    }
+    public FieldQuery WithNameMatching(Func<string, bool> predicate) => AddFilter(f => predicate(f.Name));
 
     #endregion
 
@@ -208,50 +143,32 @@ public readonly struct FieldQuery
     /// <summary>
     /// Filters for fields of a specific type.
     /// </summary>
-    public FieldQuery WithType<T>()
-    {
-        return AddFilter(f => f.Type.Name == typeof(T).Name);
-    }
+    public FieldQuery WithType<T>() => AddFilter(f => f.Type.Name == typeof(T).Name);
 
     /// <summary>
     /// Filters for fields of a specific type by name.
     /// </summary>
-    public FieldQuery WithType(string typeName)
-    {
-        return AddFilter(f => f.Type.Name == typeName);
-    }
+    public FieldQuery WithType(string typeName) => AddFilter(f => f.Type.Name == typeName);
 
     /// <summary>
     /// Filters for fields with generic types.
     /// </summary>
-    public FieldQuery ThatAreGenericType()
-    {
-        return AddFilter(f => f.Type is INamedTypeSymbol { IsGenericType: true });
-    }
+    public FieldQuery ThatAreGenericType() => AddFilter(f => f.Type is INamedTypeSymbol { IsGenericType: true });
 
     /// <summary>
     /// Filters for fields that are not generic types.
     /// </summary>
-    public FieldQuery ThatAreNotGenericType()
-    {
-        return AddFilter(f => f.Type is not INamedTypeSymbol { IsGenericType: true });
-    }
+    public FieldQuery ThatAreNotGenericType() => AddFilter(f => f.Type is not INamedTypeSymbol { IsGenericType: true });
 
     /// <summary>
     /// Filters for fields with nullable value types.
     /// </summary>
-    public FieldQuery ThatAreNullable()
-    {
-        return AddFilter(f => f.Type.NullableAnnotation == NullableAnnotation.Annotated);
-    }
+    public FieldQuery ThatAreNullable() => AddFilter(f => f.Type.NullableAnnotation == NullableAnnotation.Annotated);
 
     /// <summary>
     /// Filters for fields that are not nullable.
     /// </summary>
-    public FieldQuery ThatAreNotNullable()
-    {
-        return AddFilter(f => f.Type.NullableAnnotation != NullableAnnotation.Annotated);
-    }
+    public FieldQuery ThatAreNotNullable() => AddFilter(f => f.Type.NullableAnnotation != NullableAnnotation.Annotated);
 
     #endregion
 
@@ -260,26 +177,19 @@ public readonly struct FieldQuery
     /// <summary>
     /// Filters for fields that have the specified attribute.
     /// </summary>
-    public FieldQuery WithAttribute<TAttribute>() where TAttribute : Attribute
-    {
-        return AddFilter(f => f.GetAttributesByType<TAttribute>().Any());
-    }
+    public FieldQuery WithAttribute<TAttribute>() where TAttribute : Attribute =>
+        AddFilter(f => f.GetAttributesByType<TAttribute>().Any());
 
     /// <summary>
     /// Filters for fields that have an attribute with the specified name.
     /// </summary>
-    public FieldQuery WithAttribute(string attributeName)
-    {
-        return AddFilter(f => f.GetAttributesByName(attributeName).Any());
-    }
+    public FieldQuery WithAttribute(string attributeName) => AddFilter(f => f.GetAttributesByName(attributeName).Any());
 
     /// <summary>
     /// Filters for fields that do not have the specified attribute.
     /// </summary>
-    public FieldQuery WithoutAttribute<TAttribute>() where TAttribute : Attribute
-    {
-        return AddFilter(f => !f.GetAttributesByType<TAttribute>().Any());
-    }
+    public FieldQuery WithoutAttribute<TAttribute>() where TAttribute : Attribute =>
+        AddFilter(f => !f.GetAttributesByType<TAttribute>().Any());
 
     #endregion
 
@@ -289,10 +199,7 @@ public readonly struct FieldQuery
     /// Filters for fields matching the custom predicate.
     /// Use this as an escape hatch for complex or uncommon filters.
     /// </summary>
-    public FieldQuery Where(Func<IFieldSymbol, bool> predicate)
-    {
-        return AddFilter(predicate);
-    }
+    public FieldQuery Where(Func<IFieldSymbol, bool> predicate) => AddFilter(predicate);
 
     #endregion
 
@@ -336,18 +243,14 @@ public readonly struct FieldQuery
     /// <summary>
     /// Gets all matching and projects each field using the specified mapper.
     /// </summary>
-    public ImmutableArray<TModel> Select<TModel>(Func<ValidSymbol<IFieldSymbol>, TModel> mapper)
-    {
-        return [..GetAll().Select(mapper)];
-    }
+    public ImmutableArray<TModel> Select<TModel>(Func<ValidSymbol<IFieldSymbol>, TModel> mapper) =>
+        [..GetAll().Select(mapper)];
 
     /// <summary>
     /// Gets all matching and projects each field to a collection, then flattens the results.
     /// </summary>
-    public ImmutableArray<TModel> SelectMany<TModel>(Func<ValidSymbol<IFieldSymbol>, IEnumerable<TModel>> mapper)
-    {
-        return [..GetAll().SelectMany(mapper)];
-    }
+    public ImmutableArray<TModel> SelectMany<TModel>(Func<ValidSymbol<IFieldSymbol>, IEnumerable<TModel>> mapper) =>
+        [..GetAll().SelectMany(mapper)];
 
     /// <summary>
     /// Gets all matching and returns the first matching field, or Empty if none found.
@@ -355,6 +258,7 @@ public readonly struct FieldQuery
     public OptionalSymbol<IFieldSymbol> FirstOrDefault()
     {
         var all = GetAll();
+
         return all.Length > 0
             ? OptionalSymbol<IFieldSymbol>.WithValue(all[0].Value)
             : OptionalSymbol<IFieldSymbol>.Empty();
@@ -367,6 +271,7 @@ public readonly struct FieldQuery
     public ValidSymbol<IFieldSymbol> First()
     {
         var all = GetAll();
+
         return all.Length > 0
             ? all[0]
             : throw new InvalidOperationException("No ifieldsymbols matched the query criteria.");
@@ -375,18 +280,12 @@ public readonly struct FieldQuery
     /// <summary>
     /// Gets all matching and returns true if any fields match, false otherwise.
     /// </summary>
-    public bool Any()
-    {
-        return GetAll().Length > 0;
-    }
+    public bool Any() => GetAll().Length > 0;
 
     /// <summary>
     /// Gets all matching and returns the count of matching fields.
     /// </summary>
-    public int Count()
-    {
-        return GetAll().Length;
-    }
+    public int Count() => GetAll().Length;
 
     #endregion
 }

@@ -142,6 +142,7 @@ public class ProjectionsTests : RoslynTestBase
         {
             // Try to compile the generated code
             var compilation = CompilationFor(validEmit.Code);
+
             var errors = compilation.GetDiagnostics()
                 .Where(d => d.Severity == DiagnosticSeverity.Error);
 

@@ -32,16 +32,10 @@ internal readonly struct ParsableTypeInfo
     /// <summary>Gets the C# keyword for the type, or null if none.</summary>
     public string? CSharpKeyword => Core.CSharpKeyword;
 
-    private ParsableTypeInfo(BackingTypeCore core)
-    {
-        Core = core;
-    }
+    private ParsableTypeInfo(BackingTypeCore core) => Core = core;
 
     /// <summary>
     /// Creates a ParsableTypeInfo from the given type symbol.
     /// </summary>
-    public static ParsableTypeInfo From(TypeSnapshot type)
-    {
-        return new ParsableTypeInfo(BackingTypeCore.From(type));
-    }
+    public static ParsableTypeInfo From(TypeSnapshot type) => new(BackingTypeCore.From(type));
 }

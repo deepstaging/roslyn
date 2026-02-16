@@ -39,38 +39,37 @@ public static class TypeBuilderJsonConverterExtensions
         var typeName = builder.Name;
 
         var converterType = TypeBuilder
-            .Parse($"public partial class {converterName} : global::System.Text.Json.Serialization.JsonConverter<{typeName}>")
+            .Parse(
+                $"public partial class {converterName} : global::System.Text.Json.Serialization.JsonConverter<{typeName}>")
             .AddMethod(MethodBuilder
-                .Parse($"public override {typeName} Read(ref global::System.Text.Json.Utf8JsonReader reader, global::System.Type typeToConvert, global::System.Text.Json.JsonSerializerOptions options)")
+                .Parse(
+                    $"public override {typeName} Read(ref global::System.Text.Json.Utf8JsonReader reader, global::System.Type typeToConvert, global::System.Text.Json.JsonSerializerOptions options)")
                 .WithExpressionBody(readExpression))
             .AddMethod(MethodBuilder
-                .Parse($"public override void Write(global::System.Text.Json.Utf8JsonWriter writer, {typeName} value, global::System.Text.Json.JsonSerializerOptions options)")
+                .Parse(
+                    $"public override void Write(global::System.Text.Json.Utf8JsonWriter writer, {typeName} value, global::System.Text.Json.JsonSerializerOptions options)")
                 .WithExpressionBody(writeExpression));
 
         // Add property name methods for NET6+
         if (readAsPropertyNameExpression is not null)
-        {
             converterType = converterType.AddMethod(MethodBuilder
-                .Parse($"public override {typeName} ReadAsPropertyName(ref global::System.Text.Json.Utf8JsonReader reader, global::System.Type typeToConvert, global::System.Text.Json.JsonSerializerOptions options)")
+                .Parse(
+                    $"public override {typeName} ReadAsPropertyName(ref global::System.Text.Json.Utf8JsonReader reader, global::System.Type typeToConvert, global::System.Text.Json.JsonSerializerOptions options)")
                 .When(Directives.Net6OrGreater)
                 .WithExpressionBody(readAsPropertyNameExpression));
-        }
 
         if (writeAsPropertyNameExpression is not null)
-        {
             converterType = converterType.AddMethod(MethodBuilder
-                .Parse($"public override void WriteAsPropertyName(global::System.Text.Json.Utf8JsonWriter writer, {typeName} value, global::System.Text.Json.JsonSerializerOptions options)")
+                .Parse(
+                    $"public override void WriteAsPropertyName(global::System.Text.Json.Utf8JsonWriter writer, {typeName} value, global::System.Text.Json.JsonSerializerOptions options)")
                 .When(Directives.Net6OrGreater)
                 .WithExpressionBody(writeAsPropertyNameExpression));
-        }
 
         var result = builder.AddNestedType(converterType);
 
         if (addAttribute)
-        {
             result = result.WithAttribute("global::System.Text.Json.Serialization.JsonConverter", a => a
                 .WithArgument($"typeof({converterName})"));
-        }
 
         return result;
     }
@@ -91,15 +90,14 @@ public static class TypeBuilderJsonConverterExtensions
         var typeName = builder.Name;
 
         var converterType = configure(TypeBuilder
-            .Parse($"public partial class {converterName} : global::System.Text.Json.Serialization.JsonConverter<{typeName}>"));
+            .Parse(
+                $"public partial class {converterName} : global::System.Text.Json.Serialization.JsonConverter<{typeName}>"));
 
         var result = builder.AddNestedType(converterType);
 
         if (addAttribute)
-        {
             result = result.WithAttribute("global::System.Text.Json.Serialization.JsonConverter", a => a
                 .WithArgument($"typeof({converterName})"));
-        }
 
         return result;
     }

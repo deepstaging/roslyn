@@ -17,10 +17,7 @@ public static class ValidEmitExtensions
         /// Chain calls for more: <c>a.Combine(b).Combine(c)</c>.
         /// </summary>
         /// <param name="other">The other emit to combine with.</param>
-        public ValidEmit Combine(ValidEmit other)
-        {
-            return CombineAll([emit, other]);
-        }
+        public ValidEmit Combine(ValidEmit other) => CombineAll([emit, other]);
     }
 
     internal static ValidEmit CombineAll(List<ValidEmit> emitList)
@@ -39,6 +36,7 @@ public static class ValidEmitExtensions
         foreach (var usingDirective in emit.Usings)
         {
             var name = usingDirective.Name?.ToString() ?? string.Empty;
+
             if (string.IsNullOrEmpty(name))
                 continue;
 
@@ -50,9 +48,11 @@ public static class ValidEmitExtensions
             {
                 // Recreate the using directive to ensure clean syntax
                 var newUsing = SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(name));
+
                 if (isStatic)
                     newUsing = newUsing.WithStaticKeyword(
                         SyntaxFactory.Token(SyntaxKind.StaticKeyword));
+
                 usingDirectives.Add(newUsing);
             }
         }
@@ -66,9 +66,11 @@ public static class ValidEmitExtensions
 
         // Group types by namespace (using empty string for global scope)
         var typesByNamespace = new Dictionary<string, List<MemberDeclarationSyntax>>();
+
         foreach (var emit in emitList)
         {
             var ns = emit.Namespace ?? string.Empty;
+
             if (!typesByNamespace.TryGetValue(ns, out var list))
             {
                 list = [];
@@ -83,10 +85,12 @@ public static class ValidEmitExtensions
         {
             var ns = kvp.Key;
             var types = kvp.Value;
+
             if (!string.IsNullOrEmpty(ns))
             {
                 var nsDecl = SyntaxFactory.FileScopedNamespaceDeclaration(SyntaxFactory.ParseName(ns))
                     .WithMembers(SyntaxFactory.List(types));
+
                 compilationUnit = compilationUnit.AddMembers(nsDecl);
             }
             else
@@ -97,6 +101,7 @@ public static class ValidEmitExtensions
 
         // Preserve leading trivia from the first emit
         var firstTrivia = emitList[0].LeadingTrivia;
+
         if (firstTrivia.Count > 0)
         {
             var firstToken = compilationUnit.GetFirstToken();

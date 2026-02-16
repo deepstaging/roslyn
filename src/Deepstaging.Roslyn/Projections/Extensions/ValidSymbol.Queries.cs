@@ -15,66 +15,48 @@ public static class ValidSymbolQueryExtensions
         /// Starts a fluent query for methods on this type symbol.
         /// Only works if symbol is a type; throws otherwise.
         /// </summary>
-        public MethodQuery QueryMethods()
-        {
-            return symbol.Value is ITypeSymbol typeSymbol
-                ? MethodQuery.From(typeSymbol)
-                : throw new InvalidOperationException("Symbol is not a type symbol");
-        }
+        public MethodQuery QueryMethods() => symbol.Value is ITypeSymbol typeSymbol
+            ? MethodQuery.From(typeSymbol)
+            : throw new InvalidOperationException("Symbol is not a type symbol");
 
         /// <summary>
         /// Starts a fluent query for properties on this type symbol.
         /// Only works if symbol is a type; throws otherwise.
         /// </summary>
-        public PropertyQuery QueryProperties()
-        {
-            return symbol.Value is ITypeSymbol typeSymbol
-                ? PropertyQuery.From(typeSymbol)
-                : throw new InvalidOperationException("Symbol is not a type symbol");
-        }
+        public PropertyQuery QueryProperties() => symbol.Value is ITypeSymbol typeSymbol
+            ? PropertyQuery.From(typeSymbol)
+            : throw new InvalidOperationException("Symbol is not a type symbol");
 
         /// <summary>
         /// Starts a fluent query for constructors on this type symbol.
         /// Only works if symbol is a type; throws otherwise.
         /// </summary>
-        public ConstructorQuery QueryConstructors()
-        {
-            return symbol.Value is ITypeSymbol typeSymbol
-                ? ConstructorQuery.From(typeSymbol)
-                : throw new InvalidOperationException("Symbol is not a type symbol");
-        }
+        public ConstructorQuery QueryConstructors() => symbol.Value is ITypeSymbol typeSymbol
+            ? ConstructorQuery.From(typeSymbol)
+            : throw new InvalidOperationException("Symbol is not a type symbol");
 
         /// <summary>
         /// Starts a fluent query for fields on this type symbol.
         /// Only works if symbol is a type; throws otherwise.
         /// </summary>
-        public FieldQuery QueryFields()
-        {
-            return symbol.Value is ITypeSymbol typeSymbol
-                ? FieldQuery.From(typeSymbol)
-                : throw new InvalidOperationException("Symbol is not a type symbol");
-        }
+        public FieldQuery QueryFields() => symbol.Value is ITypeSymbol typeSymbol
+            ? FieldQuery.From(typeSymbol)
+            : throw new InvalidOperationException("Symbol is not a type symbol");
 
         /// <summary>
         /// Starts a fluent query for events on this type symbol.
         /// Only works if symbol is a type; throws otherwise.
         /// </summary>
-        public EventQuery QueryEvents()
-        {
-            return symbol.Value is ITypeSymbol typeSymbol
-                ? EventQuery.From(typeSymbol)
-                : throw new InvalidOperationException("Symbol is not a type symbol");
-        }
+        public EventQuery QueryEvents() => symbol.Value is ITypeSymbol typeSymbol
+            ? EventQuery.From(typeSymbol)
+            : throw new InvalidOperationException("Symbol is not a type symbol");
 
         /// <summary>
         /// Starts a fluent query for parameters on this method symbol.
         /// Only works if symbol is a method; throws otherwise.
         /// </summary>
-        public ParameterQuery QueryParameters()
-        {
-            return symbol.Value is IMethodSymbol methodSymbol
-                ? ParameterQuery.From(methodSymbol)
-                : throw new InvalidOperationException("Symbol is not a method symbol");
-        }
+        public ParameterQuery QueryParameters() => symbol.Value is IMethodSymbol methodSymbol
+            ? ParameterQuery.From(methodSymbol)
+            : throw new InvalidOperationException("Symbol is not a method symbol");
     }
 }

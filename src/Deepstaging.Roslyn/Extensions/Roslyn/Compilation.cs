@@ -13,9 +13,6 @@ public static class CompilationQueryExtensions
         /// <summary>
         /// Creates a TypeQuery to search for types in the compilation.
         /// </summary>
-        public TypeQuery QueryTypes()
-        {
-            return TypeQuery.From(compilation);
-        }
+        public TypeQuery QueryTypes() => TypeQuery.From(compilation);
     }
 }

@@ -8,7 +8,7 @@ public class TaskRefsTests
     [Test]
     public async Task Task_non_generic()
     {
-        TypeRef typeRef = TaskRefs.Task();
+        var typeRef = TaskRefs.Task();
 
         await Assert.That(typeRef).IsEqualTo("global::System.Threading.Tasks.Task");
     }
@@ -16,7 +16,7 @@ public class TaskRefsTests
     [Test]
     public async Task Task_generic()
     {
-        TypeRef typeRef = TaskRefs.Task("string");
+        var typeRef = TaskRefs.Task("string");
 
         await Assert.That(typeRef).IsEqualTo("global::System.Threading.Tasks.Task<string>");
     }
@@ -24,7 +24,7 @@ public class TaskRefsTests
     [Test]
     public async Task ValueTask_non_generic()
     {
-        TypeRef typeRef = TaskRefs.ValueTask();
+        var typeRef = TaskRefs.ValueTask();
 
         await Assert.That(typeRef).IsEqualTo("global::System.Threading.Tasks.ValueTask");
     }
@@ -32,7 +32,7 @@ public class TaskRefsTests
     [Test]
     public async Task ValueTask_generic()
     {
-        TypeRef typeRef = TaskRefs.ValueTask("int");
+        var typeRef = TaskRefs.ValueTask("int");
 
         await Assert.That(typeRef).IsEqualTo("global::System.Threading.Tasks.ValueTask<int>");
     }
@@ -40,7 +40,7 @@ public class TaskRefsTests
     [Test]
     public async Task CompletedTask_expression()
     {
-        TypeRef typeRef = TaskRefs.CompletedTask;
+        var typeRef = TaskRefs.CompletedTask;
 
         await Assert.That(typeRef).IsEqualTo("global::System.Threading.Tasks.Task.CompletedTask");
     }
@@ -48,7 +48,7 @@ public class TaskRefsTests
     [Test]
     public async Task CompletedValueTask_expression()
     {
-        TypeRef typeRef = TaskRefs.CompletedValueTask;
+        var typeRef = TaskRefs.CompletedValueTask;
 
         await Assert.That(typeRef).IsEqualTo("global::System.Threading.Tasks.ValueTask.CompletedTask");
     }
@@ -56,7 +56,7 @@ public class TaskRefsTests
     [Test]
     public async Task CancellationToken_creates_globally_qualified_type()
     {
-        TypeRef typeRef = TaskRefs.CancellationToken;
+        var typeRef = TaskRefs.CancellationToken;
 
         await Assert.That(typeRef).IsEqualTo("global::System.Threading.CancellationToken");
     }
@@ -66,9 +66,10 @@ public class TaskRefsTests
     [Test]
     public async Task Task_of_list()
     {
-        TypeRef typeRef = TaskRefs.Task(CollectionRefs.List("string"));
+        var typeRef = TaskRefs.Task(CollectionRefs.List("string"));
 
-        await Assert.That(typeRef).IsEqualTo("global::System.Threading.Tasks.Task<global::System.Collections.Generic.List<string>>");
+        await Assert.That(typeRef)
+            .IsEqualTo("global::System.Threading.Tasks.Task<global::System.Collections.Generic.List<string>>");
     }
 
     #endregion

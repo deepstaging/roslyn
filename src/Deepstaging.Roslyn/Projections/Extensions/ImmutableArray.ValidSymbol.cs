@@ -15,12 +15,9 @@ public static class ImmutableArrayValidSymbolExtensions
         /// <summary>
         /// Returns the first element as an OptionalSymbol, or Empty if the array is empty.
         /// </summary>
-        public OptionalSymbol<T> First()
-        {
-            return source.Length > 0
-                ? OptionalSymbol<T>.WithValue(source[0].Value)
-                : OptionalSymbol<T>.Empty();
-        }
+        public OptionalSymbol<T> First() => source.Length > 0
+            ? OptionalSymbol<T>.WithValue(source[0].Value)
+            : OptionalSymbol<T>.Empty();
 
         /// <summary>
         /// Returns the first element matching the predicate as an OptionalSymbol, or Empty if none found.
@@ -30,18 +27,16 @@ public static class ImmutableArrayValidSymbolExtensions
             foreach (var item in source)
                 if (predicate(item))
                     return OptionalSymbol<T>.WithValue(item.Value);
+
             return OptionalSymbol<T>.Empty();
         }
 
         /// <summary>
         /// Returns the only element as an OptionalSymbol, or Empty if the array doesn't contain exactly one element.
         /// </summary>
-        public OptionalSymbol<T> Single()
-        {
-            return source.Length == 1
-                ? OptionalSymbol<T>.WithValue(source[0].Value)
-                : OptionalSymbol<T>.Empty();
-        }
+        public OptionalSymbol<T> Single() => source.Length == 1
+            ? OptionalSymbol<T>.WithValue(source[0].Value)
+            : OptionalSymbol<T>.Empty();
 
         /// <summary>
         /// Returns the only element matching the predicate as an OptionalSymbol, or Empty if there isn't exactly one match.
@@ -67,12 +62,9 @@ public static class ImmutableArrayValidSymbolExtensions
         /// <summary>
         /// Returns the last element as an OptionalSymbol, or Empty if the array is empty.
         /// </summary>
-        public OptionalSymbol<T> Last()
-        {
-            return source.Length > 0
-                ? OptionalSymbol<T>.WithValue(source[^1].Value)
-                : OptionalSymbol<T>.Empty();
-        }
+        public OptionalSymbol<T> Last() => source.Length > 0
+            ? OptionalSymbol<T>.WithValue(source[^1].Value)
+            : OptionalSymbol<T>.Empty();
 
         /// <summary>
         /// Returns the last element matching the predicate as an OptionalSymbol, or Empty if none found.
@@ -82,81 +74,58 @@ public static class ImmutableArrayValidSymbolExtensions
             for (var i = source.Length - 1; i >= 0; i--)
                 if (predicate(source[i]))
                     return OptionalSymbol<T>.WithValue(source[i].Value);
+
             return OptionalSymbol<T>.Empty();
         }
 
         /// <summary>
         /// Returns the element at the specified index as an OptionalSymbol, or Empty if index is out of range.
         /// </summary>
-        public OptionalSymbol<T> ElementAt(int index)
-        {
-            return index >= 0 && index < source.Length
-                ? OptionalSymbol<T>.WithValue(source[index].Value)
-                : OptionalSymbol<T>.Empty();
-        }
+        public OptionalSymbol<T> ElementAt(int index) => index >= 0 && index < source.Length
+            ? OptionalSymbol<T>.WithValue(source[index].Value)
+            : OptionalSymbol<T>.Empty();
 
         /// <summary>
         /// Returns the first element as an OptionalSymbol, or Empty if the array is empty.
         /// Alias for First() to match LINQ naming conventions.
         /// </summary>
-        public OptionalSymbol<T> FirstOrDefault()
-        {
-            return source.First();
-        }
+        public OptionalSymbol<T> FirstOrDefault() => source.First();
 
         /// <summary>
         /// Returns the first element matching the predicate as an OptionalSymbol, or Empty if none found.
         /// Alias for First(predicate) to match LINQ naming conventions.
         /// </summary>
-        public OptionalSymbol<T> FirstOrDefault(Func<ValidSymbol<T>, bool> predicate)
-        {
-            return source.First(predicate);
-        }
+        public OptionalSymbol<T> FirstOrDefault(Func<ValidSymbol<T>, bool> predicate) => source.First(predicate);
 
         /// <summary>
         /// Returns the last element as an OptionalSymbol, or Empty if the array is empty.
         /// Alias for Last() to match LINQ naming conventions.
         /// </summary>
-        public OptionalSymbol<T> LastOrDefault()
-        {
-            return source.Last();
-        }
+        public OptionalSymbol<T> LastOrDefault() => source.Last();
 
         /// <summary>
         /// Returns the last element matching the predicate as an OptionalSymbol, or Empty if none found.
         /// Alias for Last(predicate) to match LINQ naming conventions.
         /// </summary>
-        public OptionalSymbol<T> LastOrDefault(Func<ValidSymbol<T>, bool> predicate)
-        {
-            return source.Last(predicate);
-        }
+        public OptionalSymbol<T> LastOrDefault(Func<ValidSymbol<T>, bool> predicate) => source.Last(predicate);
 
         /// <summary>
         /// Returns the only element as an OptionalSymbol, or Empty if the array doesn't contain exactly one element.
         /// Alias for Single() to match LINQ naming conventions.
         /// </summary>
-        public OptionalSymbol<T> SingleOrDefault()
-        {
-            return source.Single();
-        }
+        public OptionalSymbol<T> SingleOrDefault() => source.Single();
 
         /// <summary>
         /// Returns the only element matching the predicate as an OptionalSymbol, or Empty if there isn't exactly one match.
         /// Alias for Single(predicate) to match LINQ naming conventions.
         /// </summary>
-        public OptionalSymbol<T> SingleOrDefault(Func<ValidSymbol<T>, bool> predicate)
-        {
-            return source.Single(predicate);
-        }
+        public OptionalSymbol<T> SingleOrDefault(Func<ValidSymbol<T>, bool> predicate) => source.Single(predicate);
 
         /// <summary>
         /// Returns the element at the specified index as an OptionalSymbol, or Empty if index is out of range.
         /// Alias for ElementAt(index) to match LINQ naming conventions.
         /// </summary>
-        public OptionalSymbol<T> ElementAtOrDefault(int index)
-        {
-            return source.ElementAt(index);
-        }
+        public OptionalSymbol<T> ElementAtOrDefault(int index) => source.ElementAt(index);
 
         /// <summary>
         /// Provides indexer access to symbols by name.
@@ -174,10 +143,7 @@ public readonly struct SymbolNameIndexer<T> where T : class, ISymbol
 {
     private readonly ImmutableArray<ValidSymbol<T>> _source;
 
-    internal SymbolNameIndexer(ImmutableArray<ValidSymbol<T>> source)
-    {
-        _source = source;
-    }
+    internal SymbolNameIndexer(ImmutableArray<ValidSymbol<T>> source) => _source = source;
 
     /// <summary>
     /// Gets a symbol by name, returning OptionalSymbol.

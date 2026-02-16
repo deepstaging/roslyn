@@ -34,7 +34,7 @@ public static class XmlDocumentationSnapshotExtensions
                 Exceptions = doc.Exceptions
                     .Select(e => new ExceptionDocumentation(e.Type, e.Description))
                     .ToEquatableArray(),
-                SeeAlso = doc.SeeAlso.ToEquatableArray(),
+                SeeAlso = doc.SeeAlso.ToEquatableArray()
             };
         }
     }

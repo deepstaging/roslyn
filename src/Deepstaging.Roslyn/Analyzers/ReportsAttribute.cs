@@ -58,15 +58,12 @@ public sealed class ReportsAttribute : Attribute
     /// <summary>
     /// Creates a <see cref="DiagnosticDescriptor"/> from this attribute.
     /// </summary>
-    internal DiagnosticDescriptor ToDescriptor()
-    {
-        return new DiagnosticDescriptor(
-            DiagnosticId,
-            Title,
-            Message,
-            Category,
-            Severity,
-            IsEnabledByDefault,
-            Description);
-    }
+    internal DiagnosticDescriptor ToDescriptor() => new(
+        DiagnosticId,
+        Title,
+        Message,
+        Category,
+        Severity,
+        IsEnabledByDefault,
+        Description);
 }

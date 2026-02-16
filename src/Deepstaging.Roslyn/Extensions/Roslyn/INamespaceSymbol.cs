@@ -13,9 +13,6 @@ public static class NamespaceQueryExtensions
         /// <summary>
         /// Creates a TypeQuery to search for types in the namespace.
         /// </summary>
-        public TypeQuery QueryTypes()
-        {
-            return TypeQuery.From(namespaceSymbol);
-        }
+        public TypeQuery QueryTypes() => TypeQuery.From(namespaceSymbol);
     }
 }

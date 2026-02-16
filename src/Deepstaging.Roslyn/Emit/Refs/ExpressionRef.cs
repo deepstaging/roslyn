@@ -62,6 +62,11 @@ public readonly record struct ExpressionRef
         return new ExpressionRef(expression);
     }
 
+    /// <summary>Creates an expression reference from a raw expression string.</summary>
+    /// <param name="expression">The expression string (e.g., "value", "x + y", "handler?.Invoke()").</param>
+    /// <remarks>Semantic alias for <see cref="From(string)"/> that reads naturally when <c>using static ExpressionRef</c> is in scope.</remarks>
+    public static ExpressionRef CreateExpressionRef(string expression) => From(expression);
+
     // ── Method Calls ────────────────────────────────────────────────────
 
     /// <summary>Produces a method call expression: <c>expr.method(args)</c>.</summary>

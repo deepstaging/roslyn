@@ -17,10 +17,7 @@ public readonly struct ValidSyntax<TSyntax> : IProjection<TSyntax>
 {
     private readonly TSyntax _node;
 
-    private ValidSyntax(TSyntax node)
-    {
-        _node = node ?? throw new ArgumentNullException(nameof(node));
-    }
+    private ValidSyntax(TSyntax node) => _node = node ?? throw new ArgumentNullException(nameof(node));
 
     #region Factory Methods
 
@@ -28,19 +25,13 @@ public readonly struct ValidSyntax<TSyntax> : IProjection<TSyntax>
     /// Creates a validated projection from a non-null syntax node.
     /// </summary>
     /// <exception cref="ArgumentNullException">Thrown if node is null.</exception>
-    public static ValidSyntax<TSyntax> From(TSyntax node)
-    {
-        return new ValidSyntax<TSyntax>(node);
-    }
+    public static ValidSyntax<TSyntax> From(TSyntax node) => new(node);
 
     /// <summary>
     /// Attempts to create a validated projection from a nullable syntax node.
     /// Returns null if the node is null.
     /// </summary>
-    public static ValidSyntax<TSyntax>? TryFrom(TSyntax? node)
-    {
-        return node != null ? new ValidSyntax<TSyntax>(node) : null;
-    }
+    public static ValidSyntax<TSyntax>? TryFrom(TSyntax? node) => node != null ? new ValidSyntax<TSyntax>(node) : null;
 
     #endregion
 
@@ -68,18 +59,12 @@ public readonly struct ValidSyntax<TSyntax> : IProjection<TSyntax>
     /// <summary>
     /// Returns the guaranteed non-null syntax node.
     /// </summary>
-    public TSyntax OrThrow(string? message = null)
-    {
-        return _node;
-    }
+    public TSyntax OrThrow(string? message = null) => _node;
 
     /// <summary>
     /// Returns the guaranteed non-null syntax node.
     /// </summary>
-    public TSyntax OrNull()
-    {
-        return _node;
-    }
+    public TSyntax OrNull() => _node;
 
     #endregion
 
@@ -88,37 +73,26 @@ public readonly struct ValidSyntax<TSyntax> : IProjection<TSyntax>
     /// <summary>
     /// Maps the validated syntax node to a different type.
     /// </summary>
-    public TResult Map<TResult>(Func<TSyntax, TResult> mapper)
-    {
-        return mapper(_node);
-    }
+    public TResult Map<TResult>(Func<TSyntax, TResult> mapper) => mapper(_node);
 
     /// <summary>
     /// Maps the validated syntax node to another validated syntax node.
     /// </summary>
     public ValidSyntax<TDerived> MapTo<TDerived>(Func<TSyntax, TDerived> mapper)
-        where TDerived : SyntaxNode
-    {
-        return new ValidSyntax<TDerived>(mapper(_node));
-    }
+        where TDerived : SyntaxNode => new(mapper(_node));
 
     /// <summary>
     /// Filters the syntax node based on a predicate.
     /// Returns null if predicate fails.
     /// </summary>
-    public ValidSyntax<TSyntax>? Where(Func<TSyntax, bool> predicate)
-    {
-        return predicate(_node) ? this : null;
-    }
+    public ValidSyntax<TSyntax>? Where(Func<TSyntax, bool> predicate) => predicate(_node) ? this : null;
 
     /// <summary>
     /// Attempts to cast to a derived syntax type.
     /// Returns null if cast fails.
     /// </summary>
-    public ValidSyntax<TDerived>? OfType<TDerived>() where TDerived : SyntaxNode
-    {
-        return _node is TDerived derived ? new ValidSyntax<TDerived>(derived) : null;
-    }
+    public ValidSyntax<TDerived>? OfType<TDerived>() where TDerived : SyntaxNode =>
+        _node is TDerived derived ? new ValidSyntax<TDerived>(derived) : null;
 
     /// <summary>
     /// Executes an action with the syntax node.
@@ -136,12 +110,9 @@ public readonly struct ValidSyntax<TSyntax> : IProjection<TSyntax>
     /// <summary>
     /// Gets the parent of the syntax node as the specified type.
     /// </summary>
-    public OptionalSyntax<TParent> Parent<TParent>() where TParent : SyntaxNode
-    {
-        return _node.Parent is TParent parent
-            ? OptionalSyntax<TParent>.WithValue(parent)
-            : OptionalSyntax<TParent>.Empty();
-    }
+    public OptionalSyntax<TParent> Parent<TParent>() where TParent : SyntaxNode => _node.Parent is TParent parent
+        ? OptionalSyntax<TParent>.WithValue(parent)
+        : OptionalSyntax<TParent>.Empty();
 
     /// <summary>
     /// Finds the first ancestor of the specified type.
@@ -238,42 +209,27 @@ public readonly struct ValidSyntax<TSyntax> : IProjection<TSyntax>
     /// <summary>
     /// Checks if the validated syntax node equals the specified syntax node.
     /// </summary>
-    public bool Equals(TSyntax? other)
-    {
-        return other != null && _node.IsEquivalentTo(other);
-    }
+    public bool Equals(TSyntax? other) => other != null && _node.IsEquivalentTo(other);
 
     /// <summary>
     /// Enables equality checks: validated == node
     /// </summary>
-    public static bool operator ==(ValidSyntax<TSyntax> left, TSyntax? right)
-    {
-        return left.Equals(right);
-    }
+    public static bool operator ==(ValidSyntax<TSyntax> left, TSyntax? right) => left.Equals(right);
 
     /// <summary>
     /// Enables inequality checks: validated != node
     /// </summary>
-    public static bool operator !=(ValidSyntax<TSyntax> left, TSyntax? right)
-    {
-        return !left.Equals(right);
-    }
+    public static bool operator !=(ValidSyntax<TSyntax> left, TSyntax? right) => !left.Equals(right);
 
     /// <summary>
     /// Determines whether the current instance equals the specified object (always returns false).
     /// </summary>
-    public override bool Equals(object? obj)
-    {
-        return false;
-    }
+    public override bool Equals(object? obj) => false;
 
     /// <summary>
     /// Returns the hash code for this instance.
     /// </summary>
-    public override int GetHashCode()
-    {
-        return _node.GetHashCode();
-    }
+    public override int GetHashCode() => _node.GetHashCode();
 
     #endregion
 
@@ -282,10 +238,7 @@ public readonly struct ValidSyntax<TSyntax> : IProjection<TSyntax>
     /// <summary>
     /// Implicitly converts to the underlying syntax node for seamless interop with Roslyn APIs.
     /// </summary>
-    public static implicit operator TSyntax(ValidSyntax<TSyntax> valid)
-    {
-        return valid._node;
-    }
+    public static implicit operator TSyntax(ValidSyntax<TSyntax> valid) => valid._node;
 
     #endregion
 }

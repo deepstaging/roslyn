@@ -139,10 +139,8 @@ public class UserTemplatesTests
     #region Helpers
 
     private static ImmutableArray<AdditionalText> CreateAdditionalTexts(
-        params (string Path, string Content)[] files)
-    {
-        return [..files.Select(f => (AdditionalText)new InMemoryAdditionalText(f.Path, f.Content))];
-    }
+        params (string Path, string Content)[] files) =>
+        [..files.Select(f => (AdditionalText)new InMemoryAdditionalText(f.Path, f.Content))];
 
     private sealed class InMemoryAdditionalText(string path, string content) : AdditionalText
     {

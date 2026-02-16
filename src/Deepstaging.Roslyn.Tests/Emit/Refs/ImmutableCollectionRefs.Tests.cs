@@ -8,7 +8,7 @@ public class ImmutableCollectionRefsTests
     [Test]
     public async Task ImmutableArray_creates_globally_qualified_type()
     {
-        TypeRef typeRef = ImmutableCollectionRefs.ImmutableArray("string");
+        var typeRef = ImmutableCollectionRefs.ImmutableArray("string");
 
         await Assert.That(typeRef).IsEqualTo("global::System.Collections.Immutable.ImmutableArray<string>");
     }
@@ -16,7 +16,7 @@ public class ImmutableCollectionRefsTests
     [Test]
     public async Task ImmutableList_creates_globally_qualified_type()
     {
-        TypeRef typeRef = ImmutableCollectionRefs.ImmutableList("string");
+        var typeRef = ImmutableCollectionRefs.ImmutableList("string");
 
         await Assert.That(typeRef).IsEqualTo("global::System.Collections.Immutable.ImmutableList<string>");
     }
@@ -24,7 +24,7 @@ public class ImmutableCollectionRefsTests
     [Test]
     public async Task ImmutableDictionary_creates_globally_qualified_type()
     {
-        TypeRef typeRef = ImmutableCollectionRefs.ImmutableDictionary("string", "int");
+        var typeRef = ImmutableCollectionRefs.ImmutableDictionary("string", "int");
 
         await Assert.That(typeRef).IsEqualTo("global::System.Collections.Immutable.ImmutableDictionary<string, int>");
     }

@@ -88,9 +88,6 @@ internal static class RegionHelper
                 .WithEndOfDirectiveToken(endOfDirective));
     }
 
-    private static SyntaxTrivia CreateEndRegionDirective()
-    {
-        return SyntaxFactory.Trivia(
-            SyntaxFactory.EndRegionDirectiveTrivia(isActive: true));
-    }
+    private static SyntaxTrivia CreateEndRegionDirective() => SyntaxFactory.Trivia(
+        SyntaxFactory.EndRegionDirectiveTrivia(isActive: true));
 }

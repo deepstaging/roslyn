@@ -24,6 +24,7 @@ public static class SourceProductionContextExtensions
             {
                 foreach (var diagnostic in emit.Diagnostics)
                     ctx.ReportDiagnostic(diagnostic);
+
                 return;
             }
 
@@ -44,6 +45,7 @@ public static class SourceProductionContextExtensions
             {
                 foreach (var diagnostic in emit.Diagnostics)
                     ctx.ReportDiagnostic(diagnostic);
+
                 return;
             }
 

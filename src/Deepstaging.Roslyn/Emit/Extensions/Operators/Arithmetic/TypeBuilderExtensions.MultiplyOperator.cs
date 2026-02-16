@@ -25,7 +25,9 @@ public static class TypeBuilderMultiplyOperatorExtensions
             return builder;
 
         return builder
-            .Implements($"global::System.Numerics.IMultiplyOperators<{typeName}, {typeName}, {typeName}>", Directives.Net7OrGreater)
+            .Implements(
+                $"global::System.Numerics.IMultiplyOperators<{typeName}, {typeName}, {typeName}>",
+                Directives.Net7OrGreater)
             .AddOperator(OperatorBuilder
                 .Multiplication(typeName)
                 .When(Directives.Net7OrGreater)
@@ -42,7 +44,9 @@ public static class TypeBuilderMultiplyOperatorExtensions
         var typeName = builder.Name;
 
         return builder
-            .Implements($"global::System.Numerics.IMultiplyOperators<{typeName}, {typeName}, {typeName}>", Directives.Net7OrGreater)
+            .Implements(
+                $"global::System.Numerics.IMultiplyOperators<{typeName}, {typeName}, {typeName}>",
+                Directives.Net7OrGreater)
             .AddOperator(OperatorBuilder
                 .Multiplication(typeName)
                 .When(Directives.Net7OrGreater)

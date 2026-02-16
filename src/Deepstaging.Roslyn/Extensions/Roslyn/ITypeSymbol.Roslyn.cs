@@ -14,11 +14,9 @@ public static class TypeSymbolRoslynExtensions
         /// <summary>
         /// Checks if the type is <c>Deepstaging.Roslyn.ValidSymbol&lt;T&gt;</c>.
         /// </summary>
-        public bool IsValidSymbolType()
-        {
-            return typeSymbol is INamedTypeSymbol { IsGenericType: true, Name: "ValidSymbol", Arity: 1 } named
-                   && named.ContainingNamespace.ToDisplayString() == "Deepstaging.Roslyn";
-        }
+        public bool IsValidSymbolType() =>
+            typeSymbol is INamedTypeSymbol { IsGenericType: true, Name: "ValidSymbol", Arity: 1 } named &&
+            named.ContainingNamespace.ToDisplayString() == "Deepstaging.Roslyn";
 
         /// <summary>
         /// Checks if the type is or implements <c>Microsoft.CodeAnalysis.ISymbol</c>.
@@ -26,16 +24,14 @@ public static class TypeSymbolRoslynExtensions
         /// </summary>
         public bool IsRoslynSymbolType()
         {
-            if (typeSymbol is { Name: "ISymbol", TypeKind: TypeKind.Interface }
-                && typeSymbol.ContainingNamespace.ToDisplayString() == "Microsoft.CodeAnalysis")
+            if (typeSymbol is { Name: "ISymbol", TypeKind: TypeKind.Interface } &&
+                typeSymbol.ContainingNamespace.ToDisplayString() == "Microsoft.CodeAnalysis")
                 return true;
 
             foreach (var iface in typeSymbol.AllInterfaces)
-            {
-                if (iface is { Name: "ISymbol", TypeKind: TypeKind.Interface }
-                    && iface.ContainingNamespace.ToDisplayString() == "Microsoft.CodeAnalysis")
+                if (iface is { Name: "ISymbol", TypeKind: TypeKind.Interface } &&
+                    iface.ContainingNamespace.ToDisplayString() == "Microsoft.CodeAnalysis")
                     return true;
-            }
 
             return false;
         }

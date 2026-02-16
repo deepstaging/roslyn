@@ -34,9 +34,8 @@ public static class ProjectedParameterSymbolExtensions
         /// 
         /// </summary>
         /// <returns></returns>
-        public string? DefaultValueString()
-        {
-            return parameter.Symbol!.HasExplicitDefaultValue
+        public string? DefaultValueString() =>
+            parameter.Symbol!.HasExplicitDefaultValue
                 ? parameter.Symbol.ExplicitDefaultValue switch
                 {
                     null => "default",
@@ -45,6 +44,5 @@ public static class ProjectedParameterSymbolExtensions
                     var value => value.ToString()
                 }
                 : null;
-        }
     }
 }

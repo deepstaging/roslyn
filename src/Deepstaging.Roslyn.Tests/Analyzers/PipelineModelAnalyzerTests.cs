@@ -14,14 +14,14 @@ public class PipelineModelAnalyzerTests : RoslynTestBase
     public async Task DSRK001_ReportsDiagnostic_WhenPropertyUsesImmutableArray()
     {
         const string source = """
-            using System.Collections.Immutable;
-            using Deepstaging.Roslyn;
+                              using System.Collections.Immutable;
+                              using Deepstaging.Roslyn;
 
-            namespace TestApp;
+                              namespace TestApp;
 
-            [PipelineModel]
-            public sealed record MyModel(string Name, ImmutableArray<string> Items);
-            """;
+                              [PipelineModel]
+                              public sealed record MyModel(string Name, ImmutableArray<string> Items);
+                              """;
 
         await AnalyzeWith<PipelineModelImmutableArrayAnalyzer>(source)
             .ShouldReportDiagnostic("DSRK001")
@@ -33,13 +33,13 @@ public class PipelineModelAnalyzerTests : RoslynTestBase
     public async Task DSRK001_NoDiagnostic_WhenPropertyUsesEquatableArray()
     {
         const string source = """
-            using Deepstaging.Roslyn;
+                              using Deepstaging.Roslyn;
 
-            namespace TestApp;
+                              namespace TestApp;
 
-            [PipelineModel]
-            public sealed record MyModel(string Name, EquatableArray<string> Items);
-            """;
+                              [PipelineModel]
+                              public sealed record MyModel(string Name, EquatableArray<string> Items);
+                              """;
 
         await AnalyzeWith<PipelineModelImmutableArrayAnalyzer>(source)
             .ShouldNotReportDiagnostic("DSRK001");
@@ -51,14 +51,14 @@ public class PipelineModelAnalyzerTests : RoslynTestBase
     public async Task DSRK002_ReportsDiagnostic_WhenPropertyUsesValidSymbol()
     {
         const string source = """
-            using Deepstaging.Roslyn;
-            using Microsoft.CodeAnalysis;
+                              using Deepstaging.Roslyn;
+                              using Microsoft.CodeAnalysis;
 
-            namespace TestApp;
+                              namespace TestApp;
 
-            [PipelineModel]
-            public sealed record MyModel(string Name, ValidSymbol<INamedTypeSymbol> Symbol);
-            """;
+                              [PipelineModel]
+                              public sealed record MyModel(string Name, ValidSymbol<INamedTypeSymbol> Symbol);
+                              """;
 
         await AnalyzeWith<PipelineModelValidSymbolAnalyzer>(source)
             .ShouldReportDiagnostic("DSRK002")
@@ -72,14 +72,14 @@ public class PipelineModelAnalyzerTests : RoslynTestBase
     public async Task DSRK003_ReportsDiagnostic_WhenPropertyUsesISymbol()
     {
         const string source = """
-            using Deepstaging.Roslyn;
-            using Microsoft.CodeAnalysis;
+                              using Deepstaging.Roslyn;
+                              using Microsoft.CodeAnalysis;
 
-            namespace TestApp;
+                              namespace TestApp;
 
-            [PipelineModel]
-            public sealed record MyModel(string Name, INamedTypeSymbol Symbol);
-            """;
+                              [PipelineModel]
+                              public sealed record MyModel(string Name, INamedTypeSymbol Symbol);
+                              """;
 
         await AnalyzeWith<PipelineModelSymbolAnalyzer>(source)
             .ShouldReportDiagnostic("DSRK003")
@@ -91,14 +91,14 @@ public class PipelineModelAnalyzerTests : RoslynTestBase
     public async Task DSRK003_ReportsDiagnostic_WhenPropertyUsesIMethodSymbol()
     {
         const string source = """
-            using Deepstaging.Roslyn;
-            using Microsoft.CodeAnalysis;
+                              using Deepstaging.Roslyn;
+                              using Microsoft.CodeAnalysis;
 
-            namespace TestApp;
+                              namespace TestApp;
 
-            [PipelineModel]
-            public sealed record MyModel(string Name, IMethodSymbol Method);
-            """;
+                              [PipelineModel]
+                              public sealed record MyModel(string Name, IMethodSymbol Method);
+                              """;
 
         await AnalyzeWith<PipelineModelSymbolAnalyzer>(source)
             .ShouldReportDiagnostic("DSRK003")
@@ -111,14 +111,14 @@ public class PipelineModelAnalyzerTests : RoslynTestBase
     public async Task DSRK004_ReportsDiagnostic_WhenPropertyTypeIsNotEquatable()
     {
         const string source = """
-            using Deepstaging.Roslyn;
-            using System.Xml.Linq;
+                              using Deepstaging.Roslyn;
+                              using System.Xml.Linq;
 
-            namespace TestApp;
+                              namespace TestApp;
 
-            [PipelineModel]
-            public sealed record MyModel(string Name, XElement Docs);
-            """;
+                              [PipelineModel]
+                              public sealed record MyModel(string Name, XElement Docs);
+                              """;
 
         await AnalyzeWith<PipelineModelNonEquatableAnalyzer>(source)
             .ShouldReportDiagnostic("DSRK004")
@@ -132,13 +132,13 @@ public class PipelineModelAnalyzerTests : RoslynTestBase
     public async Task NoDiagnostic_WhenAllPropertiesAreClean()
     {
         const string source = """
-            using Deepstaging.Roslyn;
+                              using Deepstaging.Roslyn;
 
-            namespace TestApp;
+                              namespace TestApp;
 
-            [PipelineModel]
-            public sealed record CleanModel(string Name, int Count, bool IsActive);
-            """;
+                              [PipelineModel]
+                              public sealed record CleanModel(string Name, int Count, bool IsActive);
+                              """;
 
         await AnalyzeWith<PipelineModelImmutableArrayAnalyzer>(source)
             .ShouldHaveNoDiagnostics();
@@ -148,12 +148,12 @@ public class PipelineModelAnalyzerTests : RoslynTestBase
     public async Task NoDiagnostic_WhenRecordDoesNotHavePipelineModelAttribute()
     {
         const string source = """
-            using System.Collections.Immutable;
+                              using System.Collections.Immutable;
 
-            namespace TestApp;
+                              namespace TestApp;
 
-            public sealed record NotAModel(string Name, ImmutableArray<string> Items);
-            """;
+                              public sealed record NotAModel(string Name, ImmutableArray<string> Items);
+                              """;
 
         await AnalyzeWith<PipelineModelImmutableArrayAnalyzer>(source)
             .ShouldHaveNoDiagnostics();
@@ -163,15 +163,15 @@ public class PipelineModelAnalyzerTests : RoslynTestBase
     public async Task NoDiagnostic_WhenPropertyIsEnum()
     {
         const string source = """
-            using Deepstaging.Roslyn;
+                              using Deepstaging.Roslyn;
 
-            namespace TestApp;
+                              namespace TestApp;
 
-            public enum Status { Active, Inactive }
+                              public enum Status { Active, Inactive }
 
-            [PipelineModel]
-            public sealed record MyModel(string Name, Status Status);
-            """;
+                              [PipelineModel]
+                              public sealed record MyModel(string Name, Status Status);
+                              """;
 
         await AnalyzeWith<PipelineModelNonEquatableAnalyzer>(source)
             .ShouldHaveNoDiagnostics();
@@ -181,13 +181,13 @@ public class PipelineModelAnalyzerTests : RoslynTestBase
     public async Task NoDiagnostic_WhenPropertyIsNullableValueType()
     {
         const string source = """
-            using Deepstaging.Roslyn;
+                              using Deepstaging.Roslyn;
 
-            namespace TestApp;
+                              namespace TestApp;
 
-            [PipelineModel]
-            public sealed record MyModel(string Name, int? OptionalCount);
-            """;
+                              [PipelineModel]
+                              public sealed record MyModel(string Name, int? OptionalCount);
+                              """;
 
         await AnalyzeWith<PipelineModelNonEquatableAnalyzer>(source)
             .ShouldHaveNoDiagnostics();
@@ -197,16 +197,16 @@ public class PipelineModelAnalyzerTests : RoslynTestBase
     public async Task NoDiagnostic_WhenPropertyIsNestedPipelineModel()
     {
         const string source = """
-            using Deepstaging.Roslyn;
+                              using Deepstaging.Roslyn;
 
-            namespace TestApp;
+                              namespace TestApp;
 
-            [PipelineModel]
-            public sealed record ChildModel(string Value);
+                              [PipelineModel]
+                              public sealed record ChildModel(string Value);
 
-            [PipelineModel]
-            public sealed record ParentModel(string Name, ChildModel Child);
-            """;
+                              [PipelineModel]
+                              public sealed record ParentModel(string Name, ChildModel Child);
+                              """;
 
         await AnalyzeWith<PipelineModelNonEquatableAnalyzer>(source)
             .ShouldHaveNoDiagnostics();
@@ -218,18 +218,18 @@ public class PipelineModelAnalyzerTests : RoslynTestBase
     public async Task ReportsMultipleDiagnostics_ForMultipleProblematicProperties()
     {
         const string source = """
-            using System.Collections.Immutable;
-            using Deepstaging.Roslyn;
-            using Microsoft.CodeAnalysis;
+                              using System.Collections.Immutable;
+                              using Deepstaging.Roslyn;
+                              using Microsoft.CodeAnalysis;
 
-            namespace TestApp;
+                              namespace TestApp;
 
-            [PipelineModel]
-            public sealed record BrokenModel(
-                string Name,
-                ImmutableArray<string> Items,
-                INamedTypeSymbol Symbol);
-            """;
+                              [PipelineModel]
+                              public sealed record BrokenModel(
+                                  string Name,
+                                  ImmutableArray<string> Items,
+                                  INamedTypeSymbol Symbol);
+                              """;
 
         await AnalyzeWith<PipelineModelImmutableArrayAnalyzer>(source)
             .ShouldReportDiagnostic("DSRK001");

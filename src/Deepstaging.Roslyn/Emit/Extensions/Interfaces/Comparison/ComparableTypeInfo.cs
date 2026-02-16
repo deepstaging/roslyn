@@ -20,16 +20,10 @@ internal readonly struct ComparableTypeInfo
     /// <summary>Gets the simple type name.</summary>
     public string Name => Core.Name;
 
-    private ComparableTypeInfo(BackingTypeCore core)
-    {
-        Core = core;
-    }
+    private ComparableTypeInfo(BackingTypeCore core) => Core = core;
 
     /// <summary>
     /// Creates a ComparableTypeInfo from the given type symbol.
     /// </summary>
-    public static ComparableTypeInfo From(TypeSnapshot type)
-    {
-        return new ComparableTypeInfo(BackingTypeCore.From(type));
-    }
+    public static ComparableTypeInfo From(TypeSnapshot type) => new(BackingTypeCore.From(type));
 }

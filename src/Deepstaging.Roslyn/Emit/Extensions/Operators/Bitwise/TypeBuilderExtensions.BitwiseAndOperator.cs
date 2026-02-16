@@ -27,7 +27,8 @@ public static class TypeBuilderBitwiseAndOperatorExtensions
             return builder;
 
         return builder
-            .Implements($"global::System.Numerics.IBitwiseOperators<{typeName}, {typeName}, {typeName}>", Directives.Net7OrGreater)
+            .Implements($"global::System.Numerics.IBitwiseOperators<{typeName}, {typeName}, {typeName}>",
+                Directives.Net7OrGreater)
             .AddOperator(OperatorBuilder
                 .BitwiseAnd(typeName)
                 .When(Directives.Net7OrGreater)
@@ -44,7 +45,8 @@ public static class TypeBuilderBitwiseAndOperatorExtensions
         var typeName = builder.Name;
 
         return builder
-            .Implements($"global::System.Numerics.IBitwiseOperators<{typeName}, {typeName}, {typeName}>", Directives.Net7OrGreater)
+            .Implements($"global::System.Numerics.IBitwiseOperators<{typeName}, {typeName}, {typeName}>",
+                Directives.Net7OrGreater)
             .AddOperator(OperatorBuilder
                 .BitwiseAnd(typeName)
                 .When(Directives.Net7OrGreater)

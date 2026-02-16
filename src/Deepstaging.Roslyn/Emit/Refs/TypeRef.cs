@@ -53,6 +53,7 @@ public readonly record struct TypeRef
     /// </summary>
     /// <param name="typeName">The type name as a string (e.g., "string", "List", "MyClass").</param>
     /// <returns>A TypeRef instance representing the provided type name.</returns>
+    /// <remarks>Semantic alias for <see cref="From(string)"/> that reads naturally when <c>using static TypeRef</c> is in scope.</remarks>
     public static TypeRef CreateTypeRef(string typeName) => From(typeName);
 
     /// <summary>

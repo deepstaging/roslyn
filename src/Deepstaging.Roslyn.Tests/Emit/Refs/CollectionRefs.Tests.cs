@@ -8,7 +8,7 @@ public class CollectionRefsTests
     [Test]
     public async Task List_creates_globally_qualified_type()
     {
-        TypeRef typeRef = CollectionRefs.List("string");
+        var typeRef = CollectionRefs.List("string");
 
         await Assert.That(typeRef).IsEqualTo("global::System.Collections.Generic.List<string>");
     }
@@ -16,7 +16,7 @@ public class CollectionRefsTests
     [Test]
     public async Task Dictionary_creates_globally_qualified_type()
     {
-        TypeRef typeRef = CollectionRefs.Dictionary("string", "int");
+        var typeRef = CollectionRefs.Dictionary("string", "int");
 
         await Assert.That(typeRef).IsEqualTo("global::System.Collections.Generic.Dictionary<string, int>");
     }
@@ -24,7 +24,7 @@ public class CollectionRefsTests
     [Test]
     public async Task HashSet_creates_globally_qualified_type()
     {
-        TypeRef typeRef = CollectionRefs.HashSet("int");
+        var typeRef = CollectionRefs.HashSet("int");
 
         await Assert.That(typeRef).IsEqualTo("global::System.Collections.Generic.HashSet<int>");
     }
@@ -32,7 +32,7 @@ public class CollectionRefsTests
     [Test]
     public async Task KeyValuePair_creates_globally_qualified_type()
     {
-        TypeRef typeRef = CollectionRefs.KeyValuePair("string", "int");
+        var typeRef = CollectionRefs.KeyValuePair("string", "int");
 
         await Assert.That(typeRef).IsEqualTo("global::System.Collections.Generic.KeyValuePair<string, int>");
     }
@@ -40,7 +40,7 @@ public class CollectionRefsTests
     [Test]
     public async Task IEnumerable_creates_globally_qualified_type()
     {
-        TypeRef typeRef = CollectionRefs.IEnumerable("string");
+        var typeRef = CollectionRefs.IEnumerable("string");
 
         await Assert.That(typeRef).IsEqualTo("global::System.Collections.Generic.IEnumerable<string>");
     }
@@ -48,7 +48,7 @@ public class CollectionRefsTests
     [Test]
     public async Task ICollection_creates_globally_qualified_type()
     {
-        TypeRef typeRef = CollectionRefs.ICollection("string");
+        var typeRef = CollectionRefs.ICollection("string");
 
         await Assert.That(typeRef).IsEqualTo("global::System.Collections.Generic.ICollection<string>");
     }
@@ -56,7 +56,7 @@ public class CollectionRefsTests
     [Test]
     public async Task IList_creates_globally_qualified_type()
     {
-        TypeRef typeRef = CollectionRefs.IList("string");
+        var typeRef = CollectionRefs.IList("string");
 
         await Assert.That(typeRef).IsEqualTo("global::System.Collections.Generic.IList<string>");
     }
@@ -64,7 +64,7 @@ public class CollectionRefsTests
     [Test]
     public async Task IDictionary_creates_globally_qualified_type()
     {
-        TypeRef typeRef = CollectionRefs.IDictionary("string", "int");
+        var typeRef = CollectionRefs.IDictionary("string", "int");
 
         await Assert.That(typeRef).IsEqualTo("global::System.Collections.Generic.IDictionary<string, int>");
     }
@@ -72,7 +72,7 @@ public class CollectionRefsTests
     [Test]
     public async Task ISet_creates_globally_qualified_type()
     {
-        TypeRef typeRef = CollectionRefs.ISet("int");
+        var typeRef = CollectionRefs.ISet("int");
 
         await Assert.That(typeRef).IsEqualTo("global::System.Collections.Generic.ISet<int>");
     }
@@ -80,7 +80,7 @@ public class CollectionRefsTests
     [Test]
     public async Task IReadOnlyList_creates_globally_qualified_type()
     {
-        TypeRef typeRef = CollectionRefs.IReadOnlyList("string");
+        var typeRef = CollectionRefs.IReadOnlyList("string");
 
         await Assert.That(typeRef).IsEqualTo("global::System.Collections.Generic.IReadOnlyList<string>");
     }
@@ -88,7 +88,7 @@ public class CollectionRefsTests
     [Test]
     public async Task IReadOnlyCollection_creates_globally_qualified_type()
     {
-        TypeRef typeRef = CollectionRefs.IReadOnlyCollection("string");
+        var typeRef = CollectionRefs.IReadOnlyCollection("string");
 
         await Assert.That(typeRef).IsEqualTo("global::System.Collections.Generic.IReadOnlyCollection<string>");
     }
@@ -96,7 +96,7 @@ public class CollectionRefsTests
     [Test]
     public async Task IReadOnlyDictionary_creates_globally_qualified_type()
     {
-        TypeRef typeRef = CollectionRefs.IReadOnlyDictionary("string", "int");
+        var typeRef = CollectionRefs.IReadOnlyDictionary("string", "int");
 
         await Assert.That(typeRef).IsEqualTo("global::System.Collections.Generic.IReadOnlyDictionary<string, int>");
     }
@@ -106,7 +106,7 @@ public class CollectionRefsTests
     [Test]
     public async Task List_nullable()
     {
-        TypeRef typeRef = CollectionRefs.List("string").Nullable();
+        var typeRef = CollectionRefs.List("string").Nullable();
 
         await Assert.That(typeRef).IsEqualTo("global::System.Collections.Generic.List<string>?");
     }
@@ -114,15 +114,16 @@ public class CollectionRefsTests
     [Test]
     public async Task Dictionary_with_nested_list()
     {
-        TypeRef typeRef = CollectionRefs.Dictionary("string", CollectionRefs.List("int"));
+        var typeRef = CollectionRefs.Dictionary("string", CollectionRefs.List("int"));
 
-        await Assert.That(typeRef).IsEqualTo("global::System.Collections.Generic.Dictionary<string, global::System.Collections.Generic.List<int>>");
+        await Assert.That(typeRef)
+            .IsEqualTo("global::System.Collections.Generic.Dictionary<string, global::System.Collections.Generic.List<int>>");
     }
 
     [Test]
     public async Task IReadOnlyList_array()
     {
-        TypeRef typeRef = CollectionRefs.IReadOnlyList("int").Array();
+        var typeRef = CollectionRefs.IReadOnlyList("int").Array();
 
         await Assert.That(typeRef).IsEqualTo("global::System.Collections.Generic.IReadOnlyList<int>[]");
     }

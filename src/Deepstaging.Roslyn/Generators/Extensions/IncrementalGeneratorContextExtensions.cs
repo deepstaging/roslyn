@@ -15,10 +15,8 @@ public static class IncrementalGeneratorContextExtensions
         /// </summary>
         /// <typeparam name="TAttribute">The attribute type to map</typeparam>
         /// <returns>A fluent mapping builder</returns>
-        public AttributeMapper ForAttribute<TAttribute>() where TAttribute : Attribute
-        {
-            return new AttributeMapper(context, typeof(TAttribute).FullName!);
-        }
+        public AttributeMapper ForAttribute<TAttribute>() where TAttribute : Attribute =>
+            new(context, typeof(TAttribute).FullName!);
 
         /// <summary>
         /// Starts a fluent mapping chain for an attribute by <see cref="Type"/>.
@@ -41,10 +39,8 @@ public static class IncrementalGeneratorContextExtensions
         /// </summary>
         /// <param name="fullyQualifiedAttributeName">Fully qualified name of the attribute (e.g., "MyApp.MyAttribute")</param>
         /// <returns>A fluent mapping builder</returns>
-        public AttributeMapper ForAttribute(string fullyQualifiedAttributeName)
-        {
-            return new AttributeMapper(context, fullyQualifiedAttributeName);
-        }
+        public AttributeMapper ForAttribute(string fullyQualifiedAttributeName) =>
+            new(context, fullyQualifiedAttributeName);
 
         /// <summary>
         /// Maps types from the compilation using a query builder pattern.
@@ -54,10 +50,8 @@ public static class IncrementalGeneratorContextExtensions
         /// <param name="selector">Function to select and transform types from compilation</param>
         /// <returns>Incremental values provider of models</returns>
         public IncrementalValuesProvider<TModel> MapTypes<TModel>(
-            Func<Compilation, CancellationToken, IEnumerable<TModel>> selector)
-        {
-            return context.CompilationProvider.SelectMany(selector);
-        }
+            Func<Compilation, CancellationToken, IEnumerable<TModel>> selector) =>
+            context.CompilationProvider.SelectMany(selector);
     }
 
     /// <summary>
@@ -78,33 +72,28 @@ public static class IncrementalGeneratorContextExtensions
         /// Maps to models using the builder function. Model type is inferred automatically.
         /// </summary>
         public IncrementalValuesProvider<TModel> Map<TModel>(
-            Func<GeneratorAttributeSyntaxContext, CancellationToken, TModel?> builder)
-        {
-            return MapAttribute(_attributeName, builder);
-        }
+            Func<GeneratorAttributeSyntaxContext, CancellationToken, TModel?> builder) =>
+            MapAttribute(_attributeName, builder);
 
         /// <summary>
         /// Maps to models using the builder function, with a custom syntax predicate.
         /// </summary>
         public IncrementalValuesProvider<TModel> Where<TModel>(
             Func<SyntaxNode, CancellationToken, bool> syntaxPredicate,
-            Func<GeneratorAttributeSyntaxContext, CancellationToken, TModel?> builder)
-        {
-            return MapAttribute(_attributeName, builder, syntaxPredicate);
-        }
+            Func<GeneratorAttributeSyntaxContext, CancellationToken, TModel?> builder) =>
+            MapAttribute(_attributeName, builder, syntaxPredicate);
 
-        private IncrementalValuesProvider<TModel> MapAttribute<TModel>(string fullyQualifiedAttributeName,
+        private IncrementalValuesProvider<TModel> MapAttribute<TModel>(
+            string fullyQualifiedAttributeName,
             Func<GeneratorAttributeSyntaxContext, CancellationToken, TModel?> builder,
-            Func<SyntaxNode, CancellationToken, bool>? syntaxPredicate = null)
-        {
-            return _context.SyntaxProvider
+            Func<SyntaxNode, CancellationToken, bool>? syntaxPredicate = null) =>
+            _context.SyntaxProvider
                 .ForAttributeWithMetadataName(
                     fullyQualifiedAttributeName,
                     syntaxPredicate ?? (static (_, _) => true),
                     builder)
                 .Where(static model => model is not null)
                 .Select(static (model, _) => model!);
-        }
     }
 
     /// <summary>
@@ -114,7 +103,9 @@ public static class IncrementalGeneratorContextExtensions
     /// <param name="model"></param>
     /// <param name="exception"></param>
     /// <typeparam name="TModel"></typeparam>
-    public static void ReportDefaultError<TModel>(this SourceProductionContext context, TModel model,
+    public static void ReportDefaultError<TModel>(
+        this SourceProductionContext context,
+        TModel model,
         Exception exception)
     {
         var descriptor = new DiagnosticDescriptor(

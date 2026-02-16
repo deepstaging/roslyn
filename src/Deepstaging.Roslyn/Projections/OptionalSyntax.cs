@@ -17,36 +17,24 @@ public readonly struct OptionalSyntax<TSyntax> : IValidatableProjection<TSyntax,
 {
     private readonly TSyntax? _node;
 
-    private OptionalSyntax(TSyntax? node)
-    {
-        _node = node;
-    }
+    private OptionalSyntax(TSyntax? node) => _node = node;
 
     #region Factory Methods
 
     /// <summary>
     /// Creates an optional syntax with a value.
     /// </summary>
-    public static OptionalSyntax<TSyntax> WithValue(TSyntax node)
-    {
-        return new OptionalSyntax<TSyntax>(node);
-    }
+    public static OptionalSyntax<TSyntax> WithValue(TSyntax node) => new(node);
 
     /// <summary>
     /// Creates an empty optional syntax without a value.
     /// </summary>
-    public static OptionalSyntax<TSyntax> Empty()
-    {
-        return new OptionalSyntax<TSyntax>(null);
-    }
+    public static OptionalSyntax<TSyntax> Empty() => new(null);
 
     /// <summary>
     /// Creates an optional syntax from a nullable syntax reference.
     /// </summary>
-    public static OptionalSyntax<TSyntax> FromNullable(TSyntax? node)
-    {
-        return node != null ? WithValue(node) : Empty();
-    }
+    public static OptionalSyntax<TSyntax> FromNullable(TSyntax? node) => node != null ? WithValue(node) : Empty();
 
     #endregion
 
@@ -74,44 +62,31 @@ public readonly struct OptionalSyntax<TSyntax> : IValidatableProjection<TSyntax,
     /// <summary>
     /// Returns the syntax node or throws an exception if absent.
     /// </summary>
-    public TSyntax OrThrow(string? message = null)
-    {
-        return _node ?? throw new InvalidOperationException(message ?? "Syntax node is not present.");
-    }
+    public TSyntax OrThrow(string? message = null) =>
+        _node ?? throw new InvalidOperationException(message ?? "Syntax node is not present.");
 
     /// <summary>
     /// Returns the syntax node or throws an exception with a lazily-computed message if absent.
     /// </summary>
-    public TSyntax OrThrow(Func<string> messageFactory)
-    {
-        return _node ?? throw new InvalidOperationException(messageFactory());
-    }
+    public TSyntax OrThrow(Func<string> messageFactory) =>
+        _node ?? throw new InvalidOperationException(messageFactory());
 
     /// <summary>
     /// Returns the syntax node or null if absent.
     /// </summary>
-    public TSyntax? OrNull()
-    {
-        return _node;
-    }
+    public TSyntax? OrNull() => _node;
 
     /// <summary>
     /// Validates the optional syntax to a ValidSyntax with guaranteed non-null access.
     /// </summary>
-    public ValidSyntax<TSyntax>? Validate()
-    {
-        return _node != null ? ValidSyntax<TSyntax>.From(_node) : null;
-    }
+    public ValidSyntax<TSyntax>? Validate() => _node != null ? ValidSyntax<TSyntax>.From(_node) : null;
 
     /// <summary>
     /// Validates the optional syntax or throws an exception if absent.
     /// </summary>
-    public ValidSyntax<TSyntax> ValidateOrThrow(string? message = null)
-    {
-        return _node != null
-            ? ValidSyntax<TSyntax>.From(_node)
-            : throw new InvalidOperationException(message ?? "Cannot validate an empty syntax projection.");
-    }
+    public ValidSyntax<TSyntax> ValidateOrThrow(string? message = null) => _node != null
+        ? ValidSyntax<TSyntax>.From(_node)
+        : throw new InvalidOperationException(message ?? "Cannot validate an empty syntax projection.");
 
     /// <summary>
     /// Attempts to validate the optional syntax. Returns true if successful (non-null).
@@ -131,18 +106,12 @@ public readonly struct OptionalSyntax<TSyntax> : IValidatableProjection<TSyntax,
     /// <summary>
     /// Checks if the optional syntax is not valid (empty). Returns true if invalid.
     /// </summary>
-    public bool IsNotValid(out ValidSyntax<TSyntax> validated)
-    {
-        return !IsValid(out validated);
-    }
+    public bool IsNotValid(out ValidSyntax<TSyntax> validated) => !IsValid(out validated);
 
     /// <summary>
     /// Checks if the optional syntax is valid (has value). Returns true if valid.
     /// </summary>
-    public bool IsValid(out ValidSyntax<TSyntax> validated)
-    {
-        return TryValidate(out validated);
-    }
+    public bool IsValid(out ValidSyntax<TSyntax> validated) => TryValidate(out validated);
 
     #endregion
 
@@ -151,38 +120,27 @@ public readonly struct OptionalSyntax<TSyntax> : IValidatableProjection<TSyntax,
     /// <summary>
     /// Maps the syntax node to a different type using the provided function.
     /// </summary>
-    public OptionalValue<TResult> Map<TResult>(Func<ValidSyntax<TSyntax>, TResult> mapper)
-    {
-        return _node != null
-            ? OptionalValue<TResult>.WithValue(mapper(ValidSyntax<TSyntax>.From(_node)))
-            : OptionalValue<TResult>.Empty();
-    }
+    public OptionalValue<TResult> Map<TResult>(Func<ValidSyntax<TSyntax>, TResult> mapper) => _node != null
+        ? OptionalValue<TResult>.WithValue(mapper(ValidSyntax<TSyntax>.From(_node)))
+        : OptionalValue<TResult>.Empty();
 
     /// <summary>
     /// Alias for Map. Maps the syntax node to a different type.
     /// </summary>
-    public OptionalValue<TResult> Select<TResult>(Func<ValidSyntax<TSyntax>, TResult> selector)
-    {
-        return Map(selector);
-    }
+    public OptionalValue<TResult> Select<TResult>(Func<ValidSyntax<TSyntax>, TResult> selector) => Map(selector);
 
     /// <summary>
     /// Filters the syntax node based on a predicate.
     /// </summary>
-    public OptionalSyntax<TSyntax> Where(Func<TSyntax, bool> predicate)
-    {
-        return _node != null && predicate(_node) ? this : Empty();
-    }
+    public OptionalSyntax<TSyntax> Where(Func<TSyntax, bool> predicate) =>
+        _node != null && predicate(_node) ? this : Empty();
 
     /// <summary>
     /// Attempts to cast the syntax node to a derived syntax type.
     /// </summary>
-    public OptionalSyntax<TDerived> OfType<TDerived>() where TDerived : SyntaxNode
-    {
-        return _node is TDerived derived
-            ? OptionalSyntax<TDerived>.WithValue(derived)
-            : OptionalSyntax<TDerived>.Empty();
-    }
+    public OptionalSyntax<TDerived> OfType<TDerived>() where TDerived : SyntaxNode => _node is TDerived derived
+        ? OptionalSyntax<TDerived>.WithValue(derived)
+        : OptionalSyntax<TDerived>.Empty();
 
     #endregion
 
@@ -191,12 +149,9 @@ public readonly struct OptionalSyntax<TSyntax> : IValidatableProjection<TSyntax,
     /// <summary>
     /// Gets the parent of the syntax node as the specified type.
     /// </summary>
-    public OptionalSyntax<TParent> Parent<TParent>() where TParent : SyntaxNode
-    {
-        return _node?.Parent is TParent parent
-            ? OptionalSyntax<TParent>.WithValue(parent)
-            : OptionalSyntax<TParent>.Empty();
-    }
+    public OptionalSyntax<TParent> Parent<TParent>() where TParent : SyntaxNode => _node?.Parent is TParent parent
+        ? OptionalSyntax<TParent>.WithValue(parent)
+        : OptionalSyntax<TParent>.Empty();
 
     /// <summary>
     /// Finds the first ancestor of the specified type.
@@ -244,42 +199,27 @@ public readonly struct OptionalSyntax<TSyntax> : IValidatableProjection<TSyntax,
     /// <summary>
     /// Checks if the syntax node equals another syntax node.
     /// </summary>
-    public bool Equals(TSyntax? other)
-    {
-        return _node != null && other != null && _node.IsEquivalentTo(other);
-    }
+    public bool Equals(TSyntax? other) => _node != null && other != null && _node.IsEquivalentTo(other);
 
     /// <summary>
     /// Enables equality checks: optional == node
     /// </summary>
-    public static bool operator ==(OptionalSyntax<TSyntax> left, TSyntax? right)
-    {
-        return left.Equals(right);
-    }
+    public static bool operator ==(OptionalSyntax<TSyntax> left, TSyntax? right) => left.Equals(right);
 
     /// <summary>
     /// Enables inequality checks: optional != node
     /// </summary>
-    public static bool operator !=(OptionalSyntax<TSyntax> left, TSyntax? right)
-    {
-        return !left.Equals(right);
-    }
+    public static bool operator !=(OptionalSyntax<TSyntax> left, TSyntax? right) => !left.Equals(right);
 
     /// <summary>
     /// Determines whether the current instance equals the specified object (always returns false).
     /// </summary>
-    public override bool Equals(object? obj)
-    {
-        return false;
-    }
+    public override bool Equals(object? obj) => false;
 
     /// <summary>
     /// Returns the hash code for this instance.
     /// </summary>
-    public override int GetHashCode()
-    {
-        return _node?.GetHashCode() ?? 0;
-    }
+    public override int GetHashCode() => _node?.GetHashCode() ?? 0;
 
     #endregion
 
@@ -292,6 +232,7 @@ public readonly struct OptionalSyntax<TSyntax> : IValidatableProjection<TSyntax,
     {
         if (_node != null)
             action(_node);
+
         return this;
     }
 
@@ -309,10 +250,8 @@ public readonly struct OptionalSyntax<TSyntax> : IValidatableProjection<TSyntax,
     /// <summary>
     /// Pattern matching that returns a value.
     /// </summary>
-    public TResult Match<TResult>(Func<TSyntax, TResult> whenPresent, Func<TResult> whenEmpty)
-    {
-        return _node != null ? whenPresent(_node) : whenEmpty();
-    }
+    public TResult Match<TResult>(Func<TSyntax, TResult> whenPresent, Func<TResult> whenEmpty) =>
+        _node != null ? whenPresent(_node) : whenEmpty();
 
     #endregion
 }

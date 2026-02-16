@@ -206,6 +206,7 @@ public class OperatorBuilderTests : RoslynTestBase
         await Assert.That(result.Success).IsTrue();
 
         var compilation = CompilationFor(result.Code!);
+
         var diagnostics = compilation.GetDiagnostics()
             .Where(d => d.Severity == DiagnosticSeverity.Error);
 

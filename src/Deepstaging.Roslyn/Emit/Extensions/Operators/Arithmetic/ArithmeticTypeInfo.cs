@@ -35,16 +35,10 @@ internal readonly struct ArithmeticTypeInfo
     /// <summary>Gets the C# keyword for the backing type.</summary>
     public string? CSharpKeyword => Core.CSharpKeyword;
 
-    private ArithmeticTypeInfo(BackingTypeCore core)
-    {
-        Core = core;
-    }
+    private ArithmeticTypeInfo(BackingTypeCore core) => Core = core;
 
     /// <summary>
     /// Creates an ArithmeticTypeInfo from the given type symbol.
     /// </summary>
-    public static ArithmeticTypeInfo From(TypeSnapshot type)
-    {
-        return new ArithmeticTypeInfo(BackingTypeCore.From(type));
-    }
+    public static ArithmeticTypeInfo From(TypeSnapshot type) => new(BackingTypeCore.From(type));
 }

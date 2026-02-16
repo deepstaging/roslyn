@@ -49,10 +49,8 @@ public readonly struct EquatableArray<T>(ImmutableArray<T> array)
             return false;
 
         for (var i = 0; i < left.Length; i++)
-        {
             if (!left[i].Equals(right[i]))
                 return false;
-        }
 
         return true;
     }
@@ -65,14 +63,17 @@ public readonly struct EquatableArray<T>(ImmutableArray<T> array)
     public override int GetHashCode()
     {
         var arr = AsImmutableArray();
+
         if (arr.IsEmpty)
             return 0;
 
         unchecked
         {
             var hash = 17;
+
             foreach (var item in arr)
                 hash = hash * 31 + item.GetHashCode();
+
             return hash;
         }
     }

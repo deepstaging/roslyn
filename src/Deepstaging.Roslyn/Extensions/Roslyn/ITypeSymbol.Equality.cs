@@ -37,16 +37,14 @@ public static class TypeSymbolEqualityExtensions
                 return true;
 
             foreach (var iface in typeSymbol.AllInterfaces)
-            {
-                if (iface is { Name: "IEquatable", IsGenericType: true, Arity: 1 }
-                    && iface.ContainingNamespace.ToDisplayString() == "System"
-                    && SymbolEqualityComparer.Default.Equals(iface.TypeArguments[0], typeSymbol))
+                if (iface is { Name: "IEquatable", IsGenericType: true, Arity: 1 } &&
+                    iface.ContainingNamespace.ToDisplayString() == "System" &&
+                    SymbolEqualityComparer.Default.Equals(iface.TypeArguments[0], typeSymbol))
                     return true;
-            }
 
             // Nullable<T> is equatable if T is equatable
-            if (typeSymbol is INamedTypeSymbol { IsGenericType: true, Name: "Nullable", Arity: 1 } nullable
-                && nullable.ContainingNamespace.ToDisplayString() == "System")
+            if (typeSymbol is INamedTypeSymbol { IsGenericType: true, Name: "Nullable", Arity: 1 } nullable &&
+                nullable.ContainingNamespace.ToDisplayString() == "System")
                 return nullable.TypeArguments[0].ImplementsIEquatable();
 
             return false;

@@ -21,81 +21,52 @@ public readonly struct EventQuery
     /// <summary>
     /// Creates a new event query for the specified type symbol.
     /// </summary>
-    public static EventQuery From(ITypeSymbol typeSymbol)
-    {
-        return new EventQuery(typeSymbol, ImmutableArray<Func<IEventSymbol, bool>>.Empty);
-    }
+    public static EventQuery From(ITypeSymbol typeSymbol) =>
+        new(typeSymbol, ImmutableArray<Func<IEventSymbol, bool>>.Empty);
 
-    private EventQuery AddFilter(Func<IEventSymbol, bool> filter)
-    {
-        return new EventQuery(_typeSymbol, _filters.Add(filter));
-    }
+    private EventQuery AddFilter(Func<IEventSymbol, bool> filter) => new(_typeSymbol, _filters.Add(filter));
 
     #region Accessibility Filters
 
     /// <summary>
     /// Filters for public events.
     /// </summary>
-    public EventQuery ThatArePublic()
-    {
-        return AddFilter(e => e.DeclaredAccessibility == Accessibility.Public);
-    }
+    public EventQuery ThatArePublic() => AddFilter(e => e.DeclaredAccessibility == Accessibility.Public);
 
     /// <summary>
     /// Filters for non-public events.
     /// </summary>
-    public EventQuery ThatAreNotPublic()
-    {
-        return AddFilter(e => e.DeclaredAccessibility != Accessibility.Public);
-    }
+    public EventQuery ThatAreNotPublic() => AddFilter(e => e.DeclaredAccessibility != Accessibility.Public);
 
     /// <summary>
     /// Filters for private events.
     /// </summary>
-    public EventQuery ThatArePrivate()
-    {
-        return AddFilter(e => e.DeclaredAccessibility == Accessibility.Private);
-    }
+    public EventQuery ThatArePrivate() => AddFilter(e => e.DeclaredAccessibility == Accessibility.Private);
 
     /// <summary>
     /// Filters for non-private events.
     /// </summary>
-    public EventQuery ThatAreNotPrivate()
-    {
-        return AddFilter(e => e.DeclaredAccessibility != Accessibility.Private);
-    }
+    public EventQuery ThatAreNotPrivate() => AddFilter(e => e.DeclaredAccessibility != Accessibility.Private);
 
     /// <summary>
     /// Filters for protected events.
     /// </summary>
-    public EventQuery ThatAreProtected()
-    {
-        return AddFilter(e => e.DeclaredAccessibility == Accessibility.Protected);
-    }
+    public EventQuery ThatAreProtected() => AddFilter(e => e.DeclaredAccessibility == Accessibility.Protected);
 
     /// <summary>
     /// Filters for non-protected events.
     /// </summary>
-    public EventQuery ThatAreNotProtected()
-    {
-        return AddFilter(e => e.DeclaredAccessibility != Accessibility.Protected);
-    }
+    public EventQuery ThatAreNotProtected() => AddFilter(e => e.DeclaredAccessibility != Accessibility.Protected);
 
     /// <summary>
     /// Filters for internal events.
     /// </summary>
-    public EventQuery ThatAreInternal()
-    {
-        return AddFilter(e => e.DeclaredAccessibility == Accessibility.Internal);
-    }
+    public EventQuery ThatAreInternal() => AddFilter(e => e.DeclaredAccessibility == Accessibility.Internal);
 
     /// <summary>
     /// Filters for non-internal events.
     /// </summary>
-    public EventQuery ThatAreNotInternal()
-    {
-        return AddFilter(e => e.DeclaredAccessibility != Accessibility.Internal);
-    }
+    public EventQuery ThatAreNotInternal() => AddFilter(e => e.DeclaredAccessibility != Accessibility.Internal);
 
     #endregion
 
@@ -104,82 +75,52 @@ public readonly struct EventQuery
     /// <summary>
     /// Filters for static events.
     /// </summary>
-    public EventQuery ThatAreStatic()
-    {
-        return AddFilter(e => e.IsStatic);
-    }
+    public EventQuery ThatAreStatic() => AddFilter(e => e.IsStatic);
 
     /// <summary>
     /// Filters for instance events (non-static).
     /// </summary>
-    public EventQuery ThatAreInstance()
-    {
-        return AddFilter(e => !e.IsStatic);
-    }
+    public EventQuery ThatAreInstance() => AddFilter(e => !e.IsStatic);
 
     /// <summary>
     /// Filters for abstract events.
     /// </summary>
-    public EventQuery ThatAreAbstract()
-    {
-        return AddFilter(e => e.IsAbstract);
-    }
+    public EventQuery ThatAreAbstract() => AddFilter(e => e.IsAbstract);
 
     /// <summary>
     /// Filters for non-abstract events.
     /// </summary>
-    public EventQuery ThatAreNotAbstract()
-    {
-        return AddFilter(e => !e.IsAbstract);
-    }
+    public EventQuery ThatAreNotAbstract() => AddFilter(e => !e.IsAbstract);
 
     /// <summary>
     /// Filters for virtual events.
     /// </summary>
-    public EventQuery ThatAreVirtual()
-    {
-        return AddFilter(e => e.IsVirtual);
-    }
+    public EventQuery ThatAreVirtual() => AddFilter(e => e.IsVirtual);
 
     /// <summary>
     /// Filters for non-virtual events.
     /// </summary>
-    public EventQuery ThatAreNotVirtual()
-    {
-        return AddFilter(e => !e.IsVirtual);
-    }
+    public EventQuery ThatAreNotVirtual() => AddFilter(e => !e.IsVirtual);
 
     /// <summary>
     /// Filters for sealed events.
     /// </summary>
-    public EventQuery ThatAreSealed()
-    {
-        return AddFilter(e => e.IsSealed);
-    }
+    public EventQuery ThatAreSealed() => AddFilter(e => e.IsSealed);
 
     /// <summary>
     /// Filters for non-sealed events.
     /// </summary>
-    public EventQuery ThatAreNotSealed()
-    {
-        return AddFilter(e => !e.IsSealed);
-    }
+    public EventQuery ThatAreNotSealed() => AddFilter(e => !e.IsSealed);
 
     /// <summary>
     /// Filters for override events.
     /// </summary>
-    public EventQuery ThatAreOverride()
-    {
-        return AddFilter(e => e.IsOverride);
-    }
+    public EventQuery ThatAreOverride() => AddFilter(e => e.IsOverride);
 
     /// <summary>
     /// Filters for events that are not overrides.
     /// </summary>
-    public EventQuery ThatAreNotOverride()
-    {
-        return AddFilter(e => !e.IsOverride);
-    }
+    public EventQuery ThatAreNotOverride() => AddFilter(e => !e.IsOverride);
 
     #endregion
 
@@ -188,34 +129,22 @@ public readonly struct EventQuery
     /// <summary>
     /// Filters for events with the exact name.
     /// </summary>
-    public EventQuery WithName(string name)
-    {
-        return AddFilter(e => e.Name == name);
-    }
+    public EventQuery WithName(string name) => AddFilter(e => e.Name == name);
 
     /// <summary>
     /// Filters for events with names starting with the specified prefix.
     /// </summary>
-    public EventQuery WithNamePrefix(string prefix)
-    {
-        return AddFilter(e => e.Name.StartsWith(prefix));
-    }
+    public EventQuery WithNamePrefix(string prefix) => AddFilter(e => e.Name.StartsWith(prefix));
 
     /// <summary>
     /// Filters for events with names ending with the specified suffix.
     /// </summary>
-    public EventQuery WithNameSuffix(string suffix)
-    {
-        return AddFilter(e => e.Name.EndsWith(suffix));
-    }
+    public EventQuery WithNameSuffix(string suffix) => AddFilter(e => e.Name.EndsWith(suffix));
 
     /// <summary>
     /// Filters for events with names matching a predicate.
     /// </summary>
-    public EventQuery WithNameMatching(Func<string, bool> predicate)
-    {
-        return AddFilter(e => predicate(e.Name));
-    }
+    public EventQuery WithNameMatching(Func<string, bool> predicate) => AddFilter(e => predicate(e.Name));
 
     #endregion
 
@@ -224,18 +153,12 @@ public readonly struct EventQuery
     /// <summary>
     /// Filters for events of a specific type.
     /// </summary>
-    public EventQuery WithType<T>()
-    {
-        return AddFilter(e => e.Type.Name == typeof(T).Name);
-    }
+    public EventQuery WithType<T>() => AddFilter(e => e.Type.Name == typeof(T).Name);
 
     /// <summary>
     /// Filters for events of a specific type by name.
     /// </summary>
-    public EventQuery WithType(string typeName)
-    {
-        return AddFilter(e => e.Type.Name == typeName);
-    }
+    public EventQuery WithType(string typeName) => AddFilter(e => e.Type.Name == typeName);
 
     #endregion
 
@@ -244,26 +167,19 @@ public readonly struct EventQuery
     /// <summary>
     /// Filters for events that have the specified attribute.
     /// </summary>
-    public EventQuery WithAttribute<TAttribute>() where TAttribute : Attribute
-    {
-        return AddFilter(e => e.GetAttributesByType<TAttribute>().Any());
-    }
+    public EventQuery WithAttribute<TAttribute>() where TAttribute : Attribute =>
+        AddFilter(e => e.GetAttributesByType<TAttribute>().Any());
 
     /// <summary>
     /// Filters for events that have an attribute with the specified name.
     /// </summary>
-    public EventQuery WithAttribute(string attributeName)
-    {
-        return AddFilter(e => e.GetAttributesByName(attributeName).Any());
-    }
+    public EventQuery WithAttribute(string attributeName) => AddFilter(e => e.GetAttributesByName(attributeName).Any());
 
     /// <summary>
     /// Filters for events that do not have the specified attribute.
     /// </summary>
-    public EventQuery WithoutAttribute<TAttribute>() where TAttribute : Attribute
-    {
-        return AddFilter(e => !e.GetAttributesByType<TAttribute>().Any());
-    }
+    public EventQuery WithoutAttribute<TAttribute>() where TAttribute : Attribute =>
+        AddFilter(e => !e.GetAttributesByType<TAttribute>().Any());
 
     #endregion
 
@@ -273,10 +189,7 @@ public readonly struct EventQuery
     /// Filters for events matching the custom predicate.
     /// Use this as an escape hatch for complex or uncommon filters.
     /// </summary>
-    public EventQuery Where(Func<IEventSymbol, bool> predicate)
-    {
-        return AddFilter(predicate);
-    }
+    public EventQuery Where(Func<IEventSymbol, bool> predicate) => AddFilter(predicate);
 
     #endregion
 
@@ -318,18 +231,14 @@ public readonly struct EventQuery
     /// <summary>
     /// Gets all matching and projects each event using the specified mapper.
     /// </summary>
-    public ImmutableArray<TModel> Select<TModel>(Func<ValidSymbol<IEventSymbol>, TModel> mapper)
-    {
-        return [..GetAll().Select(mapper)];
-    }
+    public ImmutableArray<TModel> Select<TModel>(Func<ValidSymbol<IEventSymbol>, TModel> mapper) =>
+        [..GetAll().Select(mapper)];
 
     /// <summary>
     /// Gets all matching and projects each event to a collection, then flattens the results.
     /// </summary>
-    public ImmutableArray<TModel> SelectMany<TModel>(Func<ValidSymbol<IEventSymbol>, IEnumerable<TModel>> mapper)
-    {
-        return [..GetAll().SelectMany(mapper)];
-    }
+    public ImmutableArray<TModel> SelectMany<TModel>(Func<ValidSymbol<IEventSymbol>, IEnumerable<TModel>> mapper) =>
+        [..GetAll().SelectMany(mapper)];
 
     /// <summary>
     /// Gets all matching and returns the first matching event, or Empty if none found.
@@ -337,6 +246,7 @@ public readonly struct EventQuery
     public OptionalSymbol<IEventSymbol> FirstOrDefault()
     {
         var all = GetAll();
+
         return all.Length > 0
             ? OptionalSymbol<IEventSymbol>.WithValue(all[0].Value)
             : OptionalSymbol<IEventSymbol>.Empty();
@@ -349,6 +259,7 @@ public readonly struct EventQuery
     public ValidSymbol<IEventSymbol> First()
     {
         var all = GetAll();
+
         return all.Length > 0
             ? all[0]
             : throw new InvalidOperationException("No ieventsymbols matched the query criteria.");
@@ -357,18 +268,12 @@ public readonly struct EventQuery
     /// <summary>
     /// Gets all matching and returns true if any events match, false otherwise.
     /// </summary>
-    public bool Any()
-    {
-        return GetAll().Length > 0;
-    }
+    public bool Any() => GetAll().Length > 0;
 
     /// <summary>
     /// Gets all matching and returns the count of matching events.
     /// </summary>
-    public int Count()
-    {
-        return GetAll().Length;
-    }
+    public int Count() => GetAll().Length;
 
     #endregion
 }

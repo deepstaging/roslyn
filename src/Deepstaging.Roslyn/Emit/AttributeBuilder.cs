@@ -73,6 +73,7 @@ public record struct AttributeBuilder
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Argument name cannot be null or empty.", nameof(name));
+
         if (string.IsNullOrWhiteSpace(value))
             throw new ArgumentException("Argument value cannot be null or empty.", nameof(value));
 
@@ -129,10 +130,8 @@ public record struct AttributeBuilder
     /// <summary>
     /// Builds the attribute as an attribute list syntax node.
     /// </summary>
-    internal readonly AttributeListSyntax BuildList()
-    {
-        return SyntaxFactory.AttributeList(SyntaxFactory.SingletonSeparatedList(Build()));
-    }
+    internal readonly AttributeListSyntax BuildList() =>
+        SyntaxFactory.AttributeList(SyntaxFactory.SingletonSeparatedList(Build()));
 
     #endregion
 }

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: RPL-1.5
 
 // ReSharper disable once CheckNamespace
+
 namespace Deepstaging.Roslyn;
 
 /// <summary>

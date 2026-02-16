@@ -25,10 +25,7 @@ public readonly struct ValidEmit : IProjection<CompilationUnitSyntax>
     /// Creates a validated emit result from syntax and code.
     /// </summary>
     /// <exception cref="ArgumentNullException">Thrown if syntax or code is null.</exception>
-    internal static ValidEmit From(CompilationUnitSyntax syntax, string code)
-    {
-        return new ValidEmit(syntax, code);
-    }
+    internal static ValidEmit From(CompilationUnitSyntax syntax, string code) => new(syntax, code);
 
     #endregion
 
@@ -63,18 +60,12 @@ public readonly struct ValidEmit : IProjection<CompilationUnitSyntax>
     /// <summary>
     /// Returns the guaranteed non-null syntax.
     /// </summary>
-    public CompilationUnitSyntax OrThrow(string? message = null)
-    {
-        return _syntax;
-    }
+    public CompilationUnitSyntax OrThrow(string? message = null) => _syntax;
 
     /// <summary>
     /// Returns the guaranteed non-null syntax.
     /// </summary>
-    public CompilationUnitSyntax? OrNull()
-    {
-        return _syntax;
-    }
+    public CompilationUnitSyntax? OrNull() => _syntax;
 
     #endregion
 
@@ -95,6 +86,7 @@ public readonly struct ValidEmit : IProjection<CompilationUnitSyntax>
         get
         {
             var types = ImmutableArray.CreateBuilder<MemberDeclarationSyntax>();
+
             foreach (var member in _syntax.Members)
                 if (member is BaseNamespaceDeclarationSyntax ns)
                     types.AddRange(ns.Members);
@@ -130,10 +122,7 @@ public readonly struct ValidEmit : IProjection<CompilationUnitSyntax>
     /// <summary>
     /// Returns the formatted code string.
     /// </summary>
-    public override string ToString()
-    {
-        return _code;
-    }
+    public override string ToString() => _code;
 
     #endregion
 }

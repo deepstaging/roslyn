@@ -20,10 +20,12 @@ public static class TypeSymbolInheritanceExtensions
                 return true;
 
             var current = typeSymbol.BaseType;
+
             while (current != null)
             {
                 if (SymbolEqualityComparer.Default.Equals(current, baseType))
                     return true;
+
                 current = current.BaseType;
             }
 
@@ -36,11 +38,13 @@ public static class TypeSymbolInheritanceExtensions
         public bool IsOrInheritsFrom(string typeName, string? containingNamespace = null)
         {
             var current = typeSymbol;
+
             while (current != null)
             {
                 if (current.Name == typeName &&
                     (containingNamespace == null || current.ContainingNamespace?.ToString() == containingNamespace))
                     return true;
+
                 current = current.BaseType;
             }
 
@@ -53,11 +57,13 @@ public static class TypeSymbolInheritanceExtensions
         public bool InheritsFrom(string typeName, string? containingNamespace = null)
         {
             var current = typeSymbol.BaseType;
+
             while (current != null)
             {
                 if (current.Name == typeName &&
                     (containingNamespace == null || current.ContainingNamespace?.ToString() == containingNamespace))
                     return true;
+
                 current = current.BaseType;
             }
 
@@ -71,10 +77,12 @@ public static class TypeSymbolInheritanceExtensions
         public ITypeSymbol? GetBaseTypeByName(string typeName)
         {
             var current = typeSymbol.BaseType;
+
             while (current != null)
             {
                 if (current.Name == typeName)
                     return current;
+
                 current = current.BaseType;
             }
 
@@ -85,11 +93,11 @@ public static class TypeSymbolInheritanceExtensions
         /// Extracts the first type argument from a generic type with a single type parameter.
         /// Returns null if not a generic type or doesn't have exactly one type argument.
         /// </summary>
-        public ITypeSymbol? GetSingleTypeArgument()
+        public ITypeSymbol? GetSingleTypeArgument() => typeSymbol is INamedTypeSymbol
         {
-            return typeSymbol is INamedTypeSymbol { IsGenericType: true, TypeArguments.Length: 1 } namedType
-                ? namedType.TypeArguments[0]
-                : null;
-        }
+            IsGenericType: true, TypeArguments.Length: 1
+        } namedType
+            ? namedType.TypeArguments[0]
+            : null;
     }
 }

@@ -59,6 +59,7 @@ public static class StringExtensions
                     default:
                         if (previousCategory != null)
                             previousCategory = UnicodeCategory.SpaceSeparator;
+
                         continue;
                 }
 
@@ -258,13 +259,10 @@ public static class StringExtensions
         /// Converts the string to Train-Case (e.g., "myPropertyName" → "My-Property-Name").
         /// </summary>
         /// <returns>The Train-Case version of the string.</returns>
-        public string ToTrainCase()
-        {
-            return text.ToPascalCase()
-                .InsertHyphenBeforeUpperCase()
-                .WithFirstCharUpperCase()
-                .Replace("--", "-");
-        }
+        public string ToTrainCase() => text.ToPascalCase()
+            .InsertHyphenBeforeUpperCase()
+            .WithFirstCharUpperCase()
+            .Replace("--", "-");
 
         /// <summary>
         /// Converts the string to Title Case (e.g., "my_property_name" → "My Property Name").
@@ -293,34 +291,19 @@ public static class StringExtensions
             return builder.ToString();
         }
 
-        private string InsertSpaceBeforeUpperCase()
-        {
-            return text.InsertCharacterBeforeUpperCase(' ');
-        }
+        private string InsertSpaceBeforeUpperCase() => text.InsertCharacterBeforeUpperCase(' ');
 
-        private string InsertHyphenBeforeUpperCase()
-        {
-            return text.InsertCharacterBeforeUpperCase('-');
-        }
+        private string InsertHyphenBeforeUpperCase() => text.InsertCharacterBeforeUpperCase('-');
 
-        private string WithFirstCharLowerCase()
-        {
-            return string.IsNullOrEmpty(text) || char.IsLower(text[0])
-                ? text
-                : char.ToLowerInvariant(text[0]) + text.Substring(1);
-        }
+        private string WithFirstCharLowerCase() => string.IsNullOrEmpty(text) || char.IsLower(text[0])
+            ? text
+            : char.ToLowerInvariant(text[0]) + text.Substring(1);
 
-        private string WithFirstCharUpperCase()
-        {
-            return string.IsNullOrEmpty(text) || char.IsUpper(text[0])
-                ? text
-                : char.ToUpperInvariant(text[0]) + text.Substring(1);
-        }
+        private string WithFirstCharUpperCase() => string.IsNullOrEmpty(text) || char.IsUpper(text[0])
+            ? text
+            : char.ToUpperInvariant(text[0]) + text.Substring(1);
 
-        private bool IsAllUppercase()
-        {
-            return !string.IsNullOrEmpty(text) && text.All(c => !char.IsLetter(c) || char.IsUpper(c));
-        }
+        private bool IsAllUppercase() => !string.IsNullOrEmpty(text) && text.All(c => !char.IsLetter(c) || char.IsUpper(c));
     }
 
     private static bool ShouldInsertUnderscore(UnicodeCategory? previousCategory, int currentIndex, string text)
@@ -353,10 +336,7 @@ public static class StringExtensions
         return isAfterLower || isBeforeLower;
     }
 
-    private static bool IsSeparator(char c)
-    {
-        return c is '-' or '_';
-    }
+    private static bool IsSeparator(char c) => c is '-' or '_';
 
     private static string InsertCharacterBeforeUpperCase(this string text, char separator)
     {

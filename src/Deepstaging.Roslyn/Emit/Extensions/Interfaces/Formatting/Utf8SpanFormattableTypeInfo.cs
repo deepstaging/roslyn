@@ -26,18 +26,12 @@ internal readonly struct Utf8SpanFormattableTypeInfo
     /// <summary>Gets whether the type is a numeric type.</summary>
     public bool IsNumericType => Core.IsNumericType;
 
-    private Utf8SpanFormattableTypeInfo(BackingTypeCore core)
-    {
-        Core = core;
-    }
+    private Utf8SpanFormattableTypeInfo(BackingTypeCore core) => Core = core;
 
     /// <summary>
     /// Creates a Utf8SpanFormattableTypeInfo from the given type symbol.
     /// </summary>
-    public static Utf8SpanFormattableTypeInfo From(TypeSnapshot type)
-    {
-        return new Utf8SpanFormattableTypeInfo(BackingTypeCore.From(type));
-    }
+    public static Utf8SpanFormattableTypeInfo From(TypeSnapshot type) => new(BackingTypeCore.From(type));
 
     /// <summary>
     /// Gets the StringSyntax attribute string for the format parameter, if applicable.
@@ -46,9 +40,13 @@ internal readonly struct Utf8SpanFormattableTypeInfo
     public string GetStringSyntaxAttributeString()
     {
         if (IsGuid)
-            return "[global::System.Diagnostics.CodeAnalysis.StringSyntax(global::System.Diagnostics.CodeAnalysis.StringSyntaxAttribute.GuidFormat)] ";
+            return
+                "[global::System.Diagnostics.CodeAnalysis.StringSyntax(global::System.Diagnostics.CodeAnalysis.StringSyntaxAttribute.GuidFormat)] ";
+
         if (IsNumericType)
-            return "[global::System.Diagnostics.CodeAnalysis.StringSyntax(global::System.Diagnostics.CodeAnalysis.StringSyntaxAttribute.NumericFormat)] ";
+            return
+                "[global::System.Diagnostics.CodeAnalysis.StringSyntax(global::System.Diagnostics.CodeAnalysis.StringSyntaxAttribute.NumericFormat)] ";
+
         return "";
     }
 }

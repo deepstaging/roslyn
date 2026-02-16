@@ -25,7 +25,8 @@ public static class TypeBuilderUnaryNegationOperatorExtensions
             return builder;
 
         return builder
-            .Implements($"global::System.Numerics.IUnaryNegationOperators<{typeName}, {typeName}>", Directives.Net7OrGreater)
+            .Implements($"global::System.Numerics.IUnaryNegationOperators<{typeName}, {typeName}>",
+                Directives.Net7OrGreater)
             .AddOperator(OperatorBuilder
                 .UnaryMinus(typeName)
                 .When(Directives.Net7OrGreater)
@@ -42,7 +43,8 @@ public static class TypeBuilderUnaryNegationOperatorExtensions
         var typeName = builder.Name;
 
         return builder
-            .Implements($"global::System.Numerics.IUnaryNegationOperators<{typeName}, {typeName}>", Directives.Net7OrGreater)
+            .Implements($"global::System.Numerics.IUnaryNegationOperators<{typeName}, {typeName}>",
+                Directives.Net7OrGreater)
             .AddOperator(OperatorBuilder
                 .UnaryMinus(typeName)
                 .When(Directives.Net7OrGreater)

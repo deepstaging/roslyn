@@ -60,7 +60,7 @@ public class TypeBuilderToStringExtensionsTests : RoslynTestBase
             .Struct("CustomerId")
             .InNamespace("Test")
             .AddProperty("Value", "global::System.Guid", p => p.AsReadOnly())
-            .OverridesToString("$\"CustomerId: {Value}\"", isCustomExpression: true)
+            .OverridesToString("$\"CustomerId: {Value}\"", true)
             .Emit();
 
         await Assert.That(result.Success).IsTrue();

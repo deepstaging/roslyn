@@ -22,9 +22,8 @@ public static class TypeBuilderObserverExtensions
         string elementType,
         string onNextExpression,
         string? onErrorExpression = null,
-        string? onCompletedExpression = null)
-    {
-        return builder
+        string? onCompletedExpression = null) =>
+        builder
             .Implements($"global::System.IObserver<{elementType}>")
             .AddMethod(MethodBuilder
                 .Parse($"public void OnNext({elementType} value)")
@@ -35,7 +34,6 @@ public static class TypeBuilderObserverExtensions
             .AddMethod(MethodBuilder
                 .Parse("public void OnCompleted()")
                 .WithBody(b => b.AddStatement(onCompletedExpression ?? "// No action on completed")));
-    }
 
     /// <summary>
     /// Implements IObserver&lt;T&gt; with virtual methods for subclass override.
@@ -45,9 +43,8 @@ public static class TypeBuilderObserverExtensions
     /// <returns>The modified type builder.</returns>
     public static TypeBuilder ImplementsIObserverVirtual(
         this TypeBuilder builder,
-        string elementType)
-    {
-        return builder
+        string elementType) =>
+        builder
             .Implements($"global::System.IObserver<{elementType}>")
             .AddMethod(MethodBuilder
                 .Parse($"public virtual void OnNext({elementType} value)")
@@ -58,7 +55,6 @@ public static class TypeBuilderObserverExtensions
             .AddMethod(MethodBuilder
                 .Parse("public virtual void OnCompleted()")
                 .WithBody(b => b.AddStatement("// Override in derived class")));
-    }
 
     /// <summary>
     /// Implements IObserver&lt;T&gt; that delegates to action fields.
@@ -69,9 +65,8 @@ public static class TypeBuilderObserverExtensions
     /// <returns>The modified type builder.</returns>
     public static TypeBuilder ImplementsIObserverWithActionFields(
         this TypeBuilder builder,
-        string elementType)
-    {
-        return builder
+        string elementType) =>
+        builder
             .Implements($"global::System.IObserver<{elementType}>")
             .AddField(FieldBuilder.Parse($"private readonly global::System.Action<{elementType}>? _onNext"))
             .AddField(FieldBuilder.Parse("private readonly global::System.Action<global::System.Exception>? _onError"))
@@ -87,5 +82,4 @@ public static class TypeBuilderObserverExtensions
             .AddMethod(MethodBuilder
                 .Parse("public void OnCompleted()")
                 .WithExpressionBody("_onCompleted?.Invoke()"));
-    }
 }

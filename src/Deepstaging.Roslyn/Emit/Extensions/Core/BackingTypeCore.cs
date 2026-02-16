@@ -97,13 +97,10 @@ internal readonly struct BackingTypeCore
     /// <summary>
     /// Creates a BackingTypeCore from a pipeline-safe type snapshot.
     /// </summary>
-    public static BackingTypeCore From(TypeSnapshot type)
-    {
-        return new BackingTypeCore(
-            type.GloballyQualifiedName,
-            type.Name,
-            type.IsValueType,
-            type.IsReferenceType,
-            type.IsReferenceType && type.IsNullable);
-    }
+    public static BackingTypeCore From(TypeSnapshot type) => new(
+        type.GloballyQualifiedName,
+        type.Name,
+        type.IsValueType,
+        type.IsReferenceType,
+        type.IsReferenceType && type.IsNullable);
 }

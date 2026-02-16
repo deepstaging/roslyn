@@ -41,6 +41,7 @@ public record struct ParameterBuilder
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Parameter name cannot be null or empty.", nameof(name));
+
         if (string.IsNullOrWhiteSpace(type))
             throw new ArgumentException("Parameter type cannot be null or empty.", nameof(type));
 
@@ -149,6 +150,7 @@ public record struct ParameterBuilder
 
         // Add attributes
         var attributes = Attributes.IsDefault ? [] : Attributes;
+
         if (attributes.Length > 0)
         {
             var attributeLists = attributes.Select(a => a.BuildList()).ToArray();
@@ -167,6 +169,7 @@ public record struct ParameterBuilder
                 ParameterModifier.This => SyntaxKind.ThisKeyword,
                 _ => throw new InvalidOperationException($"Unknown parameter modifier: {Modifier}")
             };
+
             parameter = parameter.WithModifiers(
                 SyntaxFactory.TokenList(SyntaxFactory.Token(modifierToken)));
         }
@@ -207,14 +210,19 @@ public enum ParameterModifier
 {
     /// <summary>No modifier.</summary>
     None,
+
     /// <summary>The ref modifier.</summary>
     Ref,
+
     /// <summary>The out modifier.</summary>
     Out,
+
     /// <summary>The in modifier.</summary>
     In,
+
     /// <summary>The params modifier.</summary>
     Params,
+
     /// <summary>The this modifier for extension methods.</summary>
     This
 }
@@ -222,7 +230,10 @@ public enum ParameterModifier
 /// <summary>
 /// Represents a validation rule for a parameter.
 /// </summary>
-public readonly record struct ParameterValidation(ParameterValidationKind Kind, string? MinValue = null, string? MaxValue = null);
+public readonly record struct ParameterValidation(
+    ParameterValidationKind Kind,
+    string? MinValue = null,
+    string? MaxValue = null);
 
 /// <summary>
 /// The kinds of parameter validation.
@@ -231,16 +242,22 @@ public enum ParameterValidationKind
 {
     /// <summary>Throws ArgumentNullException if null.</summary>
     ThrowIfNull,
+
     /// <summary>Throws ArgumentException if null or empty.</summary>
     ThrowIfNullOrEmpty,
+
     /// <summary>Throws ArgumentException if null, empty, or whitespace.</summary>
     ThrowIfNullOrWhiteSpace,
+
     /// <summary>Throws ArgumentOutOfRangeException if outside specified range.</summary>
     ThrowIfOutOfRange,
+
     /// <summary>Throws ArgumentOutOfRangeException if zero or negative.</summary>
     ThrowIfNotPositive,
+
     /// <summary>Throws ArgumentOutOfRangeException if negative.</summary>
     ThrowIfNegative,
+
     /// <summary>Throws ArgumentOutOfRangeException if zero.</summary>
     ThrowIfZero
 }

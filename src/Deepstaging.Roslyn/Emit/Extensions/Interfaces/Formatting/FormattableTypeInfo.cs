@@ -49,9 +49,11 @@ internal readonly struct FormattableTypeInfo
         if (IsGuid)
             return AttributeBuilder.For("global::System.Diagnostics.CodeAnalysis.StringSyntax")
                 .WithArgument("global::System.Diagnostics.CodeAnalysis.StringSyntaxAttribute.GuidFormat");
+
         if (IsNumericType)
             return AttributeBuilder.For("global::System.Diagnostics.CodeAnalysis.StringSyntax")
                 .WithArgument("global::System.Diagnostics.CodeAnalysis.StringSyntaxAttribute.NumericFormat");
+
         return null;
     }
 }

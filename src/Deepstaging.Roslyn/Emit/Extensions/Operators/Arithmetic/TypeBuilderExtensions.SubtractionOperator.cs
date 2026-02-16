@@ -29,7 +29,9 @@ public static class TypeBuilderSubtractionOperatorExtensions
             return builder;
 
         return builder
-            .Implements($"global::System.Numerics.ISubtractionOperators<{typeName}, {typeName}, {typeName}>", Directives.Net7OrGreater)
+            .Implements(
+                $"global::System.Numerics.ISubtractionOperators<{typeName}, {typeName}, {typeName}>",
+                Directives.Net7OrGreater)
             .AddOperator(OperatorBuilder
                 .Subtraction(typeName)
                 .When(Directives.Net7OrGreater)
@@ -49,7 +51,9 @@ public static class TypeBuilderSubtractionOperatorExtensions
         var typeName = builder.Name;
 
         return builder
-            .Implements($"global::System.Numerics.ISubtractionOperators<{typeName}, {typeName}, {typeName}>", Directives.Net7OrGreater)
+            .Implements(
+                $"global::System.Numerics.ISubtractionOperators<{typeName}, {typeName}, {typeName}>",
+                Directives.Net7OrGreater)
             .AddOperator(OperatorBuilder
                 .Subtraction(typeName)
                 .When(Directives.Net7OrGreater)

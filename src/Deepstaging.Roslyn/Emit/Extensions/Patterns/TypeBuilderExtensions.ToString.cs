@@ -16,12 +16,9 @@ public static class TypeBuilderToStringExtensions
     /// <returns>The modified type builder.</returns>
     public static TypeBuilder OverridesToString(
         this TypeBuilder builder,
-        string valueAccessor)
-    {
-        return builder.AddMethod(MethodBuilder
-            .Parse("public override string ToString()")
-            .WithExpressionBody($"{valueAccessor}.ToString()"));
-    }
+        string valueAccessor) => builder.AddMethod(MethodBuilder
+        .Parse("public override string ToString()")
+        .WithExpressionBody($"{valueAccessor}.ToString()"));
 
     /// <summary>
     /// Overrides ToString() to delegate to the backing value's ToString(),
@@ -34,12 +31,9 @@ public static class TypeBuilderToStringExtensions
     public static TypeBuilder OverridesToStringNullSafe(
         this TypeBuilder builder,
         string valueAccessor,
-        string nullValue = "\"\"")
-    {
-        return builder.AddMethod(MethodBuilder
-            .Parse("public override string ToString()")
-            .WithExpressionBody($"{valueAccessor}?.ToString() ?? {nullValue}"));
-    }
+        string nullValue = "\"\"") => builder.AddMethod(MethodBuilder
+        .Parse("public override string ToString()")
+        .WithExpressionBody($"{valueAccessor}?.ToString() ?? {nullValue}"));
 
     /// <summary>
     /// Overrides ToString() using a custom expression.
@@ -51,12 +45,9 @@ public static class TypeBuilderToStringExtensions
     public static TypeBuilder OverridesToString(
         this TypeBuilder builder,
         string expression,
-        bool isCustomExpression)
-    {
-        return builder.AddMethod(MethodBuilder
-            .Parse("public override string ToString()")
-            .WithExpressionBody(expression));
-    }
+        bool isCustomExpression) => builder.AddMethod(MethodBuilder
+        .Parse("public override string ToString()")
+        .WithExpressionBody(expression));
 
     /// <summary>
     /// Overrides ToString() using a property as the backing value.

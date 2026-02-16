@@ -57,7 +57,8 @@ public record struct XmlDocumentationBuilder
     /// Creates an XML documentation builder with an inheritdoc element.
     /// </summary>
     /// <param name="cref">Optional cref attribute for the inheritdoc element.</param>
-    public static XmlDocumentationBuilder ForInheritDoc(string? cref = null) => new() { InheritDoc = cref ?? string.Empty };
+    public static XmlDocumentationBuilder ForInheritDoc(string? cref = null) =>
+        new() { InheritDoc = cref ?? string.Empty };
 
     /// <summary>
     /// Creates a builder pre-populated from a pipeline-safe <see cref="DocumentationSnapshot"/>.
@@ -66,9 +67,9 @@ public record struct XmlDocumentationBuilder
     public static XmlDocumentationBuilder From(DocumentationSnapshot snapshot)
     {
         if (!snapshot.HasValue && snapshot.Params.Count == 0 && snapshot.TypeParams.Count == 0)
-            return new();
+            return new XmlDocumentationBuilder();
 
-        return new()
+        return new XmlDocumentationBuilder
         {
             Summary = snapshot.Summary,
             Remarks = snapshot.Remarks,
@@ -78,7 +79,7 @@ public record struct XmlDocumentationBuilder
             Params = [..snapshot.Params.Select(p => (p.Name, p.Description))],
             TypeParams = [..snapshot.TypeParams.Select(p => (p.Name, p.Description))],
             Exceptions = [..snapshot.Exceptions.Select(e => (e.Type, e.Description))],
-            SeeAlso = [..snapshot.SeeAlso],
+            SeeAlso = [..snapshot.SeeAlso]
         };
     }
 
@@ -163,7 +164,8 @@ public record struct XmlDocumentationBuilder
     /// Sets the inheritdoc element. When set, this replaces the summary.
     /// </summary>
     /// <param name="cref">Optional cref attribute for the inheritdoc element.</param>
-    public readonly XmlDocumentationBuilder WithInheritDoc(string? cref = null) => this with { InheritDoc = cref ?? string.Empty };
+    public readonly XmlDocumentationBuilder WithInheritDoc(string? cref = null) =>
+        this with { InheritDoc = cref ?? string.Empty };
 
     #endregion
 
@@ -180,6 +182,7 @@ public record struct XmlDocumentationBuilder
             var typeParams = TypeParams.IsDefault ? [] : TypeParams;
             var exceptions = Exceptions.IsDefault ? [] : Exceptions;
             var seeAlso = SeeAlso.IsDefault ? [] : SeeAlso;
+
             return Summary != null ||
                    InheritDoc != null ||
                    Remarks != null ||
@@ -220,11 +223,13 @@ public record struct XmlDocumentationBuilder
 
         // Type params
         var typeParams = TypeParams.IsDefault ? [] : TypeParams;
+
         foreach (var (name, description) in typeParams)
             lines.Add($"/// <typeparam name=\"{EscapeXml(name)}\">{EscapeXml(description)}</typeparam>");
 
         // Params
         var @params = Params.IsDefault ? [] : Params;
+
         foreach (var (name, description) in @params)
             lines.Add($"/// <param name=\"{EscapeXml(name)}\">{EscapeXml(description)}</param>");
 
@@ -236,6 +241,7 @@ public record struct XmlDocumentationBuilder
 
         // Exceptions
         var exceptions = Exceptions.IsDefault ? [] : Exceptions;
+
         foreach (var (type, description) in exceptions)
             lines.Add($"/// <exception cref=\"{EscapeXml(type)}\">{EscapeXml(description)}</exception>");
 
@@ -263,6 +269,7 @@ public record struct XmlDocumentationBuilder
 
         // Build trivia
         var triviaList = new List<SyntaxTrivia>();
+
         foreach (var line in lines)
         {
             triviaList.Add(SyntaxFactory.Comment(line));
@@ -272,19 +279,13 @@ public record struct XmlDocumentationBuilder
         return SyntaxFactory.TriviaList(triviaList);
     }
 
-    private static string[] SplitLines(string text)
-    {
-        return text.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
-    }
+    private static string[] SplitLines(string text) => text.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
 
-    private static string EscapeXml(string text)
-    {
-        return text
-            .Replace("&", "&amp;")
-            .Replace("<", "&lt;")
-            .Replace(">", "&gt;")
-            .Replace("\"", "&quot;");
-    }
+    private static string EscapeXml(string text) => text
+        .Replace("&", "&amp;")
+        .Replace("<", "&lt;")
+        .Replace(">", "&gt;")
+        .Replace("\"", "&quot;");
 
     #endregion
 }

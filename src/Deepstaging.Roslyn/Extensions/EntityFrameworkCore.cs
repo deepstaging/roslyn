@@ -16,22 +16,19 @@ public static class EntityFrameworkCoreExtensions
     /// </summary>
     /// <param name="property"></param>
     /// <returns></returns>
-    public static bool IsEfDbSet(this IPropertySymbol property)
-    {
-        return property.Type is { Name: "DbSet" } &&
-               property.Type.ContainingNamespace?.ToDisplayString() == EfNamespace;
-    }
+    public static bool IsEfDbSet(this IPropertySymbol property) => property.Type is { Name: "DbSet" } &&
+                                                                   property.Type.ContainingNamespace
+                                                                       ?.ToDisplayString() ==
+                                                                   EfNamespace;
 
     /// <summary>
     /// 
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    private static bool IsEfDbContext(this INamedTypeSymbol type)
-    {
-        return type.Name == "DbContext" &&
-               type.ContainingNamespace?.ToDisplayString() == EfNamespace;
-    }
+    private static bool IsEfDbContext(this INamedTypeSymbol type) => type.Name == "DbContext" &&
+                                                                     type.ContainingNamespace?.ToDisplayString() ==
+                                                                     EfNamespace;
 
     /// <summary>
     /// 
@@ -54,8 +51,5 @@ public static class EntityFrameworkCoreExtensions
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    public static bool IsNotEfDbContext(this ValidSymbol<INamedTypeSymbol> type)
-    {
-        return !type.IsEfDbContext();
-    }
+    public static bool IsNotEfDbContext(this ValidSymbol<INamedTypeSymbol> type) => !type.IsEfDbContext();
 }

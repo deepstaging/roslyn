@@ -14,37 +14,35 @@ public static class TypeSymbolSpanMemoryExtensions
         /// <summary>
         /// Checks if the type is <c>Span&lt;T&gt;</c>.
         /// </summary>
-        public bool IsSpanType()
-        {
-            return typeSymbol is INamedTypeSymbol { Name: "Span", IsGenericType: true, TypeArguments.Length: 1 } named
-                   && named.ContainingNamespace.ToDisplayString() == "System";
-        }
+        public bool IsSpanType() =>
+            typeSymbol is INamedTypeSymbol { Name: "Span", IsGenericType: true, TypeArguments.Length: 1 } named &&
+            named.ContainingNamespace.ToDisplayString() == "System";
 
         /// <summary>
         /// Checks if the type is <c>ReadOnlySpan&lt;T&gt;</c>.
         /// </summary>
-        public bool IsReadOnlySpanType()
-        {
-            return typeSymbol is INamedTypeSymbol { Name: "ReadOnlySpan", IsGenericType: true, TypeArguments.Length: 1 } named
-                   && named.ContainingNamespace.ToDisplayString() == "System";
-        }
+        public bool IsReadOnlySpanType() =>
+            typeSymbol is INamedTypeSymbol
+            {
+                Name: "ReadOnlySpan", IsGenericType: true, TypeArguments.Length: 1
+            } named &&
+            named.ContainingNamespace.ToDisplayString() == "System";
 
         /// <summary>
         /// Checks if the type is <c>Memory&lt;T&gt;</c>.
         /// </summary>
-        public bool IsMemoryType()
-        {
-            return typeSymbol is INamedTypeSymbol { Name: "Memory", IsGenericType: true, TypeArguments.Length: 1 } named
-                   && named.ContainingNamespace.ToDisplayString() == "System";
-        }
+        public bool IsMemoryType() =>
+            typeSymbol is INamedTypeSymbol { Name: "Memory", IsGenericType: true, TypeArguments.Length: 1 } named &&
+            named.ContainingNamespace.ToDisplayString() == "System";
 
         /// <summary>
         /// Checks if the type is <c>ReadOnlyMemory&lt;T&gt;</c>.
         /// </summary>
-        public bool IsReadOnlyMemoryType()
-        {
-            return typeSymbol is INamedTypeSymbol { Name: "ReadOnlyMemory", IsGenericType: true, TypeArguments.Length: 1 } named
-                   && named.ContainingNamespace.ToDisplayString() == "System";
-        }
+        public bool IsReadOnlyMemoryType() =>
+            typeSymbol is INamedTypeSymbol
+            {
+                Name: "ReadOnlyMemory", IsGenericType: true, TypeArguments.Length: 1
+            } named &&
+            named.ContainingNamespace.ToDisplayString() == "System";
     }
 }

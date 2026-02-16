@@ -106,10 +106,7 @@ public record struct MethodBuilder
     /// var builder = MethodBuilder.Parse("public T Convert&lt;T&gt;(object value) where T : class");
     /// </code>
     /// </example>
-    public static MethodBuilder Parse(string signature)
-    {
-        return SignatureParser.ParseMethod(signature);
-    }
+    public static MethodBuilder Parse(string signature) => SignatureParser.ParseMethod(signature);
 
     #endregion
 
@@ -119,10 +116,7 @@ public record struct MethodBuilder
     /// Sets the return type of the method.
     /// </summary>
     /// <param name="returnType">The return type (e.g., "void", "string", "Task&lt;int&gt;").</param>
-    public MethodBuilder WithReturnType(string returnType)
-    {
-        return this with { ReturnType = returnType };
-    }
+    public MethodBuilder WithReturnType(string returnType) => this with { ReturnType = returnType };
 
     /// <summary>
     /// Sets the return type using a symbol's globally qualified name.
@@ -137,10 +131,7 @@ public record struct MethodBuilder
     /// <summary>
     /// Sets the accessibility of the method.
     /// </summary>
-    public MethodBuilder WithAccessibility(Accessibility accessibility)
-    {
-        return this with { Accessibility = accessibility };
-    }
+    public MethodBuilder WithAccessibility(Accessibility accessibility) => this with { Accessibility = accessibility };
 
     /// <summary>
     /// Sets the accessibility of the method from a keyword string (e.g., "public", "internal").
@@ -155,50 +146,35 @@ public record struct MethodBuilder
     /// Explicit implementations have no accessibility modifier and use <c>IInterface.Method</c> syntax.
     /// </summary>
     /// <param name="interfaceType">The interface type name (e.g., "IMyInterface", "global::MyApp.IService").</param>
-    public MethodBuilder ExplicitlyImplements(string interfaceType)
+    public MethodBuilder ExplicitlyImplements(string interfaceType) => this with
     {
-        return this with { ExplicitInterface = interfaceType, Accessibility = Accessibility.NotApplicable };
-    }
+        ExplicitInterface = interfaceType, Accessibility = Accessibility.NotApplicable
+    };
 
     /// <summary>
     /// Marks the method as static.
     /// </summary>
-    public MethodBuilder AsStatic()
-    {
-        return this with { IsStatic = true };
-    }
+    public MethodBuilder AsStatic() => this with { IsStatic = true };
 
     /// <summary>
     /// Marks the method as virtual.
     /// </summary>
-    public MethodBuilder AsVirtual()
-    {
-        return this with { IsVirtual = true };
-    }
+    public MethodBuilder AsVirtual() => this with { IsVirtual = true };
 
     /// <summary>
     /// Marks the method as override.
     /// </summary>
-    public MethodBuilder AsOverride()
-    {
-        return this with { IsOverride = true };
-    }
+    public MethodBuilder AsOverride() => this with { IsOverride = true };
 
     /// <summary>
     /// Marks the method as abstract.
     /// </summary>
-    public MethodBuilder AsAbstract()
-    {
-        return this with { IsAbstract = true };
-    }
+    public MethodBuilder AsAbstract() => this with { IsAbstract = true };
 
     /// <summary>
     /// Marks the method as async.
     /// </summary>
-    public MethodBuilder Async()
-    {
-        return this with { IsAsync = true };
-    }
+    public MethodBuilder Async() => this with { IsAsync = true };
 
     /// <summary>
     /// Wraps this method in a preprocessor directive (#if/#endif).
@@ -212,19 +188,13 @@ public record struct MethodBuilder
     ///     .WithBody(b => b.AddReturn("new()")));
     /// </code>
     /// </example>
-    public MethodBuilder When(Directive directive)
-    {
-        return this with { Condition = directive };
-    }
+    public MethodBuilder When(Directive directive) => this with { Condition = directive };
 
     /// <summary>
     /// Assigns this method to a named region for grouping in #region/#endregion blocks.
     /// </summary>
     /// <param name="regionName">The region name (e.g., "Methods", "Helpers").</param>
-    public MethodBuilder InRegion(string regionName)
-    {
-        return this with { Region = regionName };
-    }
+    public MethodBuilder InRegion(string regionName) => this with { Region = regionName };
 
     #endregion
 
@@ -300,7 +270,10 @@ public record struct MethodBuilder
     /// <summary>
     /// Adds a parameter using a symbol's globally qualified name, with configuration.
     /// </summary>
-    public MethodBuilder AddParameter<T>(string name, ValidSymbol<T> type, Func<ParameterBuilder, ParameterBuilder> configure) where T : class, ITypeSymbol
+    public MethodBuilder AddParameter<T>(
+        string name,
+        ValidSymbol<T> type,
+        Func<ParameterBuilder, ParameterBuilder> configure) where T : class, ITypeSymbol
         => AddParameter(name, type.GloballyQualifiedName, configure);
 
     /// <summary>
@@ -324,15 +297,15 @@ public record struct MethodBuilder
         var parameters = Parameters.IsDefault ? [] : Parameters;
 
         for (var i = 0; i < parameters.Length; i++)
-        {
             if (parameters[i].Name == name)
             {
                 var updated = configure(parameters[i]);
                 return this with { Parameters = parameters.SetItem(i, updated) };
             }
-        }
 
-        throw new ArgumentException($"Parameter '{name}' not found. Available parameters: {string.Join(", ", parameters.Select(p => p.Name))}", nameof(name));
+        throw new ArgumentException(
+            $"Parameter '{name}' not found. Available parameters: {string.Join(", ", parameters.Select(p => p.Name))}",
+            nameof(name));
     }
 
     #endregion
@@ -358,6 +331,7 @@ public record struct MethodBuilder
     {
         // Auto-strip trailing semicolon - expression bodies don't need them
         var trimmed = expression.TrimEnd();
+
         if (trimmed.EndsWith(";"))
             trimmed = trimmed[..^1].TrimEnd();
 
@@ -525,6 +499,7 @@ public record struct MethodBuilder
 
         // Add attributes
         var attributes = Attributes.IsDefault ? [] : Attributes;
+
         if (attributes.Length > 0)
         {
             var attributeLists = attributes.Select(a => a.BuildList()).ToArray();
@@ -533,8 +508,10 @@ public record struct MethodBuilder
 
         // Add modifiers
         var modifiers = new List<SyntaxKind>();
+
         if (ExplicitInterface is null)
             modifiers.Add(AccessibilityToSyntaxKind(Accessibility));
+
         if (IsStatic) modifiers.Add(SyntaxKind.StaticKeyword);
         if (IsAsync) modifiers.Add(SyntaxKind.AsyncKeyword);
         if (IsVirtual) modifiers.Add(SyntaxKind.VirtualKeyword);
@@ -547,18 +524,18 @@ public record struct MethodBuilder
 
         // Add explicit interface specifier
         if (ExplicitInterface is not null)
-        {
             method = method.WithExplicitInterfaceSpecifier(
                 SyntaxFactory.ExplicitInterfaceSpecifier(
                     SyntaxFactory.ParseName(ExplicitInterface)));
-        }
 
         // Add type parameters
         var typeParameters = TypeParameters.IsDefault ? [] : TypeParameters;
+
         if (typeParameters.Length > 0)
         {
             var typeParameterList = SyntaxFactory.TypeParameterList(
                 SyntaxFactory.SeparatedList(typeParameters.Select(tp => tp.Build())));
+
             method = method.WithTypeParameterList(typeParameterList);
 
             // Add constraint clauses
@@ -574,8 +551,10 @@ public record struct MethodBuilder
 
         // Add parameters
         var parameters = Parameters.IsDefault ? [] : Parameters;
+
         var parameterList = SyntaxFactory.ParameterList(
             SyntaxFactory.SeparatedList(parameters.Select(p => p.Build())));
+
         method = method.WithParameterList(parameterList);
 
         // Add body or expression body (if not abstract)
@@ -586,6 +565,7 @@ public record struct MethodBuilder
                 // Expression-bodied method: => expression;
                 var arrowExpression = SyntaxFactory.ArrowExpressionClause(
                     SyntaxFactory.ParseExpression(ExpressionBody));
+
                 method = method
                     .WithExpressionBody(arrowExpression)
                     .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
@@ -614,17 +594,13 @@ public record struct MethodBuilder
         }
 
         // Wrap in preprocessor directive if specified
-        if (Condition.HasValue)
-        {
-            method = DirectiveHelper.WrapInDirective(method, Condition.Value);
-        }
+        if (Condition.HasValue) method = DirectiveHelper.WrapInDirective(method, Condition.Value);
 
         return method;
     }
 
-    private static SyntaxKind AccessibilityToSyntaxKind(Accessibility accessibility)
-    {
-        return accessibility switch
+    private static SyntaxKind AccessibilityToSyntaxKind(Accessibility accessibility) =>
+        accessibility switch
         {
             Accessibility.Public => SyntaxKind.PublicKeyword,
             Accessibility.Private => SyntaxKind.PrivateKeyword,
@@ -632,7 +608,6 @@ public record struct MethodBuilder
             Accessibility.Internal => SyntaxKind.InternalKeyword,
             _ => SyntaxKind.PublicKeyword
         };
-    }
 
     private bool HasParameterValidations()
     {
@@ -647,17 +622,14 @@ public record struct MethodBuilder
 
         // 1. Add validation statements from parameters (at the start)
         foreach (var param in parameters)
-        {
-            foreach (var statement in param.GetValidationStatements())
-            {
-                bodyBuilder = bodyBuilder.AddStatements(statement);
-            }
-        }
+        foreach (var statement in param.GetValidationStatements())
+            bodyBuilder = bodyBuilder.AddStatements(statement);
 
         // 2. Add existing body statements
         if (Body.HasValue)
         {
             var existingStatements = Body.Value.Statements.IsDefault ? [] : Body.Value.Statements;
+
             foreach (var statement in existingStatements)
             {
                 var statements = bodyBuilder.Statements.IsDefault ? [] : bodyBuilder.Statements;
@@ -669,10 +641,7 @@ public record struct MethodBuilder
         foreach (var param in parameters)
         {
             var assignment = param.GetAssignmentStatement();
-            if (assignment is not null)
-            {
-                bodyBuilder = bodyBuilder.AddStatement(assignment);
-            }
+            if (assignment is not null) bodyBuilder = bodyBuilder.AddStatement(assignment);
         }
 
         return bodyBuilder.Build();

@@ -20,9 +20,8 @@ public static class TypeBuilderComparerExtensions
     public static TypeBuilder ImplementsIComparer(
         this TypeBuilder builder,
         string comparedType,
-        string valueAccessor)
-    {
-        return builder
+        string valueAccessor) =>
+        builder
             .Implements($"global::System.Collections.Generic.IComparer<{comparedType}>")
             .AddMethod(MethodBuilder
                 .Parse($"public int Compare({comparedType}? x, {comparedType}? y)")
@@ -30,8 +29,8 @@ public static class TypeBuilderComparerExtensions
                     .AddStatement("if (ReferenceEquals(x, y)) return 0;")
                     .AddStatement("if (x is null) return -1;")
                     .AddStatement("if (y is null) return 1;")
-                    .AddStatement($"return global::System.Collections.Generic.Comparer<{GetPropertyType(valueAccessor)}>.Default.Compare(x.{valueAccessor}, y.{valueAccessor});")));
-    }
+                    .AddStatement(
+                        $"return global::System.Collections.Generic.Comparer<{GetPropertyType(valueAccessor)}>.Default.Compare(x.{valueAccessor}, y.{valueAccessor});")));
 
     /// <summary>
     /// Implements IComparer&lt;T&gt; for value types by comparing a property/field.
@@ -45,14 +44,12 @@ public static class TypeBuilderComparerExtensions
         this TypeBuilder builder,
         string comparedType,
         string valueAccessor,
-        string propertyType)
-    {
-        return builder
-            .Implements($"global::System.Collections.Generic.IComparer<{comparedType}>")
-            .AddMethod(MethodBuilder
-                .Parse($"public int Compare({comparedType} x, {comparedType} y)")
-                .WithExpressionBody($"global::System.Collections.Generic.Comparer<{propertyType}>.Default.Compare(x.{valueAccessor}, y.{valueAccessor})"));
-    }
+        string propertyType) => builder
+        .Implements($"global::System.Collections.Generic.IComparer<{comparedType}>")
+        .AddMethod(MethodBuilder
+            .Parse($"public int Compare({comparedType} x, {comparedType} y)")
+            .WithExpressionBody(
+                $"global::System.Collections.Generic.Comparer<{propertyType}>.Default.Compare(x.{valueAccessor}, y.{valueAccessor})"));
 
     /// <summary>
     /// Implements IComparer&lt;T&gt; with a custom comparison body.
@@ -64,14 +61,11 @@ public static class TypeBuilderComparerExtensions
     public static TypeBuilder ImplementsIComparer(
         this TypeBuilder builder,
         string comparedType,
-        Func<BodyBuilder, BodyBuilder> compareBody)
-    {
-        return builder
-            .Implements($"global::System.Collections.Generic.IComparer<{comparedType}>")
-            .AddMethod(MethodBuilder
-                .Parse($"public int Compare({comparedType}? x, {comparedType}? y)")
-                .WithBody(compareBody));
-    }
+        Func<BodyBuilder, BodyBuilder> compareBody) => builder
+        .Implements($"global::System.Collections.Generic.IComparer<{comparedType}>")
+        .AddMethod(MethodBuilder
+            .Parse($"public int Compare({comparedType}? x, {comparedType}? y)")
+            .WithBody(compareBody));
 
     // Helper to infer property type - simplified, assumes var for now
     private static string GetPropertyType(string accessor) => "var";

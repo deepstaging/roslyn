@@ -26,6 +26,7 @@ public static class ValidNamespaceSymbolExtensions
         public OptionalSymbol<INamedTypeSymbol> GetNamedType(string typeName)
         {
             var types = ns.Value.GetTypeMembers(typeName).ToArray();
+
             return types.Length == 1
                 ? OptionalSymbol<INamedTypeSymbol>.WithValue(types[0])
                 : OptionalSymbol<INamedTypeSymbol>.Empty();
@@ -35,10 +36,8 @@ public static class ValidNamespaceSymbolExtensions
         /// Gets a named type by name from this namespace.
         /// Throws if not found.
         /// </summary>
-        public ValidSymbol<INamedTypeSymbol> RequireNamedType(string typeName)
-        {
-            return ns.GetNamedType(typeName).ValidateOrThrow();
-        }
+        public ValidSymbol<INamedTypeSymbol> RequireNamedType(string typeName) =>
+            ns.GetNamedType(typeName).ValidateOrThrow();
 
         /// <summary>
         /// Gets all child namespaces declared within this namespace (non-recursive).
@@ -68,18 +67,13 @@ public static class ValidNamespaceSymbolExtensions
         /// Gets a child namespace by name.
         /// Throws if not found.
         /// </summary>
-        public ValidSymbol<INamespaceSymbol> RequireNamespace(string namespaceName)
-        {
-            return ns.GetNamespace(namespaceName).ValidateOrThrow();
-        }
+        public ValidSymbol<INamespaceSymbol> RequireNamespace(string namespaceName) =>
+            ns.GetNamespace(namespaceName).ValidateOrThrow();
 
         /// <summary>
         /// Checks if this is the global namespace.
         /// </summary>
-        public bool IsGlobalNamespace()
-        {
-            return ns.Value.IsGlobalNamespace;
-        }
+        public bool IsGlobalNamespace() => ns.Value.IsGlobalNamespace;
 
         /// <summary>
         /// Gets the containing namespace if not the global namespace.

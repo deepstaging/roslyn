@@ -18,20 +18,15 @@ public sealed class HintName(string root, string extension = ".cs")
     /// <param name="name"></param>
     /// <param name="extension"></param>
     /// <returns></returns>
-    public static string From(string root, string name, string extension = ".cs")
-    {
-        return new HintName(root, extension).Filename(name);
-    }
+    public static string From(string root, string name, string extension = ".cs") =>
+        new HintName(root, extension).Filename(name);
 
     /// <summary>
     /// Creates a hint name by appending ".g.cs" to the name and prefixing with the root.
     /// </summary>
     /// <param name="name">The base name for the file.</param>
     /// <returns>A hint name in the format "{root}/{name}.g.cs".</returns>
-    public string Filename(string name)
-    {
-        return $"{root}/{name}.g{extension}";
-    }
+    public string Filename(string name) => $"{root}/{name}.g{extension}";
 
     /// <summary>
     /// Creates a hint name with an additional path segment between root and name.

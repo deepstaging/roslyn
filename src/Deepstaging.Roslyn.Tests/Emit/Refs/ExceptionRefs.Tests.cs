@@ -8,7 +8,7 @@ public class ExceptionRefsTests
     [Test]
     public async Task ArgumentNull_creates_globally_qualified_type()
     {
-        TypeRef typeRef = ExceptionRefs.ArgumentNull;
+        var typeRef = ExceptionRefs.ArgumentNull;
 
         await Assert.That(typeRef).IsEqualTo("global::System.ArgumentNullException");
     }
@@ -16,7 +16,7 @@ public class ExceptionRefsTests
     [Test]
     public async Task Argument_creates_globally_qualified_type()
     {
-        TypeRef typeRef = ExceptionRefs.Argument;
+        var typeRef = ExceptionRefs.Argument;
 
         await Assert.That(typeRef).IsEqualTo("global::System.ArgumentException");
     }
@@ -24,7 +24,7 @@ public class ExceptionRefsTests
     [Test]
     public async Task ArgumentOutOfRange_creates_globally_qualified_type()
     {
-        TypeRef typeRef = ExceptionRefs.ArgumentOutOfRange;
+        var typeRef = ExceptionRefs.ArgumentOutOfRange;
 
         await Assert.That(typeRef).IsEqualTo("global::System.ArgumentOutOfRangeException");
     }
@@ -32,7 +32,7 @@ public class ExceptionRefsTests
     [Test]
     public async Task InvalidOperation_creates_globally_qualified_type()
     {
-        TypeRef typeRef = ExceptionRefs.InvalidOperation;
+        var typeRef = ExceptionRefs.InvalidOperation;
 
         await Assert.That(typeRef).IsEqualTo("global::System.InvalidOperationException");
     }
@@ -40,7 +40,7 @@ public class ExceptionRefsTests
     [Test]
     public async Task InvalidCast_creates_globally_qualified_type()
     {
-        TypeRef typeRef = ExceptionRefs.InvalidCast;
+        var typeRef = ExceptionRefs.InvalidCast;
 
         await Assert.That(typeRef).IsEqualTo("global::System.InvalidCastException");
     }
@@ -48,7 +48,7 @@ public class ExceptionRefsTests
     [Test]
     public async Task Format_creates_globally_qualified_type()
     {
-        TypeRef typeRef = ExceptionRefs.Format;
+        var typeRef = ExceptionRefs.Format;
 
         await Assert.That(typeRef).IsEqualTo("global::System.FormatException");
     }
@@ -56,7 +56,7 @@ public class ExceptionRefsTests
     [Test]
     public async Task NotSupported_creates_globally_qualified_type()
     {
-        TypeRef typeRef = ExceptionRefs.NotSupported;
+        var typeRef = ExceptionRefs.NotSupported;
 
         await Assert.That(typeRef).IsEqualTo("global::System.NotSupportedException");
     }
@@ -64,7 +64,7 @@ public class ExceptionRefsTests
     [Test]
     public async Task NotImplemented_creates_globally_qualified_type()
     {
-        TypeRef typeRef = ExceptionRefs.NotImplemented;
+        var typeRef = ExceptionRefs.NotImplemented;
 
         await Assert.That(typeRef).IsEqualTo("global::System.NotImplementedException");
     }

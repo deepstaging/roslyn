@@ -21,97 +21,65 @@ public readonly struct ConstructorQuery
     /// <summary>
     /// Creates a new constructor query for the specified type symbol.
     /// </summary>
-    public static ConstructorQuery From(ITypeSymbol typeSymbol)
-    {
-        return new ConstructorQuery(typeSymbol, ImmutableArray<Func<IMethodSymbol, bool>>.Empty);
-    }
+    public static ConstructorQuery From(ITypeSymbol typeSymbol) =>
+        new(typeSymbol, ImmutableArray<Func<IMethodSymbol, bool>>.Empty);
 
-    private ConstructorQuery AddFilter(Func<IMethodSymbol, bool> filter)
-    {
-        return new ConstructorQuery(_typeSymbol, _filters.Add(filter));
-    }
+    private ConstructorQuery AddFilter(Func<IMethodSymbol, bool> filter) =>
+        new(_typeSymbol, _filters.Add(filter));
 
     #region Accessibility Filters
 
     /// <summary>
     /// Filters for public constructors.
     /// </summary>
-    public ConstructorQuery ThatArePublic()
-    {
-        return AddFilter(c => c.DeclaredAccessibility == Accessibility.Public);
-    }
+    public ConstructorQuery ThatArePublic() => AddFilter(c => c.DeclaredAccessibility == Accessibility.Public);
 
     /// <summary>
     /// Filters for non-public constructors.
     /// </summary>
-    public ConstructorQuery ThatAreNotPublic()
-    {
-        return AddFilter(c => c.DeclaredAccessibility != Accessibility.Public);
-    }
+    public ConstructorQuery ThatAreNotPublic() => AddFilter(c => c.DeclaredAccessibility != Accessibility.Public);
 
     /// <summary>
     /// Filters for private constructors.
     /// </summary>
-    public ConstructorQuery ThatArePrivate()
-    {
-        return AddFilter(c => c.DeclaredAccessibility == Accessibility.Private);
-    }
+    public ConstructorQuery ThatArePrivate() => AddFilter(c => c.DeclaredAccessibility == Accessibility.Private);
 
     /// <summary>
     /// Filters for non-private constructors.
     /// </summary>
-    public ConstructorQuery ThatAreNotPrivate()
-    {
-        return AddFilter(c => c.DeclaredAccessibility != Accessibility.Private);
-    }
+    public ConstructorQuery ThatAreNotPrivate() => AddFilter(c => c.DeclaredAccessibility != Accessibility.Private);
 
     /// <summary>
     /// Filters for protected constructors.
     /// </summary>
-    public ConstructorQuery ThatAreProtected()
-    {
-        return AddFilter(c => c.DeclaredAccessibility == Accessibility.Protected);
-    }
+    public ConstructorQuery ThatAreProtected() => AddFilter(c => c.DeclaredAccessibility == Accessibility.Protected);
 
     /// <summary>
     /// Filters for non-protected constructors.
     /// </summary>
-    public ConstructorQuery ThatAreNotProtected()
-    {
-        return AddFilter(c => c.DeclaredAccessibility != Accessibility.Protected);
-    }
+    public ConstructorQuery ThatAreNotProtected() => AddFilter(c => c.DeclaredAccessibility != Accessibility.Protected);
 
     /// <summary>
     /// Filters for internal constructors.
     /// </summary>
-    public ConstructorQuery ThatAreInternal()
-    {
-        return AddFilter(c => c.DeclaredAccessibility == Accessibility.Internal);
-    }
+    public ConstructorQuery ThatAreInternal() => AddFilter(c => c.DeclaredAccessibility == Accessibility.Internal);
 
     /// <summary>
     /// Filters for non-internal constructors.
     /// </summary>
-    public ConstructorQuery ThatAreNotInternal()
-    {
-        return AddFilter(c => c.DeclaredAccessibility != Accessibility.Internal);
-    }
+    public ConstructorQuery ThatAreNotInternal() => AddFilter(c => c.DeclaredAccessibility != Accessibility.Internal);
 
     /// <summary>
     /// Filters for protected internal constructors.
     /// </summary>
-    public ConstructorQuery ThatAreProtectedOrInternal()
-    {
-        return AddFilter(c => c.DeclaredAccessibility == Accessibility.ProtectedOrInternal);
-    }
+    public ConstructorQuery ThatAreProtectedOrInternal() =>
+        AddFilter(c => c.DeclaredAccessibility == Accessibility.ProtectedOrInternal);
 
     /// <summary>
     /// Filters for constructors that are not protected internal.
     /// </summary>
-    public ConstructorQuery ThatAreNotProtectedOrInternal()
-    {
-        return AddFilter(c => c.DeclaredAccessibility != Accessibility.ProtectedOrInternal);
-    }
+    public ConstructorQuery ThatAreNotProtectedOrInternal() =>
+        AddFilter(c => c.DeclaredAccessibility != Accessibility.ProtectedOrInternal);
 
     #endregion
 
@@ -120,18 +88,12 @@ public readonly struct ConstructorQuery
     /// <summary>
     /// Filters for static constructors (type initializers).
     /// </summary>
-    public ConstructorQuery ThatAreStatic()
-    {
-        return AddFilter(c => c.IsStatic);
-    }
+    public ConstructorQuery ThatAreStatic() => AddFilter(c => c.IsStatic);
 
     /// <summary>
     /// Filters for instance constructors (non-static).
     /// </summary>
-    public ConstructorQuery ThatAreInstance()
-    {
-        return AddFilter(c => !c.IsStatic);
-    }
+    public ConstructorQuery ThatAreInstance() => AddFilter(c => !c.IsStatic);
 
     #endregion
 
@@ -140,51 +102,36 @@ public readonly struct ConstructorQuery
     /// <summary>
     /// Filters for constructors with the specified number of parameters.
     /// </summary>
-    public ConstructorQuery WithParameterCount(int count)
-    {
-        return AddFilter(c => c.Parameters.Length == count);
-    }
+    public ConstructorQuery WithParameterCount(int count) => AddFilter(c => c.Parameters.Length == count);
 
     /// <summary>
     /// Filters for parameterless constructors.
     /// </summary>
-    public ConstructorQuery WithNoParameters()
-    {
-        return WithParameterCount(0);
-    }
+    public ConstructorQuery WithNoParameters() => WithParameterCount(0);
 
     /// <summary>
     /// Filters for constructors with at least the specified number of parameters.
     /// </summary>
-    public ConstructorQuery WithAtLeastParameters(int minCount)
-    {
-        return AddFilter(c => c.Parameters.Length >= minCount);
-    }
+    public ConstructorQuery WithAtLeastParameters(int minCount) => AddFilter(c => c.Parameters.Length >= minCount);
 
     /// <summary>
     /// Filters for constructors where the first parameter is of the specified type.
     /// </summary>
-    public ConstructorQuery WithFirstParameterOfType(ITypeSymbol typeSymbol)
-    {
-        return AddFilter(c => c.Parameters.Length > 0 &&
-                              SymbolEqualityComparer.Default.Equals(c.Parameters[0].Type, typeSymbol));
-    }
+    public ConstructorQuery WithFirstParameterOfType(ITypeSymbol typeSymbol) =>
+        AddFilter(c => c.Parameters.Length > 0 &&
+                       SymbolEqualityComparer.Default.Equals(c.Parameters[0].Type, typeSymbol));
 
     /// <summary>
     /// Filters for constructors where any parameter matches the predicate.
     /// </summary>
-    public ConstructorQuery WithParameter(Func<IParameterSymbol, bool> parameterPredicate)
-    {
-        return AddFilter(c => c.Parameters.Any(parameterPredicate));
-    }
+    public ConstructorQuery WithParameter(Func<IParameterSymbol, bool> parameterPredicate) =>
+        AddFilter(c => c.Parameters.Any(parameterPredicate));
 
     /// <summary>
     /// Filters for constructors where all parameters match the predicate.
     /// </summary>
-    public ConstructorQuery WhereAllParameters(Func<IParameterSymbol, bool> parameterPredicate)
-    {
-        return AddFilter(c => c.Parameters.All(parameterPredicate));
-    }
+    public ConstructorQuery WhereAllParameters(Func<IParameterSymbol, bool> parameterPredicate) =>
+        AddFilter(c => c.Parameters.All(parameterPredicate));
 
     #endregion
 
@@ -193,12 +140,10 @@ public readonly struct ConstructorQuery
     /// <summary>
     /// Filters for constructors with the specified attribute name (with or without "Attribute" suffix).
     /// </summary>
-    public ConstructorQuery WithAttribute(string attributeName)
-    {
-        return AddFilter(c => c.GetAttributes().Any(a =>
+    public ConstructorQuery WithAttribute(string attributeName) =>
+        AddFilter(c => c.GetAttributes().Any(a =>
             a.AttributeClass?.Name == attributeName ||
             a.AttributeClass?.Name == attributeName + "Attribute"));
-    }
 
     #endregion
 
@@ -208,10 +153,7 @@ public readonly struct ConstructorQuery
     /// Filters for constructors matching the custom predicate.
     /// Use this as an escape hatch for complex or uncommon filters.
     /// </summary>
-    public ConstructorQuery Where(Func<IMethodSymbol, bool> predicate)
-    {
-        return AddFilter(predicate);
-    }
+    public ConstructorQuery Where(Func<IMethodSymbol, bool> predicate) => AddFilter(predicate);
 
     #endregion
 
@@ -255,18 +197,14 @@ public readonly struct ConstructorQuery
     /// <summary>
     /// Gets all matching and projects each constructor using the specified mapper.
     /// </summary>
-    public ImmutableArray<TModel> Select<TModel>(Func<ValidSymbol<IMethodSymbol>, TModel> mapper)
-    {
-        return [..GetAll().Select(mapper)];
-    }
+    public ImmutableArray<TModel> Select<TModel>(Func<ValidSymbol<IMethodSymbol>, TModel> mapper) =>
+        [..GetAll().Select(mapper)];
 
     /// <summary>
     /// Gets all matching and projects each constructor to a collection, then flattens the results.
     /// </summary>
-    public ImmutableArray<TModel> SelectMany<TModel>(Func<ValidSymbol<IMethodSymbol>, IEnumerable<TModel>> mapper)
-    {
-        return [..GetAll().SelectMany(mapper)];
-    }
+    public ImmutableArray<TModel> SelectMany<TModel>(Func<ValidSymbol<IMethodSymbol>, IEnumerable<TModel>> mapper) =>
+        [..GetAll().SelectMany(mapper)];
 
     /// <summary>
     /// Gets all matching and returns the first matching constructor, or Empty if none found.
@@ -274,6 +212,7 @@ public readonly struct ConstructorQuery
     public OptionalSymbol<IMethodSymbol> FirstOrDefault()
     {
         var all = GetAll();
+
         return all.Length > 0
             ? OptionalSymbol<IMethodSymbol>.WithValue(all[0].Value)
             : OptionalSymbol<IMethodSymbol>.Empty();
@@ -286,6 +225,7 @@ public readonly struct ConstructorQuery
     public ValidSymbol<IMethodSymbol> First()
     {
         var all = GetAll();
+
         return all.Length > 0
             ? all[0]
             : throw new InvalidOperationException("No imethodsymbols matched the query criteria.");
@@ -294,18 +234,12 @@ public readonly struct ConstructorQuery
     /// <summary>
     /// Gets all matching and returns true if any constructors match, false otherwise.
     /// </summary>
-    public bool Any()
-    {
-        return GetAll().Length > 0;
-    }
+    public bool Any() => GetAll().Length > 0;
 
     /// <summary>
     /// Gets all matching and returns the count of matching constructors.
     /// </summary>
-    public int Count()
-    {
-        return GetAll().Length;
-    }
+    public int Count() => GetAll().Length;
 
     #endregion
 }

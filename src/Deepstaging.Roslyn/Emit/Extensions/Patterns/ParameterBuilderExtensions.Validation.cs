@@ -17,7 +17,11 @@ public static class ParameterBuilderValidationExtensions
     public static ParameterBuilder ThrowIfNull(this ParameterBuilder builder)
     {
         var validations = builder.Validations.IsDefault ? [] : builder.Validations;
-        return builder with { Validations = validations.Add(new(ParameterValidationKind.ThrowIfNull)) };
+
+        return builder with
+        {
+            Validations = validations.Add(new ParameterValidation(ParameterValidationKind.ThrowIfNull))
+        };
     }
 
     /// <summary>
@@ -26,7 +30,11 @@ public static class ParameterBuilderValidationExtensions
     public static ParameterBuilder ThrowIfNullOrEmpty(this ParameterBuilder builder)
     {
         var validations = builder.Validations.IsDefault ? [] : builder.Validations;
-        return builder with { Validations = validations.Add(new(ParameterValidationKind.ThrowIfNullOrEmpty)) };
+
+        return builder with
+        {
+            Validations = validations.Add(new ParameterValidation(ParameterValidationKind.ThrowIfNullOrEmpty))
+        };
     }
 
     /// <summary>
@@ -35,7 +43,11 @@ public static class ParameterBuilderValidationExtensions
     public static ParameterBuilder ThrowIfNullOrWhiteSpace(this ParameterBuilder builder)
     {
         var validations = builder.Validations.IsDefault ? [] : builder.Validations;
-        return builder with { Validations = validations.Add(new(ParameterValidationKind.ThrowIfNullOrWhiteSpace)) };
+
+        return builder with
+        {
+            Validations = validations.Add(new ParameterValidation(ParameterValidationKind.ThrowIfNullOrWhiteSpace))
+        };
     }
 
     #endregion
@@ -51,7 +63,12 @@ public static class ParameterBuilderValidationExtensions
     public static ParameterBuilder ThrowIfOutOfRange(this ParameterBuilder builder, string minValue, string maxValue)
     {
         var validations = builder.Validations.IsDefault ? [] : builder.Validations;
-        return builder with { Validations = validations.Add(new(ParameterValidationKind.ThrowIfOutOfRange, minValue, maxValue)) };
+
+        return builder with
+        {
+            Validations =
+            validations.Add(new ParameterValidation(ParameterValidationKind.ThrowIfOutOfRange, minValue, maxValue))
+        };
     }
 
     /// <summary>
@@ -60,7 +77,11 @@ public static class ParameterBuilderValidationExtensions
     public static ParameterBuilder ThrowIfNotPositive(this ParameterBuilder builder)
     {
         var validations = builder.Validations.IsDefault ? [] : builder.Validations;
-        return builder with { Validations = validations.Add(new(ParameterValidationKind.ThrowIfNotPositive)) };
+
+        return builder with
+        {
+            Validations = validations.Add(new ParameterValidation(ParameterValidationKind.ThrowIfNotPositive))
+        };
     }
 
     /// <summary>
@@ -69,7 +90,11 @@ public static class ParameterBuilderValidationExtensions
     public static ParameterBuilder ThrowIfNegative(this ParameterBuilder builder)
     {
         var validations = builder.Validations.IsDefault ? [] : builder.Validations;
-        return builder with { Validations = validations.Add(new(ParameterValidationKind.ThrowIfNegative)) };
+
+        return builder with
+        {
+            Validations = validations.Add(new ParameterValidation(ParameterValidationKind.ThrowIfNegative))
+        };
     }
 
     /// <summary>
@@ -78,7 +103,11 @@ public static class ParameterBuilderValidationExtensions
     public static ParameterBuilder ThrowIfZero(this ParameterBuilder builder)
     {
         var validations = builder.Validations.IsDefault ? [] : builder.Validations;
-        return builder with { Validations = validations.Add(new(ParameterValidationKind.ThrowIfZero)) };
+
+        return builder with
+        {
+            Validations = validations.Add(new ParameterValidation(ParameterValidationKind.ThrowIfZero))
+        };
     }
 
     #endregion
@@ -115,8 +144,8 @@ public static class ParameterBuilderValidationExtensions
     internal static IEnumerable<string> GetValidationStatements(this ParameterBuilder builder)
     {
         var validations = builder.Validations.IsDefault ? [] : builder.Validations;
+
         foreach (var validation in validations)
-        {
             yield return validation.Kind switch
             {
                 ParameterValidationKind.ThrowIfNull =>
@@ -136,7 +165,6 @@ public static class ParameterBuilderValidationExtensions
                     $"global::System.ArgumentOutOfRangeException.ThrowIfZero({builder.Name});",
                 _ => throw new InvalidOperationException($"Unknown validation kind: {validation.Kind}")
             };
-        }
     }
 
     /// <summary>

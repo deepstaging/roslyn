@@ -10,22 +10,16 @@ public class ExpressionRefTests
     [Test]
     public async Task From_creates_expression()
     {
-        ExpressionRef expr = ExpressionRef.From("value");
+        var expr = ExpressionRef.From("value");
 
         await Assert.That(expr).IsEqualTo("value");
     }
 
     [Test]
-    public void From_throws_on_null()
-    {
-        Assert.Throws<ArgumentException>(() => ExpressionRef.From(null!));
-    }
+    public void From_throws_on_null() => Assert.Throws<ArgumentException>(() => ExpressionRef.From(null!));
 
     [Test]
-    public void From_throws_on_empty()
-    {
-        Assert.Throws<ArgumentException>(() => ExpressionRef.From(""));
-    }
+    public void From_throws_on_empty() => Assert.Throws<ArgumentException>(() => ExpressionRef.From(""));
 
     #endregion
 
@@ -70,7 +64,7 @@ public class ExpressionRefTests
     [Test]
     public async Task New_with_no_arguments()
     {
-        ExpressionRef expr = CollectionRefs.List("string").New();
+        var expr = CollectionRefs.List("string").New();
 
         await Assert.That(expr).IsEqualTo("new global::System.Collections.Generic.List<string>()");
     }
@@ -78,7 +72,7 @@ public class ExpressionRefTests
     [Test]
     public async Task New_with_single_argument()
     {
-        ExpressionRef expr = ExceptionRefs.ArgumentNull.New("nameof(value)");
+        var expr = ExceptionRefs.ArgumentNull.New("nameof(value)");
 
         await Assert.That(expr).IsEqualTo("new global::System.ArgumentNullException(nameof(value))");
     }
@@ -86,7 +80,7 @@ public class ExpressionRefTests
     [Test]
     public async Task New_with_multiple_arguments()
     {
-        ExpressionRef expr = TypeRef.From("KeyValuePair").New("key", "value");
+        var expr = TypeRef.From("KeyValuePair").New("key", "value");
 
         await Assert.That(expr).IsEqualTo("new KeyValuePair(key, value)");
     }
@@ -98,7 +92,7 @@ public class ExpressionRefTests
     [Test]
     public async Task Call_static_method_no_args()
     {
-        ExpressionRef expr = TaskRefs.Task().Call("CompletedTask");
+        var expr = TaskRefs.Task().Call("CompletedTask");
 
         await Assert.That(expr).IsEqualTo("global::System.Threading.Tasks.Task.CompletedTask()");
     }
@@ -106,7 +100,7 @@ public class ExpressionRefTests
     [Test]
     public async Task Call_static_method_with_args()
     {
-        ExpressionRef expr = TypeRef.From("Guid").Call("Parse", "input");
+        var expr = TypeRef.From("Guid").Call("Parse", "input");
 
         await Assert.That(expr).IsEqualTo("Guid.Parse(input)");
     }
@@ -114,7 +108,7 @@ public class ExpressionRefTests
     [Test]
     public async Task Call_static_method_with_multiple_args()
     {
-        ExpressionRef expr = TypeRef.From("int").Call("Parse", "input", "provider");
+        var expr = TypeRef.From("int").Call("Parse", "input", "provider");
 
         await Assert.That(expr).IsEqualTo("int.Parse(input, provider)");
     }
@@ -122,7 +116,7 @@ public class ExpressionRefTests
     [Test]
     public async Task Call_on_exception_ref()
     {
-        ExpressionRef expr = ExceptionRefs.ArgumentNull.Call("ThrowIfNull", "param");
+        var expr = ExceptionRefs.ArgumentNull.Call("ThrowIfNull", "param");
 
         await Assert.That(expr).IsEqualTo("global::System.ArgumentNullException.ThrowIfNull(param)");
     }
@@ -134,7 +128,7 @@ public class ExpressionRefTests
     [Test]
     public async Task Member_access()
     {
-        ExpressionRef expr = TypeRef.From("string").Member("Empty");
+        var expr = TypeRef.From("string").Member("Empty");
 
         await Assert.That(expr).IsEqualTo("string.Empty");
     }
@@ -142,7 +136,7 @@ public class ExpressionRefTests
     [Test]
     public async Task Member_on_global_type()
     {
-        ExpressionRef expr = TypeRef.Global("System.Text.Encoding").Member("UTF8");
+        var expr = TypeRef.Global("System.Text.Encoding").Member("UTF8");
 
         await Assert.That(expr).IsEqualTo("global::System.Text.Encoding.UTF8");
     }
@@ -154,7 +148,7 @@ public class ExpressionRefTests
     [Test]
     public async Task TypeOf_simple()
     {
-        ExpressionRef expr = TypeRef.From("string").TypeOf();
+        var expr = TypeRef.From("string").TypeOf();
 
         await Assert.That(expr).IsEqualTo("typeof(string)");
     }
@@ -162,7 +156,7 @@ public class ExpressionRefTests
     [Test]
     public async Task TypeOf_generic()
     {
-        ExpressionRef expr = JsonRefs.Converter("OrderId").TypeOf();
+        var expr = JsonRefs.Converter("OrderId").TypeOf();
 
         await Assert.That(expr).IsEqualTo("typeof(global::System.Text.Json.Serialization.JsonConverter<OrderId>)");
     }
@@ -170,7 +164,7 @@ public class ExpressionRefTests
     [Test]
     public async Task Default_expression()
     {
-        ExpressionRef expr = TaskRefs.CancellationToken.Default();
+        var expr = TaskRefs.CancellationToken.Default();
 
         await Assert.That(expr).IsEqualTo("default(global::System.Threading.CancellationToken)");
     }
@@ -178,7 +172,7 @@ public class ExpressionRefTests
     [Test]
     public async Task NameOf_expression()
     {
-        ExpressionRef expr = TypeRef.From("CustomerId").NameOf();
+        var expr = TypeRef.From("CustomerId").NameOf();
 
         await Assert.That(expr).IsEqualTo("nameof(CustomerId)");
     }
@@ -190,7 +184,7 @@ public class ExpressionRefTests
     [Test]
     public async Task Chained_call()
     {
-        ExpressionRef expr = ExpressionRef.From("value")
+        var expr = ExpressionRef.From("value")
             .Call("ToString")
             .Call("Trim");
 
@@ -200,7 +194,7 @@ public class ExpressionRefTests
     [Test]
     public async Task Call_with_arguments()
     {
-        ExpressionRef expr = ExpressionRef.From("list").Call("Add", "item");
+        var expr = ExpressionRef.From("list").Call("Add", "item");
 
         await Assert.That(expr).IsEqualTo("list.Add(item)");
     }
@@ -212,7 +206,7 @@ public class ExpressionRefTests
     [Test]
     public async Task Chained_member_access()
     {
-        ExpressionRef expr = ExpressionRef.From("value")
+        var expr = ExpressionRef.From("value")
             .Member("Name")
             .Member("Length");
 
@@ -222,7 +216,7 @@ public class ExpressionRefTests
     [Test]
     public async Task Member_then_call()
     {
-        ExpressionRef expr = ExpressionRef.From("value")
+        var expr = ExpressionRef.From("value")
             .Member("Name")
             .Call("ToUpper");
 
@@ -236,7 +230,7 @@ public class ExpressionRefTests
     [Test]
     public async Task As_expression()
     {
-        ExpressionRef expr = ExpressionRef.From("obj").As("string");
+        var expr = ExpressionRef.From("obj").As("string");
 
         await Assert.That(expr).IsEqualTo("obj as string");
     }
@@ -244,7 +238,7 @@ public class ExpressionRefTests
     [Test]
     public async Task Cast_expression()
     {
-        ExpressionRef expr = ExpressionRef.From("obj").Cast("int");
+        var expr = ExpressionRef.From("obj").Cast("int");
 
         await Assert.That(expr).IsEqualTo("(int)obj");
     }
@@ -252,7 +246,7 @@ public class ExpressionRefTests
     [Test]
     public async Task Is_expression()
     {
-        ExpressionRef expr = ExpressionRef.From("obj").Is("string");
+        var expr = ExpressionRef.From("obj").Is("string");
 
         await Assert.That(expr).IsEqualTo("obj is string");
     }
@@ -260,7 +254,7 @@ public class ExpressionRefTests
     [Test]
     public async Task Is_with_pattern_variable()
     {
-        ExpressionRef expr = ExpressionRef.From("obj").Is(TypeRef.From("string"), "text");
+        var expr = ExpressionRef.From("obj").Is(TypeRef.From("string"), "text");
 
         await Assert.That(expr).IsEqualTo("obj is string text");
     }
@@ -272,7 +266,7 @@ public class ExpressionRefTests
     [Test]
     public async Task OrDefault_expression()
     {
-        ExpressionRef expr = ExpressionRef.From("value").OrDefault("fallback");
+        var expr = ExpressionRef.From("value").OrDefault("fallback");
 
         await Assert.That(expr).IsEqualTo("value ?? fallback");
     }
@@ -280,7 +274,7 @@ public class ExpressionRefTests
     [Test]
     public async Task NullForgiving_expression()
     {
-        ExpressionRef expr = ExpressionRef.From("value").NullForgiving();
+        var expr = ExpressionRef.From("value").NullForgiving();
 
         await Assert.That(expr).IsEqualTo("value!");
     }
@@ -288,7 +282,7 @@ public class ExpressionRefTests
     [Test]
     public async Task NullConditionalMember_expression()
     {
-        ExpressionRef expr = ExpressionRef.From("handler").NullConditionalMember("Name");
+        var expr = ExpressionRef.From("handler").NullConditionalMember("Name");
 
         await Assert.That(expr).IsEqualTo("handler?.Name");
     }
@@ -296,7 +290,7 @@ public class ExpressionRefTests
     [Test]
     public async Task NullConditionalCall_expression()
     {
-        ExpressionRef expr = ExpressionRef.From("handler").NullConditionalCall("Dispose");
+        var expr = ExpressionRef.From("handler").NullConditionalCall("Dispose");
 
         await Assert.That(expr).IsEqualTo("handler?.Dispose()");
     }
@@ -308,7 +302,7 @@ public class ExpressionRefTests
     [Test]
     public async Task Await_expression()
     {
-        ExpressionRef expr = ExpressionRef.From("task").Await();
+        var expr = ExpressionRef.From("task").Await();
 
         await Assert.That(expr).IsEqualTo("await task");
     }
@@ -316,7 +310,7 @@ public class ExpressionRefTests
     [Test]
     public async Task ConfigureAwait_false()
     {
-        ExpressionRef expr = ExpressionRef.From("stream")
+        var expr = ExpressionRef.From("stream")
             .Call("FlushAsync")
             .ConfigureAwait(false);
 
@@ -326,7 +320,7 @@ public class ExpressionRefTests
     [Test]
     public async Task ConfigureAwait_true()
     {
-        ExpressionRef expr = ExpressionRef.From("stream")
+        var expr = ExpressionRef.From("stream")
             .Call("FlushAsync")
             .ConfigureAwait(true);
 
@@ -336,7 +330,7 @@ public class ExpressionRefTests
     [Test]
     public async Task Await_with_ConfigureAwait()
     {
-        ExpressionRef expr = ExpressionRef.From("disposable")
+        var expr = ExpressionRef.From("disposable")
             .Call("DisposeAsync")
             .ConfigureAwait(false)
             .Await();
@@ -351,7 +345,7 @@ public class ExpressionRefTests
     [Test]
     public async Task Parenthesize_wraps()
     {
-        ExpressionRef expr = ExpressionRef.From("a + b").Parenthesize();
+        var expr = ExpressionRef.From("a + b").Parenthesize();
 
         await Assert.That(expr).IsEqualTo("(a + b)");
     }
@@ -359,7 +353,7 @@ public class ExpressionRefTests
     [Test]
     public async Task As_then_NullForgiving_with_parentheses()
     {
-        ExpressionRef expr = ExpressionRef.From("value")
+        var expr = ExpressionRef.From("value")
             .As("string")
             .Parenthesize()
             .NullForgiving();
@@ -374,7 +368,7 @@ public class ExpressionRefTests
     [Test]
     public async Task New_exception_with_nameof()
     {
-        ExpressionRef expr = ExceptionRefs.ArgumentNull
+        var expr = ExceptionRefs.ArgumentNull
             .New(TypeRef.From("value").NameOf());
 
         await Assert.That(expr).IsEqualTo("new global::System.ArgumentNullException(nameof(value))");
@@ -383,18 +377,19 @@ public class ExpressionRefTests
     [Test]
     public async Task Delegate_invoke_with_await_and_fallback()
     {
-        ExpressionRef expr = TypeRef.From("OnSaveAsync")
+        var expr = TypeRef.From("OnSaveAsync")
             .Invoke("entity")
             .OrDefault(TaskRefs.CompletedTask)
             .Await();
 
-        await Assert.That(expr).IsEqualTo("await OnSaveAsync?.Invoke(entity) ?? global::System.Threading.Tasks.Task.CompletedTask");
+        await Assert.That(expr)
+            .IsEqualTo("await OnSaveAsync?.Invoke(entity) ?? global::System.Threading.Tasks.Task.CompletedTask");
     }
 
     [Test]
     public async Task Static_method_parse_pattern()
     {
-        ExpressionRef expr = TypeRef.From("Guid").Call("Parse", "input", "provider");
+        var expr = TypeRef.From("Guid").Call("Parse", "input", "provider");
 
         await Assert.That(expr).IsEqualTo("Guid.Parse(input, provider)");
     }
@@ -402,7 +397,7 @@ public class ExpressionRefTests
     [Test]
     public async Task Throw_if_null_pattern()
     {
-        ExpressionRef expr = ExceptionRefs.ArgumentNull.Call("ThrowIfNull", "value");
+        var expr = ExceptionRefs.ArgumentNull.Call("ThrowIfNull", "value");
 
         await Assert.That(expr).IsEqualTo("global::System.ArgumentNullException.ThrowIfNull(value)");
     }
@@ -410,7 +405,7 @@ public class ExpressionRefTests
     [Test]
     public async Task Typeof_for_json_converter()
     {
-        ExpressionRef expr = JsonRefs.Converter("CustomerId").TypeOf();
+        var expr = JsonRefs.Converter("CustomerId").TypeOf();
 
         await Assert.That(expr).IsEqualTo("typeof(global::System.Text.Json.Serialization.JsonConverter<CustomerId>)");
     }

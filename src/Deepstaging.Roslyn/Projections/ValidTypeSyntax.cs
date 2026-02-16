@@ -19,10 +19,7 @@ public readonly struct ValidTypeSyntax<TSyntax> : IProjection<TSyntax>
 {
     private readonly TSyntax _node;
 
-    private ValidTypeSyntax(TSyntax node)
-    {
-        _node = node ?? throw new ArgumentNullException(nameof(node));
-    }
+    private ValidTypeSyntax(TSyntax node) => _node = node ?? throw new ArgumentNullException(nameof(node));
 
     #region Factory Methods
 
@@ -30,27 +27,19 @@ public readonly struct ValidTypeSyntax<TSyntax> : IProjection<TSyntax>
     /// Creates a validated type syntax from a non-null type declaration.
     /// </summary>
     /// <exception cref="ArgumentNullException">Thrown if node is null.</exception>
-    public static ValidTypeSyntax<TSyntax> From(TSyntax node)
-    {
-        return new ValidTypeSyntax<TSyntax>(node);
-    }
+    public static ValidTypeSyntax<TSyntax> From(TSyntax node) => new(node);
 
     /// <summary>
     /// Attempts to create a validated type syntax from a nullable type declaration.
     /// Returns null if the node is null.
     /// </summary>
-    public static ValidTypeSyntax<TSyntax>? TryFrom(TSyntax? node)
-    {
-        return node != null ? new ValidTypeSyntax<TSyntax>(node) : null;
-    }
+    public static ValidTypeSyntax<TSyntax>? TryFrom(TSyntax? node) =>
+        node != null ? new ValidTypeSyntax<TSyntax>(node) : null;
 
     /// <summary>
     /// Creates a validated type syntax from a ValidSyntax wrapper.
     /// </summary>
-    public static ValidTypeSyntax<TSyntax> From(ValidSyntax<TSyntax> valid)
-    {
-        return new ValidTypeSyntax<TSyntax>(valid.Node);
-    }
+    public static ValidTypeSyntax<TSyntax> From(ValidSyntax<TSyntax> valid) => new(valid.Node);
 
     #endregion
 
@@ -78,18 +67,12 @@ public readonly struct ValidTypeSyntax<TSyntax> : IProjection<TSyntax>
     /// <summary>
     /// Returns the guaranteed non-null syntax node.
     /// </summary>
-    public TSyntax OrThrow(string? message = null)
-    {
-        return _node;
-    }
+    public TSyntax OrThrow(string? message = null) => _node;
 
     /// <summary>
     /// Returns the guaranteed non-null syntax node.
     /// </summary>
-    public TSyntax OrNull()
-    {
-        return _node;
-    }
+    public TSyntax OrNull() => _node;
 
     #endregion
 
@@ -122,10 +105,7 @@ public readonly struct ValidTypeSyntax<TSyntax> : IProjection<TSyntax>
     /// <summary>
     /// Checks if the type has a specific modifier.
     /// </summary>
-    public bool HasModifier(SyntaxKind kind)
-    {
-        return _node.Modifiers.Any(m => m.IsKind(kind));
-    }
+    public bool HasModifier(SyntaxKind kind) => _node.Modifiers.Any(m => m.IsKind(kind));
 
     /// <summary>
     /// Gets a value indicating whether the type is partial.
@@ -200,6 +180,7 @@ public readonly struct ValidTypeSyntax<TSyntax> : IProjection<TSyntax>
     public TSyntax RemoveModifier(SyntaxKind kind)
     {
         var modifierToRemove = _node.Modifiers.FirstOrDefault(m => m.IsKind(kind));
+
         if (modifierToRemove == default)
             return _node;
 
@@ -210,10 +191,7 @@ public readonly struct ValidTypeSyntax<TSyntax> : IProjection<TSyntax>
     /// <summary>
     /// Replaces all modifiers with the specified modifiers.
     /// </summary>
-    public TSyntax WithModifiers(SyntaxTokenList modifiers)
-    {
-        return (TSyntax)_node.WithModifiers(modifiers);
-    }
+    public TSyntax WithModifiers(SyntaxTokenList modifiers) => (TSyntax)_node.WithModifiers(modifiers);
 
     #endregion
 
@@ -350,42 +328,27 @@ public readonly struct ValidTypeSyntax<TSyntax> : IProjection<TSyntax>
     /// <summary>
     /// Checks if the validated type syntax equals the specified syntax node.
     /// </summary>
-    public bool Equals(TSyntax? other)
-    {
-        return other != null && _node.IsEquivalentTo(other);
-    }
+    public bool Equals(TSyntax? other) => other != null && _node.IsEquivalentTo(other);
 
     /// <summary>
     /// Enables equality checks: validated == node
     /// </summary>
-    public static bool operator ==(ValidTypeSyntax<TSyntax> left, TSyntax? right)
-    {
-        return left.Equals(right);
-    }
+    public static bool operator ==(ValidTypeSyntax<TSyntax> left, TSyntax? right) => left.Equals(right);
 
     /// <summary>
     /// Enables inequality checks: validated != node
     /// </summary>
-    public static bool operator !=(ValidTypeSyntax<TSyntax> left, TSyntax? right)
-    {
-        return !left.Equals(right);
-    }
+    public static bool operator !=(ValidTypeSyntax<TSyntax> left, TSyntax? right) => !left.Equals(right);
 
     /// <summary>
     /// Determines whether the current instance equals the specified object (always returns false).
     /// </summary>
-    public override bool Equals(object? obj)
-    {
-        return false;
-    }
+    public override bool Equals(object? obj) => false;
 
     /// <summary>
     /// Returns the hash code for this instance.
     /// </summary>
-    public override int GetHashCode()
-    {
-        return _node.GetHashCode();
-    }
+    public override int GetHashCode() => _node.GetHashCode();
 
     #endregion
 
@@ -394,18 +357,13 @@ public readonly struct ValidTypeSyntax<TSyntax> : IProjection<TSyntax>
     /// <summary>
     /// Implicitly converts to the underlying syntax node for seamless interop with Roslyn APIs.
     /// </summary>
-    public static implicit operator TSyntax(ValidTypeSyntax<TSyntax> valid)
-    {
-        return valid._node;
-    }
+    public static implicit operator TSyntax(ValidTypeSyntax<TSyntax> valid) => valid._node;
 
     /// <summary>
     /// Implicitly converts to ValidSyntax for generic syntax operations.
     /// </summary>
-    public static implicit operator ValidSyntax<TSyntax>(ValidTypeSyntax<TSyntax> valid)
-    {
-        return ValidSyntax<TSyntax>.From(valid._node);
-    }
+    public static implicit operator ValidSyntax<TSyntax>(ValidTypeSyntax<TSyntax> valid) =>
+        ValidSyntax<TSyntax>.From(valid._node);
 
     #endregion
 }

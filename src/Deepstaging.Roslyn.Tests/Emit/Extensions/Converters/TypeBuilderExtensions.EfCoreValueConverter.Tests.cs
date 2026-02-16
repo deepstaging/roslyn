@@ -13,13 +13,16 @@ public sealed class TypeBuilderExtensionsEfCoreValueConverterTests : RoslynTestB
     {
         var type = TypeBuilder.Parse("public partial struct UserId")
             .WithEfCoreValueConverter(
-                backingType: "global::System.Guid",
-                toProviderExpression: "id => id.Value",
-                fromProviderExpression: "value => new UserId(value)");
+                "global::System.Guid",
+                "id => id.Value",
+                "value => new UserId(value)");
 
         var result = type.Emit();
 
-        await Assert.That(result.Code).Contains("public partial class EfCoreValueConverter : global::Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter<UserId, global::System.Guid>");
+        await Assert.That(result.Code)
+            .Contains(
+                "public partial class EfCoreValueConverter : global::Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter<UserId, global::System.Guid>");
+
         await Assert.That(result.Code).Contains("id => id.Value");
         await Assert.That(result.Code).Contains("value => new UserId(value)");
     }
@@ -29,10 +32,10 @@ public sealed class TypeBuilderExtensionsEfCoreValueConverterTests : RoslynTestB
     {
         var type = TypeBuilder.Parse("public partial struct UserId")
             .WithEfCoreValueConverter(
-                backingType: "global::System.Guid",
-                toProviderExpression: "id => id.Value",
-                fromProviderExpression: "value => new UserId(value)",
-                converterName: "UserIdEfConverter");
+                "global::System.Guid",
+                "id => id.Value",
+                "value => new UserId(value)",
+                "UserIdEfConverter");
 
         var result = type.Emit();
 

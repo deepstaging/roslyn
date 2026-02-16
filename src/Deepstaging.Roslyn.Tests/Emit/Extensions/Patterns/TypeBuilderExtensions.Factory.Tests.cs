@@ -16,7 +16,8 @@ public sealed class TypeBuilderExtensionsFactoryTests : RoslynTestBase
 
         var result = type.Emit();
 
-        await Assert.That(result.Code).Contains("public static readonly UserId Empty = new UserId(global::System.Guid.Empty);");
+        await Assert.That(result.Code)
+            .Contains("public static readonly UserId Empty = new UserId(global::System.Guid.Empty);");
     }
 
     [Test]

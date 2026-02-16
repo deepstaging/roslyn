@@ -52,6 +52,7 @@ public static class ValidNamedTypeSymbolExtensions
         public IEnumerable<ValidSymbol<INamedTypeSymbol>> GetBaseTypes()
         {
             var current = type.Value.BaseType;
+
             while (current != null)
             {
                 yield return ValidSymbol<INamedTypeSymbol>.From(current);
@@ -79,13 +80,11 @@ public static class ValidNamedTypeSymbolExtensions
         /// Checks if this type implements the specified interface by name.
         /// Checks both direct and inherited interfaces.
         /// </summary>
-        public bool ImplementsInterface(string interfaceName)
-        {
-            return type.Value.AllInterfaces.Any(i =>
+        public bool ImplementsInterface(string interfaceName) =>
+            type.Value.AllInterfaces.Any(i =>
                 i.Name == interfaceName ||
                 i.ToDisplayString() == interfaceName ||
                 i.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == interfaceName);
-        }
 
         /// <summary>
         /// Checks if this type inherits from the specified base type by name.
@@ -93,12 +92,14 @@ public static class ValidNamedTypeSymbolExtensions
         public bool InheritsFrom(string baseTypeName)
         {
             var current = type.Value.BaseType;
+
             while (current != null)
             {
                 if (current.Name == baseTypeName ||
                     current.ToDisplayString() == baseTypeName ||
                     current.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == baseTypeName)
                     return true;
+
                 current = current.BaseType;
             }
 
@@ -129,34 +130,22 @@ public static class ValidNamedTypeSymbolExtensions
         /// <summary>
         /// Checks if this is a partial type using syntax analysis.
         /// </summary>
-        public bool IsPartialType()
-        {
-            return type.Value.IsPartial();
-        }
+        public bool IsPartialType() => type.Value.IsPartial();
 
         /// <summary>
         /// Checks if this is an enum type.
         /// </summary>
-        public bool IsEnum()
-        {
-            return type.Value.TypeKind == TypeKind.Enum;
-        }
+        public bool IsEnum() => type.Value.TypeKind == TypeKind.Enum;
 
         /// <summary>
         /// Checks if this is a delegate type.
         /// </summary>
-        public bool IsDelegate()
-        {
-            return type.Value.TypeKind == TypeKind.Delegate;
-        }
+        public bool IsDelegate() => type.Value.TypeKind == TypeKind.Delegate;
 
         /// <summary>
         /// Checks if this is a nested type.
         /// </summary>
-        public bool IsNestedType()
-        {
-            return type.Value.ContainingType != null;
-        }
+        public bool IsNestedType() => type.Value.ContainingType != null;
 
         /// <summary>
         /// Gets the containing type if this is a nested type.
@@ -180,26 +169,17 @@ public static class ValidNamedTypeSymbolExtensions
         /// <summary>
         /// Checks if this type is a tuple type.
         /// </summary>
-        public bool IsTupleType()
-        {
-            return type.Value.IsTupleType;
-        }
+        public bool IsTupleType() => type.Value.IsTupleType;
 
         /// <summary>
         /// Checks if this type is an anonymous type.
         /// </summary>
-        public bool IsAnonymousType()
-        {
-            return type.Value.IsAnonymousType;
-        }
+        public bool IsAnonymousType() => type.Value.IsAnonymousType;
 
         /// <summary>
         /// Checks if this type is a native integer type (nint or nuint).
         /// </summary>
-        public bool IsNativeIntegerType()
-        {
-            return type.Value.IsNativeIntegerType;
-        }
+        public bool IsNativeIntegerType() => type.Value.IsNativeIntegerType;
 
         /// <summary>
         /// Gets the arity (number of type parameters) for generic types.
@@ -210,9 +190,6 @@ public static class ValidNamedTypeSymbolExtensions
         /// <summary>
         /// Checks if this is an unbound generic type (e.g., List&lt;&gt; without type arguments).
         /// </summary>
-        public bool IsUnboundGenericType()
-        {
-            return type.Value.IsUnboundGenericType;
-        }
+        public bool IsUnboundGenericType() => type.Value.IsUnboundGenericType;
     }
 }

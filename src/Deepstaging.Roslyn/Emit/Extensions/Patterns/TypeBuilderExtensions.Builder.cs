@@ -15,10 +15,7 @@ public static class TypeBuilderBuilderPatternExtensions
     /// </summary>
     /// <param name="builder">The type builder.</param>
     /// <returns>The modified type builder with a nested Builder class.</returns>
-    public static TypeBuilder WithBuilder(this TypeBuilder builder)
-    {
-        return builder.WithBuilder("Builder");
-    }
+    public static TypeBuilder WithBuilder(this TypeBuilder builder) => builder.WithBuilder("Builder");
 
     /// <summary>
     /// Adds a nested Builder class with a custom name for the fluent builder pattern.
@@ -31,10 +28,7 @@ public static class TypeBuilderBuilderPatternExtensions
     public static TypeBuilder WithBuilder(this TypeBuilder builder, string builderClassName)
     {
         // Only classes support builders
-        if (builder is not { Kind: TypeKind.Class, IsRecord: false })
-        {
-            return builder;
-        }
+        if (builder is not { Kind: TypeKind.Class, IsRecord: false }) return builder;
 
         var typeName = builder.Name;
         var properties = builder.Properties.IsDefault ? [] : builder.Properties;
@@ -46,7 +40,6 @@ public static class TypeBuilderBuilderPatternExtensions
 
         // Add init properties and With* methods using 'with' expression
         foreach (var prop in properties)
-        {
             builderClass = builderClass
                 .AddProperty(prop.Name, prop.Type!, p => p.WithAutoPropertyAccessors().WithInitOnlySetter())
                 .AddMethod($"With{prop.Name}", m => m
@@ -54,7 +47,6 @@ public static class TypeBuilderBuilderPatternExtensions
                     .WithReturnType(builderClassName)
                     .AddParameter("value", prop.Type!)
                     .WithExpressionBody($"this with {{ {prop.Name} = value }}"));
-        }
 
         // Build constructor parameters using property names
         var constructorParams = string.Join(", ", properties.Select(p => p.Name));

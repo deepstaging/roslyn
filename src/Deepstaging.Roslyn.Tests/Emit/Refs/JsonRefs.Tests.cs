@@ -8,7 +8,7 @@ public class JsonRefsTests
     [Test]
     public async Task Serializer_creates_globally_qualified_type()
     {
-        TypeRef typeRef = JsonRefs.Serializer;
+        var typeRef = JsonRefs.Serializer;
 
         await Assert.That(typeRef).IsEqualTo("global::System.Text.Json.JsonSerializer");
     }
@@ -16,7 +16,7 @@ public class JsonRefsTests
     [Test]
     public async Task SerializerOptions_creates_globally_qualified_type()
     {
-        TypeRef typeRef = JsonRefs.SerializerOptions;
+        var typeRef = JsonRefs.SerializerOptions;
 
         await Assert.That(typeRef).IsEqualTo("global::System.Text.Json.JsonSerializerOptions");
     }
@@ -24,7 +24,7 @@ public class JsonRefsTests
     [Test]
     public async Task Reader_creates_globally_qualified_type()
     {
-        TypeRef typeRef = JsonRefs.Reader;
+        var typeRef = JsonRefs.Reader;
 
         await Assert.That(typeRef).IsEqualTo("global::System.Text.Json.Utf8JsonReader");
     }
@@ -32,7 +32,7 @@ public class JsonRefsTests
     [Test]
     public async Task Writer_creates_globally_qualified_type()
     {
-        TypeRef typeRef = JsonRefs.Writer;
+        var typeRef = JsonRefs.Writer;
 
         await Assert.That(typeRef).IsEqualTo("global::System.Text.Json.Utf8JsonWriter");
     }
@@ -40,7 +40,7 @@ public class JsonRefsTests
     [Test]
     public async Task Converter_creates_generic_globally_qualified_type()
     {
-        TypeRef typeRef = JsonRefs.Converter("CustomerId");
+        var typeRef = JsonRefs.Converter("CustomerId");
 
         await Assert.That(typeRef).IsEqualTo("global::System.Text.Json.Serialization.JsonConverter<CustomerId>");
     }
@@ -48,7 +48,7 @@ public class JsonRefsTests
     [Test]
     public async Task ConverterAttribute_creates_globally_qualified_type()
     {
-        TypeRef typeRef = JsonRefs.ConverterAttribute;
+        var typeRef = JsonRefs.ConverterAttribute;
 
         await Assert.That(typeRef).IsEqualTo("global::System.Text.Json.Serialization.JsonConverter");
     }

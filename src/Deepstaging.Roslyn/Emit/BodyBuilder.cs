@@ -14,7 +14,9 @@ public record struct BodyBuilder
     public ImmutableArray<StatementSyntax> Statements { get; init; }
 
     /// <summary>Initializes a new instance of the BodyBuilder.</summary>
-    public BodyBuilder() { }
+    public BodyBuilder()
+    {
+    }
 
     #region Factory Methods
 
@@ -64,10 +66,12 @@ public record struct BodyBuilder
 
         // Parse as a block to preserve structure
         var blockCode = statements.Trim();
+
         if (!blockCode.StartsWith("{"))
             blockCode = "{\n" + blockCode + "\n}";
 
         var block = SyntaxFactory.ParseStatement(blockCode) as BlockSyntax;
+
         if (block == null)
             return this;
 
@@ -83,6 +87,7 @@ public record struct BodyBuilder
     {
         var returnStatement = SyntaxFactory.ReturnStatement(
             SyntaxFactory.ParseExpression(expression));
+
         var statements = Statements.IsDefault ? [] : Statements;
         return this with { Statements = statements.Add(returnStatement) };
     }
@@ -105,6 +110,7 @@ public record struct BodyBuilder
     {
         var throwStatement = SyntaxFactory.ThrowStatement(
             SyntaxFactory.ParseExpression(expression));
+
         var statements = Statements.IsDefault ? [] : Statements;
         return this with { Statements = statements.Add(throwStatement) };
     }
@@ -117,9 +123,11 @@ public record struct BodyBuilder
     public BodyBuilder AddIf(string condition, Func<BodyBuilder, BodyBuilder> configureBody)
     {
         var body = configureBody(Empty());
+
         var ifStatement = SyntaxFactory.IfStatement(
             SyntaxFactory.ParseExpression(condition),
             body.Build());
+
         var statements = Statements.IsDefault ? [] : Statements;
         return this with { Statements = statements.Add(ifStatement) };
     }
@@ -130,15 +138,19 @@ public record struct BodyBuilder
     /// <param name="condition">The condition expression (e.g., "x > 0", "value != null").</param>
     /// <param name="configureIfBody">Configuration callback for the if body.</param>
     /// <param name="configureElseBody">Configuration callback for the else body.</param>
-    public BodyBuilder AddIfElse(string condition, Func<BodyBuilder, BodyBuilder> configureIfBody,
+    public BodyBuilder AddIfElse(
+        string condition,
+        Func<BodyBuilder, BodyBuilder> configureIfBody,
         Func<BodyBuilder, BodyBuilder> configureElseBody)
     {
         var ifBody = configureIfBody(Empty());
         var elseBody = configureElseBody(Empty());
+
         var ifStatement = SyntaxFactory.IfStatement(
             SyntaxFactory.ParseExpression(condition),
             ifBody.Build(),
             SyntaxFactory.ElseClause(elseBody.Build()));
+
         var statements = Statements.IsDefault ? [] : Statements;
         return this with { Statements = statements.Add(ifStatement) };
     }
@@ -150,15 +162,20 @@ public record struct BodyBuilder
     /// <param name="variableName">The name of the loop variable (e.g., "item", "x").</param>
     /// <param name="collection">The collection expression (e.g., "items", "GetValues()").</param>
     /// <param name="configureBody">Configuration callback for the loop body.</param>
-    public BodyBuilder AddForEach(string variableType, string variableName, string collection,
+    public BodyBuilder AddForEach(
+        string variableType,
+        string variableName,
+        string collection,
         Func<BodyBuilder, BodyBuilder> configureBody)
     {
         var body = configureBody(Empty());
+
         var forEachStatement = SyntaxFactory.ForEachStatement(
             SyntaxFactory.ParseTypeName(variableType),
             SyntaxFactory.Identifier(variableName),
             SyntaxFactory.ParseExpression(collection),
             body.Build());
+
         var statements = Statements.IsDefault ? [] : Statements;
         return this with { Statements = statements.Add(forEachStatement) };
     }
@@ -191,6 +208,7 @@ public record struct BodyBuilder
     public BodyBuilder When(Directive directive, Func<BodyBuilder, BodyBuilder> configureBody)
     {
         var conditionalBody = configureBody(Empty());
+
         if (conditionalBody.IsEmpty)
             return this;
 
@@ -210,10 +228,7 @@ public record struct BodyBuilder
     /// Builds the body as a block syntax.
     /// Returns an empty block if no statements were added.
     /// </summary>
-    internal BlockSyntax Build()
-    {
-        return SyntaxFactory.Block(Statements.IsDefault ? [] : Statements);
-    }
+    internal BlockSyntax Build() => SyntaxFactory.Block(Statements.IsDefault ? [] : Statements);
 
     /// <summary>
     /// Gets a value indicating whether the body is empty (no statements).

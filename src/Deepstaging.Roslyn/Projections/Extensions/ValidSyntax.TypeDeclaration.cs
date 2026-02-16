@@ -24,6 +24,7 @@ public static class ValidSyntaxTypeDeclarationExtensions
         where TSyntax : TypeDeclarationSyntax
     {
         var node = syntax.Node;
+
         if (node.Modifiers.Any(m => m.IsKind(kind)))
             return node;
 
@@ -44,9 +45,8 @@ public static class ValidSyntaxTypeDeclarationExtensions
         return modifiers.Count;
     }
 
-    private static int GetModifierPriority(SyntaxKind kind)
-    {
-        return kind switch
+    private static int GetModifierPriority(SyntaxKind kind) =>
+        kind switch
         {
             // Accessibility modifiers come first
             SyntaxKind.PublicKeyword => 0,
@@ -75,7 +75,6 @@ public static class ValidSyntaxTypeDeclarationExtensions
 
             _ => 5
         };
-    }
 
     /// <summary>
     /// Removes a modifier from the type declaration.
@@ -89,6 +88,7 @@ public static class ValidSyntaxTypeDeclarationExtensions
     {
         var node = syntax.Node;
         var modifierToRemove = node.Modifiers.FirstOrDefault(m => m.IsKind(kind));
+
         if (modifierToRemove == default)
             return node;
 
@@ -104,53 +104,36 @@ public static class ValidSyntaxTypeDeclarationExtensions
     /// <param name="kind">The modifier kind to check.</param>
     /// <returns>True if the modifier is present.</returns>
     public static bool HasModifier<TSyntax>(this ValidSyntax<TSyntax> syntax, SyntaxKind kind)
-        where TSyntax : TypeDeclarationSyntax
-    {
-        return syntax.Node.Modifiers.Any(m => m.IsKind(kind));
-    }
+        where TSyntax : TypeDeclarationSyntax =>
+        syntax.Node.Modifiers.Any(m => m.IsKind(kind));
 
     /// <summary>
     /// Gets a value indicating whether the type is partial.
     /// </summary>
     public static bool IsPartial<TSyntax>(this ValidSyntax<TSyntax> syntax)
-        where TSyntax : TypeDeclarationSyntax
-    {
-        return syntax.HasModifier(SyntaxKind.PartialKeyword);
-    }
+        where TSyntax : TypeDeclarationSyntax => syntax.HasModifier(SyntaxKind.PartialKeyword);
 
     /// <summary>
     /// Gets a value indicating whether the type is static.
     /// </summary>
     public static bool IsStatic<TSyntax>(this ValidSyntax<TSyntax> syntax)
-        where TSyntax : TypeDeclarationSyntax
-    {
-        return syntax.HasModifier(SyntaxKind.StaticKeyword);
-    }
+        where TSyntax : TypeDeclarationSyntax => syntax.HasModifier(SyntaxKind.StaticKeyword);
 
     /// <summary>
     /// Gets a value indicating whether the type is abstract.
     /// </summary>
     public static bool IsAbstract<TSyntax>(this ValidSyntax<TSyntax> syntax)
-        where TSyntax : TypeDeclarationSyntax
-    {
-        return syntax.HasModifier(SyntaxKind.AbstractKeyword);
-    }
+        where TSyntax : TypeDeclarationSyntax => syntax.HasModifier(SyntaxKind.AbstractKeyword);
 
     /// <summary>
     /// Gets a value indicating whether the type is sealed.
     /// </summary>
     public static bool IsSealed<TSyntax>(this ValidSyntax<TSyntax> syntax)
-        where TSyntax : TypeDeclarationSyntax
-    {
-        return syntax.HasModifier(SyntaxKind.SealedKeyword);
-    }
+        where TSyntax : TypeDeclarationSyntax => syntax.HasModifier(SyntaxKind.SealedKeyword);
 
     /// <summary>
     /// Gets the name of the type declaration.
     /// </summary>
     public static string Name<TSyntax>(this ValidSyntax<TSyntax> syntax)
-        where TSyntax : TypeDeclarationSyntax
-    {
-        return syntax.Node.Identifier.Text;
-    }
+        where TSyntax : TypeDeclarationSyntax => syntax.Node.Identifier.Text;
 }

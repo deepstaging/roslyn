@@ -16,99 +16,66 @@ public static class TypeSymbolClassificationExtensions
         /// <summary>
         /// Checks if the type is an enum type.
         /// </summary>
-        public bool IsEnumType()
-        {
-            return typeSymbol.TypeKind == TypeKind.Enum;
-        }
+        public bool IsEnumType() => typeSymbol.TypeKind == TypeKind.Enum;
 
         /// <summary>
         /// Checks if the type is an interface type.
         /// </summary>
-        public bool IsInterfaceType()
-        {
-            return typeSymbol.TypeKind == TypeKind.Interface;
-        }
+        public bool IsInterfaceType() => typeSymbol.TypeKind == TypeKind.Interface;
 
         /// <summary>
         /// Checks if the type is a record type (class or struct).
         /// </summary>
-        public bool IsRecordType()
-        {
-            return typeSymbol is INamedTypeSymbol { IsRecord: true };
-        }
+        public bool IsRecordType() => typeSymbol is INamedTypeSymbol { IsRecord: true };
 
         /// <summary>
         /// Checks if the type is a struct/value type (excluding enums).
         /// </summary>
-        public bool IsStructType()
-        {
-            return typeSymbol.IsValueType && typeSymbol.TypeKind == TypeKind.Struct;
-        }
+        public bool IsStructType() => typeSymbol.IsValueType && typeSymbol.TypeKind == TypeKind.Struct;
 
         /// <summary>
         /// Checks if the type is a class type.
         /// </summary>
-        public bool IsClassType()
-        {
-            return typeSymbol.TypeKind == TypeKind.Class;
-        }
+        public bool IsClassType() => typeSymbol.TypeKind == TypeKind.Class;
 
         /// <summary>
         /// Checks if the type is an array type.
         /// </summary>
-        public bool IsArrayType()
-        {
-            return typeSymbol is IArrayTypeSymbol;
-        }
+        public bool IsArrayType() => typeSymbol is IArrayTypeSymbol;
 
         /// <summary>
         /// Checks if the type is a pointer type.
         /// </summary>
-        public bool IsPointerType()
-        {
-            return typeSymbol is IPointerTypeSymbol;
-        }
+        public bool IsPointerType() => typeSymbol is IPointerTypeSymbol;
 
         /// <summary>
         /// Checks if the type is a tuple (ValueTuple).
         /// </summary>
-        public bool IsTupleType()
-        {
-            return typeSymbol is INamedTypeSymbol { IsTupleType: true };
-        }
+        public bool IsTupleType() => typeSymbol is INamedTypeSymbol { IsTupleType: true };
 
         /// <summary>
         /// Checks if the type is <c>Nullable&lt;T&gt;</c> (value type nullable).
         /// </summary>
-        public bool IsNullableValueType()
+        public bool IsNullableValueType() => typeSymbol is INamedTypeSymbol
         {
-            return typeSymbol is INamedTypeSymbol { Name: "Nullable", IsGenericType: true, TypeArguments.Length: 1 };
-        }
+            Name: "Nullable", IsGenericType: true, TypeArguments.Length: 1
+        };
 
         // ── Modifiers ────────────────────────────────────────────────────
 
         /// <summary>
         /// Checks if the type is marked as abstract.
         /// </summary>
-        public bool IsAbstractType()
-        {
-            return typeSymbol.IsAbstract;
-        }
+        public bool IsAbstractType() => typeSymbol.IsAbstract;
 
         /// <summary>
         /// Checks if the type is marked as sealed.
         /// </summary>
-        public bool IsSealedType()
-        {
-            return typeSymbol.IsSealed;
-        }
+        public bool IsSealedType() => typeSymbol.IsSealed;
 
         /// <summary>
         /// Checks if the type is static.
         /// </summary>
-        public bool IsStaticType()
-        {
-            return typeSymbol.IsStatic;
-        }
+        public bool IsStaticType() => typeSymbol.IsStatic;
     }
 }

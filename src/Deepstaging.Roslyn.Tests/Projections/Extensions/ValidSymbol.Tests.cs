@@ -206,10 +206,9 @@ public class ValidSymbolTests : RoslynTestBase
     [Test]
     public async Task CanReadGenericAttributes()
     {
-        
         var code = """
                    namespace MyApp;
-                   
+
                    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
                     public class TestAttribute<T> : Attribute;
                     
@@ -219,11 +218,11 @@ public class ValidSymbolTests : RoslynTestBase
 
         var type = SymbolsFor(code)
             .RequireNamedType("Target");
-        
+
         var attributes = type
             .GetAttributes("TestAttribute")
             .ToImmutableArray();
-        
+
         await Assert.That(attributes.Length).IsEqualTo(1);
 
         var symbol = attributes[0].GetTypeArgument(0);
@@ -236,21 +235,21 @@ public class ValidSymbolTests : RoslynTestBase
     {
         var code = """
                    namespace MyApp;
-                   
+
                    [AttributeUsage(AttributeTargets.Class)]
                    public class GenericAttribute<T> : Attribute;
-                   
+
                    [Generic<int>]
                    public class Target;
                    """;
 
         var type = SymbolsFor(code).RequireNamedType("Target");
-        
+
         // Use metadata name to find any instantiation of the generic attribute
         var attr = type.Value.GetAttributesByMetadataName("GenericAttribute`1").ToImmutableArray();
-        
+
         await Assert.That(attr.Length).IsEqualTo(1);
-        
+
         // Verify we can get the type argument
         var typeArg = attr[0].GetTypeArgument(0);
         await Assert.That(typeArg.HasValue).IsTrue();
@@ -262,24 +261,24 @@ public class ValidSymbolTests : RoslynTestBase
     {
         var code = """
                    namespace MyApp;
-                   
+
                    [AttributeUsage(AttributeTargets.Class)]
                    public class ConfigAttribute<TConfig> : Attribute;
-                   
+
                    [Config<string>]
                    public class WithConfig;
-                   
+
                    public class WithoutConfig;
                    """;
 
         var context = SymbolsFor(code);
         var withConfig = context.RequireNamedType("WithConfig");
         var withoutConfig = context.RequireNamedType("WithoutConfig");
-        
+
         // Use metadata name with arity
         var attrs = withConfig.Value.GetAttributesByMetadataName("ConfigAttribute`1").ToImmutableArray();
         await Assert.That(attrs.Length).IsEqualTo(1);
-        
+
         var noAttrs = withoutConfig.Value.GetAttributesByMetadataName("ConfigAttribute`1").ToImmutableArray();
         await Assert.That(noAttrs.Length).IsEqualTo(0);
     }

@@ -265,9 +265,11 @@ public class OptionalSymbolNamespaceTests : RoslynTestBase
                    """;
 
         var context = SymbolsFor(code);
+
         var grandChild = context.GetNamespace("Parent")
             .GetNamespace("Child")
             .GetNamespace("GrandChild");
+
         var type = grandChild.GetNamedType("MyClass");
 
         await Assert.That(grandChild.HasValue).IsTrue();
@@ -286,6 +288,7 @@ public class OptionalSymbolNamespaceTests : RoslynTestBase
                    """;
 
         var context = SymbolsFor(code);
+
         var result = context.GetNamespace("Parent")
             .GetNamespace("NonExistent")
             .GetNamespace("AlsoNonExistent");

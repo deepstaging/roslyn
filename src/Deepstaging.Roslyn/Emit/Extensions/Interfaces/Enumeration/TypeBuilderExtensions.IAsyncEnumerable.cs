@@ -18,15 +18,14 @@ public static class TypeBuilderAsyncEnumerableExtensions
     public static TypeBuilder ImplementsIAsyncEnumerable(
         this TypeBuilder builder,
         string elementType,
-        string collectionAccessor)
-    {
-        return builder
-            .Implements($"global::System.Collections.Generic.IAsyncEnumerable<{elementType}>", Directives.NetCoreApp30OrGreater)
-            .AddMethod(MethodBuilder
-                .Parse($"public global::System.Collections.Generic.IAsyncEnumerator<{elementType}> GetAsyncEnumerator(global::System.Threading.CancellationToken cancellationToken = default)")
-                .When(Directives.NetCoreApp30OrGreater)
-                .WithExpressionBody($"{collectionAccessor}.GetAsyncEnumerator(cancellationToken)"));
-    }
+        string collectionAccessor) => builder
+        .Implements($"global::System.Collections.Generic.IAsyncEnumerable<{elementType}>",
+            Directives.NetCoreApp30OrGreater)
+        .AddMethod(MethodBuilder
+            .Parse(
+                $"public global::System.Collections.Generic.IAsyncEnumerator<{elementType}> GetAsyncEnumerator(global::System.Threading.CancellationToken cancellationToken = default)")
+            .When(Directives.NetCoreApp30OrGreater)
+            .WithExpressionBody($"{collectionAccessor}.GetAsyncEnumerator(cancellationToken)"));
 
     /// <summary>
     /// Implements IAsyncEnumerable&lt;T&gt; with a custom async enumerator expression.
@@ -38,15 +37,14 @@ public static class TypeBuilderAsyncEnumerableExtensions
     public static TypeBuilder ImplementsIAsyncEnumerableWith(
         this TypeBuilder builder,
         string elementType,
-        string enumeratorExpression)
-    {
-        return builder
-            .Implements($"global::System.Collections.Generic.IAsyncEnumerable<{elementType}>", Directives.NetCoreApp30OrGreater)
-            .AddMethod(MethodBuilder
-                .Parse($"public global::System.Collections.Generic.IAsyncEnumerator<{elementType}> GetAsyncEnumerator(global::System.Threading.CancellationToken cancellationToken = default)")
-                .When(Directives.NetCoreApp30OrGreater)
-                .WithExpressionBody(enumeratorExpression));
-    }
+        string enumeratorExpression) => builder
+        .Implements($"global::System.Collections.Generic.IAsyncEnumerable<{elementType}>",
+            Directives.NetCoreApp30OrGreater)
+        .AddMethod(MethodBuilder
+            .Parse(
+                $"public global::System.Collections.Generic.IAsyncEnumerator<{elementType}> GetAsyncEnumerator(global::System.Threading.CancellationToken cancellationToken = default)")
+            .When(Directives.NetCoreApp30OrGreater)
+            .WithExpressionBody(enumeratorExpression));
 
     /// <summary>
     /// Implements IAsyncEnumerable&lt;T&gt; using an async iterator method body.
@@ -58,13 +56,12 @@ public static class TypeBuilderAsyncEnumerableExtensions
     public static TypeBuilder ImplementsIAsyncEnumerableWithIterator(
         this TypeBuilder builder,
         string elementType,
-        Func<BodyBuilder, BodyBuilder> iteratorBody)
-    {
-        return builder
-            .Implements($"global::System.Collections.Generic.IAsyncEnumerable<{elementType}>", Directives.NetCoreApp30OrGreater)
-            .AddMethod(MethodBuilder
-                .Parse($"public async global::System.Collections.Generic.IAsyncEnumerator<{elementType}> GetAsyncEnumerator(global::System.Threading.CancellationToken cancellationToken = default)")
-                .When(Directives.NetCoreApp30OrGreater)
-                .WithBody(iteratorBody));
-    }
+        Func<BodyBuilder, BodyBuilder> iteratorBody) => builder
+        .Implements($"global::System.Collections.Generic.IAsyncEnumerable<{elementType}>",
+            Directives.NetCoreApp30OrGreater)
+        .AddMethod(MethodBuilder
+            .Parse(
+                $"public async global::System.Collections.Generic.IAsyncEnumerator<{elementType}> GetAsyncEnumerator(global::System.Threading.CancellationToken cancellationToken = default)")
+            .When(Directives.NetCoreApp30OrGreater)
+            .WithBody(iteratorBody));
 }

@@ -20,16 +20,10 @@ internal readonly struct EquatableTypeInfo
     /// <summary>Gets the simple type name.</summary>
     public string Name => Core.Name;
 
-    private EquatableTypeInfo(BackingTypeCore core)
-    {
-        Core = core;
-    }
+    private EquatableTypeInfo(BackingTypeCore core) => Core = core;
 
     /// <summary>
     /// Creates an EquatableTypeInfo from the given type symbol.
     /// </summary>
-    public static EquatableTypeInfo From(TypeSnapshot type)
-    {
-        return new EquatableTypeInfo(BackingTypeCore.From(type));
-    }
+    public static EquatableTypeInfo From(TypeSnapshot type) => new(BackingTypeCore.From(type));
 }

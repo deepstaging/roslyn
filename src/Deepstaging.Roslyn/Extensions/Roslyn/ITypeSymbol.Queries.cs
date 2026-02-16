@@ -14,49 +14,32 @@ public static class TypeSymbolQueryExtensions
         /// <summary>
         /// Starts a fluent query for methods on this type.
         /// </summary>
-        public MethodQuery QueryMethods()
-        {
-            return MethodQuery.From(typeSymbol);
-        }
+        public MethodQuery QueryMethods() => MethodQuery.From(typeSymbol);
 
         /// <summary>
         /// Starts a fluent query for properties on this type.
         /// </summary>
-        public PropertyQuery QueryProperties()
-        {
-            return PropertyQuery.From(typeSymbol);
-        }
+        public PropertyQuery QueryProperties() => PropertyQuery.From(typeSymbol);
 
         /// <summary>
         /// Starts a fluent query for constructors on this type.
         /// </summary>
-        public ConstructorQuery QueryConstructors()
-        {
-            return ConstructorQuery.From(typeSymbol);
-        }
+        public ConstructorQuery QueryConstructors() => ConstructorQuery.From(typeSymbol);
 
         /// <summary>
         /// Starts a fluent query for fields on this type.
         /// </summary>
-        public FieldQuery QueryFields()
-        {
-            return FieldQuery.From(typeSymbol);
-        }
+        public FieldQuery QueryFields() => FieldQuery.From(typeSymbol);
 
         /// <summary>
         /// Starts a fluent query for events on this type.
         /// </summary>
-        public EventQuery QueryEvents()
-        {
-            return EventQuery.From(typeSymbol);
-        }
+        public EventQuery QueryEvents() => EventQuery.From(typeSymbol);
 
         /// <summary>
         /// Gets all attributes on this type as valid attributes.
         /// </summary>
-        public ImmutableArray<ValidAttribute> QueryAttributes()
-        {
-            return [..typeSymbol.GetAttributes().Select(ValidAttribute.From)];
-        }
+        public ImmutableArray<ValidAttribute> QueryAttributes() =>
+            [..typeSymbol.GetAttributes().Select(ValidAttribute.From)];
     }
 }

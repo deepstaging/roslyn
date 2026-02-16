@@ -25,6 +25,7 @@ public static partial class TypeBuilderFactoryExtensions
     public static TypeBuilder WithEmptyFactory(this TypeBuilder builder, string initExpression)
     {
         var typeName = builder.Name;
+
         return builder.AddField(FieldBuilder
             .Parse($"public static readonly {typeName} Empty = {initExpression}"));
     }
@@ -37,6 +38,7 @@ public static partial class TypeBuilderFactoryExtensions
     public static TypeBuilder WithDefaultFactory(this TypeBuilder builder, string initExpression)
     {
         var typeName = builder.Name;
+
         return builder.AddField(FieldBuilder
             .Parse($"public static readonly {typeName} Default = {initExpression}"));
     }
@@ -57,6 +59,7 @@ public static partial class TypeBuilderFactoryExtensions
     public static TypeBuilder WithNewFactory(this TypeBuilder builder, string expression)
     {
         var typeName = builder.Name;
+
         return builder.AddMethod(MethodBuilder
             .Parse($"public static {typeName} New()")
             .WithExpressionBody(expression));
@@ -69,10 +72,10 @@ public static partial class TypeBuilderFactoryExtensions
     /// <param name="builder">The type builder.</param>
     /// <param name="emptyExpression">The expression for the Empty field.</param>
     /// <param name="newExpression">The expression for the New() method.</param>
-    public static TypeBuilder WithEmptyAndNewFactory(this TypeBuilder builder, string emptyExpression, string newExpression)
-    {
-        return builder
-            .WithEmptyFactory(emptyExpression)
-            .WithNewFactory(newExpression);
-    }
+    public static TypeBuilder WithEmptyAndNewFactory(
+        this TypeBuilder builder,
+        string emptyExpression,
+        string newExpression) => builder
+        .WithEmptyFactory(emptyExpression)
+        .WithNewFactory(newExpression);
 }

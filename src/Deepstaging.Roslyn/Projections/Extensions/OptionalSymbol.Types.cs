@@ -18,141 +18,105 @@ public static class ProjectedTypeSymbolExtensions
         /// Gets the base type of the type.
         /// Returns Empty if type has no base type.
         /// </summary>
-        public OptionalSymbol<INamedTypeSymbol> GetBaseType()
-        {
-            return type is { HasValue: true, Symbol.BaseType: not null }
-                ? OptionalSymbol<INamedTypeSymbol>.WithValue(type.Symbol!.BaseType)
-                : OptionalSymbol<INamedTypeSymbol>.Empty();
-        }
+        public OptionalSymbol<INamedTypeSymbol> GetBaseType() => type is { HasValue: true, Symbol.BaseType: not null }
+            ? OptionalSymbol<INamedTypeSymbol>.WithValue(type.Symbol!.BaseType)
+            : OptionalSymbol<INamedTypeSymbol>.Empty();
 
         /// <summary>
         /// Checks if the type implements or inherits from another type using symbol equality.
         /// </summary>
-        public bool ImplementsOrInheritsFrom(ITypeSymbol baseType)
-        {
-            return type.HasValue && type.Symbol!.ImplementsOrInheritsFrom(baseType);
-        }
+        public bool ImplementsOrInheritsFrom(ITypeSymbol baseType) =>
+            type.HasValue && type.Symbol!.ImplementsOrInheritsFrom(baseType);
 
         /// <summary>
         /// Checks if the type is or inherits from a type with the specified name.
         /// </summary>
-        public bool IsOrInheritsFrom(string typeName, string? containingNamespace = null)
-        {
-            return type.HasValue && type.Symbol!.IsOrInheritsFrom(typeName, containingNamespace);
-        }
+        public bool IsOrInheritsFrom(string typeName, string? containingNamespace = null) =>
+            type.HasValue && type.Symbol!.IsOrInheritsFrom(typeName, containingNamespace);
 
         /// <summary>
         /// Checks if the type inherits from a type with the specified name (excludes the type itself).
         /// </summary>
-        public bool InheritsFrom(string typeName, string? containingNamespace = null)
-        {
-            return type.HasValue && type.Symbol!.InheritsFrom(typeName, containingNamespace);
-        }
+        public bool InheritsFrom(string typeName, string? containingNamespace = null) =>
+            type.HasValue && type.Symbol!.InheritsFrom(typeName, containingNamespace);
 
         /// <summary>
         /// Gets the base type with the specified name from the inheritance chain.
         /// Returns Empty if no matching base type is found.
         /// </summary>
-        public OptionalSymbol<ITypeSymbol> GetBaseTypeByName(string typeName)
-        {
-            return type.HasValue && type.Symbol!.GetBaseTypeByName(typeName) is { } baseType
+        public OptionalSymbol<ITypeSymbol> GetBaseTypeByName(string typeName) =>
+            type.HasValue && type.Symbol!.GetBaseTypeByName(typeName) is { } baseType
                 ? OptionalSymbol<ITypeSymbol>.WithValue(baseType)
                 : OptionalSymbol<ITypeSymbol>.Empty();
-        }
 
         /// <summary>
         /// Checks if the type is a Task or Task&lt;T&gt;.
         /// </summary>
-        public bool IsTaskType()
-        {
-            return type.HasValue && type.Symbol!.IsTaskType();
-        }
+        public bool IsTaskType() => type.HasValue && type.Symbol!.IsTaskType();
 
         /// <summary>
         /// Checks if the type is a generic async type (Task&lt;T&gt; or ValueTask&lt;T&gt;).
         /// </summary>
-        public bool IsGenericAsyncType()
-        {
-            return type.HasValue && (type.Symbol!.IsGenericTaskType() || type.Symbol!.IsGenericValueTaskType());
-        }
+        public bool IsGenericAsyncType() =>
+            type.HasValue && (type.Symbol!.IsGenericTaskType() || type.Symbol!.IsGenericValueTaskType());
 
         /// <summary>
         /// Checks if the type is a generic Task&lt;T&gt;.
         /// </summary>
-        public bool IsGenericTaskType()
-        {
-            return type.HasValue && type.Symbol!.IsGenericTaskType();
-        }
+        public bool IsGenericTaskType() => type.HasValue && type.Symbol!.IsGenericTaskType();
 
         /// <summary>
         /// Checks if the type is a ValueTask or ValueTask&lt;T&gt;.
         /// </summary>
-        public bool IsValueTaskType()
-        {
-            return type.HasValue && type.Symbol!.IsValueTaskType();
-        }
+        public bool IsValueTaskType() => type.HasValue && type.Symbol!.IsValueTaskType();
 
         /// <summary>
         /// Checks if the type is a generic ValueTask&lt;T&gt;.
         /// </summary>
-        public bool IsGenericValueTaskType()
-        {
-            return type.HasValue && type.Symbol!.IsGenericValueTaskType();
-        }
+        public bool IsGenericValueTaskType() => type.HasValue && type.Symbol!.IsGenericValueTaskType();
 
         /// <summary>
         /// Extracts the first type argument from a generic type with a single type parameter.
         /// Returns Empty if not a generic type or doesn't have exactly one type argument.
         /// </summary>
-        public OptionalSymbol<ITypeSymbol> GetSingleTypeArgument()
-        {
-            return type.HasValue && type.Symbol!.GetSingleTypeArgument() is { } innerType
+        public OptionalSymbol<ITypeSymbol> GetSingleTypeArgument() =>
+            type.HasValue && type.Symbol!.GetSingleTypeArgument() is { } innerType
                 ? OptionalSymbol<ITypeSymbol>.WithValue(innerType)
                 : OptionalSymbol<ITypeSymbol>.Empty();
-        }
 
         /// <summary>
         /// Extracts the inner type from Task&lt;T&gt; or ValueTask&lt;T&gt;.
         /// Returns Empty if not a generic Task/ValueTask.
         /// </summary>
-        public OptionalSymbol<ITypeSymbol> ExtractTaskInnerType()
-        {
-            return type.IsGenericTaskType() || type.IsGenericValueTaskType()
+        public OptionalSymbol<ITypeSymbol> ExtractTaskInnerType() =>
+            type.IsGenericTaskType() || type.IsGenericValueTaskType()
                 ? type.GetSingleTypeArgument()
                 : OptionalSymbol<ITypeSymbol>.Empty();
-        }
 
         /// <summary>
         /// Gets the element type of an array.
         /// Returns Empty if not an array.
         /// </summary>
-        public OptionalSymbol<ITypeSymbol> GetArrayElementType()
-        {
-            return type is { HasValue: true, Symbol: IArrayTypeSymbol arrayType }
+        public OptionalSymbol<ITypeSymbol> GetArrayElementType() =>
+            type is { HasValue: true, Symbol: IArrayTypeSymbol arrayType }
                 ? OptionalSymbol<ITypeSymbol>.WithValue(arrayType.ElementType)
                 : OptionalSymbol<ITypeSymbol>.Empty();
-        }
 
         /// <summary>
         /// Gets the pointed-at type of a pointer.
         /// Returns Empty if not a pointer.
         /// </summary>
-        public OptionalSymbol<ITypeSymbol> GetPointedAtType()
-        {
-            return type is { HasValue: true, Symbol: IPointerTypeSymbol pointerType }
+        public OptionalSymbol<ITypeSymbol> GetPointedAtType() =>
+            type is { HasValue: true, Symbol: IPointerTypeSymbol pointerType }
                 ? OptionalSymbol<ITypeSymbol>.WithValue(pointerType.PointedAtType)
                 : OptionalSymbol<ITypeSymbol>.Empty();
-        }
 
         /// <summary>
         /// Gets the special type enum for built-in types (System.Int32, System.String, System.Void, etc.).
         /// Returns null if type is not present.
         /// Use this to check if a type is void: GetSpecialType() == SpecialType.System_Void
         /// </summary>
-        public SpecialType? GetSpecialType()
-        {
-            return type.HasValue ? type.Symbol!.SpecialType : null;
-        }
+        public SpecialType? GetSpecialType() => type.HasValue ? type.Symbol!.SpecialType : null;
 
         /// <summary>
         /// Checks if the type is a specific special type (System.Int32, System.String, System.Void, etc.).
@@ -168,9 +132,6 @@ public static class ProjectedTypeSymbolExtensions
         /// }
         /// </code>
         /// </example>
-        public bool IsSpecialType(SpecialType specialType)
-        {
-            return type.HasValue && type.Symbol!.SpecialType == specialType;
-        }
+        public bool IsSpecialType(SpecialType specialType) => type.HasValue && type.Symbol!.SpecialType == specialType;
     }
 }

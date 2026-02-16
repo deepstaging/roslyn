@@ -25,26 +25,17 @@ public static class ValidMethodSymbolExtensions
         /// <summary>
         /// Checks if method is async void (returns Task with no type arguments).
         /// </summary>
-        public bool IsAsyncVoid()
-        {
-            return method.Value.IsAsyncVoid();
-        }
+        public bool IsAsyncVoid() => method.Value.IsAsyncVoid();
 
         /// <summary>
         /// Checks if method is async value (returns Task&lt;T&gt; or ValueTask&lt;T&gt;).
         /// </summary>
-        public bool IsAsyncValue()
-        {
-            return method.Value.IsAsyncValue();
-        }
+        public bool IsAsyncValue() => method.Value.IsAsyncValue();
 
         /// <summary>
         /// Checks if method is async (either void or value).
         /// </summary>
-        public bool IsAsync()
-        {
-            return method.Value.IsAsyncValue() || method.Value.IsAsyncVoid();
-        }
+        public bool IsAsync() => method.Value.IsAsyncValue() || method.Value.IsAsyncVoid();
 
         /// <summary>
         /// Gets the return type from an async method (extracts T from Task&lt;T&gt; or ValueTask&lt;T&gt;).
@@ -94,98 +85,63 @@ public static class ValidMethodSymbolExtensions
         /// <summary>
         /// Checks if this is a public method.
         /// </summary>
-        public bool IsPublicMethod()
-        {
-            return method.Value.DeclaredAccessibility == Accessibility.Public;
-        }
+        public bool IsPublicMethod() => method.Value.DeclaredAccessibility == Accessibility.Public;
 
         /// <summary>
         /// Checks if this is an internal method.
         /// </summary>
-        public bool IsInternalMethod()
-        {
-            return method.Value.DeclaredAccessibility == Accessibility.Internal;
-        }
+        public bool IsInternalMethod() => method.Value.DeclaredAccessibility == Accessibility.Internal;
 
         /// <summary>
         /// Checks if this is a private method.
         /// </summary>
-        public bool IsPrivateMethod()
-        {
-            return method.Value.DeclaredAccessibility == Accessibility.Private;
-        }
+        public bool IsPrivateMethod() => method.Value.DeclaredAccessibility == Accessibility.Private;
 
         /// <summary>
         /// Checks if this is a protected method.
         /// </summary>
-        public bool IsProtectedMethod()
-        {
-            return method.Value.DeclaredAccessibility == Accessibility.Protected;
-        }
+        public bool IsProtectedMethod() => method.Value.DeclaredAccessibility == Accessibility.Protected;
 
         /// <summary>
         /// Checks if this is a virtual method.
         /// </summary>
-        public bool IsVirtualMethod()
-        {
-            return method.Value.IsVirtual;
-        }
+        public bool IsVirtualMethod() => method.Value.IsVirtual;
 
         /// <summary>
         /// Checks if this is an abstract method.
         /// </summary>
-        public bool IsAbstractMethod()
-        {
-            return method.Value.IsAbstract;
-        }
+        public bool IsAbstractMethod() => method.Value.IsAbstract;
 
         /// <summary>
         /// Checks if this is an override method.
         /// </summary>
-        public bool IsOverrideMethod()
-        {
-            return method.Value.IsOverride;
-        }
+        public bool IsOverrideMethod() => method.Value.IsOverride;
 
         /// <summary>
         /// Checks if this is a sealed method.
         /// </summary>
-        public bool IsSealedMethod()
-        {
-            return method.Value.IsSealed;
-        }
+        public bool IsSealedMethod() => method.Value.IsSealed;
 
         /// <summary>
         /// Checks if this is a static method.
         /// </summary>
-        public bool IsStaticMethod()
-        {
-            return method.Value.IsStatic;
-        }
+        public bool IsStaticMethod() => method.Value.IsStatic;
 
         /// <summary>
         /// Checks if this is an extension method.
         /// </summary>
-        public bool IsExtensionMethod()
-        {
-            return method.Value.IsExtensionMethod;
-        }
+        public bool IsExtensionMethod() => method.Value.IsExtensionMethod;
 
         /// <summary>
         /// Checks if this is a generic method.
         /// </summary>
-        public bool IsGenericMethod()
-        {
-            return method.Value.IsGenericMethod;
-        }
+        public bool IsGenericMethod() => method.Value.IsGenericMethod;
 
         /// <summary>
         /// Checks if this is a partial method.
         /// </summary>
-        public bool IsPartialMethod()
-        {
-            return method.Value.PartialDefinitionPart != null || method.Value.PartialImplementationPart != null;
-        }
+        public bool IsPartialMethod() => method.Value.PartialDefinitionPart != null ||
+                                         method.Value.PartialImplementationPart != null;
 
         /// <summary>
         /// Gets the parameters of the method as validated symbols.

@@ -35,13 +35,10 @@ public static class TypeBuilderCloneableExtensions
     /// <returns>The modified type builder.</returns>
     public static TypeBuilder ImplementsICloneable(
         this TypeBuilder builder,
-        string cloneExpression)
-    {
-        return builder
-            .Implements("global::System.ICloneable")
-            .AddMethod(MethodBuilder
-                .Parse("public object Clone()")
-                .WithInheritDoc("global::System.ICloneable")
-                .WithExpressionBody(cloneExpression));
-    }
+        string cloneExpression) => builder
+        .Implements("global::System.ICloneable")
+        .AddMethod(MethodBuilder
+            .Parse("public object Clone()")
+            .WithInheritDoc("global::System.ICloneable")
+            .WithExpressionBody(cloneExpression));
 }

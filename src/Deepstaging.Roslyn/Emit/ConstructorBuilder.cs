@@ -14,10 +14,13 @@ public record struct ConstructorBuilder
 {
     /// <summary>Gets the type name for the constructor.</summary>
     public string TypeName { get; init; }
+
     /// <summary>Gets the accessibility of the constructor.</summary>
     public Accessibility Accessibility { get; init; }
+
     /// <summary>Gets whether the constructor is static.</summary>
     public bool IsStatic { get; init; }
+
     /// <summary>Gets whether this is a primary constructor.</summary>
     public bool IsPrimary { get; init; }
 
@@ -32,10 +35,13 @@ public record struct ConstructorBuilder
 
     /// <summary>Gets the body of the constructor.</summary>
     public BodyBuilder? Body { get; init; }
+
     /// <summary>Gets the constructor initializer (this or base call).</summary>
     public ConstructorInitializer? Initializer { get; init; }
+
     /// <summary>Gets the XML documentation for the constructor.</summary>
     public XmlDocumentationBuilder? XmlDoc { get; init; }
+
     /// <summary>Gets the preprocessor directive condition for conditional compilation.</summary>
     public Directive? Condition { get; init; }
 
@@ -56,7 +62,7 @@ public record struct ConstructorBuilder
         return new ConstructorBuilder
         {
             TypeName = typeName,
-            Accessibility = Accessibility.Public,
+            Accessibility = Accessibility.Public
         };
     }
 
@@ -67,10 +73,8 @@ public record struct ConstructorBuilder
     /// <summary>
     /// Sets the accessibility of the constructor.
     /// </summary>
-    public ConstructorBuilder WithAccessibility(Accessibility accessibility)
-    {
-        return this with { Accessibility = accessibility };
-    }
+    public ConstructorBuilder WithAccessibility(Accessibility accessibility) =>
+        this with { Accessibility = accessibility };
 
     /// <summary>
     /// Sets the accessibility of the constructor from a keyword string (e.g., "public", "internal").
@@ -84,20 +88,14 @@ public record struct ConstructorBuilder
     /// Marks the constructor as static.
     /// Note: Static constructors cannot have parameters or accessibility modifiers.
     /// </summary>
-    public ConstructorBuilder AsStatic()
-    {
-        return this with { Accessibility = Accessibility.NotApplicable, IsStatic = true };
-    }
+    public ConstructorBuilder AsStatic() => this with { Accessibility = Accessibility.NotApplicable, IsStatic = true };
 
     /// <summary>
     /// Marks the constructor as a primary constructor.
     /// Primary constructors are declared in the type declaration itself (e.g., "class Person(string name)").
     /// Note: Primary constructors cannot have bodies or initializers.
     /// </summary>
-    public ConstructorBuilder AsPrimary()
-    {
-        return this with { IsPrimary = true, Body = null, Initializer = null };
-    }
+    public ConstructorBuilder AsPrimary() => this with { IsPrimary = true, Body = null, Initializer = null };
 
     /// <summary>
     /// Wraps this constructor in a preprocessor directive (#if/#endif).
@@ -151,7 +149,10 @@ public record struct ConstructorBuilder
     /// <summary>
     /// Adds a parameter using a symbol's globally qualified name, with configuration.
     /// </summary>
-    public ConstructorBuilder AddParameter<T>(string name, ValidSymbol<T> type, Func<ParameterBuilder, ParameterBuilder> configure) where T : class, ITypeSymbol
+    public ConstructorBuilder AddParameter<T>(
+        string name,
+        ValidSymbol<T> type,
+        Func<ParameterBuilder, ParameterBuilder> configure) where T : class, ITypeSymbol
         => AddParameter(name, type.GloballyQualifiedName, configure);
 
     /// <summary>
@@ -301,6 +302,7 @@ public record struct ConstructorBuilder
 
         // Add attributes
         var attributes = Attributes.IsDefault ? [] : Attributes;
+
         if (attributes.Length > 0)
         {
             var attributeLists = attributes.Select(a => a.BuildList()).ToArray();
@@ -328,8 +330,10 @@ public record struct ConstructorBuilder
         if (!IsStatic)
         {
             var parameters = Parameters.IsDefault ? [] : Parameters;
+
             var parameterList = SyntaxFactory.ParameterList(
                 SyntaxFactory.SeparatedList(parameters.Select(p => p.Build())));
+
             constructor = constructor.WithParameterList(parameterList);
         }
         else
@@ -366,17 +370,13 @@ public record struct ConstructorBuilder
         }
 
         // Wrap in preprocessor directive if specified
-        if (Condition.HasValue)
-        {
-            constructor = DirectiveHelper.WrapInDirective(constructor, Condition.Value);
-        }
+        if (Condition.HasValue) constructor = DirectiveHelper.WrapInDirective(constructor, Condition.Value);
 
         return constructor;
     }
 
-    private static SyntaxKind AccessibilityToSyntaxKind(Accessibility accessibility)
-    {
-        return accessibility switch
+    private static SyntaxKind AccessibilityToSyntaxKind(Accessibility accessibility) =>
+        accessibility switch
         {
             Accessibility.Public => SyntaxKind.PublicKeyword,
             Accessibility.Private => SyntaxKind.PrivateKeyword,
@@ -384,7 +384,6 @@ public record struct ConstructorBuilder
             Accessibility.Internal => SyntaxKind.InternalKeyword,
             _ => SyntaxKind.PublicKeyword
         };
-    }
 
     private BlockSyntax BuildBodyWithValidations()
     {
@@ -393,17 +392,14 @@ public record struct ConstructorBuilder
 
         // 1. Add validation statements from parameters (at the start)
         foreach (var param in parameters)
-        {
-            foreach (var statement in param.GetValidationStatements())
-            {
-                bodyBuilder = bodyBuilder.AddStatements(statement);
-            }
-        }
+        foreach (var statement in param.GetValidationStatements())
+            bodyBuilder = bodyBuilder.AddStatements(statement);
 
         // 2. Add existing body statements
         if (Body.HasValue)
         {
             var existingStatements = Body.Value.Statements.IsDefault ? [] : Body.Value.Statements;
+
             foreach (var statement in existingStatements)
             {
                 var statements = bodyBuilder.Statements.IsDefault ? [] : bodyBuilder.Statements;
@@ -415,10 +411,7 @@ public record struct ConstructorBuilder
         foreach (var param in parameters)
         {
             var assignment = param.GetAssignmentStatement();
-            if (assignment is not null)
-            {
-                bodyBuilder = bodyBuilder.AddStatement(assignment);
-            }
+            if (assignment is not null) bodyBuilder = bodyBuilder.AddStatement(assignment);
         }
 
         return bodyBuilder.Build();
@@ -434,6 +427,7 @@ public readonly struct ConstructorInitializer
 {
     /// <summary>Gets the kind of initializer (this or base).</summary>
     public ConstructorInitializerKind Kind { get; }
+
     /// <summary>Gets the arguments passed to the initializer.</summary>
     public ImmutableArray<string> Arguments { get; }
 
@@ -456,6 +450,7 @@ public enum ConstructorInitializerKind
 {
     /// <summary>Initializer calls this().</summary>
     This,
+
     /// <summary>Initializer calls base().</summary>
     Base
 }

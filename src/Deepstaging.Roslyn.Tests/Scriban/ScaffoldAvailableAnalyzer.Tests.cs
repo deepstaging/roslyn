@@ -12,34 +12,34 @@ namespace Deepstaging.Roslyn.Tests.Scriban;
 public class ScaffoldAvailableAnalyzerTests : RoslynTestBase
 {
     private const string ScaffoldMetadataSource = """
-        [assembly: System.Reflection.AssemblyMetadata(
-            "Deepstaging.Scaffold:TestProject/Widget",
-            "TestProject.WidgetAttribute")]
-        [assembly: System.Reflection.AssemblyMetadata(
-            "Deepstaging.Scaffold:TestProject/Widget:Content",
-            "// scaffold content")]
-        """;
+                                                  [assembly: System.Reflection.AssemblyMetadata(
+                                                      "Deepstaging.Scaffold:TestProject/Widget",
+                                                      "TestProject.WidgetAttribute")]
+                                                  [assembly: System.Reflection.AssemblyMetadata(
+                                                      "Deepstaging.Scaffold:TestProject/Widget:Content",
+                                                      "// scaffold content")]
+                                                  """;
 
     private const string TriggerAttributeSource = """
-        namespace TestProject
-        {
-            [System.AttributeUsage(System.AttributeTargets.Struct)]
-            public class WidgetAttribute : System.Attribute { }
-        }
-        """;
+                                                  namespace TestProject
+                                                  {
+                                                      [System.AttributeUsage(System.AttributeTargets.Struct)]
+                                                      public class WidgetAttribute : System.Attribute { }
+                                                  }
+                                                  """;
 
     [Test]
     public async Task ReportsDiagnostic_WhenTypeHasTriggerAttribute_AndNoTemplate()
     {
         var source = $$"""
-            {{ScaffoldMetadataSource}}
-            {{TriggerAttributeSource}}
-            namespace TestApp
-            {
-                [TestProject.Widget]
-                public partial struct MyWidget { }
-            }
-            """;
+                       {{ScaffoldMetadataSource}}
+                       {{TriggerAttributeSource}}
+                       namespace TestApp
+                       {
+                           [TestProject.Widget]
+                           public partial struct MyWidget { }
+                       }
+                       """;
 
         await AnalyzeWith<ScaffoldAvailableAnalyzer>(source)
             .ShouldReportDiagnostic("DSRK005")
@@ -51,14 +51,14 @@ public class ScaffoldAvailableAnalyzerTests : RoslynTestBase
     public async Task NoDiagnostic_WhenUserTemplateExists()
     {
         var source = $$"""
-            {{ScaffoldMetadataSource}}
-            {{TriggerAttributeSource}}
-            namespace TestApp
-            {
-                [TestProject.Widget]
-                public partial struct MyWidget { }
-            }
-            """;
+                       {{ScaffoldMetadataSource}}
+                       {{TriggerAttributeSource}}
+                       namespace TestApp
+                       {
+                           [TestProject.Widget]
+                           public partial struct MyWidget { }
+                       }
+                       """;
 
         await AnalyzeWith<ScaffoldAvailableAnalyzer>(source)
             .WithAdditionalText("Templates/TestProject/Widget.scriban-cs", "// user template")
@@ -69,11 +69,11 @@ public class ScaffoldAvailableAnalyzerTests : RoslynTestBase
     public async Task NoDiagnostic_WhenNoScaffoldMetadata()
     {
         var source = """
-            namespace TestApp
-            {
-                public partial struct MyWidget { }
-            }
-            """;
+                     namespace TestApp
+                     {
+                         public partial struct MyWidget { }
+                     }
+                     """;
 
         await AnalyzeWith<ScaffoldAvailableAnalyzer>(source)
             .ShouldHaveNoDiagnostics();
@@ -83,13 +83,13 @@ public class ScaffoldAvailableAnalyzerTests : RoslynTestBase
     public async Task NoDiagnostic_WhenTypeDoesNotHaveTriggerAttribute()
     {
         var source = $$"""
-            {{ScaffoldMetadataSource}}
-            {{TriggerAttributeSource}}
-            namespace TestApp
-            {
-                public partial struct PlainStruct { }
-            }
-            """;
+                       {{ScaffoldMetadataSource}}
+                       {{TriggerAttributeSource}}
+                       namespace TestApp
+                       {
+                           public partial struct PlainStruct { }
+                       }
+                       """;
 
         await AnalyzeWith<ScaffoldAvailableAnalyzer>(source)
             .ShouldHaveNoDiagnostics();
@@ -99,17 +99,17 @@ public class ScaffoldAvailableAnalyzerTests : RoslynTestBase
     public async Task ReportsMultipleDiagnostics_ForMultipleTypes()
     {
         var source = $$"""
-            {{ScaffoldMetadataSource}}
-            {{TriggerAttributeSource}}
-            namespace TestApp
-            {
-                [TestProject.Widget]
-                public partial struct WidgetA { }
-            
-                [TestProject.Widget]
-                public partial struct WidgetB { }
-            }
-            """;
+                       {{ScaffoldMetadataSource}}
+                       {{TriggerAttributeSource}}
+                       namespace TestApp
+                       {
+                           [TestProject.Widget]
+                           public partial struct WidgetA { }
+
+                           [TestProject.Widget]
+                           public partial struct WidgetB { }
+                       }
+                       """;
 
         await AnalyzeWith<ScaffoldAvailableAnalyzer>(source)
             .ShouldReportDiagnostic("DSRK005")

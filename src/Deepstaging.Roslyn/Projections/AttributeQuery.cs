@@ -45,10 +45,10 @@ internal static class QueryFactory<TQuery> where TQuery : AttributeQuery
 
     private static Func<AttributeData, TQuery> BuildFactory()
     {
-        var ctor = typeof(TQuery).GetConstructor([typeof(AttributeData)])
-            ?? throw new InvalidOperationException(
-                $"{typeof(TQuery).Name} must have a constructor that takes AttributeData.");
-        
+        var ctor = typeof(TQuery).GetConstructor([typeof(AttributeData)]) ??
+                   throw new InvalidOperationException(
+                       $"{typeof(TQuery).Name} must have a constructor that takes AttributeData.");
+
         var param = Expression.Parameter(typeof(AttributeData), "data");
         var newExpr = Expression.New(ctor, param);
         return Expression.Lambda<Func<AttributeData, TQuery>>(newExpr, param).Compile();

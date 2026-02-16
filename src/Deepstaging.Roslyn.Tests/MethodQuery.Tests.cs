@@ -82,7 +82,7 @@ public class MethodQueryTests : RoslynTestBase
                        partial void PartialMethod();
                        public void RegularMethod() { }
                    }
-                   
+
                    public partial class TestClass
                    {
                        partial void PartialMethod() { }
@@ -109,7 +109,7 @@ public class MethodQueryTests : RoslynTestBase
                        partial void PartialMethod();
                        public void RegularMethod() { }
                    }
-                   
+
                    public partial class TestClass
                    {
                        partial void PartialMethod() { }

@@ -57,6 +57,7 @@ public record struct EventBuilder
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Event name cannot be null or empty.", nameof(name));
+
         if (string.IsNullOrWhiteSpace(type))
             throw new ArgumentException("Event type cannot be null or empty.", nameof(type));
 
@@ -226,6 +227,7 @@ public record struct EventBuilder
 
         // Add attributes
         var attributes = Attributes.IsDefault ? [] : Attributes;
+
         if (attributes.Length > 0)
         {
             var attributeLists = attributes.Select(a => a.BuildList()).ToArray();
@@ -251,17 +253,13 @@ public record struct EventBuilder
         }
 
         // Wrap in preprocessor directive if specified
-        if (Condition.HasValue)
-        {
-            eventDecl = DirectiveHelper.WrapInDirective(eventDecl, Condition.Value);
-        }
+        if (Condition.HasValue) eventDecl = DirectiveHelper.WrapInDirective(eventDecl, Condition.Value);
 
         return eventDecl;
     }
 
-    private static SyntaxKind AccessibilityToSyntaxKind(Accessibility accessibility)
-    {
-        return accessibility switch
+    private static SyntaxKind AccessibilityToSyntaxKind(Accessibility accessibility) =>
+        accessibility switch
         {
             Accessibility.Public => SyntaxKind.PublicKeyword,
             Accessibility.Private => SyntaxKind.PrivateKeyword,
@@ -269,7 +267,6 @@ public record struct EventBuilder
             Accessibility.Internal => SyntaxKind.InternalKeyword,
             _ => SyntaxKind.PublicKeyword
         };
-    }
 
     #endregion
 }

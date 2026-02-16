@@ -61,30 +61,27 @@ public static class TypeBuilderConvertibleExtensions
     public static TypeBuilder ImplementsIConvertible(
         this TypeBuilder builder,
         string typeCode,
-        string valueAccessor)
-    {
-        return builder
-            .Implements("global::System.IConvertible")
-            .AddMethod(MethodBuilder
-                .Parse("global::System.TypeCode IConvertible.GetTypeCode()")
-                .WithExpressionBody($"global::System.TypeCode.{typeCode}"))
-            .AddMethod(BuildConvertMethod("bool", "ToBoolean", valueAccessor))
-            .AddMethod(BuildConvertMethod("byte", "ToByte", valueAccessor))
-            .AddMethod(BuildConvertMethod("char", "ToChar", valueAccessor))
-            .AddMethod(BuildConvertMethod("global::System.DateTime", "ToDateTime", valueAccessor))
-            .AddMethod(BuildConvertMethod("decimal", "ToDecimal", valueAccessor))
-            .AddMethod(BuildConvertMethod("double", "ToDouble", valueAccessor))
-            .AddMethod(BuildConvertMethod("short", "ToInt16", valueAccessor))
-            .AddMethod(BuildConvertMethod("int", "ToInt32", valueAccessor))
-            .AddMethod(BuildConvertMethod("long", "ToInt64", valueAccessor))
-            .AddMethod(BuildConvertMethod("sbyte", "ToSByte", valueAccessor))
-            .AddMethod(BuildConvertMethod("float", "ToSingle", valueAccessor))
-            .AddMethod(BuildToStringMethod(valueAccessor))
-            .AddMethod(BuildToTypeMethod(valueAccessor))
-            .AddMethod(BuildConvertMethod("ushort", "ToUInt16", valueAccessor))
-            .AddMethod(BuildConvertMethod("uint", "ToUInt32", valueAccessor))
-            .AddMethod(BuildConvertMethod("ulong", "ToUInt64", valueAccessor));
-    }
+        string valueAccessor) => builder
+        .Implements("global::System.IConvertible")
+        .AddMethod(MethodBuilder
+            .Parse("global::System.TypeCode IConvertible.GetTypeCode()")
+            .WithExpressionBody($"global::System.TypeCode.{typeCode}"))
+        .AddMethod(BuildConvertMethod("bool", "ToBoolean", valueAccessor))
+        .AddMethod(BuildConvertMethod("byte", "ToByte", valueAccessor))
+        .AddMethod(BuildConvertMethod("char", "ToChar", valueAccessor))
+        .AddMethod(BuildConvertMethod("global::System.DateTime", "ToDateTime", valueAccessor))
+        .AddMethod(BuildConvertMethod("decimal", "ToDecimal", valueAccessor))
+        .AddMethod(BuildConvertMethod("double", "ToDouble", valueAccessor))
+        .AddMethod(BuildConvertMethod("short", "ToInt16", valueAccessor))
+        .AddMethod(BuildConvertMethod("int", "ToInt32", valueAccessor))
+        .AddMethod(BuildConvertMethod("long", "ToInt64", valueAccessor))
+        .AddMethod(BuildConvertMethod("sbyte", "ToSByte", valueAccessor))
+        .AddMethod(BuildConvertMethod("float", "ToSingle", valueAccessor))
+        .AddMethod(BuildToStringMethod(valueAccessor))
+        .AddMethod(BuildToTypeMethod(valueAccessor))
+        .AddMethod(BuildConvertMethod("ushort", "ToUInt16", valueAccessor))
+        .AddMethod(BuildConvertMethod("uint", "ToUInt32", valueAccessor))
+        .AddMethod(BuildConvertMethod("ulong", "ToUInt64", valueAccessor));
 
     private static string GetTypeCode(BackingTypeCore info)
     {
@@ -99,26 +96,19 @@ public static class TypeBuilderConvertibleExtensions
         return "Object";
     }
 
-    private static MethodBuilder BuildConvertMethod(string returnType, string methodName, string valueAccessor)
-    {
-        return MethodBuilder
+    private static MethodBuilder BuildConvertMethod(string returnType, string methodName, string valueAccessor) =>
+        MethodBuilder
             .Parse($"{returnType} IConvertible.{methodName}(global::System.IFormatProvider? provider)")
             .WithExpressionBody($"((global::System.IConvertible){valueAccessor}).{methodName}(provider)");
-    }
 
-    private static MethodBuilder BuildToStringMethod(string valueAccessor)
-    {
-        return MethodBuilder
-            .Parse("string IConvertible.ToString(global::System.IFormatProvider? provider)")
-            .WithExpressionBody($"((global::System.IConvertible){valueAccessor}).ToString(provider)");
-    }
+    private static MethodBuilder BuildToStringMethod(string valueAccessor) => MethodBuilder
+        .Parse("string IConvertible.ToString(global::System.IFormatProvider? provider)")
+        .WithExpressionBody($"((global::System.IConvertible){valueAccessor}).ToString(provider)");
 
-    private static MethodBuilder BuildToTypeMethod(string valueAccessor)
-    {
-        return MethodBuilder
-            .Parse("object IConvertible.ToType(global::System.Type conversionType, global::System.IFormatProvider? provider)")
-            .WithExpressionBody($"((global::System.IConvertible){valueAccessor}).ToType(conversionType, provider)");
-    }
+    private static MethodBuilder BuildToTypeMethod(string valueAccessor) => MethodBuilder
+        .Parse(
+            "object IConvertible.ToType(global::System.Type conversionType, global::System.IFormatProvider? provider)")
+        .WithExpressionBody($"((global::System.IConvertible){valueAccessor}).ToType(conversionType, provider)");
 
     /// <summary>
     /// Implements IConvertible using a property as the backing value.

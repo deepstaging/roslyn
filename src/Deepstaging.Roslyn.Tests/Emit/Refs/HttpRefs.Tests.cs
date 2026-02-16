@@ -8,7 +8,7 @@ public class HttpRefsTests
     [Test]
     public async Task Client_creates_globally_qualified_type()
     {
-        TypeRef typeRef = HttpRefs.Client;
+        var typeRef = HttpRefs.Client;
 
         await Assert.That(typeRef).IsEqualTo("global::System.Net.Http.HttpClient");
     }
@@ -16,7 +16,7 @@ public class HttpRefsTests
     [Test]
     public async Task RequestMessage_creates_globally_qualified_type()
     {
-        TypeRef typeRef = HttpRefs.RequestMessage;
+        var typeRef = HttpRefs.RequestMessage;
 
         await Assert.That(typeRef).IsEqualTo("global::System.Net.Http.HttpRequestMessage");
     }
@@ -24,7 +24,7 @@ public class HttpRefsTests
     [Test]
     public async Task ResponseMessage_creates_globally_qualified_type()
     {
-        TypeRef typeRef = HttpRefs.ResponseMessage;
+        var typeRef = HttpRefs.ResponseMessage;
 
         await Assert.That(typeRef).IsEqualTo("global::System.Net.Http.HttpResponseMessage");
     }
@@ -32,7 +32,7 @@ public class HttpRefsTests
     [Test]
     public async Task Method_creates_globally_qualified_type()
     {
-        TypeRef typeRef = HttpRefs.Method;
+        var typeRef = HttpRefs.Method;
 
         await Assert.That(typeRef).IsEqualTo("global::System.Net.Http.HttpMethod");
     }
@@ -40,21 +40,18 @@ public class HttpRefsTests
     [Test]
     public async Task Verb_creates_method_expression()
     {
-        TypeRef typeRef = HttpRefs.Verb("Get");
+        var typeRef = HttpRefs.Verb("Get");
 
         await Assert.That(typeRef).IsEqualTo("global::System.Net.Http.HttpMethod.Get");
     }
 
     [Test]
-    public void Verb_throws_on_unknown_verb()
-    {
-        Assert.Throws<ArgumentException>(() => HttpRefs.Verb("Yeet"));
-    }
+    public void Verb_throws_on_unknown_verb() => Assert.Throws<ArgumentException>(() => HttpRefs.Verb("Yeet"));
 
     [Test]
     public async Task Get_creates_method_expression()
     {
-        TypeRef typeRef = HttpRefs.Get;
+        var typeRef = HttpRefs.Get;
 
         await Assert.That(typeRef).IsEqualTo("global::System.Net.Http.HttpMethod.Get");
     }
@@ -62,7 +59,7 @@ public class HttpRefsTests
     [Test]
     public async Task Post_creates_method_expression()
     {
-        TypeRef typeRef = HttpRefs.Post;
+        var typeRef = HttpRefs.Post;
 
         await Assert.That(typeRef).IsEqualTo("global::System.Net.Http.HttpMethod.Post");
     }
@@ -70,7 +67,7 @@ public class HttpRefsTests
     [Test]
     public async Task Content_creates_globally_qualified_type()
     {
-        TypeRef typeRef = HttpRefs.Content;
+        var typeRef = HttpRefs.Content;
 
         await Assert.That(typeRef).IsEqualTo("global::System.Net.Http.HttpContent");
     }
@@ -78,7 +75,7 @@ public class HttpRefsTests
     [Test]
     public async Task StringContent_creates_globally_qualified_type()
     {
-        TypeRef typeRef = HttpRefs.StringContent;
+        var typeRef = HttpRefs.StringContent;
 
         await Assert.That(typeRef).IsEqualTo("global::System.Net.Http.StringContent");
     }
@@ -86,7 +83,7 @@ public class HttpRefsTests
     [Test]
     public async Task ByteArrayContent_creates_globally_qualified_type()
     {
-        TypeRef typeRef = HttpRefs.ByteArrayContent;
+        var typeRef = HttpRefs.ByteArrayContent;
 
         await Assert.That(typeRef).IsEqualTo("global::System.Net.Http.ByteArrayContent");
     }
@@ -94,7 +91,7 @@ public class HttpRefsTests
     [Test]
     public async Task StreamContent_creates_globally_qualified_type()
     {
-        TypeRef typeRef = HttpRefs.StreamContent;
+        var typeRef = HttpRefs.StreamContent;
 
         await Assert.That(typeRef).IsEqualTo("global::System.Net.Http.StreamContent");
     }

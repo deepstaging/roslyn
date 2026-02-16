@@ -157,25 +157,19 @@ public class SignatureParserFieldTests : RoslynTestBase
     #region Error Handling
 
     [Test]
-    public async Task Parse_InvalidSignature_ThrowsArgumentException()
-    {
+    public async Task Parse_InvalidSignature_ThrowsArgumentException() =>
         await Assert.ThrowsAsync<ArgumentException>(() =>
             Task.FromResult(FieldBuilder.Parse("this is not valid")));
-    }
 
     [Test]
-    public async Task Parse_EmptySignature_ThrowsArgumentException()
-    {
+    public async Task Parse_EmptySignature_ThrowsArgumentException() =>
         await Assert.ThrowsAsync<ArgumentException>(() =>
             Task.FromResult(FieldBuilder.Parse("")));
-    }
 
     [Test]
-    public async Task Parse_NullSignature_ThrowsArgumentException()
-    {
+    public async Task Parse_NullSignature_ThrowsArgumentException() =>
         await Assert.ThrowsAsync<ArgumentException>(() =>
             Task.FromResult(FieldBuilder.Parse(null!)));
-    }
 
     #endregion
 }

@@ -76,6 +76,7 @@ public class TypeBuilderTests : RoslynTestBase
 
         // Try to compile the generated code
         var compilation = CompilationFor(result.Code!);
+
         var diagnostics = compilation.GetDiagnostics()
             .Where(d => d.Severity == DiagnosticSeverity.Error);
 
@@ -265,8 +266,10 @@ public class TypeBuilderTests : RoslynTestBase
         await Assert.That(result.Success).IsTrue();
 
         var compilation = CompilationFor(result.Code!);
+
         var diagnostics = compilation.GetDiagnostics()
             .Where(d => d.Severity == DiagnosticSeverity.Error);
+
         await Assert.That(diagnostics).IsEmpty();
     }
 

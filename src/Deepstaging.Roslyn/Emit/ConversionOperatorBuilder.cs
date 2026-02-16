@@ -61,10 +61,14 @@ public record struct ConversionOperatorBuilder
     /// <param name="targetType">The target type to convert to.</param>
     /// <param name="sourceType">The source type to convert from.</param>
     /// <param name="parameterName">The parameter name (default: "value").</param>
-    public static ConversionOperatorBuilder Explicit(string targetType, string sourceType, string parameterName = "value")
+    public static ConversionOperatorBuilder Explicit(
+        string targetType,
+        string sourceType,
+        string parameterName = "value")
     {
         if (string.IsNullOrWhiteSpace(targetType))
             throw new ArgumentException("Target type cannot be null or empty.", nameof(targetType));
+
         if (string.IsNullOrWhiteSpace(sourceType))
             throw new ArgumentException("Source type cannot be null or empty.", nameof(sourceType));
 
@@ -73,7 +77,7 @@ public record struct ConversionOperatorBuilder
             IsExplicit = true,
             TargetType = targetType,
             SourceType = sourceType,
-            ParameterName = parameterName,
+            ParameterName = parameterName
         };
     }
 
@@ -83,10 +87,14 @@ public record struct ConversionOperatorBuilder
     /// <param name="targetType">The target type to convert to.</param>
     /// <param name="sourceType">The source type to convert from.</param>
     /// <param name="parameterName">The parameter name (default: "value").</param>
-    public static ConversionOperatorBuilder Implicit(string targetType, string sourceType, string parameterName = "value")
+    public static ConversionOperatorBuilder Implicit(
+        string targetType,
+        string sourceType,
+        string parameterName = "value")
     {
         if (string.IsNullOrWhiteSpace(targetType))
             throw new ArgumentException("Target type cannot be null or empty.", nameof(targetType));
+
         if (string.IsNullOrWhiteSpace(sourceType))
             throw new ArgumentException("Source type cannot be null or empty.", nameof(sourceType));
 
@@ -95,7 +103,7 @@ public record struct ConversionOperatorBuilder
             IsExplicit = false,
             TargetType = targetType,
             SourceType = sourceType,
-            ParameterName = parameterName,
+            ParameterName = parameterName
         };
     }
 
@@ -116,10 +124,8 @@ public record struct ConversionOperatorBuilder
     /// Sets an expression body for the conversion operator.
     /// </summary>
     /// <param name="expression">The expression (e.g., "new MyType(value)", "source.Value").</param>
-    public ConversionOperatorBuilder WithExpressionBody(string expression)
-    {
-        return this with { ExpressionBody = expression, Body = null };
-    }
+    public ConversionOperatorBuilder WithExpressionBody(string expression) =>
+        this with { ExpressionBody = expression, Body = null };
 
     /// <summary>
     /// Wraps this conversion operator in a preprocessor directive (#if/#endif).
@@ -219,11 +225,13 @@ public record struct ConversionOperatorBuilder
         // Add parameter
         var parameter = SyntaxFactory.Parameter(SyntaxFactory.Identifier(ParameterName))
             .WithType(SyntaxFactory.ParseTypeName(SourceType));
+
         op = op.WithParameterList(SyntaxFactory.ParameterList(
             SyntaxFactory.SingletonSeparatedList(parameter)));
 
         // Add attributes
         var attributes = Attributes.IsDefault ? [] : Attributes;
+
         if (attributes.Length > 0)
         {
             var attributeLists = attributes.Select(a => a.BuildList()).ToArray();
@@ -235,6 +243,7 @@ public record struct ConversionOperatorBuilder
         {
             var arrowExpression = SyntaxFactory.ArrowExpressionClause(
                 SyntaxFactory.ParseExpression(ExpressionBody));
+
             op = op
                 .WithExpressionBody(arrowExpression)
                 .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
@@ -257,10 +266,7 @@ public record struct ConversionOperatorBuilder
         }
 
         // Wrap in preprocessor directive if specified
-        if (Condition.HasValue)
-        {
-            op = DirectiveHelper.WrapInDirective(op, Condition.Value);
-        }
+        if (Condition.HasValue) op = DirectiveHelper.WrapInDirective(op, Condition.Value);
 
         return op;
     }

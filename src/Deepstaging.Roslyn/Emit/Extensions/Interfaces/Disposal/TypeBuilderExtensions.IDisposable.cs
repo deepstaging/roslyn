@@ -17,14 +17,11 @@ public static class TypeBuilderDisposableExtensions
     /// <returns>The modified type builder.</returns>
     public static TypeBuilder ImplementsIDisposable(
         this TypeBuilder builder,
-        params string[] disposeStatements)
-    {
-        return builder
-            .Implements("global::System.IDisposable")
-            .AddField(FieldBuilder.Parse("private bool _disposed"))
-            .AddMethod(BuildDisposeMethod())
-            .AddMethod(BuildDisposePatternMethod(disposeStatements));
-    }
+        params string[] disposeStatements) => builder
+        .Implements("global::System.IDisposable")
+        .AddField(FieldBuilder.Parse("private bool _disposed"))
+        .AddMethod(BuildDisposeMethod())
+        .AddMethod(BuildDisposePatternMethod(disposeStatements));
 
     /// <summary>
     /// Implements IDisposable by disposing a single field.
@@ -55,23 +52,18 @@ public static class TypeBuilderDisposableExtensions
                 .AddStatement("Dispose(true);")
                 .AddStatement("global::System.GC.SuppressFinalize(this);"));
 
-    private static MethodBuilder BuildDisposePatternMethod(string[] userStatements)
-    {
-        return MethodBuilder
+    private static MethodBuilder BuildDisposePatternMethod(string[] userStatements) =>
+        MethodBuilder
             .Parse("protected virtual void Dispose(bool disposing)")
             .WithBody(b =>
             {
                 b = b.AddStatement("if (_disposed) return;");
                 b = b.AddStatement("if (disposing)");
                 b = b.AddStatement("{");
-                foreach (var statement in userStatements)
-                {
-                    b = b.AddStatement($"    {statement}");
-                }
+                foreach (var statement in userStatements) b = b.AddStatement($"    {statement}");
                 b = b.AddStatement("}");
                 b = b.AddStatement("");
                 b = b.AddStatement("_disposed = true;");
                 return b;
             });
-    }
 }

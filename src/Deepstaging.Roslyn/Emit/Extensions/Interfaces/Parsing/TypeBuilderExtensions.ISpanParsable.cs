@@ -51,12 +51,14 @@ public static class TypeBuilderSpanParsableExtensions
         return builder
             .Implements($"global::System.ISpanParsable<{typeName}>", Directives.Net7OrGreater)
             .AddMethod(MethodBuilder
-                .Parse($"public static {typeName} Parse(global::System.ReadOnlySpan<char> input, global::System.IFormatProvider? provider)")
+                .Parse(
+                    $"public static {typeName} Parse(global::System.ReadOnlySpan<char> input, global::System.IFormatProvider? provider)")
                 .When(Directives.Net6OrGreater)
                 .WithInheritDoc("global::System.ISpanParsable{{TSelf}}")
                 .WithExpressionBody(parseExpression))
             .AddMethod(MethodBuilder
-                .Parse($"public static bool TryParse(global::System.ReadOnlySpan<char> input, global::System.IFormatProvider? provider, out {typeName} result)")
+                .Parse(
+                    $"public static bool TryParse(global::System.ReadOnlySpan<char> input, global::System.IFormatProvider? provider, out {typeName} result)")
                 .When(Directives.Net6OrGreater)
                 .WithInheritDoc("global::System.ISpanParsable{{TSelf}}")
                 .WithBody(b => b.AddStatements(tryParseBody)));
@@ -65,6 +67,7 @@ public static class TypeBuilderSpanParsableExtensions
     private static MethodBuilder BuildBasicParseMethod(string typeName, SpanParsableTypeInfo info)
     {
         string parseExpression;
+
         if (info.IsGuid)
             parseExpression = "new(global::System.Guid.Parse(input))";
         else if (info.IsString)
@@ -83,6 +86,7 @@ public static class TypeBuilderSpanParsableExtensions
     private static MethodBuilder BuildParseWithProviderMethod(string typeName, SpanParsableTypeInfo info)
     {
         string parseExpression;
+
         if (info.IsGuid)
             parseExpression = "new(global::System.Guid.Parse(input, provider))";
         else if (info.IsString)
@@ -93,7 +97,8 @@ public static class TypeBuilderSpanParsableExtensions
             parseExpression = "default";
 
         return MethodBuilder
-            .Parse($"public static {typeName} Parse(global::System.ReadOnlySpan<char> input, global::System.IFormatProvider? provider)")
+            .Parse(
+                $"public static {typeName} Parse(global::System.ReadOnlySpan<char> input, global::System.IFormatProvider? provider)")
             .When(Directives.Net6OrGreater)
             .WithInheritDoc("global::System.ISpanParsable{{TSelf}}")
             .WithExpressionBody(parseExpression);
@@ -102,53 +107,47 @@ public static class TypeBuilderSpanParsableExtensions
     private static MethodBuilder BuildTryParseMethod(string typeName, SpanParsableTypeInfo info)
     {
         string tryParseBody;
+
         if (info.IsGuid)
-        {
             tryParseBody = """
-                if (global::System.Guid.TryParse(input, provider, out var guid))
-                {
-                    result = new(guid);
-                    return true;
-                }
-                else
-                {
-                    result = default;
-                    return false;
-                }
-                """;
-        }
+                           if (global::System.Guid.TryParse(input, provider, out var guid))
+                           {
+                               result = new(guid);
+                               return true;
+                           }
+                           else
+                           {
+                               result = default;
+                               return false;
+                           }
+                           """;
         else if (info.IsString)
-        {
             tryParseBody = """
-                result = new(input.ToString());
-                return true;
-                """;
-        }
+                           result = new(input.ToString());
+                           return true;
+                           """;
         else if (info.CSharpKeyword is { } keyword)
-        {
             tryParseBody = $$"""
-                if ({{keyword}}.TryParse(input, provider, out var value))
-                {
-                    result = new(value);
-                    return true;
-                }
-                else
-                {
-                    result = default;
-                    return false;
-                }
-                """;
-        }
+                             if ({{keyword}}.TryParse(input, provider, out var value))
+                             {
+                                 result = new(value);
+                                 return true;
+                             }
+                             else
+                             {
+                                 result = default;
+                                 return false;
+                             }
+                             """;
         else
-        {
             tryParseBody = """
-                result = default;
-                return false;
-                """;
-        }
+                           result = default;
+                           return false;
+                           """;
 
         return MethodBuilder
-            .Parse($"public static bool TryParse(global::System.ReadOnlySpan<char> input, global::System.IFormatProvider? provider, out {typeName} result)")
+            .Parse(
+                $"public static bool TryParse(global::System.ReadOnlySpan<char> input, global::System.IFormatProvider? provider, out {typeName} result)")
             .When(Directives.Net6OrGreater)
             .WithInheritDoc("global::System.ISpanParsable{{TSelf}}")
             .WithBody(b => b.AddStatements(tryParseBody));

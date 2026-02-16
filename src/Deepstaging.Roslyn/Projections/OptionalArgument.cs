@@ -22,18 +22,12 @@ public readonly struct OptionalArgument<TSource> : IProjection<TSource?>, IEquat
     /// <summary>
     /// Creates a projection with a value.
     /// </summary>
-    public static OptionalArgument<TSource> WithValue(TSource value)
-    {
-        return new OptionalArgument<TSource>(value, true);
-    }
+    public static OptionalArgument<TSource> WithValue(TSource value) => new(value, true);
 
     /// <summary>
     /// Creates a projection without a value.
     /// </summary>
-    public static OptionalArgument<TSource> Empty()
-    {
-        return new OptionalArgument<TSource>(default, false);
-    }
+    public static OptionalArgument<TSource> Empty() => new(default, false);
 
     /// <summary>
     /// Maps the source value to a different type using the provided function.
@@ -55,10 +49,7 @@ public readonly struct OptionalArgument<TSource> : IProjection<TSource?>, IEquat
     /// <typeparam name="TResult">The result type.</typeparam>
     /// <param name="selector">The selection function.</param>
     /// <returns>A new projected argument with the result type.</returns>
-    public OptionalArgument<TResult> Select<TResult>(Func<TSource, TResult> selector)
-    {
-        return Map(selector);
-    }
+    public OptionalArgument<TResult> Select<TResult>(Func<TSource, TResult> selector) => Map(selector);
 
     /// <summary>
     /// Maps an integer value to an enum type.
@@ -88,12 +79,9 @@ public readonly struct OptionalArgument<TSource> : IProjection<TSource?>, IEquat
     /// <param name="message">Optional error message.</param>
     /// <returns>The value.</returns>
     /// <exception cref="InvalidOperationException">Thrown when value is not present.</exception>
-    public TSource OrThrow(string? message = null)
-    {
-        return _hasValue && _value != null
-            ? _value
-            : throw new InvalidOperationException(message ?? "Attribute argument not found");
-    }
+    public TSource OrThrow(string? message = null) => _hasValue && _value != null
+        ? _value
+        : throw new InvalidOperationException(message ?? "Attribute argument not found");
 
     /// <summary>
     /// Returns the value or throws an exception with a lazily-computed message if not present.
@@ -101,51 +89,37 @@ public readonly struct OptionalArgument<TSource> : IProjection<TSource?>, IEquat
     /// <param name="messageFactory">Factory function to create the error message.</param>
     /// <returns>The value.</returns>
     /// <exception cref="InvalidOperationException">Thrown when value is not present.</exception>
-    public TSource OrThrow(Func<string> messageFactory)
-    {
-        return _hasValue && _value != null
-            ? _value
-            : throw new InvalidOperationException(messageFactory());
-    }
+    public TSource OrThrow(Func<string> messageFactory) => _hasValue && _value != null
+        ? _value
+        : throw new InvalidOperationException(messageFactory());
 
     /// <summary>
     /// Returns the value or throws a custom exception if not present.
     /// </summary>
     /// <param name="exceptionFactory">Factory function to create the exception.</param>
     /// <returns>The value.</returns>
-    public TSource OrThrow(Func<Exception> exceptionFactory)
-    {
-        return _hasValue && _value != null ? _value : throw exceptionFactory();
-    }
+    public TSource OrThrow(Func<Exception> exceptionFactory) =>
+        _hasValue && _value != null ? _value : throw exceptionFactory();
 
     /// <summary>
     /// Returns the value or a default value if not present.
     /// </summary>
     /// <param name="defaultValue">The default value.</param>
     /// <returns>The value or default.</returns>
-    public TSource OrDefault(TSource defaultValue)
-    {
-        return _hasValue && _value != null ? _value : defaultValue;
-    }
+    public TSource OrDefault(TSource defaultValue) => _hasValue && _value != null ? _value : defaultValue;
 
     /// <summary>
     /// Returns the value or computes a default using the provided function.
     /// </summary>
     /// <param name="defaultFactory">Function to compute the default value.</param>
     /// <returns>The value or computed default.</returns>
-    public TSource OrDefault(Func<TSource> defaultFactory)
-    {
-        return _hasValue && _value != null ? _value : defaultFactory();
-    }
+    public TSource OrDefault(Func<TSource> defaultFactory) => _hasValue && _value != null ? _value : defaultFactory();
 
     /// <summary>
     /// Returns the value or null if not present.
     /// </summary>
     /// <returns>The value or null.</returns>
-    public TSource? OrNull()
-    {
-        return _hasValue ? _value : default;
-    }
+    public TSource? OrNull() => _hasValue ? _value : default;
 
     /// <summary>
     /// Executes an action if the value is present.
@@ -209,10 +183,7 @@ public readonly struct OptionalArgument<TSource> : IProjection<TSource?>, IEquat
     /// </example>
     public TResult Match<TResult>(
         Func<TSource, TResult> whenPresent,
-        Func<TResult> whenEmpty)
-    {
-        return _hasValue && _value != null ? whenPresent(_value) : whenEmpty();
-    }
+        Func<TResult> whenEmpty) => _hasValue && _value != null ? whenPresent(_value) : whenEmpty();
 
     /// <summary>
     /// Pattern matching with void return (for side effects).
@@ -260,51 +231,34 @@ public readonly struct OptionalArgument<TSource> : IProjection<TSource?>, IEquat
     /// </summary>
     /// <param name="other">The value to compare against.</param>
     /// <returns>True if values are equal, false otherwise.</returns>
-    public bool Equals(TSource? other)
-    {
-        return _hasValue &&
-               _value != null &&
-               other != null &&
-               EqualityComparer<TSource>.Default.Equals(_value, other);
-    }
+    public bool Equals(TSource? other) => _hasValue &&
+                                          _value != null &&
+                                          other != null &&
+                                          EqualityComparer<TSource>.Default.Equals(_value, other);
 
     /// <summary>
     /// Enables equality checks: projected == value
     /// </summary>
-    public static bool operator ==(OptionalArgument<TSource> left, TSource? right)
-    {
-        return left.Equals(right);
-    }
+    public static bool operator ==(OptionalArgument<TSource> left, TSource? right) => left.Equals(right);
 
     /// <summary>
     /// Enables inequality checks: projected != value
     /// </summary>
-    public static bool operator !=(OptionalArgument<TSource> left, TSource? right)
-    {
-        return !left.Equals(right);
-    }
+    public static bool operator !=(OptionalArgument<TSource> left, TSource? right) => !left.Equals(right);
 
     /// <summary>
     /// Determines whether the current instance equals the specified object (always returns false).
     /// </summary>
-    public override bool Equals(object? obj)
-    {
-        return false;
-    }
+    public override bool Equals(object? obj) => false;
 
     /// <summary>
     /// Returns the hash code for this instance.
     /// </summary>
-    public override int GetHashCode()
-    {
-        return _hasValue ? _value?.GetHashCode() ?? 0 : 0;
-    }
+    public override int GetHashCode() => _hasValue ? _value?.GetHashCode() ?? 0 : 0;
 
     /// <summary>
     /// Determines whether the current instance equals another OptionalArgument instance.
     /// </summary>
-    public bool Equals(OptionalArgument<TSource> other)
-    {
-        return EqualityComparer<TSource?>.Default.Equals(_value, other._value);
-    }
+    public bool Equals(OptionalArgument<TSource> other) =>
+        EqualityComparer<TSource?>.Default.Equals(_value, other._value);
 }

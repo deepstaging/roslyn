@@ -14,49 +14,43 @@ public static class TypeSymbolAsyncExtensions
         /// <summary>
         /// Checks if the type is Task or ValueTask (with or without type arguments).
         /// </summary>
-        public bool IsTaskType()
-        {
-            return typeSymbol is INamedTypeSymbol { Name: "Task" or "ValueTask" };
-        }
+        public bool IsTaskType() => typeSymbol is INamedTypeSymbol { Name: "Task" or "ValueTask" };
 
         /// <summary>
         /// Checks if the type is ValueTask or ValueTask&lt;T&gt;.
         /// </summary>
-        public bool IsValueTaskType()
-        {
-            return typeSymbol is INamedTypeSymbol { Name: "ValueTask" };
-        }
+        public bool IsValueTaskType() => typeSymbol is INamedTypeSymbol { Name: "ValueTask" };
 
         /// <summary>
         /// Checks if the type is Task&lt;T&gt;.
         /// </summary>
-        public bool IsGenericTaskType()
+        public bool IsGenericTaskType() => typeSymbol is INamedTypeSymbol
         {
-            return typeSymbol is INamedTypeSymbol { Name: "Task" or "ValueTask", IsGenericType: true, TypeArguments.Length: 1 };
-        }
+            Name: "Task" or "ValueTask", IsGenericType: true, TypeArguments.Length: 1
+        };
 
         /// <summary>
         /// Checks if the type is ValueTask&lt;T&gt;.
         /// </summary>
-        public bool IsGenericValueTaskType()
+        public bool IsGenericValueTaskType() => typeSymbol is INamedTypeSymbol
         {
-            return typeSymbol is INamedTypeSymbol { Name: "ValueTask", IsGenericType: true, TypeArguments.Length: 1 };
-        }
+            Name: "ValueTask", IsGenericType: true, TypeArguments.Length: 1
+        };
 
         /// <summary>
         /// Checks if the type is Task (non-generic).
         /// </summary>
-        public bool IsNonGenericTaskType()
+        public bool IsNonGenericTaskType() => typeSymbol is INamedTypeSymbol
         {
-            return typeSymbol is INamedTypeSymbol { Name: "Task" or "ValueTask", IsGenericType: false };
-        }
+            Name: "Task" or "ValueTask", IsGenericType: false
+        };
 
         /// <summary>
         /// Checks if the type is ValueTask (non-generic).
         /// </summary>
-        public bool IsNonGenericValueTaskType()
+        public bool IsNonGenericValueTaskType() => typeSymbol is INamedTypeSymbol
         {
-            return typeSymbol is INamedTypeSymbol { Name: "ValueTask", IsGenericType: false };
-        }
+            Name: "ValueTask", IsGenericType: false
+        };
     }
 }

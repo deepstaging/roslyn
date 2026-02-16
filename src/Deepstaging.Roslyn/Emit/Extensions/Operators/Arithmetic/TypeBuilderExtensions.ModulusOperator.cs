@@ -25,7 +25,8 @@ public static class TypeBuilderModulusOperatorExtensions
             return builder;
 
         return builder
-            .Implements($"global::System.Numerics.IModulusOperators<{typeName}, {typeName}, {typeName}>", Directives.Net7OrGreater)
+            .Implements($"global::System.Numerics.IModulusOperators<{typeName}, {typeName}, {typeName}>",
+                Directives.Net7OrGreater)
             .AddOperator(OperatorBuilder
                 .Modulus(typeName)
                 .When(Directives.Net7OrGreater)
@@ -42,7 +43,8 @@ public static class TypeBuilderModulusOperatorExtensions
         var typeName = builder.Name;
 
         return builder
-            .Implements($"global::System.Numerics.IModulusOperators<{typeName}, {typeName}, {typeName}>", Directives.Net7OrGreater)
+            .Implements($"global::System.Numerics.IModulusOperators<{typeName}, {typeName}, {typeName}>",
+                Directives.Net7OrGreater)
             .AddOperator(OperatorBuilder
                 .Modulus(typeName)
                 .When(Directives.Net7OrGreater)

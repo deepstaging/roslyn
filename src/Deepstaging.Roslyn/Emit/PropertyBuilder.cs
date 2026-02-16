@@ -12,44 +12,64 @@ public record struct PropertyBuilder
 {
     /// <summary>Gets the property name.</summary>
     public string Name { get; init; }
+
     /// <summary>Gets the property type.</summary>
     public string Type { get; init; }
+
     /// <summary>Gets the accessibility level.</summary>
     public Accessibility Accessibility { get; init; }
+
     /// <summary>Gets whether the property is static.</summary>
     public bool IsStatic { get; init; }
+
     /// <summary>Gets whether the property is virtual.</summary>
     public bool IsVirtual { get; init; }
+
     /// <summary>Gets whether the property is an override.</summary>
     public bool IsOverride { get; init; }
+
     /// <summary>Gets whether the property is abstract.</summary>
     public bool IsAbstract { get; init; }
+
     /// <summary>Gets whether the property is sealed.</summary>
     public bool IsSealed { get; init; }
+
     /// <summary>Gets whether the property is required.</summary>
     public bool IsRequired { get; init; }
+
     /// <summary>Gets whether the property has an init-only setter.</summary>
     public bool HasInitSetter { get; init; }
+
     /// <summary>Gets the accessor style.</summary>
     internal PropertyAccessorStyle AccessorStyle { get; init; }
+
     /// <summary>Gets the getter body expression or statement.</summary>
     public string? GetterBody { get; init; }
+
     /// <summary>Gets the setter body statement.</summary>
     public string? SetterBody { get; init; }
+
     /// <summary>Gets the property initializer expression.</summary>
     public string? Initializer { get; init; }
+
     /// <summary>Gets the backing field name.</summary>
     public string? BackingFieldName { get; init; }
+
     /// <summary>Gets the attributes for this property.</summary>
     public ImmutableArray<AttributeBuilder> Attributes { get; init; }
+
     /// <summary>Gets the using directives for this property.</summary>
     public ImmutableArray<string> Usings { get; init; }
+
     /// <summary>Gets the XML documentation builder.</summary>
     public XmlDocumentationBuilder? XmlDoc { get; init; }
+
     /// <summary>Gets the preprocessor directive condition for conditional compilation.</summary>
     public Directive? Condition { get; init; }
+
     /// <summary>Gets the region name for grouping this member in a #region block.</summary>
     public string? Region { get; init; }
+
     /// <summary>Gets user-defined metadata that does not affect code generation.</summary>
     public ImmutableDictionary<string, object?>? Metadata { get; init; }
 
@@ -64,6 +84,7 @@ public record struct PropertyBuilder
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Property name cannot be null or empty.", nameof(name));
+
         if (string.IsNullOrWhiteSpace(type))
             throw new ArgumentException("Property type cannot be null or empty.", nameof(type));
 
@@ -101,10 +122,7 @@ public record struct PropertyBuilder
     /// var builder = PropertyBuilder.Parse("public List&lt;string&gt; Items { get; set; } = new()");
     /// </code>
     /// </example>
-    public static PropertyBuilder Parse(string signature)
-    {
-        return SignatureParser.ParseProperty(signature);
-    }
+    public static PropertyBuilder Parse(string signature) => SignatureParser.ParseProperty(signature);
 
     #endregion
 
@@ -191,7 +209,11 @@ public record struct PropertyBuilder
     public readonly PropertyBuilder WithSetter(Func<BodyBuilder, BodyBuilder> configure)
     {
         var body = configure(BodyBuilder.Empty());
-        return this with { AccessorStyle = PropertyAccessorStyle.BlockBodied, SetterBody = body.Build().ToFullString() };
+
+        return this with
+        {
+            AccessorStyle = PropertyAccessorStyle.BlockBodied, SetterBody = body.Build().ToFullString()
+        };
     }
 
     /// <summary>
@@ -200,7 +222,11 @@ public record struct PropertyBuilder
     public readonly PropertyBuilder WithGetter(Func<BodyBuilder, BodyBuilder> configure)
     {
         var body = configure(BodyBuilder.Empty());
-        return this with { AccessorStyle = PropertyAccessorStyle.BlockBodied, GetterBody = body.Build().ToFullString() };
+
+        return this with
+        {
+            AccessorStyle = PropertyAccessorStyle.BlockBodied, GetterBody = body.Build().ToFullString()
+        };
     }
 
     /// <summary>
@@ -386,6 +412,7 @@ public record struct PropertyBuilder
 
         // Add attributes
         var attributes = Attributes.IsDefault ? [] : Attributes;
+
         if (attributes.Length > 0)
         {
             var attributeLists = attributes.Select(a => a.BuildList()).ToArray();
@@ -430,10 +457,7 @@ public record struct PropertyBuilder
         }
 
         // Wrap in preprocessor directive if specified
-        if (Condition.HasValue)
-        {
-            property = DirectiveHelper.WrapInDirective(property, Condition.Value);
-        }
+        if (Condition.HasValue) property = DirectiveHelper.WrapInDirective(property, Condition.Value);
 
         return property;
     }
@@ -441,6 +465,7 @@ public record struct PropertyBuilder
     private readonly PropertyDeclarationSyntax AddAutoAccessors(PropertyDeclarationSyntax property)
     {
         var setterKind = HasInitSetter ? SyntaxKind.InitAccessorDeclaration : SyntaxKind.SetAccessorDeclaration;
+
         return property.WithAccessorList(
             SyntaxFactory.AccessorList(
                 SyntaxFactory.List(new[]
@@ -452,14 +477,12 @@ public record struct PropertyBuilder
                 })));
     }
 
-    private readonly PropertyDeclarationSyntax AddGetterOnly(PropertyDeclarationSyntax property)
-    {
-        return property.WithAccessorList(
+    private readonly PropertyDeclarationSyntax AddGetterOnly(PropertyDeclarationSyntax property) =>
+        property.WithAccessorList(
             SyntaxFactory.AccessorList(
                 SyntaxFactory.SingletonList(
                     SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
                         .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)))));
-    }
 
     private readonly PropertyDeclarationSyntax AddExpressionBody(PropertyDeclarationSyntax property)
     {
@@ -481,14 +504,17 @@ public record struct PropertyBuilder
         {
             var getter = SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
                 .WithBody(SyntaxFactory.ParseStatement(GetterBody) as BlockSyntax);
+
             accessors.Add(getter);
         }
 
         if (SetterBody != null)
         {
             var setterKind = HasInitSetter ? SyntaxKind.InitAccessorDeclaration : SyntaxKind.SetAccessorDeclaration;
+
             var setter = SyntaxFactory.AccessorDeclaration(setterKind)
                 .WithBody(SyntaxFactory.ParseStatement(SetterBody) as BlockSyntax);
+
             accessors.Add(setter);
         }
 
@@ -496,9 +522,8 @@ public record struct PropertyBuilder
             SyntaxFactory.AccessorList(SyntaxFactory.List(accessors)));
     }
 
-    private static SyntaxKind AccessibilityToSyntaxKind(Accessibility accessibility)
-    {
-        return accessibility switch
+    private static SyntaxKind AccessibilityToSyntaxKind(Accessibility accessibility) =>
+        accessibility switch
         {
             Accessibility.Public => SyntaxKind.PublicKeyword,
             Accessibility.Private => SyntaxKind.PrivateKeyword,
@@ -506,7 +531,6 @@ public record struct PropertyBuilder
             Accessibility.Internal => SyntaxKind.InternalKeyword,
             _ => SyntaxKind.PublicKeyword
         };
-    }
 
     #endregion
 }

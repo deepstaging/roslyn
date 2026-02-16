@@ -29,6 +29,7 @@ public static class ProjectedNamedTypeSymbolExtensions
         {
             if (!type.HasValue) yield break;
             var current = type.Symbol!.BaseType;
+
             while (current != null)
             {
                 yield return ValidSymbol<INamedTypeSymbol>.From(current);
@@ -43,6 +44,7 @@ public static class ProjectedNamedTypeSymbolExtensions
         public IEnumerable<ValidSymbol<INamedTypeSymbol>> GetInterfaces()
         {
             if (!type.HasValue) yield break;
+
             foreach (var iface in type.Symbol!.Interfaces)
                 yield return ValidSymbol<INamedTypeSymbol>.From(iface);
         }
@@ -54,6 +56,7 @@ public static class ProjectedNamedTypeSymbolExtensions
         public IEnumerable<ValidSymbol<INamedTypeSymbol>> GetAllInterfaces()
         {
             if (!type.HasValue) yield break;
+
             foreach (var iface in type.Symbol!.AllInterfaces)
                 yield return ValidSymbol<INamedTypeSymbol>.From(iface);
         }
@@ -63,13 +66,12 @@ public static class ProjectedNamedTypeSymbolExtensions
         /// Checks both direct and inherited interfaces.
         /// Returns false if type has no value.
         /// </summary>
-        public bool ImplementsInterface(string interfaceName)
-        {
-            return type.HasValue && type.Symbol!.AllInterfaces.Any(i =>
+        public bool ImplementsInterface(string interfaceName) =>
+            type.HasValue &&
+            type.Symbol!.AllInterfaces.Any(i =>
                 i.Name == interfaceName ||
                 i.ToDisplayString() == interfaceName ||
                 i.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == interfaceName);
-        }
 
         /// <summary>
         /// Checks if this type inherits from the specified base type by name.
@@ -79,12 +81,14 @@ public static class ProjectedNamedTypeSymbolExtensions
         {
             if (!type.HasValue) return false;
             var current = type.Symbol!.BaseType;
+
             while (current != null)
             {
                 if (current.Name == baseTypeName ||
                     current.ToDisplayString() == baseTypeName ||
                     current.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == baseTypeName)
                     return true;
+
                 current = current.BaseType;
             }
 
@@ -122,9 +126,6 @@ public static class ProjectedNamedTypeSymbolExtensions
         /// Checks if the type is partial using syntax analysis.
         /// This requires checking DeclaringSyntaxReferences unlike most other checks.
         /// </summary>
-        public bool IsPartialType()
-        {
-            return type.HasValue && type.Symbol!.IsPartial();
-        }
+        public bool IsPartialType() => type.HasValue && type.Symbol!.IsPartial();
     }
 }

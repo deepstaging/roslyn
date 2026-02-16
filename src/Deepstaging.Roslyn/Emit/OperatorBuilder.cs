@@ -74,7 +74,10 @@ public record struct OperatorBuilder
     /// <param name="type">The type to compare.</param>
     /// <param name="leftParameterName">Left parameter name (default: "left").</param>
     /// <param name="rightParameterName">Right parameter name (default: "right").</param>
-    public static OperatorBuilder Equality(string type, string leftParameterName = "left", string rightParameterName = "right")
+    public static OperatorBuilder Equality(
+        string type,
+        string leftParameterName = "left",
+        string rightParameterName = "right")
         => Binary("==", type, type, "bool", leftParameterName, rightParameterName);
 
     /// <summary>
@@ -83,7 +86,10 @@ public record struct OperatorBuilder
     /// <param name="type">The type to compare.</param>
     /// <param name="leftParameterName">Left parameter name (default: "left").</param>
     /// <param name="rightParameterName">Right parameter name (default: "right").</param>
-    public static OperatorBuilder Inequality(string type, string leftParameterName = "left", string rightParameterName = "right")
+    public static OperatorBuilder Inequality(
+        string type,
+        string leftParameterName = "left",
+        string rightParameterName = "right")
         => Binary("!=", type, type, "bool", leftParameterName, rightParameterName);
 
     /// <summary>
@@ -92,7 +98,10 @@ public record struct OperatorBuilder
     /// <param name="type">The type to compare.</param>
     /// <param name="leftParameterName">Left parameter name (default: "left").</param>
     /// <param name="rightParameterName">Right parameter name (default: "right").</param>
-    public static OperatorBuilder LessThan(string type, string leftParameterName = "left", string rightParameterName = "right")
+    public static OperatorBuilder LessThan(
+        string type,
+        string leftParameterName = "left",
+        string rightParameterName = "right")
         => Binary("<", type, type, "bool", leftParameterName, rightParameterName);
 
     /// <summary>
@@ -101,7 +110,10 @@ public record struct OperatorBuilder
     /// <param name="type">The type to compare.</param>
     /// <param name="leftParameterName">Left parameter name (default: "left").</param>
     /// <param name="rightParameterName">Right parameter name (default: "right").</param>
-    public static OperatorBuilder GreaterThan(string type, string leftParameterName = "left", string rightParameterName = "right")
+    public static OperatorBuilder GreaterThan(
+        string type,
+        string leftParameterName = "left",
+        string rightParameterName = "right")
         => Binary(">", type, type, "bool", leftParameterName, rightParameterName);
 
     /// <summary>
@@ -110,7 +122,10 @@ public record struct OperatorBuilder
     /// <param name="type">The type to compare.</param>
     /// <param name="leftParameterName">Left parameter name (default: "left").</param>
     /// <param name="rightParameterName">Right parameter name (default: "right").</param>
-    public static OperatorBuilder LessThanOrEqual(string type, string leftParameterName = "left", string rightParameterName = "right")
+    public static OperatorBuilder LessThanOrEqual(
+        string type,
+        string leftParameterName = "left",
+        string rightParameterName = "right")
         => Binary("<=", type, type, "bool", leftParameterName, rightParameterName);
 
     /// <summary>
@@ -119,7 +134,10 @@ public record struct OperatorBuilder
     /// <param name="type">The type to compare.</param>
     /// <param name="leftParameterName">Left parameter name (default: "left").</param>
     /// <param name="rightParameterName">Right parameter name (default: "right").</param>
-    public static OperatorBuilder GreaterThanOrEqual(string type, string leftParameterName = "left", string rightParameterName = "right")
+    public static OperatorBuilder GreaterThanOrEqual(
+        string type,
+        string leftParameterName = "left",
+        string rightParameterName = "right")
         => Binary(">=", type, type, "bool", leftParameterName, rightParameterName);
 
     #endregion
@@ -132,7 +150,10 @@ public record struct OperatorBuilder
     /// <param name="type">The operand and return type.</param>
     /// <param name="leftParameterName">Left parameter name (default: "left").</param>
     /// <param name="rightParameterName">Right parameter name (default: "right").</param>
-    public static OperatorBuilder Addition(string type, string leftParameterName = "left", string rightParameterName = "right")
+    public static OperatorBuilder Addition(
+        string type,
+        string leftParameterName = "left",
+        string rightParameterName = "right")
         => Binary("+", type, type, type, leftParameterName, rightParameterName);
 
     /// <summary>
@@ -141,7 +162,10 @@ public record struct OperatorBuilder
     /// <param name="type">The operand and return type.</param>
     /// <param name="leftParameterName">Left parameter name (default: "left").</param>
     /// <param name="rightParameterName">Right parameter name (default: "right").</param>
-    public static OperatorBuilder Subtraction(string type, string leftParameterName = "left", string rightParameterName = "right")
+    public static OperatorBuilder Subtraction(
+        string type,
+        string leftParameterName = "left",
+        string rightParameterName = "right")
         => Binary("-", type, type, type, leftParameterName, rightParameterName);
 
     /// <summary>
@@ -150,7 +174,10 @@ public record struct OperatorBuilder
     /// <param name="type">The operand and return type.</param>
     /// <param name="leftParameterName">Left parameter name (default: "left").</param>
     /// <param name="rightParameterName">Right parameter name (default: "right").</param>
-    public static OperatorBuilder Multiplication(string type, string leftParameterName = "left", string rightParameterName = "right")
+    public static OperatorBuilder Multiplication(
+        string type,
+        string leftParameterName = "left",
+        string rightParameterName = "right")
         => Binary("*", type, type, type, leftParameterName, rightParameterName);
 
     /// <summary>
@@ -159,7 +186,10 @@ public record struct OperatorBuilder
     /// <param name="type">The operand and return type.</param>
     /// <param name="leftParameterName">Left parameter name (default: "left").</param>
     /// <param name="rightParameterName">Right parameter name (default: "right").</param>
-    public static OperatorBuilder Division(string type, string leftParameterName = "left", string rightParameterName = "right")
+    public static OperatorBuilder Division(
+        string type,
+        string leftParameterName = "left",
+        string rightParameterName = "right")
         => Binary("/", type, type, type, leftParameterName, rightParameterName);
 
     /// <summary>
@@ -168,7 +198,10 @@ public record struct OperatorBuilder
     /// <param name="type">The operand and return type.</param>
     /// <param name="leftParameterName">Left parameter name (default: "left").</param>
     /// <param name="rightParameterName">Right parameter name (default: "right").</param>
-    public static OperatorBuilder Modulus(string type, string leftParameterName = "left", string rightParameterName = "right")
+    public static OperatorBuilder Modulus(
+        string type,
+        string leftParameterName = "left",
+        string rightParameterName = "right")
         => Binary("%", type, type, type, leftParameterName, rightParameterName);
 
     #endregion
@@ -214,7 +247,10 @@ public record struct OperatorBuilder
     /// <param name="type">The operand and return type.</param>
     /// <param name="leftParameterName">Left parameter name (default: "left").</param>
     /// <param name="rightParameterName">Right parameter name (default: "right").</param>
-    public static OperatorBuilder BitwiseAnd(string type, string leftParameterName = "left", string rightParameterName = "right")
+    public static OperatorBuilder BitwiseAnd(
+        string type,
+        string leftParameterName = "left",
+        string rightParameterName = "right")
         => Binary("&", type, type, type, leftParameterName, rightParameterName);
 
     /// <summary>
@@ -223,7 +259,10 @@ public record struct OperatorBuilder
     /// <param name="type">The operand and return type.</param>
     /// <param name="leftParameterName">Left parameter name (default: "left").</param>
     /// <param name="rightParameterName">Right parameter name (default: "right").</param>
-    public static OperatorBuilder BitwiseOr(string type, string leftParameterName = "left", string rightParameterName = "right")
+    public static OperatorBuilder BitwiseOr(
+        string type,
+        string leftParameterName = "left",
+        string rightParameterName = "right")
         => Binary("|", type, type, type, leftParameterName, rightParameterName);
 
     /// <summary>
@@ -232,7 +271,10 @@ public record struct OperatorBuilder
     /// <param name="type">The operand and return type.</param>
     /// <param name="leftParameterName">Left parameter name (default: "left").</param>
     /// <param name="rightParameterName">Right parameter name (default: "right").</param>
-    public static OperatorBuilder ExclusiveOr(string type, string leftParameterName = "left", string rightParameterName = "right")
+    public static OperatorBuilder ExclusiveOr(
+        string type,
+        string leftParameterName = "left",
+        string rightParameterName = "right")
         => Binary("^", type, type, type, leftParameterName, rightParameterName);
 
     /// <summary>
@@ -241,7 +283,10 @@ public record struct OperatorBuilder
     /// <param name="type">The operand and return type.</param>
     /// <param name="leftParameterName">Left parameter name (default: "left").</param>
     /// <param name="rightParameterName">Right parameter name (default: "right").</param>
-    public static OperatorBuilder LeftShift(string type, string leftParameterName = "left", string rightParameterName = "right")
+    public static OperatorBuilder LeftShift(
+        string type,
+        string leftParameterName = "left",
+        string rightParameterName = "right")
         => Binary("<<", type, "int", type, leftParameterName, rightParameterName);
 
     /// <summary>
@@ -250,7 +295,10 @@ public record struct OperatorBuilder
     /// <param name="type">The operand and return type.</param>
     /// <param name="leftParameterName">Left parameter name (default: "left").</param>
     /// <param name="rightParameterName">Right parameter name (default: "right").</param>
-    public static OperatorBuilder RightShift(string type, string leftParameterName = "left", string rightParameterName = "right")
+    public static OperatorBuilder RightShift(
+        string type,
+        string leftParameterName = "left",
+        string rightParameterName = "right")
         => Binary(">>", type, "int", type, leftParameterName, rightParameterName);
 
     /// <summary>
@@ -259,7 +307,10 @@ public record struct OperatorBuilder
     /// <param name="type">The operand and return type.</param>
     /// <param name="leftParameterName">Left parameter name (default: "left").</param>
     /// <param name="rightParameterName">Right parameter name (default: "right").</param>
-    public static OperatorBuilder UnsignedRightShift(string type, string leftParameterName = "left", string rightParameterName = "right")
+    public static OperatorBuilder UnsignedRightShift(
+        string type,
+        string leftParameterName = "left",
+        string rightParameterName = "right")
         => Binary(">>>", type, "int", type, leftParameterName, rightParameterName);
 
     /// <summary>
@@ -328,7 +379,7 @@ public record struct OperatorBuilder
             RightType = rightType,
             ReturnType = returnType,
             LeftParameterName = leftParameterName,
-            RightParameterName = rightParameterName,
+            RightParameterName = rightParameterName
         };
     }
 
@@ -356,7 +407,7 @@ public record struct OperatorBuilder
             OperandType = operandType,
             ReturnType = returnType,
             LeftParameterName = parameterName,
-            RightParameterName = string.Empty,
+            RightParameterName = string.Empty
         };
     }
 
@@ -389,10 +440,8 @@ public record struct OperatorBuilder
     /// Sets an expression body for the operator.
     /// </summary>
     /// <param name="expression">The expression (e.g., "left.Equals(right)", "new Money(-operand.Amount)").</param>
-    public OperatorBuilder WithExpressionBody(string expression)
-    {
-        return this with { ExpressionBody = expression, Body = null };
-    }
+    public OperatorBuilder WithExpressionBody(string expression) =>
+        this with { ExpressionBody = expression, Body = null };
 
     /// <summary>
     /// Wraps this operator in a preprocessor directive (#if/#endif).
@@ -502,12 +551,14 @@ public record struct OperatorBuilder
 
         var leftParam = SyntaxFactory.Parameter(SyntaxFactory.Identifier(LeftParameterName))
             .WithType(SyntaxFactory.ParseTypeName(OperandType));
+
         parameters.Add(leftParam);
 
         if (!IsUnary && RightType != null)
         {
             var rightParam = SyntaxFactory.Parameter(SyntaxFactory.Identifier(RightParameterName))
                 .WithType(SyntaxFactory.ParseTypeName(RightType));
+
             parameters.Add(rightParam);
         }
 
@@ -516,6 +567,7 @@ public record struct OperatorBuilder
 
         // Add attributes
         var attributes = Attributes.IsDefault ? [] : Attributes;
+
         if (attributes.Length > 0)
         {
             var attributeLists = attributes.Select(a => a.BuildList()).ToArray();
@@ -527,6 +579,7 @@ public record struct OperatorBuilder
         {
             var arrowExpression = SyntaxFactory.ArrowExpressionClause(
                 SyntaxFactory.ParseExpression(ExpressionBody));
+
             op = op
                 .WithExpressionBody(arrowExpression)
                 .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
@@ -549,17 +602,13 @@ public record struct OperatorBuilder
         }
 
         // Wrap in preprocessor directive if specified
-        if (Condition.HasValue)
-        {
-            op = DirectiveHelper.WrapInDirective(op, Condition.Value);
-        }
+        if (Condition.HasValue) op = DirectiveHelper.WrapInDirective(op, Condition.Value);
 
         return op;
     }
 
-    private SyntaxToken GetOperatorToken()
-    {
-        return Operator switch
+    private SyntaxToken GetOperatorToken() =>
+        Operator switch
         {
             "+" => SyntaxFactory.Token(SyntaxKind.PlusToken),
             "-" => SyntaxFactory.Token(SyntaxKind.MinusToken),
@@ -586,7 +635,6 @@ public record struct OperatorBuilder
             "false" => SyntaxFactory.Token(SyntaxKind.FalseKeyword),
             _ => throw new InvalidOperationException($"Unsupported operator: {Operator}")
         };
-    }
 
     #endregion
 }

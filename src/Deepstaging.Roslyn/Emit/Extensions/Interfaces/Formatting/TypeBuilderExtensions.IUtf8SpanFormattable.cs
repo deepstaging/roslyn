@@ -39,43 +39,44 @@ public static class TypeBuilderUtf8SpanFormattableExtensions
     /// <returns>The modified type builder.</returns>
     public static TypeBuilder ImplementsIUtf8SpanFormattable(
         this TypeBuilder builder,
-        string tryFormatExpression)
-    {
-        return builder
-            .Implements("global::System.IUtf8SpanFormattable", Directives.Net8OrGreater)
-            .AddMethod(MethodBuilder
-                .Parse("public bool TryFormat(global::System.Span<byte> utf8Destination, out int bytesWritten, global::System.ReadOnlySpan<char> format, global::System.IFormatProvider? provider)")
-                .When(Directives.Net8OrGreater)
-                .WithInheritDoc("global::System.IUtf8SpanFormattable.TryFormat")
-                .WithExpressionBody(tryFormatExpression));
-    }
+        string tryFormatExpression) => builder
+        .Implements("global::System.IUtf8SpanFormattable", Directives.Net8OrGreater)
+        .AddMethod(MethodBuilder
+            .Parse(
+                "public bool TryFormat(global::System.Span<byte> utf8Destination, out int bytesWritten, global::System.ReadOnlySpan<char> format, global::System.IFormatProvider? provider)")
+            .When(Directives.Net8OrGreater)
+            .WithInheritDoc("global::System.IUtf8SpanFormattable.TryFormat")
+            .WithExpressionBody(tryFormatExpression));
 
-    private static MethodBuilder BuildTryFormatMethod(Utf8SpanFormattableTypeInfo info, string valueAccessor, string stringSyntaxAttr)
+    private static MethodBuilder BuildTryFormatMethod(
+        Utf8SpanFormattableTypeInfo info,
+        string valueAccessor,
+        string stringSyntaxAttr)
     {
         var method = MethodBuilder
-            .Parse($"public bool TryFormat(global::System.Span<byte> utf8Destination, out int bytesWritten, {stringSyntaxAttr}global::System.ReadOnlySpan<char> format, global::System.IFormatProvider? provider)")
+            .Parse(
+                $"public bool TryFormat(global::System.Span<byte> utf8Destination, out int bytesWritten, {stringSyntaxAttr}global::System.ReadOnlySpan<char> format, global::System.IFormatProvider? provider)")
             .When(Directives.Net8OrGreater)
             .WithInheritDoc("global::System.IUtf8SpanFormattable.TryFormat");
 
         if (info.RequiresNullHandling)
-        {
             return method.WithBody(b => b.AddStatements($$"""
-                var bytes = global::System.Text.Encoding.UTF8.GetBytes({{valueAccessor}} ?? string.Empty);
-                if (bytes.AsSpan().TryCopyTo(utf8Destination))
-                {
-                    bytesWritten = bytes.Length;
-                    return true;
-                }
-                bytesWritten = 0;
-                return false;
-                """));
-        }
+                                                          var bytes = global::System.Text.Encoding.UTF8.GetBytes({{valueAccessor}} ?? string.Empty);
+                                                          if (bytes.AsSpan().TryCopyTo(utf8Destination))
+                                                          {
+                                                              bytesWritten = bytes.Length;
+                                                              return true;
+                                                          }
+                                                          bytesWritten = 0;
+                                                          return false;
+                                                          """));
 
         // Guid doesn't use provider
         if (info.IsGuid)
             return method.WithExpressionBody($"{valueAccessor}.TryFormat(utf8Destination, out bytesWritten, format)");
 
-        return method.WithExpressionBody($"{valueAccessor}.TryFormat(utf8Destination, out bytesWritten, format, provider)");
+        return method.WithExpressionBody(
+            $"{valueAccessor}.TryFormat(utf8Destination, out bytesWritten, format, provider)");
     }
 
     /// <summary>

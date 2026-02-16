@@ -50,6 +50,7 @@ public class MetadataTests : RoslynTestBase
     public async Task TypeBuilder_can_store_complex_object_as_metadata()
     {
         var info = new TestInfo("StubEmail", "_email");
+
         var builder = TypeBuilder
             .Class("Customer")
             .WithMetadata("Info", info);

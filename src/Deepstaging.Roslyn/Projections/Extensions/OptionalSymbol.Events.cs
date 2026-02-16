@@ -16,44 +16,36 @@ public static class ProjectedEventSymbolExtensions
         /// Gets the add method of the event.
         /// Returns Empty if add method is null.
         /// </summary>
-        public OptionalSymbol<IMethodSymbol> GetAddMethod()
-        {
-            return eventSymbol is { HasValue: true, Symbol.AddMethod: not null }
+        public OptionalSymbol<IMethodSymbol> GetAddMethod() =>
+            eventSymbol is { HasValue: true, Symbol.AddMethod: not null }
                 ? OptionalSymbol<IMethodSymbol>.WithValue(eventSymbol.Symbol.AddMethod)
                 : OptionalSymbol<IMethodSymbol>.Empty();
-        }
 
         /// <summary>
         /// Gets the remove method of the event.
         /// Returns Empty if remove method is null.
         /// </summary>
-        public OptionalSymbol<IMethodSymbol> GetRemoveMethod()
-        {
-            return eventSymbol is { HasValue: true, Symbol.RemoveMethod: not null }
+        public OptionalSymbol<IMethodSymbol> GetRemoveMethod() =>
+            eventSymbol is { HasValue: true, Symbol.RemoveMethod: not null }
                 ? OptionalSymbol<IMethodSymbol>.WithValue(eventSymbol.Symbol.RemoveMethod)
                 : OptionalSymbol<IMethodSymbol>.Empty();
-        }
 
         /// <summary>
         /// Gets the raise method of the event (rarely used in C#).
         /// Returns Empty if raise method is null.
         /// </summary>
-        public OptionalSymbol<IMethodSymbol> GetRaiseMethod()
-        {
-            return eventSymbol is { HasValue: true, Symbol.RaiseMethod: not null }
+        public OptionalSymbol<IMethodSymbol> GetRaiseMethod() =>
+            eventSymbol is { HasValue: true, Symbol.RaiseMethod: not null }
                 ? OptionalSymbol<IMethodSymbol>.WithValue(eventSymbol.Symbol.RaiseMethod)
                 : OptionalSymbol<IMethodSymbol>.Empty();
-        }
 
         /// <summary>
         /// Gets the event that is overridden by this event, if this is an override.
         /// Returns Empty if not an override or overridden event is null.
         /// </summary>
-        public OptionalSymbol<IEventSymbol> GetOverriddenEvent()
-        {
-            return eventSymbol is { HasValue: true, Symbol.OverriddenEvent: not null }
+        public OptionalSymbol<IEventSymbol> GetOverriddenEvent() =>
+            eventSymbol is { HasValue: true, Symbol.OverriddenEvent: not null }
                 ? OptionalSymbol<IEventSymbol>.WithValue(eventSymbol.Symbol.OverriddenEvent)
                 : OptionalSymbol<IEventSymbol>.Empty();
-        }
     }
 }

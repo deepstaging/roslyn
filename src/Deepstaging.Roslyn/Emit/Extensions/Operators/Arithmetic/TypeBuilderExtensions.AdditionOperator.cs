@@ -29,7 +29,9 @@ public static class TypeBuilderAdditionOperatorExtensions
             return builder;
 
         return builder
-            .Implements($"global::System.Numerics.IAdditionOperators<{typeName}, {typeName}, {typeName}>", Directives.Net7OrGreater)
+            .Implements(
+                $"global::System.Numerics.IAdditionOperators<{typeName}, {typeName}, {typeName}>",
+                Directives.Net7OrGreater)
             .AddOperator(OperatorBuilder
                 .Addition(typeName)
                 .When(Directives.Net7OrGreater)
@@ -49,7 +51,9 @@ public static class TypeBuilderAdditionOperatorExtensions
         var typeName = builder.Name;
 
         return builder
-            .Implements($"global::System.Numerics.IAdditionOperators<{typeName}, {typeName}, {typeName}>", Directives.Net7OrGreater)
+            .Implements(
+                $"global::System.Numerics.IAdditionOperators<{typeName}, {typeName}, {typeName}>",
+                Directives.Net7OrGreater)
             .AddOperator(OperatorBuilder
                 .Addition(typeName)
                 .When(Directives.Net7OrGreater)

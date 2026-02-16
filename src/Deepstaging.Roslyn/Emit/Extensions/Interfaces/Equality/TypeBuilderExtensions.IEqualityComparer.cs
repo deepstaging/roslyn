@@ -20,20 +20,19 @@ public static class TypeBuilderEqualityComparerExtensions
     public static TypeBuilder ImplementsIEqualityComparer(
         this TypeBuilder builder,
         string comparedType,
-        string valueAccessor)
-    {
-        return builder
+        string valueAccessor) =>
+        builder
             .Implements($"global::System.Collections.Generic.IEqualityComparer<{comparedType}>")
             .AddMethod(MethodBuilder
                 .Parse($"public bool Equals({comparedType}? x, {comparedType}? y)")
                 .WithBody(b => b
                     .AddStatement("if (ReferenceEquals(x, y)) return true;")
                     .AddStatement("if (x is null || y is null) return false;")
-                    .AddStatement($"return global::System.Collections.Generic.EqualityComparer<{GetPropertyType(valueAccessor)}>.Default.Equals(x.{valueAccessor}, y.{valueAccessor});")))
+                    .AddStatement(
+                        $"return global::System.Collections.Generic.EqualityComparer<{GetPropertyType(valueAccessor)}>.Default.Equals(x.{valueAccessor}, y.{valueAccessor});")))
             .AddMethod(MethodBuilder
                 .Parse($"public int GetHashCode({comparedType} obj)")
                 .WithExpressionBody($"obj.{valueAccessor}?.GetHashCode() ?? 0"));
-    }
 
     /// <summary>
     /// Implements IEqualityComparer&lt;T&gt; for value types.
@@ -47,17 +46,15 @@ public static class TypeBuilderEqualityComparerExtensions
         this TypeBuilder builder,
         string comparedType,
         string valueAccessor,
-        string propertyType)
-    {
-        return builder
-            .Implements($"global::System.Collections.Generic.IEqualityComparer<{comparedType}>")
-            .AddMethod(MethodBuilder
-                .Parse($"public bool Equals({comparedType} x, {comparedType} y)")
-                .WithExpressionBody($"global::System.Collections.Generic.EqualityComparer<{propertyType}>.Default.Equals(x.{valueAccessor}, y.{valueAccessor})"))
-            .AddMethod(MethodBuilder
-                .Parse($"public int GetHashCode({comparedType} obj)")
-                .WithExpressionBody($"obj.{valueAccessor}.GetHashCode()"));
-    }
+        string propertyType) => builder
+        .Implements($"global::System.Collections.Generic.IEqualityComparer<{comparedType}>")
+        .AddMethod(MethodBuilder
+            .Parse($"public bool Equals({comparedType} x, {comparedType} y)")
+            .WithExpressionBody(
+                $"global::System.Collections.Generic.EqualityComparer<{propertyType}>.Default.Equals(x.{valueAccessor}, y.{valueAccessor})"))
+        .AddMethod(MethodBuilder
+            .Parse($"public int GetHashCode({comparedType} obj)")
+            .WithExpressionBody($"obj.{valueAccessor}.GetHashCode()"));
 
     /// <summary>
     /// Implements IEqualityComparer&lt;T&gt; comparing multiple properties.
@@ -72,7 +69,8 @@ public static class TypeBuilderEqualityComparerExtensions
         params string[] valueAccessors)
     {
         var equalsConditions = string.Join(" && ",
-            valueAccessors.Select(v => $"global::System.Collections.Generic.EqualityComparer<object>.Default.Equals(x.{v}, y.{v})"));
+            valueAccessors.Select(v =>
+                $"global::System.Collections.Generic.EqualityComparer<object>.Default.Equals(x.{v}, y.{v})"));
 
         var hashCodeCombine = string.Join(", ",
             valueAccessors.Select(v => $"obj.{v}"));

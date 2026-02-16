@@ -21,7 +21,8 @@ public static class TypeBuilderSingletonExtensions
 
         return builder
             .AddField(FieldBuilder
-                .Parse($"private static readonly global::System.Lazy<{typeName}> _instance = new(() => new {typeName}());"))
+                .Parse(
+                    $"private static readonly global::System.Lazy<{typeName}> _instance = new(() => new {typeName}());"))
             .AddConstructor(ConstructorBuilder
                 .For(typeName)
                 .WithAccessibility(Accessibility.Private))
@@ -45,7 +46,8 @@ public static class TypeBuilderSingletonExtensions
 
         return builder
             .AddField(FieldBuilder
-                .Parse($"private static readonly global::System.Lazy<{typeName}> {fieldName} = new(() => new {typeName}());"))
+                .Parse(
+                    $"private static readonly global::System.Lazy<{typeName}> {fieldName} = new(() => new {typeName}());"))
             .AddConstructor(ConstructorBuilder
                 .For(typeName)
                 .WithAccessibility(Accessibility.Private))

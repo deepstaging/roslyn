@@ -17,14 +17,11 @@ public static class TypeBuilderAsyncDisposableExtensions
     /// <returns>The modified type builder.</returns>
     public static TypeBuilder ImplementsIAsyncDisposable(
         this TypeBuilder builder,
-        params string[] disposeStatements)
-    {
-        return builder
-            .Implements("global::System.IAsyncDisposable", Directives.NetCoreApp30OrGreater)
-            .AddField(FieldBuilder.Parse("private bool _disposed").When(Directives.NetCoreApp30OrGreater))
-            .AddMethod(BuildDisposeAsyncMethod())
-            .AddMethod(BuildDisposeAsyncCoreMethod(disposeStatements));
-    }
+        params string[] disposeStatements) => builder
+        .Implements("global::System.IAsyncDisposable", Directives.NetCoreApp30OrGreater)
+        .AddField(FieldBuilder.Parse("private bool _disposed").When(Directives.NetCoreApp30OrGreater))
+        .AddMethod(BuildDisposeAsyncMethod())
+        .AddMethod(BuildDisposeAsyncCoreMethod(disposeStatements));
 
     /// <summary>
     /// Implements IAsyncDisposable by disposing a single async-disposable field.
@@ -35,7 +32,8 @@ public static class TypeBuilderAsyncDisposableExtensions
     public static TypeBuilder ImplementsIAsyncDisposableForField(
         this TypeBuilder builder,
         string fieldName) =>
-        builder.ImplementsIAsyncDisposable($"if ({fieldName} is not null) await {fieldName}.DisposeAsync().ConfigureAwait(false);");
+        builder.ImplementsIAsyncDisposable(
+            $"if ({fieldName} is not null) await {fieldName}.DisposeAsync().ConfigureAwait(false);");
 
     /// <summary>
     /// Implements both IDisposable and IAsyncDisposable with proper coordination.
@@ -61,21 +59,16 @@ public static class TypeBuilderAsyncDisposableExtensions
                 .AddStatement("Dispose(false);")
                 .AddStatement("global::System.GC.SuppressFinalize(this);"));
 
-    private static MethodBuilder BuildDisposeAsyncCoreMethod(string[] userStatements)
-    {
-        return MethodBuilder
+    private static MethodBuilder BuildDisposeAsyncCoreMethod(string[] userStatements) =>
+        MethodBuilder
             .Parse("protected virtual async global::System.Threading.Tasks.ValueTask DisposeAsyncCore()")
             .When(Directives.NetCoreApp30OrGreater)
             .WithBody(b =>
             {
                 b = b.AddStatement("if (_disposed) return;");
-                foreach (var statement in userStatements)
-                {
-                    b = b.AddStatement(statement);
-                }
+                foreach (var statement in userStatements) b = b.AddStatement(statement);
                 b = b.AddStatement("");
                 b = b.AddStatement("_disposed = true;");
                 return b;
             });
-    }
 }

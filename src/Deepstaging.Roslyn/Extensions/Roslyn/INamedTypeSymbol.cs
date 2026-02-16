@@ -35,6 +35,7 @@ public static class NamedTypeSymbolExtensions
         public bool IsGeneratedCode()
         {
             var fullName = typeof(GeneratedCodeAttribute).FullName;
+
             return symbol.GetAttributes()
                 .Any(attr => attr.AttributeClass?.ToDisplayString() == fullName);
         }
@@ -42,61 +43,40 @@ public static class NamedTypeSymbolExtensions
         /// <summary>
         /// Checks if the type is NOT generated code (inverse of IsGeneratedCode).
         /// </summary>
-        public bool IsNotGeneratedCode()
-        {
-            return !symbol.IsGeneratedCode();
-        }
+        public bool IsNotGeneratedCode() => !symbol.IsGeneratedCode();
 
         /// <summary>
         /// Checks if the type has a parameterless constructor.
         /// </summary>
-        public bool HasParameterlessConstructor()
-        {
-            return symbol.Constructors.Any(c => c.Parameters.Length == 0);
-        }
+        public bool HasParameterlessConstructor() => symbol.Constructors.Any(c => c.Parameters.Length == 0);
 
         /// <summary>
         /// Checks if the type is generic (has type parameters).
         /// </summary>
-        public bool IsGeneric()
-        {
-            return symbol.IsGenericType;
-        }
+        public bool IsGeneric() => symbol.IsGenericType;
 
         /// <summary>
         /// Checks if the type is an open generic (unbound type parameters).
         /// </summary>
-        public bool IsOpenGeneric()
-        {
-            return symbol.IsUnboundGenericType;
-        }
+        public bool IsOpenGeneric() => symbol.IsUnboundGenericType;
 
         /// <summary>
         /// Checks if the type is nested within another type.
         /// </summary>
-        public bool IsNestedType()
-        {
-            return symbol.ContainingType != null;
-        }
+        public bool IsNestedType() => symbol.ContainingType != null;
 
         /// <summary>
         /// Gets the arity (number of type parameters) of the type.
         /// </summary>
-        public int GetArity()
-        {
-            return symbol.Arity;
-        }
+        public int GetArity() => symbol.Arity;
 
         /// <summary>
         /// Checks if the type implements the specified interface by name.
         /// Supports simple name, display string, and fully qualified format.
         /// </summary>
-        public bool ImplementsInterface(string interfaceName)
-        {
-            return symbol.AllInterfaces.Any(i =>
-                i.Name == interfaceName ||
-                i.ToDisplayString() == interfaceName ||
-                i.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == interfaceName);
-        }
+        public bool ImplementsInterface(string interfaceName) => symbol.AllInterfaces.Any(i =>
+            i.Name == interfaceName ||
+            i.ToDisplayString() == interfaceName ||
+            i.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == interfaceName);
     }
 }

@@ -14,9 +14,8 @@ public static class TypeBuilderNotifyPropertyChangedExtensions
     /// </summary>
     /// <param name="builder">The type builder.</param>
     /// <returns>The modified type builder with INotifyPropertyChanged implementation.</returns>
-    public static TypeBuilder ImplementsINotifyPropertyChanged(this TypeBuilder builder)
-    {
-        return builder
+    public static TypeBuilder ImplementsINotifyPropertyChanged(this TypeBuilder builder) =>
+        builder
             .Implements("global::System.ComponentModel.INotifyPropertyChanged")
             .AddEvent(EventBuilder
                 .For("PropertyChanged", "global::System.ComponentModel.PropertyChangedEventHandler?"))
@@ -26,8 +25,8 @@ public static class TypeBuilderNotifyPropertyChangedExtensions
                     .WithAttribute("global::System.Runtime.CompilerServices.CallerMemberName")
                     .WithDefaultValue("null"))
                 .WithBody(b => b
-                    .AddStatement("PropertyChanged?.Invoke(this, new global::System.ComponentModel.PropertyChangedEventArgs(propertyName));")));
-    }
+                    .AddStatement(
+                        "PropertyChanged?.Invoke(this, new global::System.ComponentModel.PropertyChangedEventArgs(propertyName));")));
 
     /// <summary>
     /// Implements INotifyPropertyChanged with a custom OnPropertyChanged method name.
@@ -37,9 +36,8 @@ public static class TypeBuilderNotifyPropertyChangedExtensions
     /// <returns>The modified type builder with INotifyPropertyChanged implementation.</returns>
     public static TypeBuilder ImplementsINotifyPropertyChanged(
         this TypeBuilder builder,
-        string onPropertyChangedMethodName)
-    {
-        return builder
+        string onPropertyChangedMethodName) =>
+        builder
             .Implements("global::System.ComponentModel.INotifyPropertyChanged")
             .AddEvent(EventBuilder
                 .For("PropertyChanged", "global::System.ComponentModel.PropertyChangedEventHandler?"))
@@ -49,6 +47,6 @@ public static class TypeBuilderNotifyPropertyChangedExtensions
                     .WithAttribute("global::System.Runtime.CompilerServices.CallerMemberName")
                     .WithDefaultValue("null"))
                 .WithBody(b => b
-                    .AddStatement("PropertyChanged?.Invoke(this, new global::System.ComponentModel.PropertyChangedEventArgs(propertyName));")));
-    }
+                    .AddStatement(
+                        "PropertyChanged?.Invoke(this, new global::System.ComponentModel.PropertyChangedEventArgs(propertyName));")));
 }

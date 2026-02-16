@@ -97,6 +97,7 @@ public class CompleteExampleTests : RoslynTestBase
 
         // Verify it actually compiles!
         var compilation = CompilationFor(result.Code!);
+
         var errors = compilation.GetDiagnostics()
             .Where(d => d.Severity == DiagnosticSeverity.Error);
 

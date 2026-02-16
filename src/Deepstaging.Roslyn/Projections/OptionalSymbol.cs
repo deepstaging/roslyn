@@ -16,36 +16,24 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
 {
     private readonly TSymbol? _symbol;
 
-    private OptionalSymbol(TSymbol? symbol)
-    {
-        _symbol = symbol;
-    }
+    private OptionalSymbol(TSymbol? symbol) => _symbol = symbol;
 
     #region Factory Methods
 
     /// <summary>
     /// Creates an optional symbol with a value.
     /// </summary>
-    public static OptionalSymbol<TSymbol> WithValue(TSymbol symbol)
-    {
-        return new OptionalSymbol<TSymbol>(symbol);
-    }
+    public static OptionalSymbol<TSymbol> WithValue(TSymbol symbol) => new(symbol);
 
     /// <summary>
     /// Creates an empty optional symbol without a value.
     /// </summary>
-    public static OptionalSymbol<TSymbol> Empty()
-    {
-        return new OptionalSymbol<TSymbol>(null);
-    }
+    public static OptionalSymbol<TSymbol> Empty() => new(null);
 
     /// <summary>
     /// Creates an optional symbol from a nullable symbol reference.
     /// </summary>
-    public static OptionalSymbol<TSymbol> FromNullable(TSymbol? symbol)
-    {
-        return symbol != null ? WithValue(symbol) : Empty();
-    }
+    public static OptionalSymbol<TSymbol> FromNullable(TSymbol? symbol) => symbol != null ? WithValue(symbol) : Empty();
 
     #endregion
 
@@ -73,48 +61,35 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
     /// <summary>
     /// Returns the symbol or throws an exception if absent.
     /// </summary>
-    public TSymbol OrThrow(string? message = null)
-    {
-        return _symbol ?? throw new InvalidOperationException(message ?? "Symbol is not present.");
-    }
+    public TSymbol OrThrow(string? message = null) =>
+        _symbol ?? throw new InvalidOperationException(message ?? "Symbol is not present.");
 
     /// <summary>
     /// Returns the symbol or throws an exception with a lazily-computed message if absent.
     /// </summary>
     /// <param name="messageFactory">Factory function to create the error message.</param>
     /// <exception cref="InvalidOperationException">Thrown when symbol is not present.</exception>
-    public TSymbol OrThrow(Func<string> messageFactory)
-    {
-        return _symbol ?? throw new InvalidOperationException(messageFactory());
-    }
+    public TSymbol OrThrow(Func<string> messageFactory) =>
+        _symbol ?? throw new InvalidOperationException(messageFactory());
 
     /// <summary>
     /// Returns the symbol or null if absent.
     /// </summary>
-    public TSymbol? OrNull()
-    {
-        return _symbol;
-    }
+    public TSymbol? OrNull() => _symbol;
 
     /// <summary>
     /// Validates the optional symbol to a ValidSymbol with guaranteed non-null, non-error access.
     /// </summary>
-    public ValidSymbol<TSymbol>? Validate()
-    {
-        return _symbol != null && !IsErrorSymbol(_symbol)
-            ? ValidSymbol<TSymbol>.From(_symbol)
-            : null;
-    }
+    public ValidSymbol<TSymbol>? Validate() => _symbol != null && !IsErrorSymbol(_symbol)
+        ? ValidSymbol<TSymbol>.From(_symbol)
+        : null;
 
     /// <summary>
     /// Validates the optional symbol or throws an exception if absent or an error symbol.
     /// </summary>
-    public ValidSymbol<TSymbol> ValidateOrThrow(string? message = null)
-    {
-        return _symbol != null && !IsErrorSymbol(_symbol)
-            ? ValidSymbol<TSymbol>.From(_symbol)
-            : throw new InvalidOperationException(message ?? "Cannot validate an empty or error projection.");
-    }
+    public ValidSymbol<TSymbol> ValidateOrThrow(string? message = null) => _symbol != null && !IsErrorSymbol(_symbol)
+        ? ValidSymbol<TSymbol>.From(_symbol)
+        : throw new InvalidOperationException(message ?? "Cannot validate an empty or error projection.");
 
     /// <summary>
     /// Attempts to validate the optional symbol. Returns true if successful (non-null and non-error).
@@ -131,26 +106,18 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
         return false;
     }
 
-    private static bool IsErrorSymbol(TSymbol symbol)
-    {
-        return symbol is ITypeSymbol { TypeKind: TypeKind.Error } or IErrorTypeSymbol;
-    }
+    private static bool IsErrorSymbol(TSymbol symbol) =>
+        symbol is ITypeSymbol { TypeKind: TypeKind.Error } or IErrorTypeSymbol;
 
     /// <summary>
     /// Checks if the optional symbol is not valid (empty). Returns true if invalid.
     /// </summary>
-    public bool IsNotValid(out ValidSymbol<TSymbol> validated)
-    {
-        return !IsValid(out validated);
-    }
+    public bool IsNotValid(out ValidSymbol<TSymbol> validated) => !IsValid(out validated);
 
     /// <summary>
     /// Checks if the optional symbol is valid (has value). Returns true if valid.
     /// </summary>
-    public bool IsValid(out ValidSymbol<TSymbol> validated)
-    {
-        return TryValidate(out validated);
-    }
+    public bool IsValid(out ValidSymbol<TSymbol> validated) => TryValidate(out validated);
 
     #endregion
 
@@ -159,38 +126,27 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
     /// <summary>
     /// Maps the symbol to a different type using the provided function.
     /// </summary>
-    public OptionalValue<TResult> Map<TResult>(Func<ValidSymbol<TSymbol>, TResult> mapper)
-    {
-        return _symbol != null
-            ? OptionalValue<TResult>.WithValue(mapper(ValidSymbol<TSymbol>.From(_symbol)))
-            : OptionalValue<TResult>.Empty();
-    }
+    public OptionalValue<TResult> Map<TResult>(Func<ValidSymbol<TSymbol>, TResult> mapper) => _symbol != null
+        ? OptionalValue<TResult>.WithValue(mapper(ValidSymbol<TSymbol>.From(_symbol)))
+        : OptionalValue<TResult>.Empty();
 
     /// <summary>
     /// Alias for Map. Maps the symbol to a different type.
     /// </summary>
-    public OptionalValue<TResult> Select<TResult>(Func<ValidSymbol<TSymbol>, TResult> selector)
-    {
-        return Map(selector);
-    }
+    public OptionalValue<TResult> Select<TResult>(Func<ValidSymbol<TSymbol>, TResult> selector) => Map(selector);
 
     /// <summary>
     /// Filters the symbol based on a predicate.
     /// </summary>
-    public OptionalSymbol<TSymbol> Where(Func<TSymbol, bool> predicate)
-    {
-        return _symbol != null && predicate(_symbol) ? this : Empty();
-    }
+    public OptionalSymbol<TSymbol> Where(Func<TSymbol, bool> predicate) =>
+        _symbol != null && predicate(_symbol) ? this : Empty();
 
     /// <summary>
     /// Attempts to cast the symbol to a derived symbol type.
     /// </summary>
-    public OptionalSymbol<TDerived> OfType<TDerived>() where TDerived : class, ISymbol
-    {
-        return _symbol is TDerived derived
-            ? OptionalSymbol<TDerived>.WithValue(derived)
-            : OptionalSymbol<TDerived>.Empty();
-    }
+    public OptionalSymbol<TDerived> OfType<TDerived>() where TDerived : class, ISymbol => _symbol is TDerived derived
+        ? OptionalSymbol<TDerived>.WithValue(derived)
+        : OptionalSymbol<TDerived>.Empty();
 
     #endregion
 
@@ -199,50 +155,33 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
     /// <summary>
     /// Checks if the symbol equals another symbol using Roslyn's symbol equality.
     /// </summary>
-    public bool Equals(TSymbol? other)
-    {
-        return _symbol != null && other != null && SymbolEqualityComparer.Default.Equals(_symbol, other);
-    }
+    public bool Equals(TSymbol? other) =>
+        _symbol != null && other != null && SymbolEqualityComparer.Default.Equals(_symbol, other);
 
     /// <summary>
     /// Checks if the symbol does not equal another symbol.
     /// </summary>
-    public bool DoesNotEqual(TSymbol? other)
-    {
-        return !Equals(other);
-    }
+    public bool DoesNotEqual(TSymbol? other) => !Equals(other);
 
     /// <summary>
     /// Enables equality checks: optional == symbol
     /// </summary>
-    public static bool operator ==(OptionalSymbol<TSymbol> left, TSymbol? right)
-    {
-        return left.Equals(right);
-    }
+    public static bool operator ==(OptionalSymbol<TSymbol> left, TSymbol? right) => left.Equals(right);
 
     /// <summary>
     /// Enables inequality checks: optional != symbol
     /// </summary>
-    public static bool operator !=(OptionalSymbol<TSymbol> left, TSymbol? right)
-    {
-        return !left.Equals(right);
-    }
+    public static bool operator !=(OptionalSymbol<TSymbol> left, TSymbol? right) => !left.Equals(right);
 
     /// <summary>
     /// Determines whether the current instance equals the specified object (always returns false).
     /// </summary>
-    public override bool Equals(object? obj)
-    {
-        return false;
-    }
+    public override bool Equals(object? obj) => false;
 
     /// <summary>
     /// Returns the hash code for this instance.
     /// </summary>
-    public override int GetHashCode()
-    {
-        return _symbol?.GetHashCode() ?? 0;
-    }
+    public override int GetHashCode() => _symbol?.GetHashCode() ?? 0;
 
     #endregion
 
@@ -262,6 +201,7 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
         {
             if (_symbol?.ContainingNamespace is null)
                 return null;
+
             var ns = _symbol.ContainingNamespace;
             return ns.IsGlobalNamespace ? null : ns.ToDisplayString();
         }
@@ -326,6 +266,7 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
         {
             var typeName = Name;
             if (typeName == null) return null;
+
             return (typeName.StartsWith("I") && typeName.Length > 1 && char.IsUpper(typeName[1])
                 ? typeName.Substring(1)
                 : typeName).ToPascalCase();
@@ -447,6 +388,7 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
         {
             if (_symbol is not INamedTypeSymbol namedType)
                 return false;
+
             return namedType.DeclaringSyntaxReferences
                 .Select(r => r.GetSyntax())
                 .OfType<TypeDeclarationSyntax>()
@@ -588,12 +530,10 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
     /// <summary>
     /// Gets the type arguments of the generic type.
     /// </summary>
-    public ImmutableArray<ValidSymbol<INamedTypeSymbol>> GetTypeArguments()
-    {
-        return _symbol is INamedTypeSymbol { IsGenericType: true } namedType
+    public ImmutableArray<ValidSymbol<INamedTypeSymbol>> GetTypeArguments() =>
+        _symbol is INamedTypeSymbol { IsGenericType: true } namedType
             ? [..namedType.TypeArguments.Select(t => t.AsValidNamedType())]
             : ImmutableArray<ValidSymbol<INamedTypeSymbol>>.Empty;
-    }
 
     /// <summary>
     /// Gets a specific type argument by index.
@@ -711,128 +651,93 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
     /// <summary>
     /// Gets attributes with the specified name.
     /// </summary>
-    public IEnumerable<ValidAttribute> GetAttributes(string attributeName)
-    {
-        return _symbol?.GetAttributesByName(attributeName) ?? [];
-    }
+    public IEnumerable<ValidAttribute> GetAttributes(string attributeName) =>
+        _symbol?.GetAttributesByName(attributeName) ?? [];
 
     /// <summary>
     /// Gets attributes of the specified type.
     /// </summary>
-    public IEnumerable<ValidAttribute> GetAttributes<TAttribute>() where TAttribute : Attribute
-    {
-        return _symbol?.GetAttributesByType<TAttribute>() ?? [];
-    }
+    public IEnumerable<ValidAttribute> GetAttributes<TAttribute>() where TAttribute : Attribute =>
+        _symbol?.GetAttributesByType<TAttribute>() ?? [];
 
     /// <summary>
     /// Gets the first attribute with the specified name.
     /// </summary>
-    public OptionalAttribute GetAttribute(string attributeName)
-    {
-        return _symbol == null
-            ? OptionalAttribute.Empty()
-            : OptionalAttribute.FromNullable(_symbol.GetAttributesByName(attributeName).FirstOrDefault().Value);
-    }
+    public OptionalAttribute GetAttribute(string attributeName) => _symbol == null
+        ? OptionalAttribute.Empty()
+        : OptionalAttribute.FromNullable(_symbol.GetAttributesByName(attributeName).FirstOrDefault().Value);
 
     /// <summary>
     /// Gets the first attribute of the specified type.
     /// </summary>
-    public OptionalAttribute GetAttribute<TAttribute>() where TAttribute : Attribute
-    {
-        return _symbol == null
-            ? OptionalAttribute.Empty()
-            : OptionalAttribute.FromNullable(_symbol.GetAttributesByType<TAttribute>().FirstOrDefault().Value);
-    }
+    public OptionalAttribute GetAttribute<TAttribute>() where TAttribute : Attribute => _symbol == null
+        ? OptionalAttribute.Empty()
+        : OptionalAttribute.FromNullable(_symbol.GetAttributesByType<TAttribute>().FirstOrDefault().Value);
 
     /// <summary>
     /// Gets the first attribute of the specified System.Type.
     /// Supports open generic types - use typeof(MyAttribute&lt;&gt;) to match any instantiation.
     /// </summary>
     /// <param name="attributeType">The attribute type. Can be an open generic like typeof(MyAttribute&lt;&gt;).</param>
-    public OptionalAttribute GetAttribute(Type attributeType)
-    {
-        return _symbol == null
-            ? OptionalAttribute.Empty()
-            : OptionalAttribute.FromNullable(_symbol.GetAttributesByType(attributeType).FirstOrDefault().Value);
-    }
+    public OptionalAttribute GetAttribute(Type attributeType) => _symbol == null
+        ? OptionalAttribute.Empty()
+        : OptionalAttribute.FromNullable(_symbol.GetAttributesByType(attributeType).FirstOrDefault().Value);
 
     /// <summary>
     /// Gets attributes of the specified System.Type.
     /// Supports open generic types - use typeof(MyAttribute&lt;&gt;) to match any instantiation.
     /// </summary>
     /// <param name="attributeType">The attribute type. Can be an open generic like typeof(MyAttribute&lt;&gt;).</param>
-    public IEnumerable<ValidAttribute> GetAttributes(Type attributeType)
-    {
-        return _symbol?.GetAttributesByType(attributeType) ?? [];
-    }
+    public IEnumerable<ValidAttribute> GetAttributes(Type attributeType) =>
+        _symbol?.GetAttributesByType(attributeType) ?? [];
 
     /// <summary>
     /// Checks if the symbol has any attributes.
     /// </summary>
-    public bool HasAttributes()
-    {
-        return _symbol?.GetAttributes().Length > 0;
-    }
+    public bool HasAttributes() => _symbol?.GetAttributes().Length > 0;
 
     /// <summary>
     /// Checks if the symbol has an attribute with the specified name.
     /// </summary>
-    public bool HasAttribute(string attributeName)
-    {
-        return _symbol?.GetAttributesByName(attributeName).Any() == true;
-    }
+    public bool HasAttribute(string attributeName) => _symbol?.GetAttributesByName(attributeName).Any() == true;
 
     /// <summary>
     /// Checks if the symbol has an attribute of the specified type.
     /// </summary>
-    public bool HasAttribute<TAttribute>() where TAttribute : Attribute
-    {
-        return _symbol?.GetAttributesByType<TAttribute>().Any() == true;
-    }
+    public bool HasAttribute<TAttribute>() where TAttribute : Attribute =>
+        _symbol?.GetAttributesByType<TAttribute>().Any() == true;
 
     /// <summary>
     /// Checks if the symbol has an attribute of the specified System.Type.
     /// Supports open generic types - use typeof(MyAttribute&lt;&gt;) to match any instantiation.
     /// </summary>
     /// <param name="attributeType">The attribute type. Can be an open generic like typeof(MyAttribute&lt;&gt;).</param>
-    public bool HasAttribute(Type attributeType)
-    {
-        return _symbol?.GetAttributesByType(attributeType).Any() == true;
-    }
+    public bool HasAttribute(Type attributeType) => _symbol?.GetAttributesByType(attributeType).Any() == true;
 
     /// <summary>
     /// Checks if the symbol has no attributes (or symbol is empty).
     /// </summary>
-    public bool LacksAttributes()
-    {
-        return _symbol == null || _symbol.GetAttributes().Length == 0;
-    }
+    public bool LacksAttributes() => _symbol == null || _symbol.GetAttributes().Length == 0;
 
     /// <summary>
     /// Checks if the symbol does not have an attribute with the specified name (or symbol is empty).
     /// </summary>
-    public bool LacksAttribute(string attributeName)
-    {
-        return _symbol == null || !_symbol.GetAttributesByName(attributeName).Any();
-    }
+    public bool LacksAttribute(string attributeName) =>
+        _symbol == null || !_symbol.GetAttributesByName(attributeName).Any();
 
     /// <summary>
     /// Checks if the symbol does not have an attribute of the specified type (or symbol is empty).
     /// </summary>
-    public bool LacksAttribute<TAttribute>() where TAttribute : Attribute
-    {
-        return _symbol == null || !_symbol.GetAttributesByType<TAttribute>().Any();
-    }
+    public bool LacksAttribute<TAttribute>() where TAttribute : Attribute =>
+        _symbol == null || !_symbol.GetAttributesByType<TAttribute>().Any();
 
     /// <summary>
     /// Checks if the symbol does not have an attribute of the specified System.Type (or symbol is empty).
     /// Supports open generic types - use typeof(MyAttribute&lt;&gt;) to match any instantiation.
     /// </summary>
     /// <param name="attributeType">The attribute type. Can be an open generic like typeof(MyAttribute&lt;&gt;).</param>
-    public bool LacksAttribute(Type attributeType)
-    {
-        return _symbol == null || !_symbol.GetAttributesByType(attributeType).Any();
-    }
+    public bool LacksAttribute(Type attributeType) =>
+        _symbol == null || !_symbol.GetAttributesByType(attributeType).Any();
 
     #endregion
 
@@ -864,6 +769,7 @@ public readonly struct OptionalSymbol<TSymbol> : IValidatableProjection<TSymbol,
     {
         if (_symbol != null)
             action(_symbol);
+
         return this;
     }
 

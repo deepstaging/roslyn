@@ -26,7 +26,6 @@ public static class TypeBuilderSpanFormattableExtensions
         var stringSyntaxAttr = info.GetStringSyntaxAttributeString();
 
         if (info.IsNumericType)
-        {
             return builder
                 .Implements("global::System.ISpanFormattable", Directives.Net6OrGreater)
                 // NET7+ with attribute
@@ -41,7 +40,6 @@ public static class TypeBuilderSpanFormattableExtensions
                 // Simple overload NET6 only
                 .AddMethod(BuildSimpleTryFormatMethod(info, valueAccessor, "")
                     .When(Directives.Net6Only));
-        }
 
         return builder
             .Implements("global::System.ISpanFormattable", Directives.Net6OrGreater)
@@ -60,36 +58,36 @@ public static class TypeBuilderSpanFormattableExtensions
     /// <returns>The modified type builder.</returns>
     public static TypeBuilder ImplementsISpanFormattable(
         this TypeBuilder builder,
-        string tryFormatExpression)
-    {
-        return builder
-            .Implements("global::System.ISpanFormattable", Directives.Net6OrGreater)
-            .AddMethod(MethodBuilder
-                .Parse("public bool TryFormat(global::System.Span<char> destination, out int charsWritten, global::System.ReadOnlySpan<char> format, global::System.IFormatProvider? provider)")
-                .When(Directives.Net6OrGreater)
-                .WithInheritDoc("global::System.ISpanFormattable")
-                .WithExpressionBody(tryFormatExpression));
-    }
+        string tryFormatExpression) => builder
+        .Implements("global::System.ISpanFormattable", Directives.Net6OrGreater)
+        .AddMethod(MethodBuilder
+            .Parse(
+                "public bool TryFormat(global::System.Span<char> destination, out int charsWritten, global::System.ReadOnlySpan<char> format, global::System.IFormatProvider? provider)")
+            .When(Directives.Net6OrGreater)
+            .WithInheritDoc("global::System.ISpanFormattable")
+            .WithExpressionBody(tryFormatExpression));
 
-    private static MethodBuilder BuildTryFormatMethod(SpanFormattableTypeInfo info, string valueAccessor, string stringSyntaxAttr)
+    private static MethodBuilder BuildTryFormatMethod(
+        SpanFormattableTypeInfo info,
+        string valueAccessor,
+        string stringSyntaxAttr)
     {
         var method = MethodBuilder
-            .Parse($"public bool TryFormat(global::System.Span<char> destination, out int charsWritten, {stringSyntaxAttr}global::System.ReadOnlySpan<char> format, global::System.IFormatProvider? provider)")
+            .Parse(
+                $"public bool TryFormat(global::System.Span<char> destination, out int charsWritten, {stringSyntaxAttr}global::System.ReadOnlySpan<char> format, global::System.IFormatProvider? provider)")
             .WithInheritDoc("global::System.ISpanFormattable");
 
         if (info.RequiresNullHandling)
-        {
             return method.WithBody(b => b.AddStatements($$"""
-                var span = ({{valueAccessor}} ?? string.Empty).AsSpan();
-                if (span.TryCopyTo(destination))
-                {
-                    charsWritten = span.Length;
-                    return true;
-                }
-                charsWritten = 0;
-                return false;
-                """));
-        }
+                                                          var span = ({{valueAccessor}} ?? string.Empty).AsSpan();
+                                                          if (span.TryCopyTo(destination))
+                                                          {
+                                                              charsWritten = span.Length;
+                                                              return true;
+                                                          }
+                                                          charsWritten = 0;
+                                                          return false;
+                                                          """));
 
         // Guid doesn't use provider
         if (info.IsGuid)
@@ -98,25 +96,27 @@ public static class TypeBuilderSpanFormattableExtensions
         return method.WithExpressionBody($"{valueAccessor}.TryFormat(destination, out charsWritten, format, provider)");
     }
 
-    private static MethodBuilder BuildSimpleTryFormatMethod(SpanFormattableTypeInfo info, string valueAccessor, string stringSyntaxAttr)
+    private static MethodBuilder BuildSimpleTryFormatMethod(
+        SpanFormattableTypeInfo info,
+        string valueAccessor,
+        string stringSyntaxAttr)
     {
         var method = MethodBuilder
-            .Parse($"public bool TryFormat(global::System.Span<char> destination, out int charsWritten, {stringSyntaxAttr}global::System.ReadOnlySpan<char> format = default)")
+            .Parse(
+                $"public bool TryFormat(global::System.Span<char> destination, out int charsWritten, {stringSyntaxAttr}global::System.ReadOnlySpan<char> format = default)")
             .WithInheritDoc("global::System.ISpanFormattable");
 
         if (info.RequiresNullHandling)
-        {
             return method.WithBody(b => b.AddStatements($$"""
-                var span = ({{valueAccessor}} ?? string.Empty).AsSpan();
-                if (span.TryCopyTo(destination))
-                {
-                    charsWritten = span.Length;
-                    return true;
-                }
-                charsWritten = 0;
-                return false;
-                """));
-        }
+                                                          var span = ({{valueAccessor}} ?? string.Empty).AsSpan();
+                                                          if (span.TryCopyTo(destination))
+                                                          {
+                                                              charsWritten = span.Length;
+                                                              return true;
+                                                          }
+                                                          charsWritten = 0;
+                                                          return false;
+                                                          """));
 
         // Guid doesn't use provider
         if (info.IsGuid)

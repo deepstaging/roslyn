@@ -20,17 +20,14 @@ public static class TypeBuilderEnumerableExtensions
     public static TypeBuilder ImplementsIEnumerable(
         this TypeBuilder builder,
         string elementType,
-        string collectionAccessor)
-    {
-        return builder
-            .Implements($"global::System.Collections.Generic.IEnumerable<{elementType}>")
-            .AddMethod(MethodBuilder
-                .Parse($"public global::System.Collections.Generic.IEnumerator<{elementType}> GetEnumerator()")
-                .WithExpressionBody($"{collectionAccessor}.GetEnumerator()"))
-            .AddMethod(MethodBuilder
-                .Parse("global::System.Collections.IEnumerator global::System.Collections.IEnumerable.GetEnumerator()")
-                .WithExpressionBody("GetEnumerator()"));
-    }
+        string collectionAccessor) => builder
+        .Implements($"global::System.Collections.Generic.IEnumerable<{elementType}>")
+        .AddMethod(MethodBuilder
+            .Parse($"public global::System.Collections.Generic.IEnumerator<{elementType}> GetEnumerator()")
+            .WithExpressionBody($"{collectionAccessor}.GetEnumerator()"))
+        .AddMethod(MethodBuilder
+            .Parse("global::System.Collections.IEnumerator global::System.Collections.IEnumerable.GetEnumerator()")
+            .WithExpressionBody("GetEnumerator()"));
 
     /// <summary>
     /// Implements IEnumerable&lt;T&gt; with a custom enumerator expression.
@@ -42,17 +39,14 @@ public static class TypeBuilderEnumerableExtensions
     public static TypeBuilder ImplementsIEnumerableWith(
         this TypeBuilder builder,
         string elementType,
-        string enumeratorExpression)
-    {
-        return builder
-            .Implements($"global::System.Collections.Generic.IEnumerable<{elementType}>")
-            .AddMethod(MethodBuilder
-                .Parse($"public global::System.Collections.Generic.IEnumerator<{elementType}> GetEnumerator()")
-                .WithExpressionBody(enumeratorExpression))
-            .AddMethod(MethodBuilder
-                .Parse("global::System.Collections.IEnumerator global::System.Collections.IEnumerable.GetEnumerator()")
-                .WithExpressionBody("GetEnumerator()"));
-    }
+        string enumeratorExpression) => builder
+        .Implements($"global::System.Collections.Generic.IEnumerable<{elementType}>")
+        .AddMethod(MethodBuilder
+            .Parse($"public global::System.Collections.Generic.IEnumerator<{elementType}> GetEnumerator()")
+            .WithExpressionBody(enumeratorExpression))
+        .AddMethod(MethodBuilder
+            .Parse("global::System.Collections.IEnumerator global::System.Collections.IEnumerable.GetEnumerator()")
+            .WithExpressionBody("GetEnumerator()"));
 
     /// <summary>
     /// Implements IReadOnlyCollection&lt;T&gt; by delegating to an inner collection.
@@ -65,15 +59,12 @@ public static class TypeBuilderEnumerableExtensions
     public static TypeBuilder ImplementsIReadOnlyCollection(
         this TypeBuilder builder,
         string elementType,
-        string collectionAccessor)
-    {
-        return builder
-            .ImplementsIEnumerable(elementType, collectionAccessor)
-            .Implements($"global::System.Collections.Generic.IReadOnlyCollection<{elementType}>")
-            .AddProperty(PropertyBuilder
-                .For("Count", "int")
-                .WithGetter($"{collectionAccessor}.Count"));
-    }
+        string collectionAccessor) => builder
+        .ImplementsIEnumerable(elementType, collectionAccessor)
+        .Implements($"global::System.Collections.Generic.IReadOnlyCollection<{elementType}>")
+        .AddProperty(PropertyBuilder
+            .For("Count", "int")
+            .WithGetter($"{collectionAccessor}.Count"));
 
     /// <summary>
     /// Implements IReadOnlyList&lt;T&gt; by delegating to an inner list.
@@ -86,13 +77,10 @@ public static class TypeBuilderEnumerableExtensions
     public static TypeBuilder ImplementsIReadOnlyList(
         this TypeBuilder builder,
         string elementType,
-        string listAccessor)
-    {
-        return builder
-            .ImplementsIReadOnlyCollection(elementType, listAccessor)
-            .Implements($"global::System.Collections.Generic.IReadOnlyList<{elementType}>")
-            .AddProperty(PropertyBuilder
-                .For($"this[int index]", elementType)
-                .WithGetter($"{listAccessor}[index]"));
-    }
+        string listAccessor) => builder
+        .ImplementsIReadOnlyCollection(elementType, listAccessor)
+        .Implements($"global::System.Collections.Generic.IReadOnlyList<{elementType}>")
+        .AddProperty(PropertyBuilder
+            .For($"this[int index]", elementType)
+            .WithGetter($"{listAccessor}[index]"));
 }

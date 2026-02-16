@@ -23,9 +23,9 @@ internal static class DirectiveHelper
         var ifDirective = SyntaxFactory.Trivia(
             SyntaxFactory.IfDirectiveTrivia(
                 SyntaxFactory.ParseExpression(condition),
-                isActive: true,
-                branchTaken: true,
-                conditionValue: true));
+                true,
+                true,
+                true));
 
         var endIfDirective = SyntaxFactory.Trivia(
             SyntaxFactory.EndIfDirectiveTrivia(isActive: true));
@@ -62,9 +62,9 @@ internal static class DirectiveHelper
         var ifDirective = SyntaxFactory.Trivia(
             SyntaxFactory.IfDirectiveTrivia(
                 SyntaxFactory.ParseExpression(condition),
-                isActive: true,
-                branchTaken: true,
-                conditionValue: true));
+                true,
+                true,
+                true));
 
         var endIfDirective = SyntaxFactory.Trivia(
             SyntaxFactory.EndIfDirectiveTrivia(isActive: true));

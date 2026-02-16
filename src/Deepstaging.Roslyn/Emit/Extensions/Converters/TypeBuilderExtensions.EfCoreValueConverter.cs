@@ -3,11 +3,20 @@
 
 namespace Deepstaging.Roslyn.Emit.Converters;
 
+using static TypeRef;
+
 /// <summary>
 /// Extensions for adding Entity Framework Core ValueConverter implementations.
 /// </summary>
 public static class TypeBuilderEfCoreValueConverterExtensions
 {
+    private static TypeRef ValueConverter(TypeRef type, TypeRef backingType) =>
+        CreateTypeRef("global::Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter")
+            .Of(type, backingType);
+
+    private static readonly TypeRef ConverterMappingHints =
+        CreateTypeRef("global::Microsoft.EntityFrameworkCore.Storage.ValueConversion.ConverterMappingHints");
+
     /// <summary>
     /// Adds a nested EF Core ValueConverter class.
     /// Uses lambda expressions for conversion in constructor.
@@ -36,16 +45,12 @@ public static class TypeBuilderEfCoreValueConverterExtensions
         var typeName = builder.Name;
 
         var converterType = TypeBuilder
-            .Parse($"public partial class {converterName} : global::Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter<{typeName}, {backingType}>")
+            .Parse($"public partial class {converterName} : {ValueConverter(typeName, backingType)}")
             .AddConstructor(c => c.CallsThis("null"))
             .AddConstructor(c => c
-                .AddParameter("mappingHints",
-                    "global::Microsoft.EntityFrameworkCore.Storage.ValueConversion.ConverterMappingHints?",
-                    p => p.WithDefaultValue("null"))
-                .CallsBase(
-                    toProviderExpression,
-                    fromProviderExpression,
-                    "mappingHints"));
+                .AddParameter("mappingHints", ConverterMappingHints.Nullable(), p => p
+                    .WithDefaultValue("null"))
+                .CallsBase(toProviderExpression, fromProviderExpression, "mappingHints"));
 
         return builder.AddNestedType(converterType);
     }
@@ -65,9 +70,10 @@ public static class TypeBuilderEfCoreValueConverterExtensions
     {
         var typeName = builder.Name;
 
-        var converterType = configure(TypeBuilder
-            .Parse($"public partial class {converterName} : global::Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter<{typeName}, {backingType}>"));
+        var converter = configure(TypeBuilder.Parse(
+            $"public partial class {converterName} : {ValueConverter(typeName, backingType)}"
+        ));
 
-        return builder.AddNestedType(converterType);
+        return builder.AddNestedType(converter);
     }
 }

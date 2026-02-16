@@ -41,10 +41,13 @@ TypeBuilder
 
 ## Features
 
-- **[Queries](https://deepstaging.github.io/roslyn/api/queries/)** - Fluent builders for finding types, methods, properties, fields, constructors, events, and parameters
-- **[Projections](https://deepstaging.github.io/roslyn/api/projections/)** - Optional/validated wrappers that make null-checking less painful
+- **[Queries](https://deepstaging.github.io/roslyn/api/queries/)** - Fluent builders for finding types, methods,
+  properties, fields, constructors, events, and parameters
+- **[Projections](https://deepstaging.github.io/roslyn/api/projections/)** - Optional/validated wrappers that make
+  null-checking less painful
 - **[Emit](https://deepstaging.github.io/roslyn/api/emit/)** - Fluent builders for generating compilable C# code
-- **[Extensions](https://deepstaging.github.io/roslyn/api/extensions/)** - Convenience methods for common Roslyn operations
+- **[Extensions](https://deepstaging.github.io/roslyn/api/extensions/)** - Convenience methods for common Roslyn
+  operations
 
 ## Why?
 
@@ -134,8 +137,10 @@ get valid CompilationUnitSyntax you can use with Roslyn's APIs.
 ## Related Packages
 
 - **[Testing](https://deepstaging.github.io/roslyn/packages/testing/)** - Test infrastructure for Roslyn components
-- **[Scriban Templates](https://deepstaging.github.io/roslyn/packages/scriban/)** - Template infrastructure for source generators
-- **[Workspace / Code Fixes](https://deepstaging.github.io/roslyn/packages/workspace/)** - Code fix provider infrastructure
+- **[Scriban Templates](https://deepstaging.github.io/roslyn/packages/scriban/)** - Template infrastructure for source
+  generators
+- **[Workspace / Code Fixes](https://deepstaging.github.io/roslyn/packages/workspace/)** - Code fix provider
+  infrastructure
 
 ## License
 

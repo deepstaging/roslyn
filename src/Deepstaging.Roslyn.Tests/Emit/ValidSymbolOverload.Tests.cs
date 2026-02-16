@@ -7,15 +7,15 @@ namespace Deepstaging.Roslyn.Tests.Emit;
 
 public class ValidSymbolOverloadTests : RoslynTestBase
 {
-    const string Source = """
-                          using System;
-                          public class Customer { }
-                          """;
+    private const string Source = """
+                                  using System;
+                                  public class Customer { }
+                                  """;
 
-    ValidSymbol<ITypeSymbol> CustomerType()
+    private ValidSymbol<ITypeSymbol> CustomerType()
         => SymbolsFor(Source).RequireType("Customer");
 
-    ValidSymbol<INamedTypeSymbol> CustomerNamedType()
+    private ValidSymbol<INamedTypeSymbol> CustomerNamedType()
         => SymbolsFor(Source).RequireNamedType("Customer");
 
     [Test]

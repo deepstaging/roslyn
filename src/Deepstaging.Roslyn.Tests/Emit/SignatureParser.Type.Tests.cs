@@ -175,25 +175,19 @@ public class SignatureParserTypeTests : RoslynTestBase
     #region Error Handling
 
     [Test]
-    public async Task Parse_InvalidSignature_ThrowsArgumentException()
-    {
+    public async Task Parse_InvalidSignature_ThrowsArgumentException() =>
         await Assert.ThrowsAsync<ArgumentException>(() =>
             Task.FromResult(TypeBuilder.Parse("this is not valid")));
-    }
 
     [Test]
-    public async Task Parse_EmptySignature_ThrowsArgumentException()
-    {
+    public async Task Parse_EmptySignature_ThrowsArgumentException() =>
         await Assert.ThrowsAsync<ArgumentException>(() =>
             Task.FromResult(TypeBuilder.Parse("")));
-    }
 
     [Test]
-    public async Task Parse_NullSignature_ThrowsArgumentException()
-    {
+    public async Task Parse_NullSignature_ThrowsArgumentException() =>
         await Assert.ThrowsAsync<ArgumentException>(() =>
             Task.FromResult(TypeBuilder.Parse(null!)));
-    }
 
     #endregion
 
@@ -223,7 +217,7 @@ public class SignatureParserTypeTests : RoslynTestBase
     [Test]
     public async Task Parse_GenericClassWithTypeRef_PreservesTypeParameters()
     {
-        TypeRef queryType = TypeRef.From("DbSetQuery").Of("RT", "T");
+        var queryType = TypeRef.From("DbSetQuery").Of("RT", "T");
 
         var result = TypeBuilder.Parse($"public sealed class {queryType} where T : class")
             .Emit();

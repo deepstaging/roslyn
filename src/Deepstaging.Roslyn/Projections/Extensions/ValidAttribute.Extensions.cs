@@ -13,10 +13,7 @@ public static class ValidAttributeExtensions
         /// <summary>
         /// Checks if a constructor argument exists at the specified index.
         /// </summary>
-        public bool HasConstructorArg(int index)
-        {
-            return attribute.Value.ConstructorArguments.Length > index;
-        }
+        public bool HasConstructorArg(int index) => attribute.Value.ConstructorArguments.Length > index;
 
         /// <summary>
         /// Attempts to get a constructor argument at the specified index.
@@ -25,6 +22,7 @@ public static class ValidAttributeExtensions
         public bool TryGetConstructorArg<T>(int index, out T? value)
         {
             var arg = attribute.ConstructorArg<T>(index);
+
             if (arg.HasValue)
             {
                 value = arg.OrThrow();
@@ -47,10 +45,7 @@ public static class ValidAttributeExtensions
         /// <summary>
         /// Checks if a named argument exists with the specified name.
         /// </summary>
-        public bool HasNamedArg(string name)
-        {
-            return attribute.Value.NamedArguments.Any(kvp => kvp.Key == name);
-        }
+        public bool HasNamedArg(string name) => attribute.Value.NamedArguments.Any(kvp => kvp.Key == name);
 
         /// <summary>
         /// Attempts to get a named argument by name.
@@ -59,6 +54,7 @@ public static class ValidAttributeExtensions
         public bool TryGetNamedArg<T>(string name, out T? value)
         {
             var arg = attribute.NamedArg<T>(name);
+
             if (arg.HasValue)
             {
                 value = arg.OrThrow();
@@ -81,50 +77,33 @@ public static class ValidAttributeExtensions
         /// <summary>
         /// Gets all named arguments as a dictionary.
         /// </summary>
-        public Dictionary<string, TypedConstant> GetAllNamedArgs()
-        {
-            return attribute.Value.NamedArguments.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-        }
+        public Dictionary<string, TypedConstant> GetAllNamedArgs() =>
+            attribute.Value.NamedArguments.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
         /// <summary>
         /// Gets all constructor arguments as TypedConstants.
         /// </summary>
-        public ImmutableArray<TypedConstant> GetAllConstructorArgs()
-        {
-            return attribute.Value.ConstructorArguments;
-        }
+        public ImmutableArray<TypedConstant> GetAllConstructorArgs() => attribute.Value.ConstructorArguments;
 
         /// <summary>
         /// Gets the number of constructor arguments.
         /// </summary>
-        public int GetConstructorArgCount()
-        {
-            return attribute.Value.ConstructorArguments.Length;
-        }
+        public int GetConstructorArgCount() => attribute.Value.ConstructorArguments.Length;
 
         /// <summary>
         /// Gets the number of named arguments.
         /// </summary>
-        public int GetNamedArgCount()
-        {
-            return attribute.Value.NamedArguments.Length;
-        }
+        public int GetNamedArgCount() => attribute.Value.NamedArguments.Length;
 
         /// <summary>
         /// Checks if this attribute has any constructor arguments.
         /// </summary>
-        public bool HasAnyConstructorArgs()
-        {
-            return attribute.Value.ConstructorArguments.Length > 0;
-        }
+        public bool HasAnyConstructorArgs() => attribute.Value.ConstructorArguments.Length > 0;
 
         /// <summary>
         /// Checks if this attribute has any named arguments.
         /// </summary>
-        public bool HasAnyNamedArgs()
-        {
-            return attribute.Value.NamedArguments.Length > 0;
-        }
+        public bool HasAnyNamedArgs() => attribute.Value.NamedArguments.Length > 0;
 
         /// <summary>
         /// Gets the attribute constructor symbol.
@@ -138,27 +117,19 @@ public static class ValidAttributeExtensions
         /// <summary>
         /// Gets the attribute class as a validated symbol.
         /// </summary>
-        public ValidSymbol<INamedTypeSymbol> GetAttributeClass()
-        {
-            return ValidSymbol<INamedTypeSymbol>.From(attribute.AttributeClass);
-        }
+        public ValidSymbol<INamedTypeSymbol> GetAttributeClass() =>
+            ValidSymbol<INamedTypeSymbol>.From(attribute.AttributeClass);
 
         /// <summary>
         /// Checks whether this attribute is of the specified attribute type.
         /// </summary>
-        public bool Is<TAttribute>() where TAttribute : Attribute
-        {
-            return attribute.Value.Is<TAttribute>();
-        }
+        public bool Is<TAttribute>() where TAttribute : Attribute => attribute.Value.Is<TAttribute>();
 
         /// <summary>
         /// Checks whether this attribute is of the specified type, returning an OptionalAttribute
         /// with the value if it matches, or empty if it does not.
         /// </summary>
-        public OptionalAttribute As<TAttribute>() where TAttribute : Attribute
-        {
-            return attribute.Value.As<TAttribute>();
-        }
+        public OptionalAttribute As<TAttribute>() where TAttribute : Attribute => attribute.Value.As<TAttribute>();
 
         /// <summary>
         /// Checks if this attribute matches the specified attribute name (with or without "Attribute" suffix).
@@ -185,10 +156,8 @@ public static class ValidAttributeExtensions
         /// <summary>
         /// Gets the fully qualified name of the attribute class.
         /// </summary>
-        public string GetFullyQualifiedName()
-        {
-            return attribute.AttributeClass.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-        }
+        public string GetFullyQualifiedName() =>
+            attribute.AttributeClass.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
 
         /// <summary>
         /// Gets the namespace of the attribute class.

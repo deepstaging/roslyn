@@ -26,7 +26,8 @@ public static class TypeBuilderUnsignedRightShiftOperatorExtensions
             return builder;
 
         return builder
-            .Implements($"global::System.Numerics.IShiftOperators<{typeName}, int, {typeName}>", Directives.Net7OrGreater)
+            .Implements($"global::System.Numerics.IShiftOperators<{typeName}, int, {typeName}>",
+                Directives.Net7OrGreater)
             .AddOperator(OperatorBuilder
                 .UnsignedRightShift(typeName)
                 .When(Directives.Net7OrGreater)
@@ -43,7 +44,8 @@ public static class TypeBuilderUnsignedRightShiftOperatorExtensions
         var typeName = builder.Name;
 
         return builder
-            .Implements($"global::System.Numerics.IShiftOperators<{typeName}, int, {typeName}>", Directives.Net7OrGreater)
+            .Implements($"global::System.Numerics.IShiftOperators<{typeName}, int, {typeName}>",
+                Directives.Net7OrGreater)
             .AddOperator(OperatorBuilder
                 .UnsignedRightShift(typeName)
                 .When(Directives.Net7OrGreater)

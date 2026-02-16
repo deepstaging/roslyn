@@ -12,27 +12,20 @@ public readonly struct ValidAttribute : IProjection<AttributeData>
 {
     private readonly AttributeData _attribute;
 
-    private ValidAttribute(AttributeData attribute)
-    {
+    private ValidAttribute(AttributeData attribute) =>
         _attribute = attribute ?? throw new ArgumentNullException(nameof(attribute));
-    }
 
     /// <summary>
     /// Creates a validated attribute from non-null AttributeData.
     /// </summary>
-    public static ValidAttribute From(AttributeData attribute)
-    {
-        return new ValidAttribute(attribute);
-    }
+    public static ValidAttribute From(AttributeData attribute) => new(attribute);
 
     /// <summary>
     /// Attempts to create a validated attribute from nullable AttributeData.
     /// Returns null if the attribute is null.
     /// </summary>
-    public static ValidAttribute? TryFrom(AttributeData? attribute)
-    {
-        return attribute != null ? new ValidAttribute(attribute) : null;
-    }
+    public static ValidAttribute? TryFrom(AttributeData? attribute) =>
+        attribute != null ? new ValidAttribute(attribute) : null;
 
     /// <summary>
     /// Gets the underlying non-null AttributeData.
@@ -54,18 +47,12 @@ public readonly struct ValidAttribute : IProjection<AttributeData>
     /// <summary>
     /// Returns the guaranteed non-null attribute.
     /// </summary>
-    public AttributeData OrThrow(string? message = null)
-    {
-        return _attribute;
-    }
+    public AttributeData OrThrow(string? message = null) => _attribute;
 
     /// <summary>
     /// Returns the guaranteed non-null attribute.
     /// </summary>
-    public AttributeData OrNull()
-    {
-        return _attribute;
-    }
+    public AttributeData OrNull() => _attribute;
 
     /// <summary>
     /// Gets the attribute class (the type of the attribute).
@@ -94,28 +81,20 @@ public readonly struct ValidAttribute : IProjection<AttributeData>
     /// <summary>
     /// Gets a named argument (property value) from the attribute (alias for NamedArg).
     /// </summary>
-    public OptionalArgument<T> GetNamedArgument<T>(string name)
-    {
-        return NamedArg<T>(name);
-    }
+    public OptionalArgument<T> GetNamedArgument<T>(string name) => NamedArg<T>(name);
 
     /// <summary>
     /// Maps the attribute to a different type.
     /// </summary>
-    public TResult Map<TResult>(Func<AttributeData, TResult> mapper)
-    {
-        return mapper(_attribute);
-    }
+    public TResult Map<TResult>(Func<AttributeData, TResult> mapper) => mapper(_attribute);
 
     /// <summary>
     /// Gets the type arguments for generic attributes as TypeModels.
     /// </summary>
-    public ImmutableArray<ValidSymbol<INamedTypeSymbol>> GetTypeArguments()
-    {
-        return _attribute.AttributeClass is { IsGenericType: true } attrType
+    public ImmutableArray<ValidSymbol<INamedTypeSymbol>> GetTypeArguments() =>
+        _attribute.AttributeClass is { IsGenericType: true } attrType
             ? [..attrType.TypeArguments.Select(t => t.AsValidNamedType())]
             : ImmutableArray<ValidSymbol<INamedTypeSymbol>>.Empty;
-    }
 
     /// <summary>
     /// Gets a specific type argument by index as a TypeModel.
@@ -153,6 +132,7 @@ public readonly struct ValidAttribute : IProjection<AttributeData>
         get
         {
             var name = AttributeClass.Name;
+
             return (name.EndsWith("Attribute") && name.Length > "Attribute".Length
                 ? name.Substring(0, name.Length - "Attribute".Length)
                 : name).ToPascalCase();

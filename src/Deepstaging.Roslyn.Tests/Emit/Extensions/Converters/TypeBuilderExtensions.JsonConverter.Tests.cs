@@ -14,17 +14,22 @@ public sealed class TypeBuilderExtensionsJsonConverterTests : RoslynTestBase
         var type = TypeBuilder.Parse("public partial struct UserId")
             .WithJsonConverter(
                 "UserIdJsonConverter",
-                readExpression: "new(reader.GetGuid())",
-                writeExpression: "writer.WriteStringValue(value.Value)");
+                "new(reader.GetGuid())",
+                "writer.WriteStringValue(value.Value)");
 
         var result = type.Emit();
 
-        await Assert.That(result.Code).Contains("public partial class UserIdJsonConverter : global::System.Text.Json.Serialization.JsonConverter<UserId>");
+        await Assert.That(result.Code)
+            .Contains(
+                "public partial class UserIdJsonConverter : global::System.Text.Json.Serialization.JsonConverter<UserId>");
+
         await Assert.That(result.Code).Contains("public override UserId Read");
         await Assert.That(result.Code).Contains("new(reader.GetGuid())");
         await Assert.That(result.Code).Contains("public override void Write");
         await Assert.That(result.Code).Contains("writer.WriteStringValue(value.Value)");
-        await Assert.That(result.Code).Contains("[global::System.Text.Json.Serialization.JsonConverter(typeof(UserIdJsonConverter))]");
+
+        await Assert.That(result.Code)
+            .Contains("[global::System.Text.Json.Serialization.JsonConverter(typeof(UserIdJsonConverter))]");
     }
 
     [Test]
@@ -33,10 +38,10 @@ public sealed class TypeBuilderExtensionsJsonConverterTests : RoslynTestBase
         var type = TypeBuilder.Parse("public partial struct UserId")
             .WithJsonConverter(
                 "UserIdJsonConverter",
-                readExpression: "new(reader.GetGuid())",
-                writeExpression: "writer.WriteStringValue(value.Value)",
-                readAsPropertyNameExpression: "new(global::System.Guid.Parse(reader.GetString()!))",
-                writeAsPropertyNameExpression: "writer.WritePropertyName(value.Value.ToString())");
+                "new(reader.GetGuid())",
+                "writer.WriteStringValue(value.Value)",
+                "new(global::System.Guid.Parse(reader.GetString()!))",
+                "writer.WritePropertyName(value.Value.ToString())");
 
         var result = type.Emit();
 
@@ -51,8 +56,8 @@ public sealed class TypeBuilderExtensionsJsonConverterTests : RoslynTestBase
         var type = TypeBuilder.Parse("public partial struct UserId")
             .WithJsonConverter(
                 "UserIdJsonConverter",
-                readExpression: "default",
-                writeExpression: "writer.WriteNullValue()",
+                "default",
+                "writer.WriteNullValue()",
                 addAttribute: false);
 
         var result = type.Emit();
@@ -66,9 +71,13 @@ public sealed class TypeBuilderExtensionsJsonConverterTests : RoslynTestBase
     {
         var type = TypeBuilder.Parse("public partial struct UserId")
             .WithJsonConverter("UserIdJsonConverter", t => t
-                .AddMethod(MethodBuilder.Parse("public override UserId Read(ref global::System.Text.Json.Utf8JsonReader reader, global::System.Type typeToConvert, global::System.Text.Json.JsonSerializerOptions options)")
+                .AddMethod(MethodBuilder
+                    .Parse(
+                        "public override UserId Read(ref global::System.Text.Json.Utf8JsonReader reader, global::System.Type typeToConvert, global::System.Text.Json.JsonSerializerOptions options)")
                     .WithExpressionBody("default"))
-                .AddMethod(MethodBuilder.Parse("public override void Write(global::System.Text.Json.Utf8JsonWriter writer, UserId value, global::System.Text.Json.JsonSerializerOptions options)")
+                .AddMethod(MethodBuilder
+                    .Parse(
+                        "public override void Write(global::System.Text.Json.Utf8JsonWriter writer, UserId value, global::System.Text.Json.JsonSerializerOptions options)")
                     .WithBody(b => b.AddStatement("writer.WriteNullValue()"))));
 
         var result = type.Emit();

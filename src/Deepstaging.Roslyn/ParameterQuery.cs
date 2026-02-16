@@ -21,129 +21,83 @@ public readonly struct ParameterQuery
     /// <summary>
     /// Creates a new parameter query for the specified method symbol.
     /// </summary>
-    public static ParameterQuery From(IMethodSymbol methodSymbol)
-    {
-        return new ParameterQuery(methodSymbol, ImmutableArray<Func<IParameterSymbol, bool>>.Empty);
-    }
+    public static ParameterQuery From(IMethodSymbol methodSymbol) =>
+        new(methodSymbol, ImmutableArray<Func<IParameterSymbol, bool>>.Empty);
 
-    private ParameterQuery AddFilter(Func<IParameterSymbol, bool> filter)
-    {
-        return new ParameterQuery(_methodSymbol, _filters.Add(filter));
-    }
+    private ParameterQuery AddFilter(Func<IParameterSymbol, bool> filter) =>
+        new(_methodSymbol, _filters.Add(filter));
 
     #region Modifier Filters
 
     /// <summary>
     /// Filters for ref parameters.
     /// </summary>
-    public ParameterQuery ThatAreRef()
-    {
-        return AddFilter(p => p.RefKind == RefKind.Ref);
-    }
+    public ParameterQuery ThatAreRef() => AddFilter(p => p.RefKind == RefKind.Ref);
 
     /// <summary>
     /// Filters for parameters that are not ref.
     /// </summary>
-    public ParameterQuery ThatAreNotRef()
-    {
-        return AddFilter(p => p.RefKind != RefKind.Ref);
-    }
+    public ParameterQuery ThatAreNotRef() => AddFilter(p => p.RefKind != RefKind.Ref);
 
     /// <summary>
     /// Filters for out parameters.
     /// </summary>
-    public ParameterQuery ThatAreOut()
-    {
-        return AddFilter(p => p.RefKind == RefKind.Out);
-    }
+    public ParameterQuery ThatAreOut() => AddFilter(p => p.RefKind == RefKind.Out);
 
     /// <summary>
     /// Filters for parameters that are not out.
     /// </summary>
-    public ParameterQuery ThatAreNotOut()
-    {
-        return AddFilter(p => p.RefKind != RefKind.Out);
-    }
+    public ParameterQuery ThatAreNotOut() => AddFilter(p => p.RefKind != RefKind.Out);
 
     /// <summary>
     /// Filters for in parameters.
     /// </summary>
-    public ParameterQuery ThatAreIn()
-    {
-        return AddFilter(p => p.RefKind == RefKind.In);
-    }
+    public ParameterQuery ThatAreIn() => AddFilter(p => p.RefKind == RefKind.In);
 
     /// <summary>
     /// Filters for parameters that are not in.
     /// </summary>
-    public ParameterQuery ThatAreNotIn()
-    {
-        return AddFilter(p => p.RefKind != RefKind.In);
-    }
+    public ParameterQuery ThatAreNotIn() => AddFilter(p => p.RefKind != RefKind.In);
 
     /// <summary>
     /// Filters for params parameters (parameter arrays).
     /// </summary>
-    public ParameterQuery ThatAreParams()
-    {
-        return AddFilter(p => p.IsParams);
-    }
+    public ParameterQuery ThatAreParams() => AddFilter(p => p.IsParams);
 
     /// <summary>
     /// Filters for parameters that are not params.
     /// </summary>
-    public ParameterQuery ThatAreNotParams()
-    {
-        return AddFilter(p => !p.IsParams);
-    }
+    public ParameterQuery ThatAreNotParams() => AddFilter(p => !p.IsParams);
 
     /// <summary>
     /// Filters for optional parameters (have default values).
     /// </summary>
-    public ParameterQuery ThatAreOptional()
-    {
-        return AddFilter(p => p.IsOptional);
-    }
+    public ParameterQuery ThatAreOptional() => AddFilter(p => p.IsOptional);
 
     /// <summary>
     /// Filters for required parameters (no default values).
     /// </summary>
-    public ParameterQuery ThatAreRequired()
-    {
-        return AddFilter(p => !p.IsOptional);
-    }
+    public ParameterQuery ThatAreRequired() => AddFilter(p => !p.IsOptional);
 
     /// <summary>
     /// Filters for this parameters (extension method receivers).
     /// </summary>
-    public ParameterQuery ThatAreThis()
-    {
-        return AddFilter(p => p.IsThis);
-    }
+    public ParameterQuery ThatAreThis() => AddFilter(p => p.IsThis);
 
     /// <summary>
     /// Filters for parameters that are not this.
     /// </summary>
-    public ParameterQuery ThatAreNotThis()
-    {
-        return AddFilter(p => !p.IsThis);
-    }
+    public ParameterQuery ThatAreNotThis() => AddFilter(p => !p.IsThis);
 
     /// <summary>
     /// Filters for parameters that discard their value (named _).
     /// </summary>
-    public ParameterQuery ThatAreDiscards()
-    {
-        return AddFilter(p => p.IsDiscard);
-    }
+    public ParameterQuery ThatAreDiscards() => AddFilter(p => p.IsDiscard);
 
     /// <summary>
     /// Filters for parameters that are not discards.
     /// </summary>
-    public ParameterQuery ThatAreNotDiscards()
-    {
-        return AddFilter(p => !p.IsDiscard);
-    }
+    public ParameterQuery ThatAreNotDiscards() => AddFilter(p => !p.IsDiscard);
 
     #endregion
 
@@ -152,34 +106,22 @@ public readonly struct ParameterQuery
     /// <summary>
     /// Filters for parameters with the exact name.
     /// </summary>
-    public ParameterQuery WithName(string name)
-    {
-        return AddFilter(p => p.Name == name);
-    }
+    public ParameterQuery WithName(string name) => AddFilter(p => p.Name == name);
 
     /// <summary>
     /// Filters for parameters with names starting with the specified prefix.
     /// </summary>
-    public ParameterQuery WithNamePrefix(string prefix)
-    {
-        return AddFilter(p => p.Name.StartsWith(prefix));
-    }
+    public ParameterQuery WithNamePrefix(string prefix) => AddFilter(p => p.Name.StartsWith(prefix));
 
     /// <summary>
     /// Filters for parameters with names ending with the specified suffix.
     /// </summary>
-    public ParameterQuery WithNameSuffix(string suffix)
-    {
-        return AddFilter(p => p.Name.EndsWith(suffix));
-    }
+    public ParameterQuery WithNameSuffix(string suffix) => AddFilter(p => p.Name.EndsWith(suffix));
 
     /// <summary>
     /// Filters for parameters with names matching a predicate.
     /// </summary>
-    public ParameterQuery WithNameMatching(Func<string, bool> predicate)
-    {
-        return AddFilter(p => predicate(p.Name));
-    }
+    public ParameterQuery WithNameMatching(Func<string, bool> predicate) => AddFilter(p => predicate(p.Name));
 
     #endregion
 
@@ -188,50 +130,32 @@ public readonly struct ParameterQuery
     /// <summary>
     /// Filters for parameters of a specific type.
     /// </summary>
-    public ParameterQuery WithType<T>()
-    {
-        return AddFilter(p => p.Type.Name == typeof(T).Name);
-    }
+    public ParameterQuery WithType<T>() => AddFilter(p => p.Type.Name == typeof(T).Name);
 
     /// <summary>
     /// Filters for parameters of a specific type by name.
     /// </summary>
-    public ParameterQuery WithType(string typeName)
-    {
-        return AddFilter(p => p.Type.Name == typeName);
-    }
+    public ParameterQuery WithType(string typeName) => AddFilter(p => p.Type.Name == typeName);
 
     /// <summary>
     /// Filters for parameters with generic types.
     /// </summary>
-    public ParameterQuery ThatAreGenericType()
-    {
-        return AddFilter(p => p.Type is INamedTypeSymbol { IsGenericType: true });
-    }
+    public ParameterQuery ThatAreGenericType() => AddFilter(p => p.Type is INamedTypeSymbol { IsGenericType: true });
 
     /// <summary>
     /// Filters for parameters that are not generic types.
     /// </summary>
-    public ParameterQuery ThatAreNotGenericType()
-    {
-        return AddFilter(p => p.Type is not INamedTypeSymbol { IsGenericType: true });
-    }
+    public ParameterQuery ThatAreNotGenericType() => AddFilter(p => p.Type is not INamedTypeSymbol { IsGenericType: true });
 
     /// <summary>
     /// Filters for parameters with nullable value types.
     /// </summary>
-    public ParameterQuery ThatAreNullable()
-    {
-        return AddFilter(p => p.Type.NullableAnnotation == NullableAnnotation.Annotated);
-    }
+    public ParameterQuery ThatAreNullable() => AddFilter(p => p.Type.NullableAnnotation == NullableAnnotation.Annotated);
 
     /// <summary>
     /// Filters for parameters that are not nullable.
     /// </summary>
-    public ParameterQuery ThatAreNotNullable()
-    {
-        return AddFilter(p => p.Type.NullableAnnotation != NullableAnnotation.Annotated);
-    }
+    public ParameterQuery ThatAreNotNullable() => AddFilter(p => p.Type.NullableAnnotation != NullableAnnotation.Annotated);
 
     #endregion
 
@@ -240,18 +164,12 @@ public readonly struct ParameterQuery
     /// <summary>
     /// Filters for parameters at a specific position (0-based index).
     /// </summary>
-    public ParameterQuery AtPosition(int index)
-    {
-        return AddFilter(p => p.Ordinal == index);
-    }
+    public ParameterQuery AtPosition(int index) => AddFilter(p => p.Ordinal == index);
 
     /// <summary>
     /// Filters for the first parameter (position 0).
     /// </summary>
-    public ParameterQuery ThatAreFirst()
-    {
-        return AddFilter(p => p.Ordinal == 0);
-    }
+    public ParameterQuery ThatAreFirst() => AddFilter(p => p.Ordinal == 0);
 
     /// <summary>
     /// Filters for the last parameter.
@@ -269,26 +187,19 @@ public readonly struct ParameterQuery
     /// <summary>
     /// Filters for parameters that have the specified attribute.
     /// </summary>
-    public ParameterQuery WithAttribute<TAttribute>() where TAttribute : Attribute
-    {
-        return AddFilter(p => p.GetAttributesByType<TAttribute>().Any());
-    }
+    public ParameterQuery WithAttribute<TAttribute>() where TAttribute : Attribute =>
+        AddFilter(p => p.GetAttributesByType<TAttribute>().Any());
 
     /// <summary>
     /// Filters for parameters that have an attribute with the specified name.
     /// </summary>
-    public ParameterQuery WithAttribute(string attributeName)
-    {
-        return AddFilter(p => p.GetAttributesByName(attributeName).Any());
-    }
+    public ParameterQuery WithAttribute(string attributeName) => AddFilter(p => p.GetAttributesByName(attributeName).Any());
 
     /// <summary>
     /// Filters for parameters that do not have the specified attribute.
     /// </summary>
-    public ParameterQuery WithoutAttribute<TAttribute>() where TAttribute : Attribute
-    {
-        return AddFilter(p => !p.GetAttributesByType<TAttribute>().Any());
-    }
+    public ParameterQuery WithoutAttribute<TAttribute>() where TAttribute : Attribute =>
+        AddFilter(p => !p.GetAttributesByType<TAttribute>().Any());
 
     #endregion
 
@@ -298,10 +209,7 @@ public readonly struct ParameterQuery
     /// Filters for parameters matching the custom predicate.
     /// Use this as an escape hatch for complex or uncommon filters.
     /// </summary>
-    public ParameterQuery Where(Func<IParameterSymbol, bool> predicate)
-    {
-        return AddFilter(predicate);
-    }
+    public ParameterQuery Where(Func<IParameterSymbol, bool> predicate) => AddFilter(predicate);
 
     #endregion
 
@@ -341,18 +249,14 @@ public readonly struct ParameterQuery
     /// <summary>
     /// Gets all matching and projects each parameter using the specified mapper.
     /// </summary>
-    public ImmutableArray<TModel> Select<TModel>(Func<ValidSymbol<IParameterSymbol>, TModel> mapper)
-    {
-        return [..GetAll().Select(mapper)];
-    }
+    public ImmutableArray<TModel> Select<TModel>(Func<ValidSymbol<IParameterSymbol>, TModel> mapper) =>
+        [..GetAll().Select(mapper)];
 
     /// <summary>
     /// Gets all matching and projects each parameter to a collection, then flattens the results.
     /// </summary>
-    public ImmutableArray<TModel> SelectMany<TModel>(Func<ValidSymbol<IParameterSymbol>, IEnumerable<TModel>> mapper)
-    {
-        return [..GetAll().SelectMany(mapper)];
-    }
+    public ImmutableArray<TModel> SelectMany<TModel>(Func<ValidSymbol<IParameterSymbol>, IEnumerable<TModel>> mapper) =>
+        [..GetAll().SelectMany(mapper)];
 
     /// <summary>
     /// Gets all matching and returns the first matching parameter, or Empty if none found.
@@ -360,6 +264,7 @@ public readonly struct ParameterQuery
     public OptionalSymbol<IParameterSymbol> FirstOrDefault()
     {
         var all = GetAll();
+
         return all.Length > 0
             ? OptionalSymbol<IParameterSymbol>.WithValue(all[0].Value)
             : OptionalSymbol<IParameterSymbol>.Empty();
@@ -372,6 +277,7 @@ public readonly struct ParameterQuery
     public ValidSymbol<IParameterSymbol> First()
     {
         var all = GetAll();
+
         return all.Length > 0
             ? all[0]
             : throw new InvalidOperationException("No iparametersymbols matched the query criteria.");
@@ -380,18 +286,12 @@ public readonly struct ParameterQuery
     /// <summary>
     /// Gets all matching and returns true if any parameters match, false otherwise.
     /// </summary>
-    public bool Any()
-    {
-        return GetAll().Length > 0;
-    }
+    public bool Any() => GetAll().Length > 0;
 
     /// <summary>
     /// Gets all matching and returns the count of matching parameters.
     /// </summary>
-    public int Count()
-    {
-        return GetAll().Length;
-    }
+    public int Count() => GetAll().Length;
 
     #endregion
 }

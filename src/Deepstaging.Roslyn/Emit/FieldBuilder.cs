@@ -77,6 +77,7 @@ public record struct FieldBuilder
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Field name cannot be null or empty.", nameof(name));
+
         if (string.IsNullOrWhiteSpace(type))
             throw new ArgumentException("Field type cannot be null or empty.", nameof(type));
 
@@ -114,10 +115,7 @@ public record struct FieldBuilder
     /// var builder = FieldBuilder.Parse("public const int MaxRetries = 3");
     /// </code>
     /// </example>
-    public static FieldBuilder Parse(string signature)
-    {
-        return SignatureParser.ParseField(signature);
-    }
+    public static FieldBuilder Parse(string signature) => SignatureParser.ParseField(signature);
 
     #endregion
 
@@ -293,6 +291,7 @@ public record struct FieldBuilder
 
         // Add attributes
         var attributes = Attributes.IsDefault ? [] : Attributes;
+
         if (attributes.Length > 0)
         {
             var attributeLists = attributes.Select(a => a.BuildList()).ToArray();
@@ -317,17 +316,13 @@ public record struct FieldBuilder
         }
 
         // Wrap in preprocessor directive if specified
-        if (Condition.HasValue)
-        {
-            field = DirectiveHelper.WrapInDirective(field, Condition.Value);
-        }
+        if (Condition.HasValue) field = DirectiveHelper.WrapInDirective(field, Condition.Value);
 
         return field;
     }
 
-    private static SyntaxKind AccessibilityToSyntaxKind(Accessibility accessibility)
-    {
-        return accessibility switch
+    private static SyntaxKind AccessibilityToSyntaxKind(Accessibility accessibility) =>
+        accessibility switch
         {
             Accessibility.Public => SyntaxKind.PublicKeyword,
             Accessibility.Private => SyntaxKind.PrivateKeyword,
@@ -335,7 +330,6 @@ public record struct FieldBuilder
             Accessibility.Internal => SyntaxKind.InternalKeyword,
             _ => SyntaxKind.PrivateKeyword
         };
-    }
 
     #endregion
 }

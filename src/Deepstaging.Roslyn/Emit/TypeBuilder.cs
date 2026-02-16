@@ -174,10 +174,7 @@ public record struct TypeBuilder
     /// var builder = TypeBuilder.Parse("public partial record OrderDto");
     /// </code>
     /// </example>
-    public static TypeBuilder Parse(string signature)
-    {
-        return SignatureParser.ParseType(signature);
-    }
+    public static TypeBuilder Parse(string signature) => SignatureParser.ParseType(signature);
 
     #endregion
 
@@ -187,10 +184,7 @@ public record struct TypeBuilder
     /// Sets the namespace for the type.
     /// </summary>
     /// <param name="namespace">The namespace (e.g., "MyApp.Domain", "Company.Project").</param>
-    public TypeBuilder InNamespace(string @namespace)
-    {
-        return this with { Namespace = @namespace };
-    }
+    public TypeBuilder InNamespace(string @namespace) => this with { Namespace = @namespace };
 
     /// <summary>
     /// Adds a using directive to the compilation unit.
@@ -219,10 +213,7 @@ public record struct TypeBuilder
     /// <summary>
     /// Sets the accessibility of the type.
     /// </summary>
-    public TypeBuilder WithAccessibility(Accessibility accessibility)
-    {
-        return this with { Accessibility = accessibility };
-    }
+    public TypeBuilder WithAccessibility(Accessibility accessibility) => this with { Accessibility = accessibility };
 
     /// <summary>
     /// Sets the accessibility of the type from a keyword string (e.g., "public", "internal").
@@ -235,34 +226,22 @@ public record struct TypeBuilder
     /// <summary>
     /// Marks the type as static.
     /// </summary>
-    public TypeBuilder AsStatic()
-    {
-        return this with { IsStatic = true };
-    }
+    public TypeBuilder AsStatic() => this with { IsStatic = true };
 
     /// <summary>
     /// Marks the type as abstract.
     /// </summary>
-    public TypeBuilder AsAbstract()
-    {
-        return this with { IsAbstract = true };
-    }
+    public TypeBuilder AsAbstract() => this with { IsAbstract = true };
 
     /// <summary>
     /// Marks the type as sealed.
     /// </summary>
-    public TypeBuilder AsSealed()
-    {
-        return this with { IsSealed = true };
-    }
+    public TypeBuilder AsSealed() => this with { IsSealed = true };
 
     /// <summary>
     /// Marks the type as partial.
     /// </summary>
-    public TypeBuilder AsPartial()
-    {
-        return this with { IsPartial = true };
-    }
+    public TypeBuilder AsPartial() => this with { IsPartial = true };
 
     #endregion
 
@@ -369,7 +348,10 @@ public record struct TypeBuilder
     /// <summary>
     /// Adds a property using a symbol's globally qualified name as the type.
     /// </summary>
-    public TypeBuilder AddProperty<T>(string name, ValidSymbol<T> type, Func<PropertyBuilder, PropertyBuilder> configure) where T : class, ITypeSymbol
+    public TypeBuilder AddProperty<T>(
+        string name,
+        ValidSymbol<T> type,
+        Func<PropertyBuilder, PropertyBuilder> configure) where T : class, ITypeSymbol
         => AddProperty(name, type.GloballyQualifiedName, configure);
 
     /// <summary>
@@ -398,7 +380,8 @@ public record struct TypeBuilder
     /// <summary>
     /// Adds a field using a symbol's globally qualified name as the type.
     /// </summary>
-    public TypeBuilder AddField<T>(string name, ValidSymbol<T> type, Func<FieldBuilder, FieldBuilder> configure) where T : class, ITypeSymbol
+    public TypeBuilder AddField<T>(string name, ValidSymbol<T> type, Func<FieldBuilder, FieldBuilder> configure)
+        where T : class, ITypeSymbol
         => AddField(name, type.GloballyQualifiedName, configure);
 
     /// <summary>
@@ -430,7 +413,8 @@ public record struct TypeBuilder
     /// <summary>
     /// Adds an event using a symbol's globally qualified name as the type.
     /// </summary>
-    public TypeBuilder AddEvent<T>(string name, ValidSymbol<T> type, Func<EventBuilder, EventBuilder> configure) where T : class, ITypeSymbol
+    public TypeBuilder AddEvent<T>(string name, ValidSymbol<T> type, Func<EventBuilder, EventBuilder> configure)
+        where T : class, ITypeSymbol
         => AddEvent(name, type.GloballyQualifiedName, configure);
 
     /// <summary>
@@ -496,7 +480,10 @@ public record struct TypeBuilder
     /// <param name="sourceType">The source type to convert from.</param>
     /// <param name="configure">Configuration callback for the conversion operator.</param>
     /// <param name="parameterName">The parameter name (default: "value").</param>
-    public TypeBuilder AddExplicitConversion(string sourceType, Func<ConversionOperatorBuilder, ConversionOperatorBuilder> configure, string parameterName = "value")
+    public TypeBuilder AddExplicitConversion(
+        string sourceType,
+        Func<ConversionOperatorBuilder, ConversionOperatorBuilder> configure,
+        string parameterName = "value")
     {
         var op = configure(ConversionOperatorBuilder.Explicit(Name, sourceType, parameterName));
         return AddConversionOperator(op);
@@ -508,7 +495,10 @@ public record struct TypeBuilder
     /// <param name="targetType">The target type to convert to.</param>
     /// <param name="configure">Configuration callback for the conversion operator.</param>
     /// <param name="parameterName">The parameter name (default: "value").</param>
-    public TypeBuilder AddExplicitConversionTo(string targetType, Func<ConversionOperatorBuilder, ConversionOperatorBuilder> configure, string parameterName = "value")
+    public TypeBuilder AddExplicitConversionTo(
+        string targetType,
+        Func<ConversionOperatorBuilder, ConversionOperatorBuilder> configure,
+        string parameterName = "value")
     {
         var op = configure(ConversionOperatorBuilder.Explicit(targetType, Name, parameterName));
         return AddConversionOperator(op);
@@ -520,7 +510,10 @@ public record struct TypeBuilder
     /// <param name="sourceType">The source type to convert from.</param>
     /// <param name="configure">Configuration callback for the conversion operator.</param>
     /// <param name="parameterName">The parameter name (default: "value").</param>
-    public TypeBuilder AddImplicitConversion(string sourceType, Func<ConversionOperatorBuilder, ConversionOperatorBuilder> configure, string parameterName = "value")
+    public TypeBuilder AddImplicitConversion(
+        string sourceType,
+        Func<ConversionOperatorBuilder, ConversionOperatorBuilder> configure,
+        string parameterName = "value")
     {
         var op = configure(ConversionOperatorBuilder.Implicit(Name, sourceType, parameterName));
         return AddConversionOperator(op);
@@ -532,7 +525,10 @@ public record struct TypeBuilder
     /// <param name="targetType">The target type to convert to.</param>
     /// <param name="configure">Configuration callback for the conversion operator.</param>
     /// <param name="parameterName">The parameter name (default: "value").</param>
-    public TypeBuilder AddImplicitConversionTo(string targetType, Func<ConversionOperatorBuilder, ConversionOperatorBuilder> configure, string parameterName = "value")
+    public TypeBuilder AddImplicitConversionTo(
+        string targetType,
+        Func<ConversionOperatorBuilder, ConversionOperatorBuilder> configure,
+        string parameterName = "value")
     {
         var op = configure(ConversionOperatorBuilder.Implicit(targetType, Name, parameterName));
         return AddConversionOperator(op);
@@ -564,19 +560,15 @@ public record struct TypeBuilder
     /// Adds an equality operator (==) for this type.
     /// </summary>
     /// <param name="expressionBody">The expression body (e.g., "left.Equals(right)").</param>
-    public TypeBuilder AddEqualityOperator(string expressionBody)
-    {
-        return AddOperator(OperatorBuilder.Equality(Name).WithExpressionBody(expressionBody));
-    }
+    public TypeBuilder AddEqualityOperator(string expressionBody) =>
+        AddOperator(OperatorBuilder.Equality(Name).WithExpressionBody(expressionBody));
 
     /// <summary>
     /// Adds an inequality operator (!=) for this type.
     /// </summary>
     /// <param name="expressionBody">The expression body (e.g., "!left.Equals(right)").</param>
-    public TypeBuilder AddInequalityOperator(string expressionBody)
-    {
-        return AddOperator(OperatorBuilder.Inequality(Name).WithExpressionBody(expressionBody));
-    }
+    public TypeBuilder AddInequalityOperator(string expressionBody) =>
+        AddOperator(OperatorBuilder.Inequality(Name).WithExpressionBody(expressionBody));
 
     #endregion
 
@@ -616,10 +608,8 @@ public record struct TypeBuilder
     /// Sets a pre-configured primary constructor for the type.
     /// Primary constructors are declared in the type declaration itself (e.g., "class Person(string name)").
     /// </summary>
-    public TypeBuilder WithPrimaryConstructor(ConstructorBuilder constructor)
-    {
-        return this with { PrimaryConstructor = constructor.AsPrimary() };
-    }
+    public TypeBuilder WithPrimaryConstructor(ConstructorBuilder constructor) =>
+        this with { PrimaryConstructor = constructor.AsPrimary() };
 
     #endregion
 
@@ -825,6 +815,7 @@ public record struct TypeBuilder
             return apply(currentArray);
 
         var builder = currentArray.ToBuilder();
+
         for (var i = oldCount; i < newCount; i++)
             builder[i] = setRegion(builder[i], regionName);
 
@@ -839,10 +830,7 @@ public record struct TypeBuilder
     /// Emits the type to a compilation unit with default options.
     /// Uses syntax validation by default.
     /// </summary>
-    public OptionalEmit Emit()
-    {
-        return Emit(EmitOptions.Default);
-    }
+    public OptionalEmit Emit() => Emit(EmitOptions.Default);
 
     /// <summary>
     /// Emits the type to a compilation unit with specified options.
@@ -869,6 +857,7 @@ public record struct TypeBuilder
             if (options.ValidationLevel != ValidationLevel.None)
             {
                 var diagnostics = Validate(formatted, options.ValidationLevel);
+
                 if (diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error))
                     return OptionalEmit.FromDiagnostics(
                         compilationUnit, formatted, WrapValidationErrors(diagnostics, formatted));
@@ -914,6 +903,7 @@ public record struct TypeBuilder
             {
                 // Static using: "static LanguageExt.Prelude" -> using static LanguageExt.Prelude;
                 var typeName = @using.Substring(7); // Remove "static " prefix
+
                 usingDirective = SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(typeName))
                     .WithStaticKeyword(SyntaxFactory.Token(SyntaxKind.StaticKeyword));
             }
@@ -956,6 +946,7 @@ public record struct TypeBuilder
             foreach (var line in options.LicenseHeader!.Split('\n'))
             {
                 var trimmedLine = line.TrimStart();
+
                 if (!string.IsNullOrEmpty(trimmedLine))
                 {
                     triviaList.Add(SyntaxFactory.Comment(trimmedLine));
@@ -969,6 +960,7 @@ public record struct TypeBuilder
         var newFirstToken = firstToken.WithLeadingTrivia(
             SyntaxFactory.TriviaList(triviaList)
                 .AddRange(firstToken.LeadingTrivia));
+
         compilationUnit = compilationUnit.ReplaceToken(firstToken, newFirstToken);
 
         return compilationUnit;
@@ -991,20 +983,17 @@ public record struct TypeBuilder
         if (IsRecord)
         {
             var hasMembers = HasAnyMembers();
+
             if (hasMembers)
-            {
                 typeDecl = typeDecl
                     .WithOpenBraceToken(SyntaxFactory.Token(SyntaxKind.OpenBraceToken))
                     .WithCloseBraceToken(SyntaxFactory.Token(SyntaxKind.CloseBraceToken));
-            }
-            else
-            {
-                typeDecl = typeDecl.WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
-            }
+            else typeDecl = typeDecl.WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
         }
 
         // Add attributes
         var attributes = Attributes.IsDefault ? [] : Attributes;
+
         if (attributes.Length > 0)
         {
             var attributeLists = attributes.Select(a => a.BuildList()).ToArray();
@@ -1024,10 +1013,12 @@ public record struct TypeBuilder
 
         // Add type parameters
         var typeParameters = TypeParameters.IsDefault ? [] : TypeParameters;
+
         if (typeParameters.Length > 0)
         {
             var typeParameterList = SyntaxFactory.TypeParameterList(
                 SyntaxFactory.SeparatedList(typeParameters.Select(tp => tp.Build())));
+
             typeDecl = typeDecl.WithTypeParameterList(typeParameterList);
 
             // Add constraint clauses
@@ -1046,20 +1037,20 @@ public record struct TypeBuilder
         {
             var parameters = PrimaryConstructor.Value.Parameters;
             var normalizedParams = parameters.IsDefault ? [] : parameters;
+
             var parameterList = SyntaxFactory.ParameterList(
                 SyntaxFactory.SeparatedList(normalizedParams.Select(p => p.Build())));
+
             typeDecl = typeDecl.WithParameterList(parameterList);
         }
 
         // Add base list (unconditional interfaces only - conditional ones added via post-processing)
         var interfaces = Interfaces.IsDefault ? [] : Interfaces;
+
         if (interfaces.Length > 0)
         {
             var baseList = BuildBaseListWithDirectives(interfaces);
-            if (baseList != null)
-            {
-                typeDecl = typeDecl.WithBaseList(baseList);
-            }
+            if (baseList != null) typeDecl = typeDecl.WithBaseList(baseList);
         }
 
         // Add members in logical order, with optional region grouping
@@ -1078,10 +1069,7 @@ public record struct TypeBuilder
     /// <summary>
     /// Builds the type as a nested type declaration (no namespace wrapper).
     /// </summary>
-    internal TypeDeclarationSyntax BuildNestedTypeDeclaration()
-    {
-        return BuildTypeDeclaration();
-    }
+    internal TypeDeclarationSyntax BuildNestedTypeDeclaration() => BuildTypeDeclaration();
 
     /// <summary>
     /// Adds members to the type declaration, applying #region/#endregion grouping as needed.
@@ -1100,10 +1088,8 @@ public record struct TypeBuilder
         if (!useRegions && !HasAnyExplicitRegions(categories))
         {
             foreach (var (_, _, members) in categories)
-            {
-                foreach (var member in members)
-                    typeDecl = typeDecl.AddMembers(member);
-            }
+            foreach (var member in members)
+                typeDecl = typeDecl.AddMembers(member);
 
             return typeDecl;
         }
@@ -1114,25 +1100,23 @@ public record struct TypeBuilder
         List<MemberDeclarationSyntax>? currentMembers = null;
 
         foreach (var (categoryName, explicitRegion, members) in categories)
+        foreach (var member in members)
         {
-            foreach (var member in members)
+            var regionName = explicitRegion ?? (useRegions ? categoryName : null);
+
+            if (regionName != currentRegion)
             {
-                var regionName = explicitRegion ?? (useRegions ? categoryName : null);
+                if (currentMembers != null && currentRegion != null)
+                    regionGroups.Add((currentRegion, currentMembers));
+                else if (currentMembers != null)
+                    regionGroups.Add(("", currentMembers));
 
-                if (regionName != currentRegion)
-                {
-                    if (currentMembers != null && currentRegion != null)
-                        regionGroups.Add((currentRegion, currentMembers));
-                    else if (currentMembers != null)
-                        regionGroups.Add(("", currentMembers));
-
-                    currentRegion = regionName;
-                    currentMembers = [];
-                }
-
-                currentMembers ??= [];
-                currentMembers.Add(member);
+                currentRegion = regionName;
+                currentMembers = [];
             }
+
+            currentMembers ??= [];
+            currentMembers.Add(member);
         }
 
         // Flush last group
@@ -1146,11 +1130,11 @@ public record struct TypeBuilder
 
         // Emit each group, wrapping in regions where appropriate
         foreach (var (regionName, groupMembers) in regionGroups)
-        {
             if (!string.IsNullOrEmpty(regionName))
             {
                 var wrapped = RegionHelper.WrapMembersInRegion(
                     [..groupMembers], regionName);
+
                 typeDecl = typeDecl.AddMembers(wrapped);
             }
             else
@@ -1158,7 +1142,6 @@ public record struct TypeBuilder
                 foreach (var member in groupMembers)
                     typeDecl = typeDecl.AddMembers(member);
             }
-        }
 
         return typeDecl;
     }
@@ -1174,40 +1157,46 @@ public record struct TypeBuilder
             new List<(string Category, string? ExplicitRegion, MemberDeclarationSyntax[] Members)>();
 
         var fields = Fields.IsDefault ? [] : Fields;
+
         AddCategory(categories, fields, "Fields",
             f => f.Region, f => f.Build());
 
         var events = Events.IsDefault ? [] : Events;
+
         AddCategory(categories, events, "Events",
             e => e.Region, e => e.Build());
 
         var constructors = Constructors.IsDefault ? [] : Constructors;
+
         AddCategory(categories, constructors, "Constructors",
             c => c.Region, c => c.Build());
 
         var properties = Properties.IsDefault ? [] : Properties;
+
         AddCategory(categories, properties, "Properties",
             p => p.Region, p => p.Build());
 
         var methods = Methods.IsDefault ? [] : Methods;
+
         AddCategory(categories, methods, "Methods",
             m => m.Region, m => m.Build());
 
         var operators = Operators.IsDefault ? [] : Operators;
+
         AddCategory(categories, operators, "Operators",
             o => o.Region, o => o.Build());
 
         var conversionOperators = ConversionOperators.IsDefault ? [] : ConversionOperators;
+
         AddCategory(categories, conversionOperators, "Conversion Operators",
             c => c.Region, c => c.Build());
 
         var nestedTypes = NestedTypes.IsDefault ? [] : NestedTypes;
+
         if (nestedTypes.Length > 0)
-        {
             categories.Add(("Nested Types", null,
                 nestedTypes.Select(t => (MemberDeclarationSyntax)t.BuildNestedTypeDeclaration())
                     .ToArray()));
-        }
 
         return categories;
     }
@@ -1239,6 +1228,7 @@ public record struct TypeBuilder
             {
                 if (currentGroup.Count > 0)
                     categories.Add((categoryName, currentRegion, [..currentGroup]));
+
                 currentGroup = [];
                 currentRegion = region;
             }
@@ -1251,10 +1241,8 @@ public record struct TypeBuilder
     }
 
     private static bool HasAnyExplicitRegions(
-        List<(string Category, string? ExplicitRegion, MemberDeclarationSyntax[] Members)> categories)
-    {
-        return categories.Any(c => c.ExplicitRegion != null);
-    }
+        List<(string Category, string? ExplicitRegion, MemberDeclarationSyntax[] Members)> categories) =>
+        categories.Any(c => c.ExplicitRegion != null);
 
     /// <summary>
     /// Checks if the type has any members (fields, properties, methods, etc.) beyond a primary constructor.
@@ -1288,6 +1276,7 @@ public record struct TypeBuilder
     {
         // Only include unconditional interfaces in the syntax tree
         var unconditional = interfaces.Where(i => !i.Condition.HasValue).ToArray();
+
         if (unconditional.Length == 0)
             return null;
 
@@ -1312,6 +1301,7 @@ public record struct TypeBuilder
     {
         var interfaces = Interfaces.IsDefault ? [] : Interfaces;
         var conditional = interfaces.Where(i => i.Condition.HasValue).ToList();
+
         if (conditional.Count == 0)
             return code;
 
@@ -1336,7 +1326,8 @@ public record struct TypeBuilder
 
             // Look for struct/class/record declaration
             if ((trimmed.Contains("struct ") || trimmed.Contains("class ") || trimmed.Contains("record ")) &&
-                !trimmed.StartsWith("//") && !trimmed.StartsWith("*"))
+                !trimmed.StartsWith("//") &&
+                !trimmed.StartsWith("*"))
             {
                 typeDeclarationIndex = i;
 
@@ -1345,27 +1336,25 @@ public record struct TypeBuilder
                 {
                     // Base list starts on this line - find where it ends (the opening brace)
                     for (var j = i; j < lines.Count; j++)
-                    {
                         if (lines[j].Contains("{"))
                         {
                             baseListEndIndex = j;
                             break;
                         }
-                    }
                 }
                 else
                 {
                     // No base list yet - the opening brace should be on this or next line
                     baseListEndIndex = i;
+
                     for (var j = i; j < lines.Count; j++)
-                    {
                         if (lines[j].Contains("{"))
                         {
                             baseListEndIndex = j;
                             break;
                         }
-                    }
                 }
+
                 break;
             }
         }
@@ -1375,17 +1364,18 @@ public record struct TypeBuilder
 
         // Build the conditional interface blocks
         var conditionalBlocks = new StringBuilder();
+
         foreach (var group in groupedConditional)
         {
             var condition = group.Key;
             var interfaceNames = group.Select(i => i.Name).ToList();
 
             conditionalBlocks.AppendLine($"#if {condition}");
+
             foreach (var interfaceName in interfaceNames)
-            {
                 // Comma goes BEFORE the interface name (continuing the list)
                 conditionalBlocks.AppendLine($"        , {interfaceName}");
-            }
+
             conditionalBlocks.AppendLine("#endif");
         }
 
@@ -1407,14 +1397,12 @@ public record struct TypeBuilder
                         var line = lines[i];
                         // Check if this line has an interface (contains the last unconditional interface name)
                         var lastUnconditional = unconditional.Last().Name;
+
                         if (line.Contains(lastUnconditional))
                         {
                             // Remove trailing comma if present (conditional interfaces will add their own commas)
                             var trimmedLine = line.TrimEnd();
-                            if (trimmedLine.EndsWith(","))
-                            {
-                                lines[i] = line.TrimEnd().TrimEnd(',');
-                            }
+                            if (trimmedLine.EndsWith(",")) lines[i] = line.TrimEnd().TrimEnd(',');
                             break;
                         }
                     }
@@ -1424,17 +1412,21 @@ public record struct TypeBuilder
                     // No unconditional interfaces - we need to add the colon
                     // Find the type declaration line and add ":"
                     var declLine = lines[typeDeclarationIndex];
+
                     if (!declLine.Contains(":"))
-                    {
                         // Insert colon before conditional blocks
                         conditionalBlocks.Insert(0, "    :\n");
-                    }
                 }
 
                 // Insert conditional blocks before the opening brace
                 var beforeBrace = braceLine.Substring(0, braceIndex);
                 var afterBrace = braceLine.Substring(braceIndex);
-                lines[baseListEndIndex] = beforeBrace.TrimEnd() + "\n" + conditionalBlocks.ToString().TrimEnd() + "\n" + afterBrace.TrimStart();
+
+                lines[baseListEndIndex] = beforeBrace.TrimEnd() +
+                                          "\n" +
+                                          conditionalBlocks.ToString().TrimEnd() +
+                                          "\n" +
+                                          afterBrace.TrimStart();
             }
         }
 
@@ -1448,83 +1440,101 @@ public record struct TypeBuilder
     {
         // Type-level usings
         var usings = Usings.IsDefault ? [] : Usings;
+
         foreach (var @using in usings)
             yield return @using;
 
         // Method usings
         var methods = Methods.IsDefault ? [] : Methods;
+
         foreach (var method in methods)
         {
             var methodUsings = method.Usings.IsDefault ? [] : method.Usings;
+
             foreach (var @using in methodUsings)
                 yield return @using;
         }
 
         // Conversion operator usings
         var conversionOperators = ConversionOperators.IsDefault ? [] : ConversionOperators;
+
         foreach (var convOp in conversionOperators)
         {
             var convOpUsings = convOp.Usings.IsDefault ? [] : convOp.Usings;
+
             foreach (var @using in convOpUsings)
                 yield return @using;
         }
 
         // Operator usings
         var operators = Operators.IsDefault ? [] : Operators;
+
         foreach (var op in operators)
         {
             var opUsings = op.Usings.IsDefault ? [] : op.Usings;
+
             foreach (var @using in opUsings)
                 yield return @using;
         }
 
         // Property usings
         var properties = Properties.IsDefault ? [] : Properties;
+
         foreach (var property in properties)
         {
             var propUsings = property.Usings.IsDefault ? [] : property.Usings;
+
             foreach (var @using in propUsings)
                 yield return @using;
         }
 
         // Field usings
         var fields = Fields.IsDefault ? [] : Fields;
+
         foreach (var field in fields)
         {
             var fieldUsings = field.Usings.IsDefault ? [] : field.Usings;
+
             foreach (var @using in fieldUsings)
                 yield return @using;
         }
 
         // Event usings
         var events = Events.IsDefault ? [] : Events;
+
         foreach (var @event in events)
         {
             var eventUsings = @event.Usings.IsDefault ? [] : @event.Usings;
+
             foreach (var @using in eventUsings)
                 yield return @using;
         }
 
         // Constructor usings
         var constructors = Constructors.IsDefault ? [] : Constructors;
+
         foreach (var constructor in constructors)
         {
             var ctorUsings = constructor.Usings.IsDefault ? [] : constructor.Usings;
+
             foreach (var @using in ctorUsings)
                 yield return @using;
         }
 
         // Attribute usings (on the type itself)
         var attributes = Attributes.IsDefault ? [] : Attributes;
+
         foreach (var attribute in attributes)
         {
             var attrUsings = attribute.Usings.IsDefault ? [] : attribute.Usings;
+
             foreach (var @using in attrUsings)
                 yield return @using;
         }
 
         // Nested types (recursive)
         var nestedTypes = NestedTypes.IsDefault ? [] : NestedTypes;
+
         foreach (var nestedType in nestedTypes)
         foreach (var @using in nestedType.CollectAllUsings())
             yield return @using;
@@ -1561,16 +1571,18 @@ public record struct TypeBuilder
         "TypeBuilder '{0}' produced invalid C# with {1} syntax error(s). First error: {2}. Code preview: {3}.",
         "Deepstaging.Emit",
         DiagnosticSeverity.Error,
-        isEnabledByDefault: true,
-        description: "The Emit API produced C# code that could not be parsed. This typically indicates a bug in the code generation logic.");
+        true,
+        "The Emit API produced C# code that could not be parsed. This typically indicates a bug in the code generation logic.");
 
     private ImmutableArray<Diagnostic> WrapValidationErrors(
-        ImmutableArray<Diagnostic> rawDiagnostics, string code)
+        ImmutableArray<Diagnostic> rawDiagnostics,
+        string code)
     {
         var errors = rawDiagnostics.Where(d => d.Severity == DiagnosticSeverity.Error).ToList();
         if (errors.Count == 0) return rawDiagnostics;
 
         var firstError = errors[0].GetMessage();
+
         var codePreview = string.Join(" | ",
             code.Split('\n').Where(l => !string.IsNullOrWhiteSpace(l)).Take(5).Select(l => l.Trim()));
 
@@ -1585,9 +1597,8 @@ public record struct TypeBuilder
         return [summary, ..rawDiagnostics];
     }
 
-    private static SyntaxKind AccessibilityToSyntaxKind(Accessibility accessibility)
-    {
-        return accessibility switch
+    private static SyntaxKind AccessibilityToSyntaxKind(Accessibility accessibility) =>
+        accessibility switch
         {
             Accessibility.Public => SyntaxKind.PublicKeyword,
             Accessibility.Private => SyntaxKind.PrivateKeyword,
@@ -1595,7 +1606,6 @@ public record struct TypeBuilder
             Accessibility.Internal => SyntaxKind.InternalKeyword,
             _ => SyntaxKind.PublicKeyword
         };
-    }
 
     #endregion
 }

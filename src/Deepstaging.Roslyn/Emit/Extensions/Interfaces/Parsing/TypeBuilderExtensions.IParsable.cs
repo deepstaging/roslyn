@@ -52,7 +52,8 @@ public static class TypeBuilderParsableExtensions
                 .WithInheritDoc("global::System.IParsable{{TSelf}}")
                 .WithExpressionBody(parseExpression))
             .AddMethod(MethodBuilder
-                .Parse($"public static bool TryParse([global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? input, global::System.IFormatProvider? provider, out {typeName} result)")
+                .Parse(
+                    $"public static bool TryParse([global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? input, global::System.IFormatProvider? provider, out {typeName} result)")
                 .When(Directives.Net7OrGreater)
                 .WithInheritDoc("global::System.IParsable{{TSelf}}")
                 .WithBody(b => b.AddStatements(tryParseBody)));
@@ -61,6 +62,7 @@ public static class TypeBuilderParsableExtensions
     private static MethodBuilder BuildParseMethod(string typeName, ParsableTypeInfo info)
     {
         string parseExpression;
+
         if (info.IsGuid)
             parseExpression = "new(global::System.Guid.Parse(input, provider))";
         else if (info.IsString)
@@ -80,59 +82,53 @@ public static class TypeBuilderParsableExtensions
     private static MethodBuilder BuildTryParseMethod(string typeName, ParsableTypeInfo info)
     {
         string tryParseBody;
-        if (info.IsGuid)
-        {
-            tryParseBody = """
-                if (input is null)
-                {
-                    result = default;
-                    return false;
-                }
 
-                if (global::System.Guid.TryParse(input, provider, out var guid))
-                {
-                    result = new(guid);
-                    return true;
-                }
-                else
-                {
-                    result = default;
-                    return false;
-                }
-                """;
-        }
+        if (info.IsGuid)
+            tryParseBody = """
+                           if (input is null)
+                           {
+                               result = default;
+                               return false;
+                           }
+
+                           if (global::System.Guid.TryParse(input, provider, out var guid))
+                           {
+                               result = new(guid);
+                               return true;
+                           }
+                           else
+                           {
+                               result = default;
+                               return false;
+                           }
+                           """;
         else if (info.IsString)
-        {
             tryParseBody = """
-                result = new(input ?? string.Empty);
-                return true;
-                """;
-        }
+                           result = new(input ?? string.Empty);
+                           return true;
+                           """;
         else if (info.CSharpKeyword is { } keyword)
-        {
             tryParseBody = $$"""
-                if ({{keyword}}.TryParse(input, provider, out var value))
-                {
-                    result = new(value);
-                    return true;
-                }
-                else
-                {
-                    result = default;
-                    return false;
-                }
-                """;
-        }
+                             if ({{keyword}}.TryParse(input, provider, out var value))
+                             {
+                                 result = new(value);
+                                 return true;
+                             }
+                             else
+                             {
+                                 result = default;
+                                 return false;
+                             }
+                             """;
         else
-        {
             tryParseBody = """
-                result = default;
-                return false;
-                """;
-        }
+                           result = default;
+                           return false;
+                           """;
 
         return MethodBuilder
-            .Parse($"public static bool TryParse([global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? input, global::System.IFormatProvider? provider, out {typeName} result)")
+            .Parse(
+                $"public static bool TryParse([global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? input, global::System.IFormatProvider? provider, out {typeName} result)")
             .When(Directives.Net7OrGreater)
             .WithInheritDoc("global::System.IParsable{{TSelf}}")
             .WithBody(b => b.AddStatements(tryParseBody));

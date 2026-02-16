@@ -13,10 +13,7 @@ public static class OptionalAttributeExtensions
         /// <summary>
         /// Converts an AttributeData to an OptionalAttribute projection.
         /// </summary>
-        public OptionalAttribute ToOptional()
-        {
-            return OptionalAttribute.FromNullable(attribute);
-        }
+        public OptionalAttribute ToOptional() => OptionalAttribute.FromNullable(attribute);
     }
 
     extension(ITypeSymbol? type)
@@ -38,6 +35,7 @@ public static class OptionalAttributeExtensions
             if (type == null) return [];
 
             var withAttribute = attributeName.EndsWith("Attribute") ? attributeName : attributeName + "Attribute";
+
             var withoutAttribute = attributeName.EndsWith("Attribute")
                 ? attributeName.Substring(0, attributeName.Length - "Attribute".Length)
                 : attributeName;

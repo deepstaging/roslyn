@@ -9,8 +9,7 @@ namespace Deepstaging.Roslyn.Tests;
 internal static class TestInitializer
 {
     [ModuleInitializer]
-    public static void Initialize()
-    {
+    public static void Initialize() =>
         ReferenceConfiguration.AddReferencesFromTypes(
             typeof(PipelineModelAttribute),
             typeof(ValidSymbol<>),
@@ -18,5 +17,4 @@ internal static class TestInitializer
             typeof(ISymbol),
             typeof(INamedTypeSymbol)
         );
-    }
 }

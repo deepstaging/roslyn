@@ -57,43 +57,43 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <None Include="buildTransitive/Deepstaging.Roslyn.targets" Pack="true" PackagePath="buildTransitive\" />
+        <None Include="buildTransitive/Deepstaging.Roslyn.targets" Pack="true" PackagePath="buildTransitive\"/>
     </ItemGroup>
 
     <!-- Bundled library assemblies (Workspace and Scriban) -->
     <ItemGroup>
         <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.Workspace/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.Workspace.dll"
-              Pack="true" PackagePath="lib/netstandard2.0" Visible="false" />
+              Pack="true" PackagePath="lib/netstandard2.0" Visible="false"/>
         <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.Scriban/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.Scriban.dll"
-              Pack="true" PackagePath="lib/netstandard2.0" Visible="false" />
+              Pack="true" PackagePath="lib/netstandard2.0" Visible="false"/>
     </ItemGroup>
 
     <!-- Analyzer and code-fix assemblies loaded by the compiler / IDE -->
     <ItemGroup>
         <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.Analyzers/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.Analyzers.dll"
-              Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+              Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
         <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.Scriban.Analyzers/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.Scriban.Analyzers.dll"
-              Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+              Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
         <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.Scriban.CodeFixes/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.Scriban.CodeFixes.dll"
-              Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+              Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
     </ItemGroup>
 
     <!-- Analyzer dependencies — must be co-located in the analyzers folder for the compiler to load -->
     <ItemGroup>
         <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.Analyzers/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.dll"
-              Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+              Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
         <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.Scriban/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.Scriban.dll"
-              Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+              Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
         <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.Workspace/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.Workspace.dll"
-              Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+              Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
     </ItemGroup>
 
     <!-- Expose analyzer/codefix types as compile-time references (for test projects) -->
     <ItemGroup>
         <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.Scriban.Analyzers/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.Scriban.Analyzers.dll"
-              Pack="true" PackagePath="lib/netstandard2.0" Visible="false" />
+              Pack="true" PackagePath="lib/netstandard2.0" Visible="false"/>
         <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.Scriban.CodeFixes/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.Scriban.CodeFixes.dll"
-              Pack="true" PackagePath="lib/netstandard2.0" Visible="false" />
+              Pack="true" PackagePath="lib/netstandard2.0" Visible="false"/>
     </ItemGroup>
 
 </Project>

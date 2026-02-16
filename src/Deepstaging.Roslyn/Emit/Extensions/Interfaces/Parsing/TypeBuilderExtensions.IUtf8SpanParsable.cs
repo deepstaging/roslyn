@@ -52,14 +52,18 @@ public static class TypeBuilderUtf8SpanParsableExtensions
         return builder
             .Implements($"global::System.IUtf8SpanParsable<{typeName}>", Directives.Net8OrGreater)
             .AddMethod(MethodBuilder
-                .Parse($"public static {typeName} Parse(global::System.ReadOnlySpan<byte> utf8Text, global::System.IFormatProvider? provider)")
+                .Parse(
+                    $"public static {typeName} Parse(global::System.ReadOnlySpan<byte> utf8Text, global::System.IFormatProvider? provider)")
                 .When(Directives.Net8OrGreater)
-                .WithInheritDoc("global::System.IUtf8SpanParsable{{TSelf}}.Parse(global::System.ReadOnlySpan{{byte}}, global::System.IFormatProvider?)")
+                .WithInheritDoc(
+                    "global::System.IUtf8SpanParsable{{TSelf}}.Parse(global::System.ReadOnlySpan{{byte}}, global::System.IFormatProvider?)")
                 .WithExpressionBody(parseExpression))
             .AddMethod(MethodBuilder
-                .Parse($"public static bool TryParse(global::System.ReadOnlySpan<byte> utf8Text, global::System.IFormatProvider? provider, out {typeName} result)")
+                .Parse(
+                    $"public static bool TryParse(global::System.ReadOnlySpan<byte> utf8Text, global::System.IFormatProvider? provider, out {typeName} result)")
                 .When(Directives.Net8OrGreater)
-                .WithInheritDoc("global::System.IUtf8SpanParsable{{TSelf}}.TryParse(global::System.ReadOnlySpan{{byte}}, global::System.IFormatProvider?, out TSelf)")
+                .WithInheritDoc(
+                    "global::System.IUtf8SpanParsable{{TSelf}}.TryParse(global::System.ReadOnlySpan{{byte}}, global::System.IFormatProvider?, out TSelf)")
                 .WithBody(b => b.AddStatements(tryParseBody)));
     }
 
@@ -69,9 +73,11 @@ public static class TypeBuilderUtf8SpanParsableExtensions
         var parseExpression = $"new({backingParseName}.Parse(utf8Text, provider))";
 
         return MethodBuilder
-            .Parse($"public static {typeName} Parse(global::System.ReadOnlySpan<byte> utf8Text, global::System.IFormatProvider? provider)")
+            .Parse(
+                $"public static {typeName} Parse(global::System.ReadOnlySpan<byte> utf8Text, global::System.IFormatProvider? provider)")
             .When(Directives.Net8OrGreater)
-            .WithInheritDoc("global::System.IUtf8SpanParsable{{TSelf}}.Parse(global::System.ReadOnlySpan{{byte}}, global::System.IFormatProvider?)")
+            .WithInheritDoc(
+                "global::System.IUtf8SpanParsable{{TSelf}}.Parse(global::System.ReadOnlySpan{{byte}}, global::System.IFormatProvider?)")
             .WithExpressionBody(parseExpression);
     }
 
@@ -80,20 +86,22 @@ public static class TypeBuilderUtf8SpanParsableExtensions
         var backingParseName = info.IsInt32 ? "int" : "long";
 
         var tryParseBody = $$"""
-            if ({{backingParseName}}.TryParse(utf8Text, provider, out var value))
-            {
-                result = new {{typeName}}(value);
-                return true;
-            }
+                             if ({{backingParseName}}.TryParse(utf8Text, provider, out var value))
+                             {
+                                 result = new {{typeName}}(value);
+                                 return true;
+                             }
 
-            result = default;
-            return false;
-            """;
+                             result = default;
+                             return false;
+                             """;
 
         return MethodBuilder
-            .Parse($"public static bool TryParse(global::System.ReadOnlySpan<byte> utf8Text, global::System.IFormatProvider? provider, out {typeName} result)")
+            .Parse(
+                $"public static bool TryParse(global::System.ReadOnlySpan<byte> utf8Text, global::System.IFormatProvider? provider, out {typeName} result)")
             .When(Directives.Net8OrGreater)
-            .WithInheritDoc("global::System.IUtf8SpanParsable{{TSelf}}.TryParse(global::System.ReadOnlySpan{{byte}}, global::System.IFormatProvider?, out TSelf)")
+            .WithInheritDoc(
+                "global::System.IUtf8SpanParsable{{TSelf}}.TryParse(global::System.ReadOnlySpan{{byte}}, global::System.IFormatProvider?, out TSelf)")
             .WithBody(b => b.AddStatements(tryParseBody));
     }
 }

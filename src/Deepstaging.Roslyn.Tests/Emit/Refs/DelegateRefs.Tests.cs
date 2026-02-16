@@ -8,7 +8,7 @@ public class DelegateRefsTests
     [Test]
     public async Task Func_with_return_type_only()
     {
-        TypeRef typeRef = DelegateRefs.Func("int");
+        var typeRef = DelegateRefs.Func("int");
 
         await Assert.That(typeRef).IsEqualTo("global::System.Func<int>");
     }
@@ -16,7 +16,7 @@ public class DelegateRefsTests
     [Test]
     public async Task Func_with_parameter_and_return_type()
     {
-        TypeRef typeRef = DelegateRefs.Func("int", "string");
+        var typeRef = DelegateRefs.Func("int", "string");
 
         await Assert.That(typeRef).IsEqualTo("global::System.Func<int, string>");
     }
@@ -24,7 +24,7 @@ public class DelegateRefsTests
     [Test]
     public async Task Func_with_multiple_parameters()
     {
-        TypeRef typeRef = DelegateRefs.Func("int", "string", "bool");
+        var typeRef = DelegateRefs.Func("int", "string", "bool");
 
         await Assert.That(typeRef).IsEqualTo("global::System.Func<int, string, bool>");
     }
@@ -32,7 +32,7 @@ public class DelegateRefsTests
     [Test]
     public async Task Action_with_no_arguments()
     {
-        TypeRef typeRef = DelegateRefs.Action();
+        var typeRef = DelegateRefs.Action();
 
         await Assert.That(typeRef).IsEqualTo("global::System.Action");
     }
@@ -40,7 +40,7 @@ public class DelegateRefsTests
     [Test]
     public async Task Action_with_single_argument()
     {
-        TypeRef typeRef = DelegateRefs.Action("string");
+        var typeRef = DelegateRefs.Action("string");
 
         await Assert.That(typeRef).IsEqualTo("global::System.Action<string>");
     }
@@ -48,7 +48,7 @@ public class DelegateRefsTests
     [Test]
     public async Task Action_with_multiple_arguments()
     {
-        TypeRef typeRef = DelegateRefs.Action("string", "int");
+        var typeRef = DelegateRefs.Action("string", "int");
 
         await Assert.That(typeRef).IsEqualTo("global::System.Action<string, int>");
     }
@@ -58,7 +58,7 @@ public class DelegateRefsTests
     [Test]
     public async Task Nullable_func_delegate()
     {
-        TypeRef typeRef = DelegateRefs.Func("string", "bool").Nullable();
+        var typeRef = DelegateRefs.Func("string", "bool").Nullable();
 
         await Assert.That(typeRef).IsEqualTo("global::System.Func<string, bool>?");
     }
@@ -66,7 +66,7 @@ public class DelegateRefsTests
     [Test]
     public async Task Func_with_generic_arguments()
     {
-        TypeRef typeRef = DelegateRefs.Func(
+        var typeRef = DelegateRefs.Func(
             TypeRef.From("List").Of("string"),
             TypeRef.From("int"));
 
@@ -78,10 +78,7 @@ public class DelegateRefsTests
     #region Edge Cases
 
     [Test]
-    public void Func_throws_on_no_arguments()
-    {
-        Assert.Throws<ArgumentException>(() => DelegateRefs.Func());
-    }
+    public void Func_throws_on_no_arguments() => Assert.Throws<ArgumentException>(() => DelegateRefs.Func());
 
     #endregion
 }

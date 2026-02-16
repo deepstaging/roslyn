@@ -13,10 +13,7 @@ public readonly struct XmlDocumentation
 {
     private readonly XElement? _member;
 
-    private XmlDocumentation(XElement? member)
-    {
-        _member = member;
-    }
+    private XmlDocumentation(XElement? member) => _member = member;
 
     /// <summary>
     /// Creates an XmlDocumentation from raw XML documentation string.
@@ -40,10 +37,7 @@ public readonly struct XmlDocumentation
     /// <summary>
     /// Creates an XmlDocumentation from a symbol.
     /// </summary>
-    public static XmlDocumentation FromSymbol(ISymbol? symbol)
-    {
-        return Parse(symbol?.GetDocumentationCommentXml());
-    }
+    public static XmlDocumentation FromSymbol(ISymbol? symbol) => Parse(symbol?.GetDocumentationCommentXml());
 
     /// <summary>
     /// Gets a value indicating whether documentation exists.
@@ -93,6 +87,7 @@ public readonly struct XmlDocumentation
             foreach (var param in _member.Elements("param"))
             {
                 var name = param.Attribute("name")?.Value;
+
                 if (name != null)
                     yield return (name, NormalizeWhitespace(param.Value));
             }
@@ -126,6 +121,7 @@ public readonly struct XmlDocumentation
             foreach (var param in _member.Elements("typeparam"))
             {
                 var name = param.Attribute("name")?.Value;
+
                 if (name != null)
                     yield return (name, NormalizeWhitespace(param.Value));
             }
@@ -159,6 +155,7 @@ public readonly struct XmlDocumentation
             foreach (var ex in _member.Elements("exception"))
             {
                 var cref = ex.Attribute("cref")?.Value;
+
                 if (cref != null)
                     yield return (cref, NormalizeWhitespace(ex.Value));
             }
@@ -178,6 +175,7 @@ public readonly struct XmlDocumentation
             foreach (var see in _member.Elements("seealso"))
             {
                 var cref = see.Attribute("cref")?.Value;
+
                 if (cref != null)
                     yield return cref;
             }

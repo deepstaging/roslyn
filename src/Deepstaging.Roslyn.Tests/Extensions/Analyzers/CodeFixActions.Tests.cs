@@ -367,6 +367,7 @@ public class CodeFixActionsTests : RoslynTestBase
             return false;
 
         var validSyntax = OptionalSyntax<ClassDeclarationSyntax>.FromNullable(classDecl);
+
         if (validSyntax.IsNotValid(out var valid))
             return false;
 
@@ -387,6 +388,7 @@ public class CodeFixActionsTests : RoslynTestBase
             return false;
 
         var validSyntax = OptionalSyntax<MethodDeclarationSyntax>.FromNullable(methodDecl);
+
         if (validSyntax.IsNotValid(out var valid))
             return false;
 
@@ -407,6 +409,7 @@ public class CodeFixActionsTests : RoslynTestBase
             return false;
 
         var validSyntax = OptionalSyntax<FieldDeclarationSyntax>.FromNullable(fieldDecl);
+
         if (validSyntax.IsNotValid(out var valid))
             return false;
 
@@ -427,6 +430,7 @@ public class CodeFixActionsTests : RoslynTestBase
             return false;
 
         var validSyntax = OptionalSyntax<PropertyDeclarationSyntax>.FromNullable(propertyDecl);
+
         if (validSyntax.IsNotValid(out var valid))
             return false;
 
@@ -447,6 +451,7 @@ public class CodeFixActionsTests : RoslynTestBase
             return false;
 
         var validSyntax = OptionalSyntax<StructDeclarationSyntax>.FromNullable(structDecl);
+
         if (validSyntax.IsNotValid(out var valid))
             return false;
 
@@ -471,6 +476,7 @@ public class CodeFixActionsTests : RoslynTestBase
         string expected)
     {
         var operations = await codeAction.GetOperationsAsync(default);
+
         var changedSolution = operations
             .OfType<Microsoft.CodeAnalysis.CodeActions.ApplyChangesOperation>()
             .FirstOrDefault()
@@ -480,6 +486,7 @@ public class CodeFixActionsTests : RoslynTestBase
             return false;
 
         var changedDocument = changedSolution.GetDocument(document.Id);
+
         if (changedDocument is null)
             return false;
 
@@ -509,10 +516,7 @@ public class CodeFixActionsTests : RoslynTestBase
         return solution.GetDocument(documentId)!;
     }
 
-    private static string Normalize(string text)
-    {
-        return text.Replace("\r\n", "\n").Replace("\r", "\n").Trim();
-    }
+    private static string Normalize(string text) => text.Replace("\r\n", "\n").Replace("\r", "\n").Trim();
 
     #endregion
 }

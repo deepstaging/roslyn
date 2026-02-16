@@ -27,7 +27,6 @@ public static class TypeBuilderFormattableExtensions
         var stringSyntaxAttr = info.GetStringSyntaxAttribute();
 
         if (info.IsNumericType)
-        {
             return builder
                 .Implements("global::System.IFormattable")
                 .AddMethod(BuildToStringMethod(stringSyntaxAttr, formatExpression)
@@ -37,7 +36,6 @@ public static class TypeBuilderFormattableExtensions
                     .When(Directives.NotNet7OrGreater)
                     .WithInheritDoc("global::System.IFormattable")
                     .WithExpressionBody(formatExpression));
-        }
 
         return builder
             .Implements("global::System.IFormattable")
@@ -53,24 +51,20 @@ public static class TypeBuilderFormattableExtensions
     /// <returns>The modified type builder.</returns>
     public static TypeBuilder ImplementsIFormattable(
         this TypeBuilder builder,
-        string toStringExpression)
-    {
-        return builder
-            .Implements("global::System.IFormattable")
-            .AddMethod(MethodBuilder
-                .Parse("public string ToString(string? format, global::System.IFormatProvider? formatProvider)")
-                .WithInheritDoc("global::System.IFormattable")
-                .WithExpressionBody(toStringExpression));
-    }
+        string toStringExpression) => builder
+        .Implements("global::System.IFormattable")
+        .AddMethod(MethodBuilder
+            .Parse("public string ToString(string? format, global::System.IFormatProvider? formatProvider)")
+            .WithInheritDoc("global::System.IFormattable")
+            .WithExpressionBody(toStringExpression));
 
-    private static MethodBuilder BuildToStringMethod(AttributeBuilder? stringSyntaxAttr, string formatExpression)
-    {
-        return MethodBuilder
+    private static MethodBuilder BuildToStringMethod(AttributeBuilder? stringSyntaxAttr, string formatExpression) =>
+        MethodBuilder
             .Parse("public string ToString(string? format, global::System.IFormatProvider? formatProvider)")
             .WithInheritDoc("global::System.IFormattable")
             .WithExpressionBody(formatExpression)
-            .If(stringSyntaxAttr.HasValue, m => m.ConfigureParameter("format", p => p.WithAttribute(stringSyntaxAttr!.Value)));
-    }
+            .If(stringSyntaxAttr.HasValue,
+                m => m.ConfigureParameter("format", p => p.WithAttribute(stringSyntaxAttr!.Value)));
 
     private static string BuildFormatExpression(FormattableTypeInfo info, string valueAccessor)
     {

@@ -103,6 +103,7 @@ public record struct TypeParameterBuilder()
     internal TypeParameterConstraintClauseSyntax? BuildConstraintClause()
     {
         var constraints = Constraints.IsDefault ? [] : Constraints;
+
         if (constraints.Length == 0)
             return null;
 
@@ -118,6 +119,7 @@ public record struct TypeParameterBuilder()
                 "new()" => SyntaxFactory.ConstructorConstraint(),
                 _ => SyntaxFactory.TypeConstraint(SyntaxFactory.ParseTypeName(constraint))
             };
+
             constraintSyntaxList.Add(constraintSyntax);
         }
 

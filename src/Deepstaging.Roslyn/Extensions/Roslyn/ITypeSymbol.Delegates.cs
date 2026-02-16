@@ -14,34 +14,23 @@ public static class TypeSymbolDelegateExtensions
         /// <summary>
         /// Checks if the type is <c>Func&lt;...&gt;</c>.
         /// </summary>
-        public bool IsFuncType()
-        {
-            return typeSymbol is INamedTypeSymbol { Name: "Func", IsGenericType: true };
-        }
+        public bool IsFuncType() => typeSymbol is INamedTypeSymbol { Name: "Func", IsGenericType: true };
 
         /// <summary>
         /// Checks if the type is <c>Action</c> or <c>Action&lt;...&gt;</c>.
         /// </summary>
-        public bool IsActionType()
-        {
-            return typeSymbol is INamedTypeSymbol { Name: "Action" };
-        }
+        public bool IsActionType() => typeSymbol is INamedTypeSymbol { Name: "Action" };
 
         /// <summary>
         /// Checks if the type is a delegate type.
         /// </summary>
-        public bool IsDelegateType()
-        {
-            return typeSymbol.TypeKind == TypeKind.Delegate;
-        }
+        public bool IsDelegateType() => typeSymbol.TypeKind == TypeKind.Delegate;
 
         /// <summary>
         /// Checks if the type is <c>Expression&lt;T&gt;</c>.
         /// </summary>
-        public bool IsExpressionType()
-        {
-            return typeSymbol is INamedTypeSymbol { Name: "Expression", IsGenericType: true, TypeArguments.Length: 1 } named
-                   && named.ContainingNamespace.ToDisplayString() == "System.Linq.Expressions";
-        }
+        public bool IsExpressionType() =>
+            typeSymbol is INamedTypeSymbol { Name: "Expression", IsGenericType: true, TypeArguments.Length: 1 } named &&
+            named.ContainingNamespace.ToDisplayString() == "System.Linq.Expressions";
     }
 }

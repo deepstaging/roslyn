@@ -175,7 +175,10 @@ public record struct IndexerBuilder()
     /// <summary>
     /// Adds an index parameter using a symbol's globally qualified name, with configuration.
     /// </summary>
-    public IndexerBuilder AddParameter<T>(string name, ValidSymbol<T> type, Func<ParameterBuilder, ParameterBuilder> configure) where T : class, ITypeSymbol
+    public IndexerBuilder AddParameter<T>(
+        string name,
+        ValidSymbol<T> type,
+        Func<ParameterBuilder, ParameterBuilder> configure) where T : class, ITypeSymbol
         => AddParameter(name, type.GloballyQualifiedName, configure);
 
     /// <summary>
@@ -323,6 +326,7 @@ public record struct IndexerBuilder()
 
         // Add attributes
         var attributes = Attributes.IsDefault ? [] : Attributes;
+
         if (attributes.Length > 0)
         {
             var attributeLists = attributes.Select(a => a.BuildList()).ToArray();
@@ -342,10 +346,12 @@ public record struct IndexerBuilder()
 
         // Add parameters
         var parameters = Parameters.IsDefault ? [] : Parameters;
+
         if (parameters.Length > 0)
         {
             var parameterList = SyntaxFactory.BracketedParameterList(
                 SyntaxFactory.SeparatedList(parameters.Select(p => p.Build())));
+
             indexer = indexer.WithParameterList(parameterList);
         }
 
@@ -367,10 +373,7 @@ public record struct IndexerBuilder()
         }
 
         // Wrap in preprocessor directive if specified
-        if (Condition.HasValue)
-        {
-            indexer = DirectiveHelper.WrapInDirective(indexer, Condition.Value);
-        }
+        if (Condition.HasValue) indexer = DirectiveHelper.WrapInDirective(indexer, Condition.Value);
 
         return indexer;
     }
@@ -378,6 +381,7 @@ public record struct IndexerBuilder()
     private IndexerDeclarationSyntax AddAutoAccessors(IndexerDeclarationSyntax indexer)
     {
         var setterKind = HasInitSetter ? SyntaxKind.InitAccessorDeclaration : SyntaxKind.SetAccessorDeclaration;
+
         return indexer.WithAccessorList(
             SyntaxFactory.AccessorList(
                 SyntaxFactory.List(new[]
@@ -389,14 +393,11 @@ public record struct IndexerBuilder()
                 })));
     }
 
-    private static IndexerDeclarationSyntax AddGetterOnly(IndexerDeclarationSyntax indexer)
-    {
-        return indexer.WithAccessorList(
-            SyntaxFactory.AccessorList(
-                SyntaxFactory.SingletonList(
-                    SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
-                        .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)))));
-    }
+    private static IndexerDeclarationSyntax AddGetterOnly(IndexerDeclarationSyntax indexer) => indexer.WithAccessorList(
+        SyntaxFactory.AccessorList(
+            SyntaxFactory.SingletonList(
+                SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+                    .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)))));
 
     private IndexerDeclarationSyntax AddExpressionBody(IndexerDeclarationSyntax indexer)
     {
@@ -418,14 +419,17 @@ public record struct IndexerBuilder()
         {
             var getter = SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
                 .WithBody(SyntaxFactory.ParseStatement(GetterBody) as BlockSyntax);
+
             accessors.Add(getter);
         }
 
         if (SetterBody != null)
         {
             var setterKind = HasInitSetter ? SyntaxKind.InitAccessorDeclaration : SyntaxKind.SetAccessorDeclaration;
+
             var setter = SyntaxFactory.AccessorDeclaration(setterKind)
                 .WithBody(SyntaxFactory.ParseStatement(SetterBody) as BlockSyntax);
+
             accessors.Add(setter);
         }
 
@@ -433,9 +437,8 @@ public record struct IndexerBuilder()
             SyntaxFactory.AccessorList(SyntaxFactory.List(accessors)));
     }
 
-    private static SyntaxKind AccessibilityToSyntaxKind(Accessibility accessibility)
-    {
-        return accessibility switch
+    private static SyntaxKind AccessibilityToSyntaxKind(Accessibility accessibility) =>
+        accessibility switch
         {
             Accessibility.Public => SyntaxKind.PublicKeyword,
             Accessibility.Private => SyntaxKind.PrivateKeyword,
@@ -443,7 +446,6 @@ public record struct IndexerBuilder()
             Accessibility.Internal => SyntaxKind.InternalKeyword,
             _ => SyntaxKind.PublicKeyword
         };
-    }
 
     #endregion
 }

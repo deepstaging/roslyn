@@ -31,7 +31,8 @@ public static class TypeBuilderComparableExtensions
             .Implements($"global::System.IComparable<{typeName}>")
             .AddOperator(OperatorBuilder.GreaterThan(typeName, "a", "b").WithExpressionBody("a.CompareTo(b) > 0"))
             .AddOperator(OperatorBuilder.LessThan(typeName, "a", "b").WithExpressionBody("a.CompareTo(b) < 0"))
-            .AddOperator(OperatorBuilder.GreaterThanOrEqual(typeName, "a", "b").WithExpressionBody("a.CompareTo(b) >= 0"))
+            .AddOperator(OperatorBuilder.GreaterThanOrEqual(typeName, "a", "b")
+                .WithExpressionBody("a.CompareTo(b) >= 0"))
             .AddOperator(OperatorBuilder.LessThanOrEqual(typeName, "a", "b").WithExpressionBody("a.CompareTo(b) <= 0"))
             .AddMethod(BuildCompareToMethod(typeName, info, valueAccessor, stringComparison));
     }
@@ -53,7 +54,8 @@ public static class TypeBuilderComparableExtensions
             .Implements($"global::System.IComparable<{typeName}>")
             .AddOperator(OperatorBuilder.GreaterThan(typeName, "a", "b").WithExpressionBody("a.CompareTo(b) > 0"))
             .AddOperator(OperatorBuilder.LessThan(typeName, "a", "b").WithExpressionBody("a.CompareTo(b) < 0"))
-            .AddOperator(OperatorBuilder.GreaterThanOrEqual(typeName, "a", "b").WithExpressionBody("a.CompareTo(b) >= 0"))
+            .AddOperator(OperatorBuilder.GreaterThanOrEqual(typeName, "a", "b")
+                .WithExpressionBody("a.CompareTo(b) >= 0"))
             .AddOperator(OperatorBuilder.LessThanOrEqual(typeName, "a", "b").WithExpressionBody("a.CompareTo(b) <= 0"))
             .AddMethod(MethodBuilder
                 .Parse($"public int CompareTo({typeName} other)")
@@ -61,7 +63,11 @@ public static class TypeBuilderComparableExtensions
                 .WithExpressionBody(compareToExpression));
     }
 
-    private static MethodBuilder BuildCompareToMethod(string typeName, ComparableTypeInfo info, string valueAccessor, StringComparison stringComparison)
+    private static MethodBuilder BuildCompareToMethod(
+        string typeName,
+        ComparableTypeInfo info,
+        string valueAccessor,
+        StringComparison stringComparison)
     {
         var method = MethodBuilder
             .Parse($"public int CompareTo({typeName} other)")
@@ -70,31 +76,32 @@ public static class TypeBuilderComparableExtensions
         if (info.RequiresNullHandling)
         {
             var compareCall = GetStringCompareCall(valueAccessor, stringComparison);
+
             // Null-safe pattern for reference types (like string)
             return method.WithBody(b => b.AddStatements($$"""
-                return ({{valueAccessor}}, other.{{valueAccessor}}) switch
-                {
-                    (null, null) => 0,
-                    (null, _) => -1,
-                    (_, null) => 1,
-                    (_, _) => {{compareCall}},
-                };
-                """));
+                                                          return ({{valueAccessor}}, other.{{valueAccessor}}) switch
+                                                          {
+                                                              (null, null) => 0,
+                                                              (null, _) => -1,
+                                                              (_, null) => 1,
+                                                              (_, _) => {{compareCall}},
+                                                          };
+                                                          """));
         }
 
         // Simple delegation for value types
         return method.WithExpressionBody($"{valueAccessor}.CompareTo(other.{valueAccessor})");
     }
 
-    private static string GetStringCompareCall(string valueAccessor, StringComparison stringComparison)
-    {
-        return stringComparison switch
+    private static string GetStringCompareCall(string valueAccessor, StringComparison stringComparison) =>
+        stringComparison switch
         {
             StringComparison.Ordinal => $"string.CompareOrdinal({valueAccessor}, other.{valueAccessor})",
-            StringComparison.OrdinalIgnoreCase => $"string.Compare({valueAccessor}, other.{valueAccessor}, global::System.StringComparison.OrdinalIgnoreCase)",
-            _ => $"string.Compare({valueAccessor}, other.{valueAccessor}, global::System.StringComparison.{stringComparison})"
+            StringComparison.OrdinalIgnoreCase =>
+                $"string.Compare({valueAccessor}, other.{valueAccessor}, global::System.StringComparison.OrdinalIgnoreCase)",
+            _ =>
+                $"string.Compare({valueAccessor}, other.{valueAccessor}, global::System.StringComparison.{stringComparison})"
         };
-    }
 
     /// <summary>
     /// Implements IComparable&lt;T&gt; using a property as the backing value.

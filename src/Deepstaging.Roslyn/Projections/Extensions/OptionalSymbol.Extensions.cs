@@ -21,20 +21,14 @@ public static class OptionalSymbolExtensions
         /// if (namedType.IsClass) { ... }
         /// </code>
         /// </example>
-        public OptionalSymbol<INamedTypeSymbol> AsNamedType()
-        {
-            return symbol is INamedTypeSymbol nts
-                ? OptionalSymbol<INamedTypeSymbol>.WithValue(nts)
-                : OptionalSymbol<INamedTypeSymbol>.Empty();
-        }
+        public OptionalSymbol<INamedTypeSymbol> AsNamedType() => symbol is INamedTypeSymbol nts
+            ? OptionalSymbol<INamedTypeSymbol>.WithValue(nts)
+            : OptionalSymbol<INamedTypeSymbol>.Empty();
 
         /// <summary>
         /// Casts to INamedTypeSymbol and validates (throws if null or wrong type).
         /// </summary>
-        public ValidSymbol<INamedTypeSymbol> AsValidNamedType()
-        {
-            return symbol.AsNamedType().ValidateOrThrow();
-        }
+        public ValidSymbol<INamedTypeSymbol> AsValidNamedType() => symbol.AsNamedType().ValidateOrThrow();
 
         /// <summary>
         /// Checks if the symbol is a named type and outputs the validated symbol.
@@ -42,6 +36,7 @@ public static class OptionalSymbolExtensions
         public bool IsNamedType(out ValidSymbol<INamedTypeSymbol> validated)
         {
             var projected = symbol.AsNamedType();
+
             if (projected.HasValue)
             {
                 validated = projected.ValidateOrThrow();
@@ -67,20 +62,14 @@ public static class OptionalSymbolExtensions
         /// <summary>
         /// Casts the symbol to INamespaceSymbol.
         /// </summary>
-        public OptionalSymbol<INamespaceSymbol> AsNamespace()
-        {
-            return symbol is INamespaceSymbol ns
-                ? OptionalSymbol<INamespaceSymbol>.WithValue(ns)
-                : OptionalSymbol<INamespaceSymbol>.Empty();
-        }
+        public OptionalSymbol<INamespaceSymbol> AsNamespace() => symbol is INamespaceSymbol ns
+            ? OptionalSymbol<INamespaceSymbol>.WithValue(ns)
+            : OptionalSymbol<INamespaceSymbol>.Empty();
 
         /// <summary>
         /// Casts to INamespaceSymbol and validates (throws if null or wrong type).
         /// </summary>
-        public ValidSymbol<INamespaceSymbol> AsValidNamespace()
-        {
-            return symbol.AsNamespace().ValidateOrThrow();
-        }
+        public ValidSymbol<INamespaceSymbol> AsValidNamespace() => symbol.AsNamespace().ValidateOrThrow();
 
         /// <summary>
         /// Checks if the symbol is a namespace and outputs the validated symbol.
@@ -88,6 +77,7 @@ public static class OptionalSymbolExtensions
         public bool IsNamespace(out ValidSymbol<INamespaceSymbol> validated)
         {
             var projected = symbol.AsNamespace();
+
             if (projected.HasValue)
             {
                 validated = projected.ValidateOrThrow();
@@ -114,20 +104,14 @@ public static class OptionalSymbolExtensions
         /// Directly casts to ITypeSymbol (any type).
         /// Returns Empty if symbol is null or not a type.
         /// </summary>
-        public OptionalSymbol<ITypeSymbol> AsType()
-        {
-            return symbol is ITypeSymbol ts
-                ? OptionalSymbol<ITypeSymbol>.WithValue(ts)
-                : OptionalSymbol<ITypeSymbol>.Empty();
-        }
+        public OptionalSymbol<ITypeSymbol> AsType() => symbol is ITypeSymbol ts
+            ? OptionalSymbol<ITypeSymbol>.WithValue(ts)
+            : OptionalSymbol<ITypeSymbol>.Empty();
 
         /// <summary>
         /// Casts to ITypeSymbol and validates (throws if null or wrong type).
         /// </summary>
-        public ValidSymbol<ITypeSymbol> AsValidType()
-        {
-            return symbol.AsType().ValidateOrThrow();
-        }
+        public ValidSymbol<ITypeSymbol> AsValidType() => symbol.AsType().ValidateOrThrow();
 
         /// <summary>
         /// Checks if the symbol is a type and outputs the validated symbol.
@@ -135,6 +119,7 @@ public static class OptionalSymbolExtensions
         public bool IsType(out ValidSymbol<ITypeSymbol> validated)
         {
             var projected = symbol.AsType();
+
             if (projected.HasValue)
             {
                 validated = projected.ValidateOrThrow();
@@ -161,20 +146,14 @@ public static class OptionalSymbolExtensions
         /// Directly casts to IMethodSymbol.
         /// Returns Empty if symbol is null or not a method.
         /// </summary>
-        public OptionalSymbol<IMethodSymbol> AsMethod()
-        {
-            return symbol is IMethodSymbol ms
-                ? OptionalSymbol<IMethodSymbol>.WithValue(ms)
-                : OptionalSymbol<IMethodSymbol>.Empty();
-        }
+        public OptionalSymbol<IMethodSymbol> AsMethod() => symbol is IMethodSymbol ms
+            ? OptionalSymbol<IMethodSymbol>.WithValue(ms)
+            : OptionalSymbol<IMethodSymbol>.Empty();
 
         /// <summary>
         /// Casts to IMethodSymbol and validates (throws if null or wrong type).
         /// </summary>
-        public ValidSymbol<IMethodSymbol> AsValidMethod()
-        {
-            return symbol.AsMethod().ValidateOrThrow();
-        }
+        public ValidSymbol<IMethodSymbol> AsValidMethod() => symbol.AsMethod().ValidateOrThrow();
 
         /// <summary>
         /// Checks if the symbol is a method and outputs the validated symbol.
@@ -182,6 +161,7 @@ public static class OptionalSymbolExtensions
         public bool IsMethod(out ValidSymbol<IMethodSymbol> validated)
         {
             var projected = symbol.AsMethod();
+
             if (projected.HasValue)
             {
                 validated = projected.ValidateOrThrow();
@@ -208,20 +188,14 @@ public static class OptionalSymbolExtensions
         /// Directly casts to IPropertySymbol.
         /// Returns Empty if symbol is null or not a property.
         /// </summary>
-        public OptionalSymbol<IPropertySymbol> AsProperty()
-        {
-            return symbol is IPropertySymbol ps
-                ? OptionalSymbol<IPropertySymbol>.WithValue(ps)
-                : OptionalSymbol<IPropertySymbol>.Empty();
-        }
+        public OptionalSymbol<IPropertySymbol> AsProperty() => symbol is IPropertySymbol ps
+            ? OptionalSymbol<IPropertySymbol>.WithValue(ps)
+            : OptionalSymbol<IPropertySymbol>.Empty();
 
         /// <summary>
         /// Casts to IPropertySymbol and validates (throws if null or wrong type).
         /// </summary>
-        public ValidSymbol<IPropertySymbol> AsValidProperty()
-        {
-            return symbol.AsProperty().ValidateOrThrow();
-        }
+        public ValidSymbol<IPropertySymbol> AsValidProperty() => symbol.AsProperty().ValidateOrThrow();
 
         /// <summary>
         /// Checks if the symbol is a property and outputs the validated symbol.
@@ -229,6 +203,7 @@ public static class OptionalSymbolExtensions
         public bool IsProperty(out ValidSymbol<IPropertySymbol> validated)
         {
             var projected = symbol.AsProperty();
+
             if (projected.HasValue)
             {
                 validated = projected.ValidateOrThrow();
@@ -255,20 +230,14 @@ public static class OptionalSymbolExtensions
         /// Directly casts to IFieldSymbol.
         /// Returns Empty if symbol is null or not a field.
         /// </summary>
-        public OptionalSymbol<IFieldSymbol> AsField()
-        {
-            return symbol is IFieldSymbol fs
-                ? OptionalSymbol<IFieldSymbol>.WithValue(fs)
-                : OptionalSymbol<IFieldSymbol>.Empty();
-        }
+        public OptionalSymbol<IFieldSymbol> AsField() => symbol is IFieldSymbol fs
+            ? OptionalSymbol<IFieldSymbol>.WithValue(fs)
+            : OptionalSymbol<IFieldSymbol>.Empty();
 
         /// <summary>
         /// Casts to IFieldSymbol and validates (throws if null or wrong type).
         /// </summary>
-        public ValidSymbol<IFieldSymbol> AsValidField()
-        {
-            return symbol.AsField().ValidateOrThrow();
-        }
+        public ValidSymbol<IFieldSymbol> AsValidField() => symbol.AsField().ValidateOrThrow();
 
         /// <summary>
         /// Checks if the symbol is a field and outputs the validated symbol.
@@ -276,6 +245,7 @@ public static class OptionalSymbolExtensions
         public bool IsField(out ValidSymbol<IFieldSymbol> validated)
         {
             var projected = symbol.AsField();
+
             if (projected.HasValue)
             {
                 validated = projected.ValidateOrThrow();
@@ -302,20 +272,14 @@ public static class OptionalSymbolExtensions
         /// Directly casts to IParameterSymbol.
         /// Returns Empty if symbol is null or not a parameter.
         /// </summary>
-        public OptionalSymbol<IParameterSymbol> AsParameter()
-        {
-            return symbol is IParameterSymbol ps
-                ? OptionalSymbol<IParameterSymbol>.WithValue(ps)
-                : OptionalSymbol<IParameterSymbol>.Empty();
-        }
+        public OptionalSymbol<IParameterSymbol> AsParameter() => symbol is IParameterSymbol ps
+            ? OptionalSymbol<IParameterSymbol>.WithValue(ps)
+            : OptionalSymbol<IParameterSymbol>.Empty();
 
         /// <summary>
         /// Casts to IParameterSymbol and validates (throws if null or wrong type).
         /// </summary>
-        public ValidSymbol<IParameterSymbol> AsValidParameter()
-        {
-            return symbol.AsParameter().ValidateOrThrow();
-        }
+        public ValidSymbol<IParameterSymbol> AsValidParameter() => symbol.AsParameter().ValidateOrThrow();
 
         /// <summary>
         /// Checks if the symbol is a parameter and outputs the validated symbol.
@@ -323,6 +287,7 @@ public static class OptionalSymbolExtensions
         public bool IsParameter(out ValidSymbol<IParameterSymbol> validated)
         {
             var projected = symbol.AsParameter();
+
             if (projected.HasValue)
             {
                 validated = projected.ValidateOrThrow();
@@ -357,13 +322,11 @@ public static class OptionalSymbolExtensions
         /// var entityType = dbSetType.GetFirstTypeArgument().OrNull();
         /// </code>
         /// </example>
-        public OptionalSymbol<INamedTypeSymbol> GetFirstTypeArgument()
-        {
-            return symbol is INamedTypeSymbol { IsGenericType: true, TypeArguments.Length: > 0 } nts &&
-                   nts.TypeArguments[0] is INamedTypeSymbol arg
+        public OptionalSymbol<INamedTypeSymbol> GetFirstTypeArgument() =>
+            symbol is INamedTypeSymbol { IsGenericType: true, TypeArguments.Length: > 0 } nts &&
+            nts.TypeArguments[0] is INamedTypeSymbol arg
                 ? OptionalSymbol<INamedTypeSymbol>.WithValue(arg)
                 : OptionalSymbol<INamedTypeSymbol>.Empty();
-        }
     }
 
     extension(ValidSymbol<INamedTypeSymbol> typeSymbol)
@@ -371,17 +334,11 @@ public static class OptionalSymbolExtensions
         /// <summary>
         /// Creates a query to search for methods in the type.
         /// </summary>
-        public MethodQuery QueryMethods()
-        {
-            return MethodQuery.From(typeSymbol.OrThrow());
-        }
+        public MethodQuery QueryMethods() => MethodQuery.From(typeSymbol.OrThrow());
 
         /// <summary>
         /// Creates a query to search for properties in the type.
         /// </summary>
-        public PropertyQuery QueryProperties()
-        {
-            return PropertyQuery.From(typeSymbol.OrThrow());
-        }
+        public PropertyQuery QueryProperties() => PropertyQuery.From(typeSymbol.OrThrow());
     }
 }

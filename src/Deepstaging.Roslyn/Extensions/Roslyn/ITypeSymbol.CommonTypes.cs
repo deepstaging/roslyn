@@ -17,71 +17,53 @@ public static class TypeSymbolCommonTypeExtensions
         /// <summary>
         /// Checks if the type is <c>System.TimeSpan</c>.
         /// </summary>
-        public bool IsTimeSpanType()
-        {
-            return typeSymbol.SpecialType == SpecialType.None
-                   && typeSymbol is INamedTypeSymbol { Name: "TimeSpan" }
-                   && typeSymbol.ContainingNamespace.ToDisplayString() == "System";
-        }
+        public bool IsTimeSpanType() => typeSymbol.SpecialType == SpecialType.None &&
+                                        typeSymbol is INamedTypeSymbol { Name: "TimeSpan" } &&
+                                        typeSymbol.ContainingNamespace.ToDisplayString() == "System";
 
         /// <summary>
         /// Checks if the type is <c>System.DateTime</c>.
         /// </summary>
-        public bool IsDateTimeType()
-        {
-            return typeSymbol.SpecialType == SpecialType.System_DateTime;
-        }
+        public bool IsDateTimeType() => typeSymbol.SpecialType == SpecialType.System_DateTime;
 
         /// <summary>
         /// Checks if the type is <c>System.DateTimeOffset</c>.
         /// </summary>
-        public bool IsDateTimeOffsetType()
-        {
-            return typeSymbol.SpecialType == SpecialType.None
-                   && typeSymbol is INamedTypeSymbol { Name: "DateTimeOffset" }
-                   && typeSymbol.ContainingNamespace.ToDisplayString() == "System";
-        }
+        public bool IsDateTimeOffsetType() => typeSymbol.SpecialType == SpecialType.None &&
+                                              typeSymbol is INamedTypeSymbol { Name: "DateTimeOffset" } &&
+                                              typeSymbol.ContainingNamespace.ToDisplayString() == "System";
 
         // ── Identifiers ──────────────────────────────────────────────────
 
         /// <summary>
         /// Checks if the type is <c>System.Guid</c>.
         /// </summary>
-        public bool IsGuidType()
-        {
-            return typeSymbol.SpecialType == SpecialType.None
-                   && typeSymbol is INamedTypeSymbol { Name: "Guid" }
-                   && typeSymbol.ContainingNamespace.ToDisplayString() == "System";
-        }
+        public bool IsGuidType() => typeSymbol.SpecialType == SpecialType.None &&
+                                    typeSymbol is INamedTypeSymbol { Name: "Guid" } &&
+                                    typeSymbol.ContainingNamespace.ToDisplayString() == "System";
 
         /// <summary>
         /// Checks if the type is <c>System.Uri</c>.
         /// </summary>
-        public bool IsUriType()
-        {
-            return typeSymbol is INamedTypeSymbol { Name: "Uri" }
-                   && typeSymbol.ContainingNamespace.ToDisplayString() == "System";
-        }
+        public bool IsUriType() => typeSymbol is INamedTypeSymbol { Name: "Uri" } &&
+                                   typeSymbol.ContainingNamespace.ToDisplayString() == "System";
 
         // ── Threading ────────────────────────────────────────────────────
 
         /// <summary>
         /// Checks if the type is <c>System.Threading.CancellationToken</c>.
         /// </summary>
-        public bool IsCancellationTokenType()
-        {
-            return typeSymbol is INamedTypeSymbol { Name: "CancellationToken" }
-                   && typeSymbol.ContainingNamespace.ToDisplayString() == "System.Threading";
-        }
+        public bool IsCancellationTokenType() => typeSymbol is INamedTypeSymbol { Name: "CancellationToken" } &&
+                                                 typeSymbol.ContainingNamespace.ToDisplayString() == "System.Threading";
 
         // ── Wrappers ────────────────────────────────────────────────────
 
         /// <summary>
         /// Checks if the type is <c>Lazy&lt;T&gt;</c>.
         /// </summary>
-        public bool IsLazyType()
+        public bool IsLazyType() => typeSymbol is INamedTypeSymbol
         {
-            return typeSymbol is INamedTypeSymbol { Name: "Lazy", IsGenericType: true, TypeArguments.Length: 1 };
-        }
+            Name: "Lazy", IsGenericType: true, TypeArguments.Length: 1
+        };
     }
 }

@@ -31,8 +31,8 @@ public abstract class MultiDiagnosticSymbolAnalyzer<TSymbol, TItem> : Diagnostic
     /// </summary>
     protected MultiDiagnosticSymbolAnalyzer()
     {
-        var reportsAttr = GetType().GetCustomAttribute<ReportsAttribute>()
-                          ?? throw new InvalidOperationException(
+        var reportsAttr = GetType().GetCustomAttribute<ReportsAttribute>() ??
+                          throw new InvalidOperationException(
                               $"Analyzer {GetType().Name} must have a [Reports] attribute.");
 
         _rule = reportsAttr.ToDescriptor();
@@ -79,10 +79,7 @@ public abstract class MultiDiagnosticSymbolAnalyzer<TSymbol, TItem> : Diagnostic
     /// <param name="symbol">The validated symbol.</param>
     /// <param name="item">The diagnostic item.</param>
     /// <returns>The message format arguments.</returns>
-    protected virtual object[] GetMessageArgs(ValidSymbol<TSymbol> symbol, TItem item)
-    {
-        return [symbol.Name];
-    }
+    protected virtual object[] GetMessageArgs(ValidSymbol<TSymbol> symbol, TItem item) => [symbol.Name];
 
     /// <summary>
     /// Gets the location for a specific diagnostic item.
@@ -91,10 +88,7 @@ public abstract class MultiDiagnosticSymbolAnalyzer<TSymbol, TItem> : Diagnostic
     /// <param name="symbol">The validated symbol.</param>
     /// <param name="item">The diagnostic item.</param>
     /// <returns>The diagnostic location.</returns>
-    protected virtual Location GetLocation(ValidSymbol<TSymbol> symbol, TItem item)
-    {
-        return symbol.Location;
-    }
+    protected virtual Location GetLocation(ValidSymbol<TSymbol> symbol, TItem item) => symbol.Location;
 
     /// <summary>
     /// Gets the properties dictionary for a specific diagnostic item.
@@ -104,8 +98,6 @@ public abstract class MultiDiagnosticSymbolAnalyzer<TSymbol, TItem> : Diagnostic
     /// <param name="symbol">The validated symbol.</param>
     /// <param name="item">The diagnostic item.</param>
     /// <returns>An immutable dictionary of property key-value pairs, or <c>null</c>.</returns>
-    protected virtual ImmutableDictionary<string, string?>? GetProperties(ValidSymbol<TSymbol> symbol, TItem item)
-    {
-        return null;
-    }
+    protected virtual ImmutableDictionary<string, string?>? GetProperties(ValidSymbol<TSymbol> symbol, TItem item) =>
+        null;
 }

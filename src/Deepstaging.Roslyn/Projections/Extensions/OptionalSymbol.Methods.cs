@@ -32,26 +32,17 @@ public static class ProjectedMethodSymbolExtensions
         /// <summary>
         /// Checks if method is async void (returns Task with no type arguments).
         /// </summary>
-        public bool IsAsyncVoid()
-        {
-            return method.HasValue && method.Symbol!.IsAsyncVoid();
-        }
+        public bool IsAsyncVoid() => method.HasValue && method.Symbol!.IsAsyncVoid();
 
         /// <summary>
         /// Checks if method is async value (returns Task&lt;T&gt; or ValueTask&lt;T&gt;).
         /// </summary>
-        public bool IsAsyncValue()
-        {
-            return method.HasValue && method.Symbol!.IsAsyncValue();
-        }
+        public bool IsAsyncValue() => method.HasValue && method.Symbol!.IsAsyncValue();
 
         /// <summary>
         /// Checks if the method is async (returns Task or ValueTask).
         /// </summary>
-        public bool IsAsync()
-        {
-            return method.HasValue && (method.Symbol!.IsAsyncValue() || method.Symbol!.IsAsyncVoid());
-        }
+        public bool IsAsync() => method.HasValue && (method.Symbol!.IsAsyncValue() || method.Symbol!.IsAsyncVoid());
 
         /// <summary>
         /// Gets the return type from an async method (extracts T from Task&lt;T&gt; or ValueTask&lt;T&gt;).

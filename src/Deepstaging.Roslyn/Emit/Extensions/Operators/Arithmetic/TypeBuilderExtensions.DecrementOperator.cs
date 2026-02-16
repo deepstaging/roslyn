@@ -29,7 +29,8 @@ public static class TypeBuilderDecrementOperatorExtensions
             return builder;
 
         return builder
-            .Implements($"global::System.Numerics.IDecrementOperators<{typeName}>", Directives.Net7OrGreater)
+            .Implements($"global::System.Numerics.IDecrementOperators<{typeName}>",
+                Directives.Net7OrGreater)
             .AddOperator(OperatorBuilder
                 .Decrement(typeName)
                 .When(Directives.Net7OrGreater)
@@ -49,7 +50,8 @@ public static class TypeBuilderDecrementOperatorExtensions
         var typeName = builder.Name;
 
         return builder
-            .Implements($"global::System.Numerics.IDecrementOperators<{typeName}>", Directives.Net7OrGreater)
+            .Implements($"global::System.Numerics.IDecrementOperators<{typeName}>",
+                Directives.Net7OrGreater)
             .AddOperator(OperatorBuilder
                 .Decrement(typeName)
                 .When(Directives.Net7OrGreater)

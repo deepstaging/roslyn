@@ -15,10 +15,7 @@ public static class ImmutableArrayAttributeDataExtensions
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public IEnumerable<ValidAttribute> GetByType<T>() where T : Attribute
-        {
-            return attributes.GetByName(typeof(T).Name);
-        }
+        public IEnumerable<ValidAttribute> GetByType<T>() where T : Attribute => attributes.GetByName(typeof(T).Name);
 
         /// <summary>
         /// Gets attributes by System.Type, supporting open generic types.
@@ -42,6 +39,7 @@ public static class ImmutableArrayAttributeDataExtensions
         public IEnumerable<ValidAttribute> GetByName(string attributeName)
         {
             var withAttribute = attributeName.EndsWith("Attribute") ? attributeName : attributeName + "Attribute";
+
             var withoutAttribute = attributeName.EndsWith("Attribute")
                 ? attributeName.Substring(0, attributeName.Length - "Attribute".Length)
                 : attributeName;

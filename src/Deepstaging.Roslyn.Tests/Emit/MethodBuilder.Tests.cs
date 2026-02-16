@@ -291,12 +291,12 @@ public class MethodBuilderTests : RoslynTestBase
             .Class("Service")
             .AddMethod("GetValue", method => method
                 .WithReturnType("int")
-                .WithExpressionBody("42;"))  // With trailing semicolon
+                .WithExpressionBody("42;")) // With trailing semicolon
             .Emit();
 
         await Assert.That(result.Success).IsTrue();
-        await Assert.That(result.Code).Contains("=> 42;");  // Should have exactly one semicolon
-        await Assert.That(result.Code).DoesNotContain("=> 42;;");  // Should NOT have double semicolon
+        await Assert.That(result.Code).Contains("=> 42;"); // Should have exactly one semicolon
+        await Assert.That(result.Code).DoesNotContain("=> 42;;"); // Should NOT have double semicolon
     }
 
     [Test]
@@ -306,7 +306,7 @@ public class MethodBuilderTests : RoslynTestBase
             .Class("Service")
             .AddMethod("GetValue", method => method
                 .WithReturnType("int")
-                .WithExpressionBody("42"))  // Without trailing semicolon
+                .WithExpressionBody("42")) // Without trailing semicolon
             .Emit();
 
         await Assert.That(result.Success).IsTrue();

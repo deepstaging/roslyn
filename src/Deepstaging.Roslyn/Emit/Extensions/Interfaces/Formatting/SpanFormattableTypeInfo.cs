@@ -48,9 +48,13 @@ internal readonly struct SpanFormattableTypeInfo
     public string GetStringSyntaxAttributeString()
     {
         if (IsGuid)
-            return "[global::System.Diagnostics.CodeAnalysis.StringSyntax(global::System.Diagnostics.CodeAnalysis.StringSyntaxAttribute.GuidFormat)] ";
+            return
+                "[global::System.Diagnostics.CodeAnalysis.StringSyntax(global::System.Diagnostics.CodeAnalysis.StringSyntaxAttribute.GuidFormat)] ";
+
         if (IsNumericType)
-            return "[global::System.Diagnostics.CodeAnalysis.StringSyntax(global::System.Diagnostics.CodeAnalysis.StringSyntaxAttribute.NumericFormat)] ";
+            return
+                "[global::System.Diagnostics.CodeAnalysis.StringSyntax(global::System.Diagnostics.CodeAnalysis.StringSyntaxAttribute.NumericFormat)] ";
+
         return "";
     }
 }

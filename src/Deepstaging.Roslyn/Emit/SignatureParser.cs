@@ -28,10 +28,13 @@ internal static class SignatureParser
 
         // Check for parse errors
         var diagnostics = tree.GetDiagnostics().Where(d => d.Severity == DiagnosticSeverity.Error).ToList();
+
         if (diagnostics.Count > 0)
         {
             var errorMessages = string.Join("; ", diagnostics.Select(d => d.GetMessage()));
-            throw new ArgumentException($"Failed to parse method signature: {errorMessages}", nameof(signature));
+
+            throw new ArgumentException($"Failed to parse method signature: {errorMessages}",
+                nameof(signature));
         }
 
         // Extract the method declaration
@@ -86,15 +89,14 @@ internal static class SignatureParser
                 SyntaxKind.AbstractKeyword => builder.AsAbstract(),
                 _ => builder
             };
+
         return builder;
     }
 
     private static TypeParameterConstraintClauseSyntax? FindConstraintClause(
         SyntaxList<TypeParameterConstraintClauseSyntax> clauses,
-        string typeParameterName)
-    {
-        return clauses.FirstOrDefault(c => c.Name.Identifier.Text == typeParameterName);
-    }
+        string typeParameterName) =>
+        clauses.FirstOrDefault(c => c.Name.Identifier.Text == typeParameterName);
 
     private static MethodBuilder AddTypeParameter(
         MethodBuilder builder,
@@ -118,6 +120,7 @@ internal static class SignatureParser
                         => tp.WithConstraint(typeConstraint.Type.ToString()),
                     _ => tp
                 };
+
             return tp;
         });
     }
@@ -181,10 +184,13 @@ internal static class SignatureParser
 
         // Check for parse errors
         var diagnostics = tree.GetDiagnostics().Where(d => d.Severity == DiagnosticSeverity.Error).ToList();
+
         if (diagnostics.Count > 0)
         {
             var errorMessages = string.Join("; ", diagnostics.Select(d => d.GetMessage()));
-            throw new ArgumentException($"Failed to parse property signature: {errorMessages}", nameof(signature));
+
+            throw new ArgumentException($"Failed to parse property signature: {errorMessages}",
+                nameof(signature));
         }
 
         // Extract the property declaration
@@ -251,6 +257,7 @@ internal static class SignatureParser
                 SyntaxKind.RequiredKeyword => builder.AsRequired(),
                 _ => builder
             };
+
         return builder;
     }
 
@@ -271,6 +278,7 @@ internal static class SignatureParser
 
         // Ensure the signature ends with semicolon for proper parsing
         var normalizedSignature = signature.Trim();
+
         if (!normalizedSignature.EndsWith(";"))
             normalizedSignature += ";";
 
@@ -281,10 +289,13 @@ internal static class SignatureParser
 
         // Check for parse errors
         var diagnostics = tree.GetDiagnostics().Where(d => d.Severity == DiagnosticSeverity.Error).ToList();
+
         if (diagnostics.Count > 0)
         {
             var errorMessages = string.Join("; ", diagnostics.Select(d => d.GetMessage()));
-            throw new ArgumentException($"Failed to parse field signature: {errorMessages}", nameof(signature));
+
+            throw new ArgumentException($"Failed to parse field signature: {errorMessages}",
+                nameof(signature));
         }
 
         // Extract the field declaration
@@ -329,6 +340,7 @@ internal static class SignatureParser
                 SyntaxKind.ConstKeyword => builder.AsConst(),
                 _ => builder
             };
+
         return builder;
     }
 
@@ -358,10 +370,13 @@ internal static class SignatureParser
 
         // Check for parse errors
         var diagnostics = tree.GetDiagnostics().Where(d => d.Severity == DiagnosticSeverity.Error).ToList();
+
         if (diagnostics.Count > 0)
         {
             var errorMessages = string.Join("; ", diagnostics.Select(d => d.GetMessage()));
-            throw new ArgumentException($"Failed to parse type signature: {errorMessages}", nameof(signature));
+
+            throw new ArgumentException($"Failed to parse type signature: {errorMessages}",
+                nameof(signature));
         }
 
         // Extract the type declaration
@@ -427,6 +442,7 @@ internal static class SignatureParser
                         => tp.WithConstraint(typeConstraint.Type.ToString()),
                     _ => tp
                 };
+
             return tp;
         });
     }
@@ -446,6 +462,7 @@ internal static class SignatureParser
                 SyntaxKind.PartialKeyword => builder.AsPartial(),
                 _ => builder
             };
+
         return builder;
     }
 

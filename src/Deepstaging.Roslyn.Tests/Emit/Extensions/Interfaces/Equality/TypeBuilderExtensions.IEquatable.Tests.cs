@@ -72,8 +72,8 @@ public class TypeBuilderIEquatableExtensionsTests : RoslynTestBase
             .Struct("MyId")
             .InNamespace("Test")
             .ImplementsIEquatable(
-                equalsExpression: "Value.CustomEquals(other.Value)",
-                hashCodeExpression: "Value.CustomHashCode()")
+                "Value.CustomEquals(other.Value)",
+                "Value.CustomHashCode()")
             .Emit();
 
         await Assert.That(result.Success).IsTrue();

@@ -20,10 +20,7 @@ public static class BuilderExtensions
     public static TBuilder WithEach<TBuilder, TItem>(
         this TBuilder builder,
         IEnumerable<TItem> items,
-        Func<TBuilder, TItem, TBuilder> folder) where TBuilder : struct
-    {
-        return items.Aggregate(builder, folder);
-    }
+        Func<TBuilder, TItem, TBuilder> folder) where TBuilder : struct => items.Aggregate(builder, folder);
 
     /// <summary>
     /// Conditionally applies a transformation when the condition is true.
@@ -38,10 +35,8 @@ public static class BuilderExtensions
         this TBuilder builder,
         bool condition,
         Func<TBuilder, TBuilder> then,
-        Func<TBuilder, TBuilder>? @else = null) where TBuilder : struct
-    {
-        return condition ? then(builder) : @else?.Invoke(builder) ?? builder;
-    }
+        Func<TBuilder, TBuilder>? @else = null) where TBuilder : struct =>
+        condition ? then(builder) : @else?.Invoke(builder) ?? builder;
 
     /// <summary>
     /// Conditionally applies a transformation when the condition is false.
@@ -56,8 +51,6 @@ public static class BuilderExtensions
         this TBuilder builder,
         bool condition,
         Func<TBuilder, TBuilder> then,
-        Func<TBuilder, TBuilder>? @else = null) where TBuilder : struct
-    {
-        return !condition ? then(builder) : @else?.Invoke(builder) ?? builder;
-    }
+        Func<TBuilder, TBuilder>? @else = null) where TBuilder : struct =>
+        !condition ? then(builder) : @else?.Invoke(builder) ?? builder;
 }

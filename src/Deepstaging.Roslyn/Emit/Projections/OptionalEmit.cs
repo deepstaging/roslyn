@@ -29,10 +29,8 @@ public readonly struct OptionalEmit : IValidatableProjection<CompilationUnitSynt
     /// <summary>
     /// Creates a successful emit result with no diagnostics.
     /// </summary>
-    internal static OptionalEmit FromSuccess(CompilationUnitSyntax syntax, string code)
-    {
-        return new OptionalEmit(syntax, code, ImmutableArray<Diagnostic>.Empty);
-    }
+    internal static OptionalEmit FromSuccess(CompilationUnitSyntax syntax, string code) =>
+        new(syntax, code, ImmutableArray<Diagnostic>.Empty);
 
     /// <summary>
     /// Creates an emit result with warnings or informational diagnostics.
@@ -41,18 +39,12 @@ public readonly struct OptionalEmit : IValidatableProjection<CompilationUnitSynt
     internal static OptionalEmit FromDiagnostics(
         CompilationUnitSyntax syntax,
         string code,
-        ImmutableArray<Diagnostic> diagnostics)
-    {
-        return new OptionalEmit(syntax, code, diagnostics);
-    }
+        ImmutableArray<Diagnostic> diagnostics) => new(syntax, code, diagnostics);
 
     /// <summary>
     /// Creates a failed emit result with error diagnostics.
     /// </summary>
-    internal static OptionalEmit FromFailure(ImmutableArray<Diagnostic> diagnostics)
-    {
-        return new OptionalEmit(null, null, diagnostics);
-    }
+    internal static OptionalEmit FromFailure(ImmutableArray<Diagnostic> diagnostics) => new(null, null, diagnostics);
 
     #endregion
 
@@ -110,10 +102,7 @@ public readonly struct OptionalEmit : IValidatableProjection<CompilationUnitSynt
     /// Validates the optional emit result to a ValidEmit with guaranteed non-null access.
     /// Returns null if validation fails (emit was unsuccessful).
     /// </summary>
-    public ValidEmit? Validate()
-    {
-        return Success ? ValidEmit.From(_syntax!, _code!) : null;
-    }
+    public ValidEmit? Validate() => Success ? ValidEmit.From(_syntax!, _code!) : null;
 
     /// <summary>
     /// Validates the optional emit result or throws if unsuccessful.
@@ -125,9 +114,11 @@ public readonly struct OptionalEmit : IValidatableProjection<CompilationUnitSynt
         {
             var errorCount = Errors.Count();
             var errorMessages = string.Join("\n  ", Errors.Select(d => d.ToString()));
+
             var codeSection = _code != null
                 ? $"\n\nGenerated code:\n{_code}"
                 : "\n\nNo code was generated.";
+
             throw new InvalidOperationException(
                 message ?? $"Emit failed with {errorCount} error(s):\n  {errorMessages}{codeSection}");
         }
@@ -154,43 +145,28 @@ public readonly struct OptionalEmit : IValidatableProjection<CompilationUnitSynt
     /// Checks if the emit result is not valid (unsuccessful). Returns true if invalid.
     /// Enables fast-exit pattern: if (result.IsNotValid(out var valid)) return;
     /// </summary>
-    public bool IsNotValid(out ValidEmit validated)
-    {
-        return !TryValidate(out validated);
-    }
+    public bool IsNotValid(out ValidEmit validated) => !TryValidate(out validated);
 
     /// <summary>
     /// Checks if the emit result is valid (successful). Returns true if valid.
     /// </summary>
-    public bool IsValid(out ValidEmit validated)
-    {
-        return TryValidate(out validated);
-    }
+    public bool IsValid(out ValidEmit validated) => TryValidate(out validated);
 
     /// <summary>
     /// Returns the syntax or throws if emit failed.
     /// </summary>
-    public CompilationUnitSyntax OrThrow(string? message = null)
-    {
-        return ValidateOrThrow(message).Syntax;
-    }
+    public CompilationUnitSyntax OrThrow(string? message = null) => ValidateOrThrow(message).Syntax;
 
     /// <summary>
     /// Returns the syntax or throws with a lazily-computed message if emit failed.
     /// </summary>
     /// <param name="messageFactory">Factory function to create the error message.</param>
-    public CompilationUnitSyntax OrThrow(Func<string> messageFactory)
-    {
-        return ValidateOrThrow(messageFactory()).Syntax;
-    }
+    public CompilationUnitSyntax OrThrow(Func<string> messageFactory) => ValidateOrThrow(messageFactory()).Syntax;
 
     /// <summary>
     /// Returns the syntax or null if emit failed.
     /// </summary>
-    public CompilationUnitSyntax? OrNull()
-    {
-        return _syntax;
-    }
+    public CompilationUnitSyntax? OrNull() => _syntax;
 
     #endregion
 

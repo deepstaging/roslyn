@@ -28,10 +28,12 @@ public static class TypeBuilderBackingConversionsExtensions
         return builder
             .AddImplicitConversion(backingTypeName, op => op
                 .WithExpressionBody($"new {typeName}(value)")
-                .WithXmlDoc($"Implicitly converts a <see cref=\"{backingType.Name}\"/> to a <see cref=\"{typeName}\"/>."))
+                .WithXmlDoc(
+                    $"Implicitly converts a <see cref=\"{backingType.Name}\"/> to a <see cref=\"{typeName}\"/>."))
             .AddExplicitConversionTo(backingTypeName, op => op
                 .WithExpressionBody($"value.{valueAccessor}")
-                .WithXmlDoc($"Explicitly converts a <see cref=\"{typeName}\"/> to its underlying <see cref=\"{backingType.Name}\"/> value."));
+                .WithXmlDoc(
+                    $"Explicitly converts a <see cref=\"{typeName}\"/> to its underlying <see cref=\"{backingType.Name}\"/> value."));
     }
 
     /// <summary>
@@ -46,14 +48,12 @@ public static class TypeBuilderBackingConversionsExtensions
         this TypeBuilder builder,
         string backingTypeName,
         string fromBackingExpression,
-        string toBackingExpression)
-    {
-        return builder
+        string toBackingExpression) =>
+        builder
             .AddImplicitConversion(backingTypeName, op => op
                 .WithExpressionBody(fromBackingExpression))
             .AddExplicitConversionTo(backingTypeName, op => op
                 .WithExpressionBody(toBackingExpression));
-    }
 
     /// <summary>
     /// Adds only an implicit conversion from the backing type to this type.
@@ -72,7 +72,8 @@ public static class TypeBuilderBackingConversionsExtensions
         return builder
             .AddImplicitConversion(backingTypeName, op => op
                 .WithExpressionBody($"new {typeName}(value)")
-                .WithXmlDoc($"Implicitly converts a <see cref=\"{backingType.Name}\"/> to a <see cref=\"{typeName}\"/>."));
+                .WithXmlDoc(
+                    $"Implicitly converts a <see cref=\"{backingType.Name}\"/> to a <see cref=\"{typeName}\"/>."));
     }
 
     /// <summary>
@@ -94,7 +95,8 @@ public static class TypeBuilderBackingConversionsExtensions
         return builder
             .AddExplicitConversionTo(backingTypeName, op => op
                 .WithExpressionBody($"value.{valueAccessor}")
-                .WithXmlDoc($"Explicitly converts a <see cref=\"{typeName}\"/> to its underlying <see cref=\"{backingType.Name}\"/> value."));
+                .WithXmlDoc(
+                    $"Explicitly converts a <see cref=\"{typeName}\"/> to its underlying <see cref=\"{backingType.Name}\"/> value."));
     }
 
     /// <summary>
