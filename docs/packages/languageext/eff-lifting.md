@@ -170,23 +170,82 @@ LiftingStrategy.AsyncVoid.EffReturnType("ignored");
 
 ---
 
-## Putting It Together
+## LiftingStrategyAnalysis
 
-A complete generator pattern that uses `LiftingStrategy` to automate method generation:
+Extension methods on `ValidSymbol<IMethodSymbol>` that automatically determine the lifting strategy and result type from a Roslyn method symbol. This eliminates manual analysis logic in your generator.
 
 ```csharp
-// Analyze the source method to determine the strategy
-LiftingStrategy strategy = AnalyzeMethod(sourceMethod);
-string resultType = GetResultType(sourceMethod);
-string callExpr = BuildCallExpression(sourceMethod);
+using Deepstaging.Roslyn.LanguageExt.Expressions;
+```
 
-// Build the lift expression and method signature
+### DetermineLiftingStrategy
+
+Analyzes a method's async nature and return type nullability to pick the correct `LiftingStrategy`:
+
+```csharp
+// Given a ValidSymbol<IMethodSymbol> from Roslyn analysis:
+LiftingStrategy strategy = method.DetermineLiftingStrategy();
+```
+
+| Method signature | Determined strategy |
+|-----------------|-------------------|
+| `Task SendAsync(string to)` | `AsyncVoid` |
+| `Task<int> CountAsync()` | `AsyncValue` |
+| `Task<User?> FindAsync(int id)` | `AsyncOptional` |
+| `void Clear()` | `SyncVoid` |
+| `int Count()` | `SyncValue` |
+| `User? Find(int id)` | `SyncOptional` |
+
+The analysis inspects `AsyncMethodKind`, `InnerTaskType`, nullable annotations, and `ReturnsVoid` — all via the `ValidSymbol` projection from `Deepstaging.Roslyn`.
+
+### EffectResultType
+
+Computes the raw (unwrapped) result type for a method given its strategy:
+
+```csharp
+LiftingStrategy strategy = method.DetermineLiftingStrategy();
+string resultType = method.EffectResultType(strategy);
+```
+
+| Strategy category | Result |
+|-------------------|--------|
+| `*Void` | `"Unit"` |
+| `AsyncValue`, `AsyncOptional`, `AsyncNonNull` | Inner type of `Task<T>` / `ValueTask<T>` |
+| `SyncValue`, `SyncOptional`, `SyncNonNull` | The method's return type directly |
+
+The returned type is always the **unwrapped inner type** (e.g., `"User"` not `"Option<User>"`). Wrapping is handled downstream by `EffReturnType` and `Lift`.
+
+!!! tip "DetermineLiftingStrategy + EffectResultType + Lift = zero manual analysis"
+    These three methods form a complete pipeline: analyze the method, extract its result type, then generate the lift expression — no `switch` statements needed in your generator code.
+
+---
+
+## Putting It Together
+
+A complete generator pattern that uses `LiftingStrategyAnalysis` to fully automate effect method generation from Roslyn symbols:
+
+```csharp
+using Deepstaging.Roslyn.LanguageExt.Expressions;
+using Deepstaging.Roslyn.LanguageExt.Extensions;
+using Deepstaging.Roslyn.LanguageExt.Refs;
+
 var lift = EffExpression.Lift("RT", "rt");
 
-var method = MethodBuilder
-    .Parse($"public void {sourceMethod.Name}()")
-    .AsEffMethod("RT", "IHasDb", strategy.EffReturnType(resultType))
-    .WithExpressionBody(lift.Lift(strategy, resultType, callExpr));
+// For each method on the source interface:
+foreach (var method in sourceType.QueryMethods())
+{
+    // 1. Determine how the method should be lifted
+    var strategy = method.DetermineLiftingStrategy();
+    var resultType = method.EffectResultType(strategy);
+
+    // 2. Build the call expression
+    var callExpr = $"rt.Service.{method.Name}({paramList})";
+
+    // 3. Generate the effect method — strategy drives everything
+    type = type.AddMethod(method.Name, m => m
+        .AsEffMethod("RT", "IHasService", strategy.EffReturnType(resultType))
+        .WithExpressionBody(lift.Lift(strategy, resultType, callExpr)));
+}
 ```
 
 This generates correct code regardless of whether the source method is async/sync, returns void, returns nullable, or returns a value — the strategy handles all the variation.

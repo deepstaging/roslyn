@@ -44,6 +44,20 @@ var type = TypeBuilder.StaticClass("DbEffects")
     .AddMethod(method);
 ```
 
+For generators that analyze Roslyn symbols, use `LiftingStrategyAnalysis` to avoid manual `switch` statements:
+
+```csharp
+// Automatically determine strategy from the method symbol
+var strategy = method.DetermineLiftingStrategy();
+var resultType = method.EffectResultType(strategy);
+
+// Strategy drives both the return type and the lift expression
+var effMethod = MethodBuilder
+    .Parse($"public void {method.Name}()")
+    .AsEffMethod("RT", "IHasDb", strategy.EffReturnType(resultType))
+    .WithExpressionBody(lift.Lift(strategy, resultType, callExpr));
+```
+
 This generates:
 
 ```csharp
@@ -81,5 +95,5 @@ Every `*TypeRef` has implicit conversions to `TypeRef` and `string`, so they dro
 
 - **[Refs](refs.md)** — `LanguageExtRefs` factory and type-safe ref structs
 - **[Expressions](expressions.md)** — Option, Either, Fin, Seq, HashMap expression builders
-- **[Eff Lifting](eff-lifting.md)** — `EffLift`, `EffLiftIO`, and `LiftingStrategy`
+- **[Eff Lifting](eff-lifting.md)** — `EffLift`, `EffLiftIO`, `LiftingStrategy`, and `LiftingStrategyAnalysis`
 - **[Extensions](extensions.md)** — `AddLanguageExtUsings`, `AsEffMethod`
