@@ -27,28 +27,23 @@ public static class LanguageExtRefs
 
     // ── Core Types ──────────────────────────────────────────────────────
 
-    /// <summary>Creates an <c>Eff&lt;RT, A&gt;</c> type reference.</summary>
-    public static TypeRef Eff(TypeRef rt, TypeRef result) =>
-        Namespace.GlobalType($"Eff<{rt.Value}, {result.Value}>");
+    /// <summary>Creates an <c>Eff&lt;RT, A&gt;</c> type reference that carries the runtime and result types.</summary>
+    public static EffTypeRef Eff(TypeRef rt, TypeRef result) => new(rt, result);
 
     /// <summary>Creates an <c>Option&lt;T&gt;</c> type reference that carries the inner type.</summary>
     public static OptionTypeRef Option(TypeRef innerType) => new(innerType);
 
-    /// <summary>Creates a <c>Fin&lt;A&gt;</c> type reference.</summary>
-    public static TypeRef Fin(TypeRef innerType) =>
-        Namespace.GlobalType($"Fin<{innerType.Value}>");
+    /// <summary>Creates a <c>Fin&lt;A&gt;</c> type reference that carries the inner type.</summary>
+    public static FinTypeRef Fin(TypeRef innerType) => new(innerType);
 
-    /// <summary>Creates a <c>Seq&lt;A&gt;</c> type reference.</summary>
-    public static TypeRef Seq(TypeRef elementType) =>
-        Namespace.GlobalType($"Seq<{elementType.Value}>");
+    /// <summary>Creates a <c>Seq&lt;A&gt;</c> type reference that carries the element type.</summary>
+    public static SeqTypeRef Seq(TypeRef elementType) => new(elementType);
 
-    /// <summary>Creates an <c>Either&lt;L, R&gt;</c> type reference.</summary>
-    public static TypeRef Either(TypeRef left, TypeRef right) =>
-        Namespace.GlobalType($"Either<{left.Value}, {right.Value}>");
+    /// <summary>Creates an <c>Either&lt;L, R&gt;</c> type reference that carries the left and right types.</summary>
+    public static EitherTypeRef Either(TypeRef left, TypeRef right) => new(left, right);
 
-    /// <summary>Creates a <c>HashMap&lt;K, V&gt;</c> type reference.</summary>
-    public static TypeRef HashMap(TypeRef keyType, TypeRef valueType) =>
-        Namespace.GlobalType($"HashMap<{keyType.Value}, {valueType.Value}>");
+    /// <summary>Creates a <c>HashMap&lt;K, V&gt;</c> type reference that carries the key and value types.</summary>
+    public static HashMapTypeRef HashMap(TypeRef keyType, TypeRef valueType) => new(keyType, valueType);
 
     /// <summary>Gets a <c>Unit</c> type reference.</summary>
     public static TypeRef Unit => Namespace.GlobalType("Unit");

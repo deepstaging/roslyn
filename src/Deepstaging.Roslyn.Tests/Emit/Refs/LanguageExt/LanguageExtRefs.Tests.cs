@@ -36,7 +36,9 @@ public class LanguageExtRefsTests
     {
         var typeRef = LanguageExtRefs.Eff("RT", "int");
 
-        await Assert.That(typeRef).IsEqualTo("global::LanguageExt.Eff<RT, int>");
+        await Assert.That((string)typeRef).IsEqualTo("global::LanguageExt.Eff<RT, int>");
+        await Assert.That((string)typeRef.Rt).IsEqualTo("RT");
+        await Assert.That((string)typeRef.Result).IsEqualTo("int");
     }
 
     [Test]
@@ -53,7 +55,8 @@ public class LanguageExtRefsTests
     {
         var typeRef = LanguageExtRefs.Fin("int");
 
-        await Assert.That(typeRef).IsEqualTo("global::LanguageExt.Fin<int>");
+        await Assert.That((string)typeRef).IsEqualTo("global::LanguageExt.Fin<int>");
+        await Assert.That((string)typeRef.InnerType).IsEqualTo("int");
     }
 
     [Test]
@@ -61,7 +64,8 @@ public class LanguageExtRefsTests
     {
         var typeRef = LanguageExtRefs.Seq("string");
 
-        await Assert.That(typeRef).IsEqualTo("global::LanguageExt.Seq<string>");
+        await Assert.That((string)typeRef).IsEqualTo("global::LanguageExt.Seq<string>");
+        await Assert.That((string)typeRef.ElementType).IsEqualTo("string");
     }
 
     [Test]
@@ -69,7 +73,9 @@ public class LanguageExtRefsTests
     {
         var typeRef = LanguageExtRefs.Either("string", "int");
 
-        await Assert.That(typeRef).IsEqualTo("global::LanguageExt.Either<string, int>");
+        await Assert.That((string)typeRef).IsEqualTo("global::LanguageExt.Either<string, int>");
+        await Assert.That((string)typeRef.Left).IsEqualTo("string");
+        await Assert.That((string)typeRef.Right).IsEqualTo("int");
     }
 
     [Test]
@@ -77,7 +83,9 @@ public class LanguageExtRefsTests
     {
         var typeRef = LanguageExtRefs.HashMap("string", "int");
 
-        await Assert.That(typeRef).IsEqualTo("global::LanguageExt.HashMap<string, int>");
+        await Assert.That((string)typeRef).IsEqualTo("global::LanguageExt.HashMap<string, int>");
+        await Assert.That((string)typeRef.KeyType).IsEqualTo("string");
+        await Assert.That((string)typeRef.ValueType).IsEqualTo("int");
     }
 
     [Test]
@@ -103,7 +111,7 @@ public class LanguageExtRefsTests
     {
         var typeRef = LanguageExtRefs.Eff("RT", LanguageExtRefs.Option("string"));
 
-        await Assert.That(typeRef)
+        await Assert.That((string)typeRef)
             .IsEqualTo("global::LanguageExt.Eff<RT, global::LanguageExt.Option<string>>");
     }
 
@@ -112,7 +120,7 @@ public class LanguageExtRefsTests
     {
         var typeRef = LanguageExtRefs.Seq(CollectionRefs.List("int"));
 
-        await Assert.That(typeRef)
+        await Assert.That((string)typeRef)
             .IsEqualTo("global::LanguageExt.Seq<global::System.Collections.Generic.List<int>>");
     }
 

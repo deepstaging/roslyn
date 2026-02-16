@@ -39,6 +39,15 @@ public class EffLiftTests
             .IsEqualTo("liftEff<RT, global::LanguageExt.Option<User>>(async rt => Optional(await rt.Service.FindAsync(id)))");
     }
 
+    [Test]
+    public async Task AsyncNonNull_produces_liftEff_with_null_forgiving()
+    {
+        var result = _lift.AsyncNonNull("string", "rt.Service.GetNameAsync(id)");
+
+        await Assert.That(result)
+            .IsEqualTo("liftEff<RT, string>(async rt => (await rt.Service.GetNameAsync(id))!)");
+    }
+
     // ── Sync ────────────────────────────────────────────────────────────
 
     [Test]
@@ -66,6 +75,15 @@ public class EffLiftTests
 
         await Assert.That(result)
             .IsEqualTo("liftEff<RT, global::LanguageExt.Option<string>>(rt => Optional(rt.Config.TryGetValue(key)))");
+    }
+
+    [Test]
+    public async Task SyncNonNull_produces_liftEff_with_null_forgiving()
+    {
+        var result = _lift.SyncNonNull("string", "rt.Config.GetValue(key)");
+
+        await Assert.That(result)
+            .IsEqualTo("liftEff<RT, string>(rt => (rt.Config.GetValue(key))!)");
     }
 
     // ── Body ────────────────────────────────────────────────────────────

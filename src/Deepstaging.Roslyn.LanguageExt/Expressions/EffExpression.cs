@@ -3,6 +3,8 @@
 
 namespace Deepstaging.Roslyn.LanguageExt.Expressions;
 
+using Refs;
+
 /// <summary>
 /// Entry point for building LanguageExt effect expressions.
 /// </summary>
@@ -22,7 +24,7 @@ public static class EffExpression
     /// <summary>
     /// Creates an <see cref="EffLiftIO"/> builder for composing <c>{EffType}.LiftIO(...)</c> expressions.
     /// </summary>
-    /// <param name="effType">The Eff type to call LiftIO on (e.g., <c>Eff&lt;RT, int&gt;</c>).</param>
+    /// <param name="effType">The Eff type reference carrying the runtime and result types.</param>
     /// <param name="param">The lambda parameter name (e.g., <c>"rt"</c>).</param>
-    public static EffLiftIO LiftIO(string effType, string param) => new(effType, param);
+    public static EffLiftIO LiftIO(EffTypeRef effType, string param) => new(effType, param);
 }

@@ -41,6 +41,14 @@ public readonly struct EffLift(string rt, string param)
         $"liftEff<{rt}, {result}>(async {param} => Optional(await {expr}))";
 
     /// <summary>
+    /// <c>liftEff&lt;{rt}, {result}&gt;(async {param} =&gt; (await {expr})!)</c>
+    /// </summary>
+    /// <param name="result">The result type.</param>
+    /// <param name="expr">The awaitable expression with null-forgiving assertion (without <c>await</c>).</param>
+    public string AsyncNonNull(string result, string expr) =>
+        $"liftEff<{rt}, {result}>(async {param} => (await {expr})!)";
+
+    /// <summary>
     /// <c>liftEff&lt;{rt}, {result}&gt;({param} =&gt; {expr})</c>
     /// </summary>
     /// <param name="result">The result type.</param>
@@ -62,6 +70,14 @@ public readonly struct EffLift(string rt, string param)
     /// <param name="expr">The synchronous expression that may return null.</param>
     public string SyncOptional(OptionTypeRef result, string expr) =>
         $"liftEff<{rt}, {result}>({param} => Optional({expr}))";
+
+    /// <summary>
+    /// <c>liftEff&lt;{rt}, {result}&gt;({param} =&gt; ({expr})!)</c>
+    /// </summary>
+    /// <param name="result">The result type.</param>
+    /// <param name="expr">The synchronous expression with null-forgiving assertion.</param>
+    public string SyncNonNull(string result, string expr) =>
+        $"liftEff<{rt}, {result}>({param} => ({expr})!)";
 
     /// <summary>
     /// <c>liftEff&lt;{rt}, {result}&gt;({lambdaBody})</c> — escape hatch for custom lambda bodies.
