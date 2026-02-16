@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
 
-namespace Deepstaging.Roslyn.Tests.Emit;
+namespace Deepstaging.Roslyn.Tests.Emit.Refs;
 
 public class ExpressionRefTests
 {

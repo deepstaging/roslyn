@@ -1,0 +1,101 @@
+// SPDX-FileCopyrightText: 2024-present Deepstaging
+// SPDX-License-Identifier: RPL-1.5
+
+namespace Deepstaging.Roslyn.Tests.Emit.Refs;
+
+public class HttpRefsTests
+{
+    [Test]
+    public async Task Client_creates_globally_qualified_type()
+    {
+        TypeRef typeRef = HttpRefs.Client;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.HttpClient");
+    }
+
+    [Test]
+    public async Task RequestMessage_creates_globally_qualified_type()
+    {
+        TypeRef typeRef = HttpRefs.RequestMessage;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.HttpRequestMessage");
+    }
+
+    [Test]
+    public async Task ResponseMessage_creates_globally_qualified_type()
+    {
+        TypeRef typeRef = HttpRefs.ResponseMessage;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.HttpResponseMessage");
+    }
+
+    [Test]
+    public async Task Method_creates_globally_qualified_type()
+    {
+        TypeRef typeRef = HttpRefs.Method;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.HttpMethod");
+    }
+
+    [Test]
+    public async Task Verb_creates_method_expression()
+    {
+        TypeRef typeRef = HttpRefs.Verb("Get");
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.HttpMethod.Get");
+    }
+
+    [Test]
+    public void Verb_throws_on_unknown_verb()
+    {
+        Assert.Throws<ArgumentException>(() => HttpRefs.Verb("Yeet"));
+    }
+
+    [Test]
+    public async Task Get_creates_method_expression()
+    {
+        TypeRef typeRef = HttpRefs.Get;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.HttpMethod.Get");
+    }
+
+    [Test]
+    public async Task Post_creates_method_expression()
+    {
+        TypeRef typeRef = HttpRefs.Post;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.HttpMethod.Post");
+    }
+
+    [Test]
+    public async Task Content_creates_globally_qualified_type()
+    {
+        TypeRef typeRef = HttpRefs.Content;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.HttpContent");
+    }
+
+    [Test]
+    public async Task StringContent_creates_globally_qualified_type()
+    {
+        TypeRef typeRef = HttpRefs.StringContent;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.StringContent");
+    }
+
+    [Test]
+    public async Task ByteArrayContent_creates_globally_qualified_type()
+    {
+        TypeRef typeRef = HttpRefs.ByteArrayContent;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.ByteArrayContent");
+    }
+
+    [Test]
+    public async Task StreamContent_creates_globally_qualified_type()
+    {
+        TypeRef typeRef = HttpRefs.StreamContent;
+
+        await Assert.That((string)typeRef).IsEqualTo("global::System.Net.Http.StreamContent");
+    }
+}
