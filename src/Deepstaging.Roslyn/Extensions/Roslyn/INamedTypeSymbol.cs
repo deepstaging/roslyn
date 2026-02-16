@@ -89,28 +89,14 @@ public static class NamedTypeSymbolExtensions
 
         /// <summary>
         /// Checks if the type implements the specified interface by name.
+        /// Supports simple name, display string, and fully qualified format.
         /// </summary>
         public bool ImplementsInterface(string interfaceName)
         {
-            return symbol.AllInterfaces.Any(i => i.Name == interfaceName);
-        }
-
-        /// <summary>
-        /// Checks if the type has any attributes.
-        /// </summary>
-        public bool HasAttributes()
-        {
-            return symbol.GetAttributes().Length > 0;
-        }
-
-        /// <summary>
-        /// Checks if the type has the specified attribute by name.
-        /// </summary>
-        public bool HasAttribute(string attributeName)
-        {
-            return symbol.GetAttributes().Any(a =>
-                a.AttributeClass?.Name == attributeName ||
-                a.AttributeClass?.Name == attributeName + "Attribute");
+            return symbol.AllInterfaces.Any(i =>
+                i.Name == interfaceName ||
+                i.ToDisplayString() == interfaceName ||
+                i.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == interfaceName);
         }
     }
 }

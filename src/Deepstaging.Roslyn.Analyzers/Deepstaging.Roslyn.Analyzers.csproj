@@ -13,12 +13,8 @@
         <!-- Disable release tracking for now -->
         <NoWarn>$(NoWarn);RS2008</NoWarn>
 
-        <!-- Package metadata -->
-        <IsPackable>true</IsPackable>
-        <PackageId>Deepstaging.Roslyn.Analyzers</PackageId>
-        <Title>Deepstaging.Roslyn.Analyzers</Title>
-        <Description>Roslyn analyzers for pipeline model correctness in incremental source generators.</Description>
-        <PackageTags>deepstaging;roslyn;analyzers;pipeline-model;source-generator</PackageTags>
+        <!-- Bundled into Deepstaging.Roslyn package; not packaged individually -->
+        <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>

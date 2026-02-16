@@ -197,5 +197,74 @@ public static class SymbolExtensions
         {
             return symbol.Locations.Any(l => l.IsInMetadata);
         }
+
+        /// <summary>
+        /// Checks if the symbol has any attributes.
+        /// </summary>
+        public bool HasAttributes()
+        {
+            return symbol.GetAttributes().Length > 0;
+        }
+
+        /// <summary>
+        /// Checks if the symbol has an attribute with the specified name.
+        /// Supports both "Name" and "NameAttribute" forms.
+        /// </summary>
+        public bool HasAttribute(string attributeName)
+        {
+            return symbol.GetAttributesByName(attributeName).Any();
+        }
+
+        /// <summary>
+        /// Checks if the symbol has an attribute of the specified type.
+        /// </summary>
+        public bool HasAttribute<TAttribute>() where TAttribute : Attribute
+        {
+            return symbol.GetAttributesByType<TAttribute>().Any();
+        }
+
+        /// <summary>
+        /// Checks if the symbol has an attribute of the specified System.Type.
+        /// Supports open generic types - use typeof(MyAttribute&lt;&gt;) to match any instantiation.
+        /// </summary>
+        /// <param name="attributeType">The attribute type. Can be an open generic like typeof(MyAttribute&lt;&gt;).</param>
+        public bool HasAttribute(Type attributeType)
+        {
+            return symbol.GetAttributesByType(attributeType).Any();
+        }
+
+        /// <summary>
+        /// Checks if the symbol has no attributes.
+        /// </summary>
+        public bool LacksAttributes()
+        {
+            return symbol.GetAttributes().Length == 0;
+        }
+
+        /// <summary>
+        /// Checks if the symbol does not have an attribute with the specified name.
+        /// </summary>
+        public bool LacksAttribute(string attributeName)
+        {
+            return !symbol.GetAttributesByName(attributeName).Any();
+        }
+
+        /// <summary>
+        /// Checks if the symbol does not have an attribute of the specified type.
+        /// </summary>
+        public bool LacksAttribute<TAttribute>() where TAttribute : Attribute
+        {
+            return !symbol.GetAttributesByType<TAttribute>().Any();
+        }
+
+        /// <summary>
+        /// Checks if the symbol does not have an attribute of the specified System.Type.
+        /// Supports open generic types - use typeof(MyAttribute&lt;&gt;) to match any instantiation.
+        /// </summary>
+        /// <param name="attributeType">The attribute type. Can be an open generic like typeof(MyAttribute&lt;&gt;).</param>
+        public bool LacksAttribute(Type attributeType)
+        {
+            return !symbol.GetAttributesByType(attributeType).Any();
+        }
     }
 }

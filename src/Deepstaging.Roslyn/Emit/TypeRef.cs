@@ -16,6 +16,7 @@ namespace Deepstaging.Roslyn.Emit;
 /// <item><see cref="Immutable"/> — <c>System.Collections.Immutable</c></item>
 /// <item><see cref="Tasks"/> — <c>System.Threading.Tasks</c> and <c>System.Threading</c></item>
 /// <item><see cref="Http"/> — <c>System.Net.Http</c></item>
+/// <item><see cref="Configuration"/> — <c>Microsoft.Extensions.Configuration</c></item>
 /// <item><see cref="DependencyInjection"/> — <c>Microsoft.Extensions.DependencyInjection</c></item>
 /// <item><see cref="Logging"/> — <c>Microsoft.Extensions.Logging</c></item>
 /// <item><see cref="Linq"/> — <c>System.Linq</c> and <c>System.Linq.Expressions</c></item>
@@ -315,6 +316,26 @@ public readonly record struct TypeRef
 
         /// <summary>Gets a <c>StreamContent</c> type reference.</summary>
         public static TypeRef StreamContent => new("global::System.Net.Http.StreamContent");
+    }
+
+    // ── Configuration (Microsoft.Extensions.Configuration) ────────────
+
+    /// <summary>
+    /// Factory methods for <c>Microsoft.Extensions.Configuration</c> types.
+    /// </summary>
+    public static class Configuration
+    {
+        /// <summary>Gets an <c>IConfiguration</c> type reference.</summary>
+        public static TypeRef IConfiguration => new("global::Microsoft.Extensions.Configuration.IConfiguration");
+
+        /// <summary>Gets an <c>IConfigurationSection</c> type reference.</summary>
+        public static TypeRef IConfigurationSection => new("global::Microsoft.Extensions.Configuration.IConfigurationSection");
+
+        /// <summary>Gets an <c>IConfigurationRoot</c> type reference.</summary>
+        public static TypeRef IConfigurationRoot => new("global::Microsoft.Extensions.Configuration.IConfigurationRoot");
+
+        /// <summary>Gets an <c>IConfigurationBuilder</c> type reference.</summary>
+        public static TypeRef IConfigurationBuilder => new("global::Microsoft.Extensions.Configuration.IConfigurationBuilder");
     }
 
     // ── Dependency Injection (Microsoft.Extensions.DependencyInjection) ──

@@ -149,6 +149,22 @@ method.AddParameter("ct", TypeRef.Tasks.CancellationToken)
 | `Http.ByteArrayContent` | `ByteArrayContent` |
 | `Http.StreamContent` | `StreamContent` |
 
+### Configuration
+
+`Microsoft.Extensions.Configuration` types.
+
+| Member | Resolves To |
+|--------|-------------|
+| `Configuration.IConfiguration` | `IConfiguration` |
+| `Configuration.IConfigurationSection` | `IConfigurationSection` |
+| `Configuration.IConfigurationRoot` | `IConfigurationRoot` |
+| `Configuration.IConfigurationBuilder` | `IConfigurationBuilder` |
+
+```csharp
+method.AddParameter("configuration", TypeRef.Configuration.IConfiguration)
+method.AddParameter("section", TypeRef.Configuration.IConfigurationSection)
+```
+
 ### DependencyInjection
 
 `Microsoft.Extensions.DependencyInjection` types.
