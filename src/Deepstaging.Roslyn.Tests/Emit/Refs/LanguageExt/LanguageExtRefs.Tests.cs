@@ -42,9 +42,10 @@ public class LanguageExtRefsTests
     [Test]
     public async Task Option_creates_globally_qualified_type()
     {
-        var typeRef = LanguageExtRefs.Option("string");
+        var option = LanguageExtRefs.Option("string");
 
-        await Assert.That(typeRef).IsEqualTo("global::LanguageExt.Option<string>");
+        await Assert.That((string)option).IsEqualTo("global::LanguageExt.Option<string>");
+        await Assert.That((string)option.InnerType).IsEqualTo("string");
     }
 
     [Test]
@@ -92,9 +93,9 @@ public class LanguageExtRefsTests
     [Test]
     public async Task Option_nullable()
     {
-        var typeRef = LanguageExtRefs.Option("string").Nullable();
+        TypeRef typeRef = LanguageExtRefs.Option("string");
 
-        await Assert.That(typeRef).IsEqualTo("global::LanguageExt.Option<string>?");
+        await Assert.That(typeRef.Nullable()).IsEqualTo("global::LanguageExt.Option<string>?");
     }
 
     [Test]

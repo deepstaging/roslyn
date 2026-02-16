@@ -4,6 +4,7 @@
 namespace Deepstaging.Roslyn.Tests.Emit.Expressions.LanguageExt;
 
 using Roslyn.LanguageExt.Expressions;
+using Roslyn.LanguageExt.Refs;
 
 public class EffLiftTests
 {
@@ -32,10 +33,10 @@ public class EffLiftTests
     [Test]
     public async Task AsyncOptional_produces_liftEff_with_Optional_wrapper()
     {
-        var result = _lift.AsyncOptional("Option<User>", "rt.Service.FindAsync(id)");
+        var result = _lift.AsyncOptional(LanguageExtRefs.Option("User"), "rt.Service.FindAsync(id)");
 
         await Assert.That(result)
-            .IsEqualTo("liftEff<RT, Option<User>>(async rt => Optional(await rt.Service.FindAsync(id)))");
+            .IsEqualTo("liftEff<RT, global::LanguageExt.Option<User>>(async rt => Optional(await rt.Service.FindAsync(id)))");
     }
 
     // ── Sync ────────────────────────────────────────────────────────────
@@ -61,10 +62,10 @@ public class EffLiftTests
     [Test]
     public async Task SyncOptional_produces_liftEff_with_Optional_wrapper()
     {
-        var result = _lift.SyncOptional("Option<string>", "rt.Config.TryGetValue(key)");
+        var result = _lift.SyncOptional(LanguageExtRefs.Option("string"), "rt.Config.TryGetValue(key)");
 
         await Assert.That(result)
-            .IsEqualTo("liftEff<RT, Option<string>>(rt => Optional(rt.Config.TryGetValue(key)))");
+            .IsEqualTo("liftEff<RT, global::LanguageExt.Option<string>>(rt => Optional(rt.Config.TryGetValue(key)))");
     }
 
     // ── Body ────────────────────────────────────────────────────────────

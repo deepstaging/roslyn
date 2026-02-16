@@ -31,9 +31,8 @@ public static class LanguageExtRefs
     public static TypeRef Eff(TypeRef rt, TypeRef result) =>
         Namespace.GlobalType($"Eff<{rt.Value}, {result.Value}>");
 
-    /// <summary>Creates an <c>Option&lt;T&gt;</c> type reference.</summary>
-    public static TypeRef Option(TypeRef innerType) =>
-        Namespace.GlobalType($"Option<{innerType.Value}>");
+    /// <summary>Creates an <c>Option&lt;T&gt;</c> type reference that carries the inner type.</summary>
+    public static OptionTypeRef Option(TypeRef innerType) => new(innerType);
 
     /// <summary>Creates a <c>Fin&lt;A&gt;</c> type reference.</summary>
     public static TypeRef Fin(TypeRef innerType) =>

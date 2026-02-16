@@ -3,6 +3,8 @@
 
 namespace Deepstaging.Roslyn.LanguageExt.Expressions;
 
+using Refs;
+
 /// <summary>
 /// Builds <c>liftEff</c> expressions for wrapping operations into the Eff monad.
 /// </summary>
@@ -31,12 +33,20 @@ public readonly struct EffLift(string rt, string param)
         $"liftEff<{rt}, Unit>(async {param} => {{ await {expr}; return unit; }})";
 
     /// <summary>
-    /// <c>liftEff&lt;{rt}, {result}&gt;(async {param} =&gt; Optional(await {expr}))</c>
+    /// <c>liftEff&lt;{rt}, Option&lt;T&gt;&gt;(async {param} =&gt; Optional(await {expr}))</c>
     /// </summary>
-    /// <param name="result">The result type including Option wrapper (e.g., <c>"Option&lt;User&gt;"</c>).</param>
+    /// <param name="result">The Option type reference carrying the inner type.</param>
     /// <param name="expr">The awaitable expression that may return null (without <c>await</c>).</param>
-    public string AsyncOptional(string result, string expr) =>
+    public string AsyncOptional(OptionTypeRef result, string expr) =>
         $"liftEff<{rt}, {result}>(async {param} => Optional(await {expr}))";
+
+    /// <summary>
+    /// <c>liftEff&lt;{rt}, Option&lt;{innerType}&gt;&gt;(async {param} =&gt; Optional(await {expr}))</c>
+    /// </summary>
+    /// <param name="innerType">The unwrapped inner type (e.g., <c>"User"</c>). Wrapped in <c>Option&lt;&gt;</c> automatically.</param>
+    /// <param name="expr">The awaitable expression that may return null (without <c>await</c>).</param>
+    public string AsyncOptional(string innerType, string expr) =>
+        $"liftEff<{rt}, Option<{innerType}>>(async {param} => Optional(await {expr}))";
 
     /// <summary>
     /// <c>liftEff&lt;{rt}, {result}&gt;({param} =&gt; {expr})</c>
@@ -54,12 +64,20 @@ public readonly struct EffLift(string rt, string param)
         $"liftEff<{rt}, Unit>({param} => {{ {expr}; return unit; }})";
 
     /// <summary>
-    /// <c>liftEff&lt;{rt}, {result}&gt;({param} =&gt; Optional({expr}))</c>
+    /// <c>liftEff&lt;{rt}, Option&lt;T&gt;&gt;({param} =&gt; Optional({expr}))</c>
     /// </summary>
-    /// <param name="result">The result type including Option wrapper.</param>
+    /// <param name="result">The Option type reference carrying the inner type.</param>
     /// <param name="expr">The synchronous expression that may return null.</param>
-    public string SyncOptional(string result, string expr) =>
+    public string SyncOptional(OptionTypeRef result, string expr) =>
         $"liftEff<{rt}, {result}>({param} => Optional({expr}))";
+
+    /// <summary>
+    /// <c>liftEff&lt;{rt}, Option&lt;{innerType}&gt;&gt;({param} =&gt; Optional({expr}))</c>
+    /// </summary>
+    /// <param name="innerType">The unwrapped inner type. Wrapped in <c>Option&lt;&gt;</c> automatically.</param>
+    /// <param name="expr">The synchronous expression that may return null.</param>
+    public string SyncOptional(string innerType, string expr) =>
+        $"liftEff<{rt}, Option<{innerType}>>({param} => Optional({expr}))";
 
     /// <summary>
     /// <c>liftEff&lt;{rt}, {result}&gt;({lambdaBody})</c> — escape hatch for custom lambda bodies.
