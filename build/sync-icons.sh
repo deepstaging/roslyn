@@ -17,15 +17,13 @@ BASE_URL="https://raw.githubusercontent.com/deepstaging/assets/dist/icons"
 # Parallel arrays: icon name and project directory
 ICON_NAMES=(
   "Deepstaging.Roslyn"
-  "Deepstaging.Roslyn.Scriban"
-  "Deepstaging.Roslyn.Workspace"
   "Deepstaging.Roslyn.Testing"
+  "Deepstaging.Templates"
 )
 ICON_DIRS=(
   "src/Deepstaging.Roslyn"
-  "src/Deepstaging.Roslyn.Scriban"
-  "src/Deepstaging.Roslyn.Workspace"
   "src/Deepstaging.Roslyn.Testing"
+  "templates"
 )
 
 CHECK_ONLY=false
