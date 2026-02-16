@@ -16,13 +16,13 @@ public static class LinqRefs
 
     /// <summary>Creates an <c>IQueryable&lt;T&gt;</c> type reference.</summary>
     public static TypeRef IQueryable(TypeRef elementType) =>
-        Namespace.Type($"IQueryable<{elementType.Value}>");
+        Namespace.GlobalType($"IQueryable<{elementType.Value}>");
 
     /// <summary>Creates an <c>IOrderedQueryable&lt;T&gt;</c> type reference.</summary>
     public static TypeRef IOrderedQueryable(TypeRef elementType) =>
-        Namespace.Type($"IOrderedQueryable<{elementType.Value}>");
+        Namespace.GlobalType($"IOrderedQueryable<{elementType.Value}>");
 
     /// <summary>Creates an <c>Expression&lt;TDelegate&gt;</c> type reference.</summary>
     public static TypeRef Expression(TypeRef delegateType) =>
-        ExpressionsNamespace.Type($"Expression<{delegateType.Value}>");
+        ExpressionsNamespace.GlobalType($"Expression<{delegateType.Value}>");
 }

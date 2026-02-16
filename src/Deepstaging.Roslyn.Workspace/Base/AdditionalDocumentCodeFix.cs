@@ -119,3 +119,34 @@ public abstract class AdditionalDocumentCodeFix : CodeFixProvider
             SourceText.From(doc.Content),
             filePath: doc.Path);
 }
+
+/// <summary>
+/// Base class for code fix providers that add additional documents to a project,
+/// with automatic symbol resolution from the diagnostic location.
+/// </summary>
+/// <typeparam name="TSymbol">The expected symbol type at the diagnostic location.</typeparam>
+/// <remarks>
+/// Combines <see cref="AdditionalDocumentCodeFix"/> with automatic symbol resolution.
+/// The diagnostic location is used to find and validate a symbol of type <typeparamref name="TSymbol"/>,
+/// which is then passed to <see cref="CreateDocument(Compilation, ValidSymbol{TSymbol})"/>.
+/// </remarks>
+public abstract class AdditionalDocumentCodeFix<TSymbol> : AdditionalDocumentCodeFix
+    where TSymbol : class, ISymbol
+{
+    /// <inheritdoc />
+    protected sealed override AdditionalDocument? CreateDocument(Compilation compilation, Diagnostic diagnostic)
+    {
+        if (compilation.GetSymbolAtDiagnostic(diagnostic).OfType<TSymbol>().IsNotValid(out var symbol))
+            return null;
+
+        return CreateDocument(compilation, symbol);
+    }
+
+    /// <summary>
+    /// Creates the additional document to add to the project.
+    /// </summary>
+    /// <param name="compilation">The current compilation (for reading metadata).</param>
+    /// <param name="symbol">The validated symbol at the diagnostic location.</param>
+    /// <returns>The document to add, or null to skip.</returns>
+    protected abstract AdditionalDocument? CreateDocument(Compilation compilation, ValidSymbol<TSymbol> symbol);
+}

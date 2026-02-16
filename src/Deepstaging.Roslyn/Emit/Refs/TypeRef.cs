@@ -10,6 +10,7 @@ namespace Deepstaging.Roslyn.Emit.Refs;
 /// Has implicit conversions to/from <see cref="string"/> for seamless integration with existing builders.
 /// </summary>
 /// <remarks>
+/// See also <see cref="AttributeRef"/> for type-safe attribute references that bridge to <see cref="AttributeBuilder"/>.
 /// Namespace-specific factories are organized into standalone static classes:
 /// <list type="bullet">
 /// <item><see cref="CollectionRefs"/> — <c>System.Collections.Generic</c></item>
@@ -21,6 +22,9 @@ namespace Deepstaging.Roslyn.Emit.Refs;
 /// <item><see cref="LoggingRefs"/> — <c>Microsoft.Extensions.Logging</c></item>
 /// <item><see cref="LinqRefs"/> — <c>System.Linq</c> and <c>System.Linq.Expressions</c></item>
 /// <item><see cref="DelegateRefs"/> — <c>System.Func</c> and <c>System.Action</c></item>
+/// <item><see cref="DiagnosticsRefs"/> — <c>System.Diagnostics</c></item>
+/// <item><see cref="SystemRefs"/> — <c>System</c> (Guid, DateTime, Uri, etc.)</item>
+/// <item><see cref="EntityFrameworkRefs"/> — <c>Microsoft.EntityFrameworkCore</c></item>
 /// </list>
 /// </remarks>
 /// <example>

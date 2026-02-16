@@ -40,9 +40,9 @@ public class HttpRefsTests
     [Test]
     public async Task Verb_creates_method_expression()
     {
-        var typeRef = HttpRefs.Verb("Get");
+        var expr = HttpRefs.Verb("Get");
 
-        await Assert.That(typeRef).IsEqualTo("global::System.Net.Http.HttpMethod.Get");
+        await Assert.That(expr).IsEqualTo("global::System.Net.Http.HttpMethod.Get");
     }
 
     [Test]
@@ -51,17 +51,17 @@ public class HttpRefsTests
     [Test]
     public async Task Get_creates_method_expression()
     {
-        var typeRef = HttpRefs.Get;
+        var expr = HttpRefs.Get;
 
-        await Assert.That(typeRef).IsEqualTo("global::System.Net.Http.HttpMethod.Get");
+        await Assert.That(expr).IsEqualTo("global::System.Net.Http.HttpMethod.Get");
     }
 
     [Test]
     public async Task Post_creates_method_expression()
     {
-        var typeRef = HttpRefs.Post;
+        var expr = HttpRefs.Post;
 
-        await Assert.That(typeRef).IsEqualTo("global::System.Net.Http.HttpMethod.Post");
+        await Assert.That(expr).IsEqualTo("global::System.Net.Http.HttpMethod.Post");
     }
 
     [Test]

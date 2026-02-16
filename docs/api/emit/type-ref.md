@@ -1,42 +1,41 @@
-# TypeRef & Refs
+# TypeRef & Primitives
 
-Globally-qualified type and namespace references for generated code.
+Type-safe primitives for referencing types, expressions, attributes, and namespaces in generated code.
 
-> **See also:** [Emit Overview](index.md) | [TypeBuilder](type-builder.md) | [MethodBuilder](method-builder.md)
+> **See also:** [Refs Overview](refs/index.md) | [Emit Overview](index.md) | [Support Types](support-types.md)
 
 ## Overview
 
-`TypeRef` and `NamespaceRef` live in `Deepstaging.Roslyn.Emit.Refs`. Type references are fully-qualified with `global::` so generated code never conflicts with user-defined types.
+The Refs system has four primitive types. Each represents a different domain in generated C# code:
+
+| Primitive | Domain | Example |
+|-----------|--------|---------|
+| `TypeRef` | Type positions — parameters, return types, generics | `Task<string>` |
+| `ExpressionRef` | Value positions — calls, member access, literals | `Task.CompletedTask` |
+| `AttributeRef` | Attribute positions — decorators | `[Key]`, `[MaxLength(100)]` |
+| `NamespaceRef` | Namespace declarations and using directives | `System.Text.Json` |
+
+Pre-built references for common .NET namespaces are in the [Refs](refs/index.md) section.
 
 ```csharp
-TaskRefs.Task("string")                   // global::System.Threading.Tasks.Task<string>
-CollectionRefs.List("int")                // global::System.Collections.Generic.List<int>
-ExceptionRefs.ArgumentNull                // global::System.ArgumentNullException
+// TypeRef → type positions
+method.WithReturnType(TaskRefs.Task("string"))
+method.AddParameter("id", SystemRefs.Guid)
+
+// ExpressionRef → value positions
+body.AddReturn(TaskRefs.CompletedTask)
+body.AddStatement($"var id = {SystemRefs.NewGuid()};")
+
+// AttributeRef → attribute positions
+property.WithAttribute(EntityFrameworkRefs.Key)
+property.WithAttribute(EntityFrameworkRefs.MaxLength.WithArgument("100"))
 ```
-
-Each domain has a standalone static class with a `Namespace` property (`NamespaceRef`) and type factories. This pattern is extensible — define your own `*Refs` class for any namespace.
-
----
-
-## NamespaceRef
-
-A lightweight primitive representing a .NET namespace.
-
-```csharp
-var ns = NamespaceRef.From("MyCompany.Domain.Events");
-TypeRef eventType = ns.Type("OrderCreated");  // global::MyCompany.Domain.Events.OrderCreated
-```
-
-| Member | Description |
-|--------|-------------|
-| `From(string)` | Create from a dotted namespace string |
-| `Type(string)` | Create a globally-qualified TypeRef in this namespace |
-| `Value` | The raw namespace string |
-| implicit `string` | Converts to string |
 
 ---
 
 ## TypeRef
+
+A fully-qualified C# type name. Immutable — every method returns a new instance.
 
 ### Factory Methods
 
@@ -71,7 +70,7 @@ TypeRef.Global("MyApp.IHandler").Of("string", "int")  // global::MyApp.IHandler<
 
 ### Expression Gateways
 
-These methods cross from the type domain into the expression domain, returning `ExpressionRef`.
+These methods cross from the **type domain** into the **expression domain**, returning `ExpressionRef`:
 
 | Method | Returns | Description |
 |--------|---------|-------------|
@@ -90,7 +89,7 @@ These methods cross from the type domain into the expression domain, returning `
 ExceptionRefs.ArgumentNull.New("nameof(value)")           // new global::System.ArgumentNullException(nameof(value))
 TypeRef.From("Guid").Call("Parse", "input", "provider")   // Guid.Parse(input, provider)
 TypeRef.From("string").Member("Empty")                    // string.Empty
-JsonRefs.Converter("OrderId").TypeOf()                    // typeof(global::...JsonConverter<OrderId>)
+JsonRefs.ConverterOf("OrderId").TypeOf()                  // typeof(global::...JsonConverter<OrderId>)
 TaskRefs.CancellationToken.Default()                      // default(global::System.Threading.CancellationToken)
 ```
 
@@ -107,22 +106,29 @@ TypeRef.Tuple(
 
 ### Implicit Conversions
 
-`TypeRef` converts implicitly to and from `string`:
+`TypeRef` converts implicitly to and from `string`, and one-way to `ExpressionRef`:
 
 ```csharp
 TypeRef typeRef = "string";                        // from string
 string code = TaskRefs.Task("string");             // to string
+ExpressionRef expr = TaskRefs.Task();              // to ExpressionRef (one-way)
 ```
 
 ---
 
 ## ExpressionRef
 
-Fluent builder for C# expression strings — the expression-domain counterpart to `TypeRef`.
+A C# expression string — the value-domain counterpart to `TypeRef`.
 
 A `TypeRef` crosses into expression domain via gateway methods (`New`, `Call`, `Member`, etc.).
 Once in expression domain, chaining continues through `ExpressionRef`. Both types convert
-implicitly to `string`. `TypeRef` converts implicitly to `ExpressionRef` (one-way gate).
+implicitly to `string`. `TypeRef` → `ExpressionRef` is a one-way gate.
+
+### Factory Methods
+
+| Method | Description |
+|--------|-------------|
+| `From(string)` | Create from an expression string |
 
 ### Chaining Methods
 
@@ -172,208 +178,98 @@ ExpressionRef.From("value").As("string").Parenthesize().NullForgiving()
 
 ---
 
-## Ref Types
+## AttributeRef
 
-### ExceptionRefs
+A type-safe attribute reference that bridges to `AttributeBuilder`.
 
-Common exception types from `System`.
+`AttributeRef` has implicit conversions to both `string` and `AttributeBuilder`, so it works
+directly with all existing `.WithAttribute()` overloads — no new overloads needed.
 
-| Member | Resolves To |
-|--------|-------------|
-| `ExceptionRefs.ArgumentNull` | `System.ArgumentNullException` |
-| `ExceptionRefs.Argument` | `System.ArgumentException` |
-| `ExceptionRefs.ArgumentOutOfRange` | `System.ArgumentOutOfRangeException` |
-| `ExceptionRefs.InvalidOperation` | `System.InvalidOperationException` |
-| `ExceptionRefs.InvalidCast` | `System.InvalidCastException` |
-| `ExceptionRefs.Format` | `System.FormatException` |
-| `ExceptionRefs.NotSupported` | `System.NotSupportedException` |
-| `ExceptionRefs.NotImplemented` | `System.NotImplementedException` |
-
-```csharp
-body.AddStatement($"throw new {ExceptionRefs.ArgumentNull}(nameof(value));")
-```
-
-### CollectionRefs
-
-Generic collection types from `System.Collections.Generic`.
-
-| Method | Resolves To |
-|--------|-------------|
-| `CollectionRefs.List(element)` | `List<T>` |
-| `CollectionRefs.Dictionary(key, value)` | `Dictionary<TKey, TValue>` |
-| `CollectionRefs.HashSet(element)` | `HashSet<T>` |
-| `CollectionRefs.KeyValuePair(key, value)` | `KeyValuePair<TKey, TValue>` |
-| `CollectionRefs.IEnumerable(element)` | `IEnumerable<T>` |
-| `CollectionRefs.ICollection(element)` | `ICollection<T>` |
-| `CollectionRefs.IList(element)` | `IList<T>` |
-| `CollectionRefs.IDictionary(key, value)` | `IDictionary<TKey, TValue>` |
-| `CollectionRefs.ISet(element)` | `ISet<T>` |
-| `CollectionRefs.IReadOnlyList(element)` | `IReadOnlyList<T>` |
-| `CollectionRefs.IReadOnlyCollection(element)` | `IReadOnlyCollection<T>` |
-| `CollectionRefs.IReadOnlyDictionary(key, value)` | `IReadOnlyDictionary<TKey, TValue>` |
-
-```csharp
-method.WithReturnType(CollectionRefs.IReadOnlyList("string"))
-```
-
-### ImmutableCollectionRefs
-
-Immutable collection types from `System.Collections.Immutable`.
-
-| Method | Resolves To |
-|--------|-------------|
-| `ImmutableCollectionRefs.ImmutableArray(element)` | `ImmutableArray<T>` |
-| `ImmutableCollectionRefs.ImmutableList(element)` | `ImmutableList<T>` |
-| `ImmutableCollectionRefs.ImmutableDictionary(key, value)` | `ImmutableDictionary<TKey, TValue>` |
-
-### TaskRefs
-
-Async types from `System.Threading.Tasks` and `System.Threading`.
-
-| Member | Resolves To |
-|--------|-------------|
-| `TaskRefs.Task()` | `Task` |
-| `TaskRefs.Task(result)` | `Task<T>` |
-| `TaskRefs.ValueTask()` | `ValueTask` |
-| `TaskRefs.ValueTask(result)` | `ValueTask<T>` |
-| `TaskRefs.CompletedTask` | `Task.CompletedTask` |
-| `TaskRefs.CompletedValueTask` | `ValueTask.CompletedTask` |
-| `TaskRefs.CancellationToken` | `CancellationToken` |
-
-```csharp
-method.WithReturnType(TaskRefs.Task(CollectionRefs.IReadOnlyList("Order")))
-method.AddParameter("ct", TaskRefs.CancellationToken)
-```
-
-### JsonRefs
-
-`System.Text.Json` types.
-
-| Member | Resolves To |
-|--------|-------------|
-| `JsonRefs.Serializer` | `JsonSerializer` |
-| `JsonRefs.SerializerOptions` | `JsonSerializerOptions` |
-| `JsonRefs.Reader` | `Utf8JsonReader` |
-| `JsonRefs.Writer` | `Utf8JsonWriter` |
-| `JsonRefs.Converter(valueType)` | `JsonConverter<T>` |
-| `JsonRefs.ConverterAttribute` | `JsonConverter` (attribute) |
-
-### EncodingRefs
-
-`System.Text.Encoding` instances.
-
-| Member | Resolves To |
-|--------|-------------|
-| `EncodingRefs.UTF8` | `Encoding.UTF8` |
-| `EncodingRefs.ASCII` | `Encoding.ASCII` |
-| `EncodingRefs.Unicode` | `Encoding.Unicode` |
-
-### HttpRefs
-
-`System.Net.Http` types and HTTP method constants.
-
-| Member | Resolves To |
-|--------|-------------|
-| `HttpRefs.Client` | `HttpClient` |
-| `HttpRefs.RequestMessage` | `HttpRequestMessage` |
-| `HttpRefs.ResponseMessage` | `HttpResponseMessage` |
-| `HttpRefs.Method` | `HttpMethod` |
-| `HttpRefs.Get` | `HttpMethod.Get` |
-| `HttpRefs.Post` | `HttpMethod.Post` |
-| `HttpRefs.Put` | `HttpMethod.Put` |
-| `HttpRefs.Patch` | `HttpMethod.Patch` |
-| `HttpRefs.Delete` | `HttpMethod.Delete` |
-| `HttpRefs.Verb(string)` | `HttpMethod.{verb}` |
-| `HttpRefs.Content` | `HttpContent` |
-| `HttpRefs.StringContent` | `StringContent` |
-| `HttpRefs.ByteArrayContent` | `ByteArrayContent` |
-| `HttpRefs.StreamContent` | `StreamContent` |
-
-### ConfigurationRefs
-
-`Microsoft.Extensions.Configuration` types.
-
-| Member | Resolves To |
-|--------|-------------|
-| `ConfigurationRefs.IConfiguration` | `IConfiguration` |
-| `ConfigurationRefs.IConfigurationSection` | `IConfigurationSection` |
-| `ConfigurationRefs.IConfigurationRoot` | `IConfigurationRoot` |
-| `ConfigurationRefs.IConfigurationBuilder` | `IConfigurationBuilder` |
-
-```csharp
-method.AddParameter("configuration", ConfigurationRefs.IConfiguration)
-method.AddParameter("section", ConfigurationRefs.IConfigurationSection)
-```
-
-### DependencyInjectionRefs
-
-`Microsoft.Extensions.DependencyInjection` types.
-
-| Member | Resolves To |
-|--------|-------------|
-| `DependencyInjectionRefs.IServiceCollection` | `IServiceCollection` |
-| `DependencyInjectionRefs.IServiceProvider` | `IServiceProvider` |
-| `DependencyInjectionRefs.IServiceScopeFactory` | `IServiceScopeFactory` |
-| `DependencyInjectionRefs.IServiceScope` | `IServiceScope` |
-| `DependencyInjectionRefs.ServiceDescriptor` | `ServiceDescriptor` |
-
-### LoggingRefs
-
-`Microsoft.Extensions.Logging` types.
-
-| Member | Resolves To |
-|--------|-------------|
-| `LoggingRefs.ILogger` | `ILogger` |
-| `LoggingRefs.ILoggerOf(categoryType)` | `ILogger<T>` |
-| `LoggingRefs.ILoggerFactory` | `ILoggerFactory` |
-| `LoggingRefs.LogLevel` | `LogLevel` |
-
-```csharp
-builder.AddField("_logger", LoggingRefs.ILoggerOf("CustomerService"))
-```
-
-### LinqRefs
-
-LINQ and expression types.
-
-| Method | Resolves To |
-|--------|-------------|
-| `LinqRefs.IQueryable(element)` | `IQueryable<T>` |
-| `LinqRefs.IOrderedQueryable(element)` | `IOrderedQueryable<T>` |
-| `LinqRefs.Expression(delegate)` | `Expression<TDelegate>` |
-
-### DelegateRefs
-
-`Func<>` and `Action<>` with arbitrary arity.
+### Factory Methods
 
 | Method | Description |
 |--------|-------------|
-| `DelegateRefs.Func(typeArgs...)` | `Func<T1, ..., TResult>` |
-| `DelegateRefs.Action(typeArgs...)` | `Action<T1, ...>` |
+| `From(string)` | Create from an attribute type name |
+| `Global(string)` | Create with `global::` prefix |
+
+### Bridge to AttributeBuilder
+
+These methods return an `AttributeBuilder` for configuring arguments:
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `WithArgument(value)` | `AttributeBuilder` | Add a positional argument |
+| `WithArguments(values...)` | `AttributeBuilder` | Add multiple positional arguments |
+| `WithNamedArgument(name, value)` | `AttributeBuilder` | Add a named argument |
+| `AddUsing(namespace)` | `AttributeBuilder` | Add a using directive |
+
+### Three Ways to Use
 
 ```csharp
-DelegateRefs.Func("string", "bool")  // Func<string, bool>
-DelegateRefs.Action("int")           // Action<int>
+// 1. Simple — implicit string conversion
+property.WithAttribute(EntityFrameworkRefs.Key)
+
+// 2. With arguments — bridge to AttributeBuilder
+property.WithAttribute(EntityFrameworkRefs.MaxLength.WithArgument("100"))
+
+// 3. With configure callback — implicit string conversion for name
+property.WithAttribute(EntityFrameworkRefs.Column, a => a
+    .WithArgument("\"order_date\"")
+    .WithNamedArgument("TypeName", "\"date\""))
+```
+
+### Implicit Conversions
+
+```csharp
+string name = EntityFrameworkRefs.Key;             // to string
+AttributeBuilder builder = EntityFrameworkRefs.Key; // to AttributeBuilder
 ```
 
 ---
 
-## Extensibility
+## NamespaceRef
 
-Each `*Refs` class follows the same pattern — create your own for any namespace:
+A lightweight primitive representing a .NET namespace. Central factory for creating `TypeRef` and `AttributeRef` instances.
+
+### Factory Methods
+
+| Method | Description |
+|--------|-------------|
+| `From(string)` | Create from a dotted namespace string |
+
+### Type Factories
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `Type(name)` | `TypeRef` | `Namespace.TypeName` (no prefix) |
+| `GlobalType(name)` | `TypeRef` | `global::Namespace.TypeName` |
+| `Attribute(name)` | `AttributeRef` | `Namespace.TypeName` (no prefix) |
+| `GlobalAttribute(name)` | `AttributeRef` | `global::Namespace.TypeName` |
+
+### Utilities
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `AsStatic()` | `string` | `static Namespace` (for static usings) |
+| `Value` | `string` | The raw namespace string |
+
+### Examples
 
 ```csharp
-public static class EfCoreRefs
-{
-    public static NamespaceRef Namespace =>
-        NamespaceRef.From("Microsoft.EntityFrameworkCore");
+var ns = NamespaceRef.From("MyCompany.Domain.Events");
 
-    public static TypeRef DbContext => Namespace.Type("DbContext");
-    public static TypeRef DbSet(TypeRef entity) =>
-        Namespace.Type($"DbSet<{entity.Value}>");
-}
+// Type references
+TypeRef eventType = ns.Type("OrderCreated");        // MyCompany.Domain.Events.OrderCreated
+TypeRef globalType = ns.GlobalType("OrderCreated");  // global::MyCompany.Domain.Events.OrderCreated
 
-// Usage:
-builder.AddField("_db", EfCoreRefs.DbContext)
-method.WithReturnType(EfCoreRefs.DbSet("Order"))
+// Attribute references
+AttributeRef attr = ns.Attribute("MyAttribute");        // MyCompany.Domain.Events.MyAttribute
+AttributeRef globalAttr = ns.GlobalAttribute("MyAttribute"); // global::...MyAttribute
+
+// Static using
+builder.AddUsing(ns.AsStatic())  // using static MyCompany.Domain.Events;
 ```
+
+!!! tip "When to use `Type()` vs `GlobalType()`"
+    Use `GlobalType()` (and `GlobalAttribute()`) in source generators — the `global::` prefix
+    prevents conflicts with user-defined types. Use `Type()` when the prefix isn't needed.

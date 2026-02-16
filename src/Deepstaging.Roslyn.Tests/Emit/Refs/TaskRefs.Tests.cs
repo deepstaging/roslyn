@@ -40,17 +40,17 @@ public class TaskRefsTests
     [Test]
     public async Task CompletedTask_expression()
     {
-        var typeRef = TaskRefs.CompletedTask;
+        var expr = TaskRefs.CompletedTask;
 
-        await Assert.That(typeRef).IsEqualTo("global::System.Threading.Tasks.Task.CompletedTask");
+        await Assert.That(expr).IsEqualTo("global::System.Threading.Tasks.Task.CompletedTask");
     }
 
     [Test]
     public async Task CompletedValueTask_expression()
     {
-        var typeRef = TaskRefs.CompletedValueTask;
+        var expr = TaskRefs.CompletedValueTask;
 
-        await Assert.That(typeRef).IsEqualTo("global::System.Threading.Tasks.ValueTask.CompletedTask");
+        await Assert.That(expr).IsEqualTo("global::System.Threading.Tasks.ValueTask.CompletedTask");
     }
 
     [Test]

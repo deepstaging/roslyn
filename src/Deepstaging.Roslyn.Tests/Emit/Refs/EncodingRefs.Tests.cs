@@ -8,24 +8,24 @@ public class EncodingRefsTests
     [Test]
     public async Task UTF8_creates_globally_qualified_expression()
     {
-        var typeRef = EncodingRefs.UTF8;
+        var expr = EncodingRefs.UTF8;
 
-        await Assert.That(typeRef).IsEqualTo("global::System.Text.Encoding.UTF8");
+        await Assert.That(expr).IsEqualTo("global::System.Text.Encoding.UTF8");
     }
 
     [Test]
     public async Task ASCII_creates_globally_qualified_expression()
     {
-        var typeRef = EncodingRefs.ASCII;
+        var expr = EncodingRefs.ASCII;
 
-        await Assert.That(typeRef).IsEqualTo("global::System.Text.Encoding.ASCII");
+        await Assert.That(expr).IsEqualTo("global::System.Text.Encoding.ASCII");
     }
 
     [Test]
     public async Task Unicode_creates_globally_qualified_expression()
     {
-        var typeRef = EncodingRefs.Unicode;
+        var expr = EncodingRefs.Unicode;
 
-        await Assert.That(typeRef).IsEqualTo("global::System.Text.Encoding.Unicode");
+        await Assert.That(expr).IsEqualTo("global::System.Text.Encoding.Unicode");
     }
 }

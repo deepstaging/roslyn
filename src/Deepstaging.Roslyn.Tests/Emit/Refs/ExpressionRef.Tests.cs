@@ -156,7 +156,7 @@ public class ExpressionRefTests
     [Test]
     public async Task TypeOf_generic()
     {
-        var expr = JsonRefs.Converter("OrderId").TypeOf();
+        var expr = JsonRefs.ConverterOf("OrderId").TypeOf();
 
         await Assert.That(expr).IsEqualTo("typeof(global::System.Text.Json.Serialization.JsonConverter<OrderId>)");
     }
@@ -405,7 +405,7 @@ public class ExpressionRefTests
     [Test]
     public async Task Typeof_for_json_converter()
     {
-        var expr = JsonRefs.Converter("CustomerId").TypeOf();
+        var expr = JsonRefs.ConverterOf("CustomerId").TypeOf();
 
         await Assert.That(expr).IsEqualTo("typeof(global::System.Text.Json.Serialization.JsonConverter<CustomerId>)");
     }

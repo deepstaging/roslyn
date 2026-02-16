@@ -13,13 +13,13 @@ public static class ImmutableCollectionRefs
 
     /// <summary>Creates an <c>ImmutableArray&lt;T&gt;</c> type reference.</summary>
     public static TypeRef ImmutableArray(TypeRef elementType) =>
-        Namespace.Type($"ImmutableArray<{elementType.Value}>");
+        Namespace.GlobalType($"ImmutableArray<{elementType.Value}>");
 
     /// <summary>Creates an <c>ImmutableList&lt;T&gt;</c> type reference.</summary>
     public static TypeRef ImmutableList(TypeRef elementType) =>
-        Namespace.Type($"ImmutableList<{elementType.Value}>");
+        Namespace.GlobalType($"ImmutableList<{elementType.Value}>");
 
     /// <summary>Creates an <c>ImmutableDictionary&lt;TKey, TValue&gt;</c> type reference.</summary>
     public static TypeRef ImmutableDictionary(TypeRef keyType, TypeRef valueType) =>
-        Namespace.Type($"ImmutableDictionary<{keyType.Value}, {valueType.Value}>");
+        Namespace.GlobalType($"ImmutableDictionary<{keyType.Value}, {valueType.Value}>");
 }

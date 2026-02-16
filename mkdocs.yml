@@ -113,6 +113,18 @@ nav:
       - Patterns: api/emit/patterns.md
       - Directives: api/emit/directives.md
       - TypeRef: api/emit/type-ref.md
+      - Refs:
+        - Overview: api/emit/refs/index.md
+        - Collections: api/emit/refs/collections.md
+        - Tasks: api/emit/refs/tasks.md
+        - JSON & Encoding: api/emit/refs/json.md
+        - HTTP: api/emit/refs/http.md
+        - Exceptions: api/emit/refs/exceptions.md
+        - Hosting (DI, Config, Logging): api/emit/refs/hosting.md
+        - LINQ & Delegates: api/emit/refs/linq.md
+        - System: api/emit/refs/system.md
+        - Diagnostics: api/emit/refs/diagnostics.md
+        - Entity Framework: api/emit/refs/efcore.md
       - Support Types: api/emit/support-types.md
     - Extensions:
       - Overview: api/extensions/index.md

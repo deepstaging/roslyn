@@ -12,16 +12,16 @@ public static class HttpRefs
     public static NamespaceRef Namespace => NamespaceRef.From("System.Net.Http");
 
     /// <summary>Gets an <c>HttpClient</c> type reference.</summary>
-    public static TypeRef Client => Namespace.Type("HttpClient");
+    public static TypeRef Client => Namespace.GlobalType("HttpClient");
 
     /// <summary>Gets an <c>HttpRequestMessage</c> type reference.</summary>
-    public static TypeRef RequestMessage => Namespace.Type("HttpRequestMessage");
+    public static TypeRef RequestMessage => Namespace.GlobalType("HttpRequestMessage");
 
     /// <summary>Gets an <c>HttpResponseMessage</c> type reference.</summary>
-    public static TypeRef ResponseMessage => Namespace.Type("HttpResponseMessage");
+    public static TypeRef ResponseMessage => Namespace.GlobalType("HttpResponseMessage");
 
     /// <summary>Gets an <c>HttpMethod</c> type reference.</summary>
-    public static TypeRef Method => Namespace.Type("HttpMethod");
+    public static TypeRef Method => Namespace.GlobalType("HttpMethod");
 
     private static readonly HashSet<string> KnownVerbs =
         ["Get", "Post", "Put", "Patch", "Delete", "Head", "Options", "Trace"];
@@ -29,40 +29,74 @@ public static class HttpRefs
     /// <summary>Creates an <c>HttpMethod.{verb}</c> expression (e.g., <c>HttpMethod.Get</c>).</summary>
     /// <param name="verb">The HTTP verb name (e.g., "Get", "Post"). Must be a known HTTP method.</param>
     /// <exception cref="ArgumentException">Thrown when the verb is not a recognized HTTP method.</exception>
-    public static TypeRef Verb(string verb)
+    public static ExpressionRef Verb(string verb)
     {
         if (!KnownVerbs.Contains(verb))
             throw new ArgumentException(
                 $"Unknown HTTP verb '{verb}'. Known verbs: {string.Join(", ", KnownVerbs)}.",
                 nameof(verb));
 
-        return TypeRef.From($"global::System.Net.Http.HttpMethod.{verb}");
+        return ExpressionRef.From($"global::System.Net.Http.HttpMethod.{verb}");
     }
 
     /// <summary>Gets an <c>HttpMethod.Get</c> expression.</summary>
-    public static TypeRef Get => TypeRef.From("global::System.Net.Http.HttpMethod.Get");
+    public static ExpressionRef Get => ExpressionRef.From("global::System.Net.Http.HttpMethod.Get");
 
     /// <summary>Gets an <c>HttpMethod.Post</c> expression.</summary>
-    public static TypeRef Post => TypeRef.From("global::System.Net.Http.HttpMethod.Post");
+    public static ExpressionRef Post => ExpressionRef.From("global::System.Net.Http.HttpMethod.Post");
 
     /// <summary>Gets an <c>HttpMethod.Put</c> expression.</summary>
-    public static TypeRef Put => TypeRef.From("global::System.Net.Http.HttpMethod.Put");
+    public static ExpressionRef Put => ExpressionRef.From("global::System.Net.Http.HttpMethod.Put");
 
     /// <summary>Gets an <c>HttpMethod.Patch</c> expression.</summary>
-    public static TypeRef Patch => TypeRef.From("global::System.Net.Http.HttpMethod.Patch");
+    public static ExpressionRef Patch => ExpressionRef.From("global::System.Net.Http.HttpMethod.Patch");
 
     /// <summary>Gets an <c>HttpMethod.Delete</c> expression.</summary>
-    public static TypeRef Delete => TypeRef.From("global::System.Net.Http.HttpMethod.Delete");
+    public static ExpressionRef Delete => ExpressionRef.From("global::System.Net.Http.HttpMethod.Delete");
 
     /// <summary>Gets an <c>HttpContent</c> type reference.</summary>
-    public static TypeRef Content => Namespace.Type("HttpContent");
+    public static TypeRef Content => Namespace.GlobalType("HttpContent");
 
     /// <summary>Gets a <c>StringContent</c> type reference.</summary>
-    public static TypeRef StringContent => Namespace.Type("StringContent");
+    public static TypeRef StringContent => Namespace.GlobalType("StringContent");
 
     /// <summary>Gets a <c>ByteArrayContent</c> type reference.</summary>
-    public static TypeRef ByteArrayContent => Namespace.Type("ByteArrayContent");
+    public static TypeRef ByteArrayContent => Namespace.GlobalType("ByteArrayContent");
 
     /// <summary>Gets a <c>StreamContent</c> type reference.</summary>
-    public static TypeRef StreamContent => Namespace.Type("StreamContent");
+    public static TypeRef StreamContent => Namespace.GlobalType("StreamContent");
+
+    // ── Well-Known API Calls ────────────────────────────────────────────
+
+    /// <summary>Produces a <c>client.GetAsync(url)</c> expression.</summary>
+    public static ExpressionRef GetAsync(ExpressionRef client, ExpressionRef url) =>
+        ExpressionRef.From(client).Call("GetAsync", url);
+
+    /// <summary>Produces a <c>client.PostAsync(url, content)</c> expression.</summary>
+    public static ExpressionRef PostAsync(ExpressionRef client, ExpressionRef url, ExpressionRef content) =>
+        ExpressionRef.From(client).Call("PostAsync", url, content);
+
+    /// <summary>Produces a <c>client.PutAsync(url, content)</c> expression.</summary>
+    public static ExpressionRef PutAsync(ExpressionRef client, ExpressionRef url, ExpressionRef content) =>
+        ExpressionRef.From(client).Call("PutAsync", url, content);
+
+    /// <summary>Produces a <c>client.DeleteAsync(url)</c> expression.</summary>
+    public static ExpressionRef DeleteAsync(ExpressionRef client, ExpressionRef url) =>
+        ExpressionRef.From(client).Call("DeleteAsync", url);
+
+    /// <summary>Produces a <c>client.SendAsync(request)</c> expression.</summary>
+    public static ExpressionRef SendAsync(ExpressionRef client, ExpressionRef request) =>
+        ExpressionRef.From(client).Call("SendAsync", request);
+
+    /// <summary>Produces a <c>client.SendAsync(request, cancellationToken)</c> expression.</summary>
+    public static ExpressionRef SendAsync(ExpressionRef client, ExpressionRef request, ExpressionRef cancellationToken) =>
+        ExpressionRef.From(client).Call("SendAsync", request, cancellationToken);
+
+    /// <summary>Produces a <c>response.EnsureSuccessStatusCode()</c> expression.</summary>
+    public static ExpressionRef EnsureSuccessStatusCode(ExpressionRef response) =>
+        ExpressionRef.From(response).Call("EnsureSuccessStatusCode");
+
+    /// <summary>Produces a <c>response.Content.ReadAsStringAsync()</c> expression.</summary>
+    public static ExpressionRef ReadAsStringAsync(ExpressionRef response) =>
+        ExpressionRef.From(response).Member("Content").Call("ReadAsStringAsync");
 }

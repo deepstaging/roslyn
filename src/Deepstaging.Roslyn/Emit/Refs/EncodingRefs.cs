@@ -12,11 +12,11 @@ public static class EncodingRefs
     public static NamespaceRef Namespace => NamespaceRef.From("System.Text");
 
     /// <summary>Gets an <c>Encoding.UTF8</c> expression.</summary>
-    public static TypeRef UTF8 => TypeRef.From("global::System.Text.Encoding.UTF8");
+    public static ExpressionRef UTF8 => ExpressionRef.From("global::System.Text.Encoding.UTF8");
 
     /// <summary>Gets an <c>Encoding.ASCII</c> expression.</summary>
-    public static TypeRef ASCII => TypeRef.From("global::System.Text.Encoding.ASCII");
+    public static ExpressionRef ASCII => ExpressionRef.From("global::System.Text.Encoding.ASCII");
 
     /// <summary>Gets an <c>Encoding.Unicode</c> (UTF-16) expression.</summary>
-    public static TypeRef Unicode => TypeRef.From("global::System.Text.Encoding.Unicode");
+    public static ExpressionRef Unicode => ExpressionRef.From("global::System.Text.Encoding.Unicode");
 }

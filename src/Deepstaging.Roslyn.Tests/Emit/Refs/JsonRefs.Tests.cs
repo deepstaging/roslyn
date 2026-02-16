@@ -38,18 +38,18 @@ public class JsonRefsTests
     }
 
     [Test]
-    public async Task Converter_creates_generic_globally_qualified_type()
+    public async Task ConverterOf_creates_generic_globally_qualified_type()
     {
-        var typeRef = JsonRefs.Converter("CustomerId");
+        var typeRef = JsonRefs.ConverterOf("CustomerId");
 
         await Assert.That(typeRef).IsEqualTo("global::System.Text.Json.Serialization.JsonConverter<CustomerId>");
     }
 
     [Test]
-    public async Task ConverterAttribute_creates_globally_qualified_type()
+    public async Task Converter_creates_globally_qualified_attribute()
     {
-        var typeRef = JsonRefs.ConverterAttribute;
+        AttributeRef attr = JsonRefs.Converter;
 
-        await Assert.That(typeRef).IsEqualTo("global::System.Text.Json.Serialization.JsonConverter");
+        await Assert.That(attr.Value).IsEqualTo("global::System.Text.Json.Serialization.JsonConverter");
     }
 }
