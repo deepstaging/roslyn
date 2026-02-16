@@ -139,6 +139,12 @@ nav:
     - Roslyn.Scriban: packages/scriban.md
     - Roslyn.Workspace: packages/workspace.md
     - Roslyn.Testing: packages/testing.md
+    - Roslyn.LanguageExt:
+      - Overview: packages/languageext/index.md
+      - Refs: packages/languageext/refs.md
+      - Expressions: packages/languageext/expressions.md
+      - Eff Lifting: packages/languageext/eff-lifting.md
+      - Extensions: packages/languageext/extensions.md
   - Testing:
     - RoslynTestBase: testing/roslyn-test-base.md
     - GeneratorTestContext: testing/generator-test-context.md
