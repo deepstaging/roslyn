@@ -54,23 +54,44 @@ TypeRef.From(snapshot)
 TypeRef.Global("System.Text.Json.JsonSerializer")
 ```
 
-### Instance Methods
+### Type Modifiers
 
-| Method | Description |
-|--------|-------------|
-| `Of(params TypeRef[])` | Add generic type arguments |
-| `Nullable()` | Append `?` |
-| `Array()` | Single-dimensional array |
-| `Array(int rank)` | Multi-dimensional array |
-| `As(TypeRef)` | Safe cast (`as`) expression |
-| `Cast(TypeRef)` | Direct cast expression |
-| `OrDefault(TypeRef)` | Null-coalescing (`??`) expression |
-| `Invoke(params TypeRef[])` | Null-conditional delegate invocation |
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `Of(params TypeRef[])` | `TypeRef` | Add generic type arguments |
+| `Nullable()` | `TypeRef` | Append `?` |
+| `Array()` | `TypeRef` | Single-dimensional array |
+| `Array(int rank)` | `TypeRef` | Multi-dimensional array |
 
 ```csharp
 TypeRef.From("MyService").Nullable()      // MyService?
 TypeRef.From("byte").Array()              // byte[]
 TypeRef.Global("MyApp.IHandler").Of("string", "int")  // global::MyApp.IHandler<string, int>
+```
+
+### Expression Gateways
+
+These methods cross from the type domain into the expression domain, returning `ExpressionRef`.
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `New(params args)` | `ExpressionRef` | Constructor call: `new Type(args)` |
+| `Call(method, params args)` | `ExpressionRef` | Static method call: `Type.Method(args)` |
+| `Member(name)` | `ExpressionRef` | Member access: `Type.Member` |
+| `TypeOf()` | `ExpressionRef` | `typeof(Type)` |
+| `Default()` | `ExpressionRef` | `default(Type)` |
+| `NameOf()` | `ExpressionRef` | `nameof(Type)` |
+| `Invoke(params args)` | `ExpressionRef` | Delegate invocation: `value?.Invoke(args)` |
+| `As(TypeRef)` | `ExpressionRef` | Safe cast: `value as Type` |
+| `Cast(TypeRef)` | `ExpressionRef` | Direct cast: `(Type)value` |
+| `OrDefault(fallback)` | `ExpressionRef` | Null coalescing: `value ?? fallback` |
+
+```csharp
+ExceptionRefs.ArgumentNull.New("nameof(value)")           // new global::System.ArgumentNullException(nameof(value))
+TypeRef.From("Guid").Call("Parse", "input", "provider")   // Guid.Parse(input, provider)
+TypeRef.From("string").Member("Empty")                    // string.Empty
+JsonRefs.Converter("OrderId").TypeOf()                    // typeof(global::...JsonConverter<OrderId>)
+TaskRefs.CancellationToken.Default()                      // default(global::System.Threading.CancellationToken)
 ```
 
 ### Tuples
@@ -91,6 +112,62 @@ TypeRef.Tuple(
 ```csharp
 TypeRef typeRef = "string";                        // from string
 string code = TaskRefs.Task("string");             // to string
+```
+
+---
+
+## ExpressionRef
+
+Fluent builder for C# expression strings — the expression-domain counterpart to `TypeRef`.
+
+A `TypeRef` crosses into expression domain via gateway methods (`New`, `Call`, `Member`, etc.).
+Once in expression domain, chaining continues through `ExpressionRef`. Both types convert
+implicitly to `string`. `TypeRef` converts implicitly to `ExpressionRef` (one-way gate).
+
+### Chaining Methods
+
+| Method | Description |
+|--------|-------------|
+| `Call(method, params args)` | Method call: `expr.Method(args)` |
+| `Member(name)` | Member access: `expr.Member` |
+| `Invoke(params args)` | Delegate invocation: `expr?.Invoke(args)` |
+| `As(TypeRef)` | Safe cast: `expr as Type` |
+| `Cast(TypeRef)` | Direct cast: `(Type)expr` |
+| `Is(TypeRef)` | Type check: `expr is Type` |
+| `Is(TypeRef, name)` | Pattern variable: `expr is Type name` |
+| `OrDefault(fallback)` | Null coalescing: `expr ?? fallback` |
+| `NullForgiving()` | Null forgiving: `expr!` |
+| `NullConditionalMember(name)` | `expr?.Member` |
+| `NullConditionalCall(method, args)` | `expr?.Method(args)` |
+| `Await()` | `await expr` |
+| `ConfigureAwait(bool)` | `expr.ConfigureAwait(false)` |
+| `Parenthesize()` | `(expr)` |
+
+### Examples
+
+```csharp
+// Chained member access + method call
+ExpressionRef.From("value").Member("Name").Call("ToUpper")
+// "value.Name.ToUpper()"
+
+// Delegate invocation with fallback
+TypeRef.From("OnSave").Invoke("id").OrDefault(TaskRefs.CompletedTask)
+// "OnSave?.Invoke(id) ?? global::System.Threading.Tasks.Task.CompletedTask"
+
+// Async dispose pattern
+ExpressionRef.From("disposable")
+    .Call("DisposeAsync")
+    .ConfigureAwait(false)
+    .Await()
+// "await disposable.DisposeAsync().ConfigureAwait(false)"
+
+// Type check with pattern variable
+ExpressionRef.From("obj").Is(TypeRef.From("string"), "text")
+// "obj is string text"
+
+// Safe cast with null forgiving
+ExpressionRef.From("value").As("string").Parenthesize().NullForgiving()
+// "(value as string)!"
 ```
 
 ---

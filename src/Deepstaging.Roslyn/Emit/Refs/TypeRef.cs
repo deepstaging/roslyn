@@ -107,27 +107,59 @@ public readonly record struct TypeRef
         return new TypeRef($"{Value}<{args}>");
     }
 
-    // ── Expressions ────────────────────────────────────────────────────
+    // ── Expression Gateways ────────────────────────────────────────────
+    // These methods cross from the type domain into the expression domain.
+    // All return ExpressionRef — the one-way gate.
+
+    /// <summary>Produces a constructor call expression: <c>new Type(args)</c>.</summary>
+    /// <param name="arguments">The constructor arguments.</param>
+    public ExpressionRef New(params ExpressionRef[] arguments)
+    {
+        var args = string.Join(", ", arguments.Select(a => a.Value));
+        return ExpressionRef.From($"new {Value}({args})");
+    }
+
+    /// <summary>Produces a static method call expression: <c>Type.method(args)</c>.</summary>
+    /// <param name="method">The method name.</param>
+    /// <param name="arguments">The method arguments.</param>
+    public ExpressionRef Call(string method, params ExpressionRef[] arguments)
+    {
+        var args = string.Join(", ", arguments.Select(a => a.Value));
+        return ExpressionRef.From($"{Value}.{method}({args})");
+    }
+
+    /// <summary>Produces a member access expression: <c>Type.member</c>.</summary>
+    /// <param name="name">The member name (property, field, constant, or nested type).</param>
+    public ExpressionRef Member(string name) => ExpressionRef.From($"{Value}.{name}");
+
+    /// <summary>Produces a <c>typeof(Type)</c> expression.</summary>
+    public ExpressionRef TypeOf() => ExpressionRef.From($"typeof({Value})");
+
+    /// <summary>Produces a <c>default(Type)</c> expression.</summary>
+    public ExpressionRef Default() => ExpressionRef.From($"default({Value})");
+
+    /// <summary>Produces a <c>nameof(Type)</c> expression.</summary>
+    public ExpressionRef NameOf() => ExpressionRef.From($"nameof({Value})");
 
     /// <summary>Produces a null-conditional delegate invocation expression: <c>value?.Invoke(args)</c>.</summary>
     /// <param name="arguments">The arguments to pass to the delegate.</param>
-    public TypeRef Invoke(params TypeRef[] arguments)
+    public ExpressionRef Invoke(params ExpressionRef[] arguments)
     {
         var args = string.Join(", ", arguments.Select(a => a.Value));
-        return new TypeRef($"{Value}?.Invoke({args})");
+        return ExpressionRef.From($"{Value}?.Invoke({args})");
     }
 
     /// <summary>Produces a safe cast expression: <c>value as Type</c>.</summary>
     /// <param name="target">The target type to cast to.</param>
-    public TypeRef As(TypeRef target) => new($"{Value} as {target.Value}");
+    public ExpressionRef As(TypeRef target) => ExpressionRef.From($"{Value} as {target.Value}");
 
     /// <summary>Produces a direct cast expression: <c>(Type)value</c>.</summary>
     /// <param name="target">The target type to cast to.</param>
-    public TypeRef Cast(TypeRef target) => new($"({target.Value}){Value}");
+    public ExpressionRef Cast(TypeRef target) => ExpressionRef.From($"({target.Value}){Value}");
 
     /// <summary>Appends a null-coalescing fallback: <c>value ?? fallback</c>.</summary>
     /// <param name="fallback">The fallback expression when the value is null.</param>
-    public TypeRef OrDefault(TypeRef fallback) => new($"{Value} ?? {fallback.Value}");
+    public ExpressionRef OrDefault(ExpressionRef fallback) => ExpressionRef.From($"{Value} ?? {fallback.Value}");
 
     // ── Modifiers ───────────────────────────────────────────────────────
 

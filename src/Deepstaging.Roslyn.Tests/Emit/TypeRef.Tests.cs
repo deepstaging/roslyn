@@ -598,45 +598,45 @@ public class TypeRefTests
     [Test]
     public async Task Invoke_with_no_arguments()
     {
-        TypeRef typeRef = TypeRef.From("OnSave").Invoke();
+        ExpressionRef expr = TypeRef.From("OnSave").Invoke();
 
-        await Assert.That((string)typeRef).IsEqualTo("OnSave?.Invoke()");
+        await Assert.That((string)expr).IsEqualTo("OnSave?.Invoke()");
     }
 
     [Test]
     public async Task Invoke_with_single_argument()
     {
-        TypeRef typeRef = TypeRef.From("OnSave").Invoke("id");
+        ExpressionRef expr = TypeRef.From("OnSave").Invoke("id");
 
-        await Assert.That((string)typeRef).IsEqualTo("OnSave?.Invoke(id)");
+        await Assert.That((string)expr).IsEqualTo("OnSave?.Invoke(id)");
     }
 
     [Test]
     public async Task Invoke_with_multiple_arguments()
     {
-        TypeRef typeRef = TypeRef.From("OnSendEmail").Invoke("to", "body");
+        ExpressionRef expr = TypeRef.From("OnSendEmail").Invoke("to", "body");
 
-        await Assert.That((string)typeRef).IsEqualTo("OnSendEmail?.Invoke(to, body)");
+        await Assert.That((string)expr).IsEqualTo("OnSendEmail?.Invoke(to, body)");
     }
 
     [Test]
     public async Task Invoke_with_OrDefault()
     {
-        TypeRef typeRef = TypeRef.From("OnSendEmail")
+        ExpressionRef expr = TypeRef.From("OnSendEmail")
             .Invoke("to", "body")
             .OrDefault(TaskRefs.CompletedTask);
 
-        await Assert.That((string)typeRef).IsEqualTo("OnSendEmail?.Invoke(to, body) ?? global::System.Threading.Tasks.Task.CompletedTask");
+        await Assert.That((string)expr).IsEqualTo("OnSendEmail?.Invoke(to, body) ?? global::System.Threading.Tasks.Task.CompletedTask");
     }
 
     [Test]
     public async Task OrDefault_with_string_fallback()
     {
-        TypeRef typeRef = TypeRef.From("OnGetName")
+        ExpressionRef expr = TypeRef.From("OnGetName")
             .Invoke()
             .OrDefault("default!");
 
-        await Assert.That((string)typeRef).IsEqualTo("OnGetName?.Invoke() ?? default!");
+        await Assert.That((string)expr).IsEqualTo("OnGetName?.Invoke() ?? default!");
     }
 
     #endregion
