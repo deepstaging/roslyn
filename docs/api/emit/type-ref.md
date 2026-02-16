@@ -1,20 +1,44 @@
-# TypeRef
+# TypeRef & Refs
 
-Globally-qualified type references for generated code.
+Globally-qualified type and namespace references for generated code.
 
 > **See also:** [Emit Overview](index.md) | [TypeBuilder](type-builder.md) | [MethodBuilder](method-builder.md)
 
 ## Overview
 
-`TypeRef` produces fully-qualified type names prefixed with `global::` so generated code never conflicts with user-defined types.
+`TypeRef` and `NamespaceRef` live in `Deepstaging.Roslyn.Emit.Refs`. Type references are fully-qualified with `global::` so generated code never conflicts with user-defined types.
 
 ```csharp
-TypeRef.Tasks.Task("string")          // global::System.Threading.Tasks.Task<string>
-TypeRef.Collections.List("int")       // global::System.Collections.Generic.List<int>
-TypeRef.Exceptions.ArgumentNull       // global::System.ArgumentNullException
+TaskRefs.Task("string")                   // global::System.Threading.Tasks.Task<string>
+CollectionRefs.List("int")                // global::System.Collections.Generic.List<int>
+ExceptionRefs.ArgumentNull                // global::System.ArgumentNullException
 ```
 
-## Factory Methods
+Each domain has a standalone static class with a `Namespace` property (`NamespaceRef`) and type factories. This pattern is extensible — define your own `*Refs` class for any namespace.
+
+---
+
+## NamespaceRef
+
+A lightweight primitive representing a .NET namespace.
+
+```csharp
+var ns = NamespaceRef.From("MyCompany.Domain.Events");
+TypeRef eventType = ns.Type("OrderCreated");  // global::MyCompany.Domain.Events.OrderCreated
+```
+
+| Member | Description |
+|--------|-------------|
+| `From(string)` | Create from a dotted namespace string |
+| `Type(string)` | Create a globally-qualified TypeRef in this namespace |
+| `Value` | The raw namespace string |
+| implicit `string` | Converts to string |
+
+---
+
+## TypeRef
+
+### Factory Methods
 
 | Method | Description |
 |--------|-------------|
@@ -30,197 +54,7 @@ TypeRef.From(snapshot)
 TypeRef.Global("System.Text.Json.JsonSerializer")
 ```
 
----
-
-## Type Categories
-
-### Exceptions
-
-Common exception types.
-
-| Member | Resolves To |
-|--------|-------------|
-| `Exceptions.ArgumentNull` | `System.ArgumentNullException` |
-| `Exceptions.Argument` | `System.ArgumentException` |
-| `Exceptions.ArgumentOutOfRange` | `System.ArgumentOutOfRangeException` |
-| `Exceptions.InvalidOperation` | `System.InvalidOperationException` |
-| `Exceptions.InvalidCast` | `System.InvalidCastException` |
-| `Exceptions.Format` | `System.FormatException` |
-| `Exceptions.NotSupported` | `System.NotSupportedException` |
-| `Exceptions.NotImplemented` | `System.NotImplementedException` |
-
-```csharp
-body.AddStatement($"throw new {TypeRef.Exceptions.ArgumentNull}(nameof(value));")
-```
-
-### Collections
-
-Generic collection types from `System.Collections.Generic`.
-
-| Method | Resolves To |
-|--------|-------------|
-| `Collections.List(element)` | `List<T>` |
-| `Collections.Dictionary(key, value)` | `Dictionary<TKey, TValue>` |
-| `Collections.HashSet(element)` | `HashSet<T>` |
-| `Collections.KeyValuePair(key, value)` | `KeyValuePair<TKey, TValue>` |
-| `Collections.IEnumerable(element)` | `IEnumerable<T>` |
-| `Collections.ICollection(element)` | `ICollection<T>` |
-| `Collections.IList(element)` | `IList<T>` |
-| `Collections.IDictionary(key, value)` | `IDictionary<TKey, TValue>` |
-| `Collections.ISet(element)` | `ISet<T>` |
-| `Collections.IReadOnlyList(element)` | `IReadOnlyList<T>` |
-| `Collections.IReadOnlyCollection(element)` | `IReadOnlyCollection<T>` |
-| `Collections.IReadOnlyDictionary(key, value)` | `IReadOnlyDictionary<TKey, TValue>` |
-
-```csharp
-method.WithReturnType(TypeRef.Collections.IReadOnlyList("string"))
-```
-
-### Immutable
-
-Immutable collection types from `System.Collections.Immutable`.
-
-| Method | Resolves To |
-|--------|-------------|
-| `Immutable.ImmutableArray(element)` | `ImmutableArray<T>` |
-| `Immutable.ImmutableList(element)` | `ImmutableList<T>` |
-| `Immutable.ImmutableDictionary(key, value)` | `ImmutableDictionary<TKey, TValue>` |
-
-### Tasks
-
-Async types from `System.Threading.Tasks` and `System.Threading`.
-
-| Member | Resolves To |
-|--------|-------------|
-| `Tasks.Task()` | `Task` |
-| `Tasks.Task(result)` | `Task<T>` |
-| `Tasks.ValueTask()` | `ValueTask` |
-| `Tasks.ValueTask(result)` | `ValueTask<T>` |
-| `Tasks.CompletedTask` | `Task.CompletedTask` |
-| `Tasks.CompletedValueTask` | `ValueTask.CompletedTask` |
-| `Tasks.CancellationToken` | `CancellationToken` |
-
-```csharp
-method.WithReturnType(TypeRef.Tasks.Task(TypeRef.Collections.IReadOnlyList("Order")))
-method.AddParameter("ct", TypeRef.Tasks.CancellationToken)
-```
-
-### Json
-
-`System.Text.Json` types.
-
-| Member | Resolves To |
-|--------|-------------|
-| `Json.Serializer` | `JsonSerializer` |
-| `Json.SerializerOptions` | `JsonSerializerOptions` |
-| `Json.Reader` | `Utf8JsonReader` |
-| `Json.Writer` | `Utf8JsonWriter` |
-| `Json.Converter(valueType)` | `JsonConverter<T>` |
-| `Json.ConverterAttribute` | `JsonConverter` (attribute) |
-
-### Encoding
-
-`System.Text.Encoding` instances.
-
-| Member | Resolves To |
-|--------|-------------|
-| `Encoding.UTF8` | `Encoding.UTF8` |
-| `Encoding.ASCII` | `Encoding.ASCII` |
-| `Encoding.Unicode` | `Encoding.Unicode` |
-
-### Http
-
-`System.Net.Http` types and HTTP method constants.
-
-| Member | Resolves To |
-|--------|-------------|
-| `Http.Client` | `HttpClient` |
-| `Http.RequestMessage` | `HttpRequestMessage` |
-| `Http.ResponseMessage` | `HttpResponseMessage` |
-| `Http.Method` | `HttpMethod` |
-| `Http.Get` | `HttpMethod.Get` |
-| `Http.Post` | `HttpMethod.Post` |
-| `Http.Put` | `HttpMethod.Put` |
-| `Http.Patch` | `HttpMethod.Patch` |
-| `Http.Delete` | `HttpMethod.Delete` |
-| `Http.Verb(string)` | `new HttpMethod("VERB")` |
-| `Http.Content` | `HttpContent` |
-| `Http.StringContent` | `StringContent` |
-| `Http.ByteArrayContent` | `ByteArrayContent` |
-| `Http.StreamContent` | `StreamContent` |
-
-### Configuration
-
-`Microsoft.Extensions.Configuration` types.
-
-| Member | Resolves To |
-|--------|-------------|
-| `Configuration.IConfiguration` | `IConfiguration` |
-| `Configuration.IConfigurationSection` | `IConfigurationSection` |
-| `Configuration.IConfigurationRoot` | `IConfigurationRoot` |
-| `Configuration.IConfigurationBuilder` | `IConfigurationBuilder` |
-
-```csharp
-method.AddParameter("configuration", TypeRef.Configuration.IConfiguration)
-method.AddParameter("section", TypeRef.Configuration.IConfigurationSection)
-```
-
-### DependencyInjection
-
-`Microsoft.Extensions.DependencyInjection` types.
-
-| Member | Resolves To |
-|--------|-------------|
-| `DependencyInjection.IServiceCollection` | `IServiceCollection` |
-| `DependencyInjection.IServiceProvider` | `IServiceProvider` |
-| `DependencyInjection.IServiceScopeFactory` | `IServiceScopeFactory` |
-| `DependencyInjection.IServiceScope` | `IServiceScope` |
-| `DependencyInjection.ServiceDescriptor` | `ServiceDescriptor` |
-
-### Logging
-
-`Microsoft.Extensions.Logging` types.
-
-| Member | Resolves To |
-|--------|-------------|
-| `Logging.ILogger` | `ILogger` |
-| `Logging.ILoggerOf(categoryType)` | `ILogger<T>` |
-| `Logging.ILoggerFactory` | `ILoggerFactory` |
-| `Logging.LogLevel` | `LogLevel` |
-
-```csharp
-builder.AddField("_logger", TypeRef.Logging.ILoggerOf("CustomerService"))
-```
-
-### Linq
-
-LINQ and expression types.
-
-| Method | Resolves To |
-|--------|-------------|
-| `Linq.IQueryable(element)` | `IQueryable<T>` |
-| `Linq.IOrderedQueryable(element)` | `IOrderedQueryable<T>` |
-| `Linq.Expression(delegate)` | `Expression<TDelegate>` |
-
-### Delegates
-
-`Func<>` and `Action<>` with arbitrary arity.
-
-| Method | Description |
-|--------|-------------|
-| `Delegates.Func(typeArgs...)` | `Func<T1, ..., TResult>` |
-| `Delegates.Action(typeArgs...)` | `Action<T1, ...>` |
-
-```csharp
-TypeRef.Delegates.Func("string", "bool")  // Func<string, bool>
-TypeRef.Delegates.Action("int")            // Action<int>
-```
-
----
-
-## Instance Methods
-
-Transform a `TypeRef` after creation.
+### Instance Methods
 
 | Method | Description |
 |--------|-------------|
@@ -239,9 +73,7 @@ TypeRef.From("byte").Array()              // byte[]
 TypeRef.Global("MyApp.IHandler").Of("string", "int")  // global::MyApp.IHandler<string, int>
 ```
 
----
-
-## Tuples
+### Tuples
 
 Named tuples with arbitrary arity:
 
@@ -252,13 +84,219 @@ TypeRef.Tuple(
 // (string Name, int Age)
 ```
 
----
-
-## Implicit Conversions
+### Implicit Conversions
 
 `TypeRef` converts implicitly to and from `string`:
 
 ```csharp
-TypeRef typeRef = "string";                    // from string
-string code = TypeRef.Tasks.Task("string");    // to string
+TypeRef typeRef = "string";                        // from string
+string code = TaskRefs.Task("string");             // to string
+```
+
+---
+
+## Ref Types
+
+### ExceptionRefs
+
+Common exception types from `System`.
+
+| Member | Resolves To |
+|--------|-------------|
+| `ExceptionRefs.ArgumentNull` | `System.ArgumentNullException` |
+| `ExceptionRefs.Argument` | `System.ArgumentException` |
+| `ExceptionRefs.ArgumentOutOfRange` | `System.ArgumentOutOfRangeException` |
+| `ExceptionRefs.InvalidOperation` | `System.InvalidOperationException` |
+| `ExceptionRefs.InvalidCast` | `System.InvalidCastException` |
+| `ExceptionRefs.Format` | `System.FormatException` |
+| `ExceptionRefs.NotSupported` | `System.NotSupportedException` |
+| `ExceptionRefs.NotImplemented` | `System.NotImplementedException` |
+
+```csharp
+body.AddStatement($"throw new {ExceptionRefs.ArgumentNull}(nameof(value));")
+```
+
+### CollectionRefs
+
+Generic collection types from `System.Collections.Generic`.
+
+| Method | Resolves To |
+|--------|-------------|
+| `CollectionRefs.List(element)` | `List<T>` |
+| `CollectionRefs.Dictionary(key, value)` | `Dictionary<TKey, TValue>` |
+| `CollectionRefs.HashSet(element)` | `HashSet<T>` |
+| `CollectionRefs.KeyValuePair(key, value)` | `KeyValuePair<TKey, TValue>` |
+| `CollectionRefs.IEnumerable(element)` | `IEnumerable<T>` |
+| `CollectionRefs.ICollection(element)` | `ICollection<T>` |
+| `CollectionRefs.IList(element)` | `IList<T>` |
+| `CollectionRefs.IDictionary(key, value)` | `IDictionary<TKey, TValue>` |
+| `CollectionRefs.ISet(element)` | `ISet<T>` |
+| `CollectionRefs.IReadOnlyList(element)` | `IReadOnlyList<T>` |
+| `CollectionRefs.IReadOnlyCollection(element)` | `IReadOnlyCollection<T>` |
+| `CollectionRefs.IReadOnlyDictionary(key, value)` | `IReadOnlyDictionary<TKey, TValue>` |
+
+```csharp
+method.WithReturnType(CollectionRefs.IReadOnlyList("string"))
+```
+
+### ImmutableCollectionRefs
+
+Immutable collection types from `System.Collections.Immutable`.
+
+| Method | Resolves To |
+|--------|-------------|
+| `ImmutableCollectionRefs.ImmutableArray(element)` | `ImmutableArray<T>` |
+| `ImmutableCollectionRefs.ImmutableList(element)` | `ImmutableList<T>` |
+| `ImmutableCollectionRefs.ImmutableDictionary(key, value)` | `ImmutableDictionary<TKey, TValue>` |
+
+### TaskRefs
+
+Async types from `System.Threading.Tasks` and `System.Threading`.
+
+| Member | Resolves To |
+|--------|-------------|
+| `TaskRefs.Task()` | `Task` |
+| `TaskRefs.Task(result)` | `Task<T>` |
+| `TaskRefs.ValueTask()` | `ValueTask` |
+| `TaskRefs.ValueTask(result)` | `ValueTask<T>` |
+| `TaskRefs.CompletedTask` | `Task.CompletedTask` |
+| `TaskRefs.CompletedValueTask` | `ValueTask.CompletedTask` |
+| `TaskRefs.CancellationToken` | `CancellationToken` |
+
+```csharp
+method.WithReturnType(TaskRefs.Task(CollectionRefs.IReadOnlyList("Order")))
+method.AddParameter("ct", TaskRefs.CancellationToken)
+```
+
+### JsonRefs
+
+`System.Text.Json` types.
+
+| Member | Resolves To |
+|--------|-------------|
+| `JsonRefs.Serializer` | `JsonSerializer` |
+| `JsonRefs.SerializerOptions` | `JsonSerializerOptions` |
+| `JsonRefs.Reader` | `Utf8JsonReader` |
+| `JsonRefs.Writer` | `Utf8JsonWriter` |
+| `JsonRefs.Converter(valueType)` | `JsonConverter<T>` |
+| `JsonRefs.ConverterAttribute` | `JsonConverter` (attribute) |
+
+### EncodingRefs
+
+`System.Text.Encoding` instances.
+
+| Member | Resolves To |
+|--------|-------------|
+| `EncodingRefs.UTF8` | `Encoding.UTF8` |
+| `EncodingRefs.ASCII` | `Encoding.ASCII` |
+| `EncodingRefs.Unicode` | `Encoding.Unicode` |
+
+### HttpRefs
+
+`System.Net.Http` types and HTTP method constants.
+
+| Member | Resolves To |
+|--------|-------------|
+| `HttpRefs.Client` | `HttpClient` |
+| `HttpRefs.RequestMessage` | `HttpRequestMessage` |
+| `HttpRefs.ResponseMessage` | `HttpResponseMessage` |
+| `HttpRefs.Method` | `HttpMethod` |
+| `HttpRefs.Get` | `HttpMethod.Get` |
+| `HttpRefs.Post` | `HttpMethod.Post` |
+| `HttpRefs.Put` | `HttpMethod.Put` |
+| `HttpRefs.Patch` | `HttpMethod.Patch` |
+| `HttpRefs.Delete` | `HttpMethod.Delete` |
+| `HttpRefs.Verb(string)` | `HttpMethod.{verb}` |
+| `HttpRefs.Content` | `HttpContent` |
+| `HttpRefs.StringContent` | `StringContent` |
+| `HttpRefs.ByteArrayContent` | `ByteArrayContent` |
+| `HttpRefs.StreamContent` | `StreamContent` |
+
+### ConfigurationRefs
+
+`Microsoft.Extensions.Configuration` types.
+
+| Member | Resolves To |
+|--------|-------------|
+| `ConfigurationRefs.IConfiguration` | `IConfiguration` |
+| `ConfigurationRefs.IConfigurationSection` | `IConfigurationSection` |
+| `ConfigurationRefs.IConfigurationRoot` | `IConfigurationRoot` |
+| `ConfigurationRefs.IConfigurationBuilder` | `IConfigurationBuilder` |
+
+```csharp
+method.AddParameter("configuration", ConfigurationRefs.IConfiguration)
+method.AddParameter("section", ConfigurationRefs.IConfigurationSection)
+```
+
+### DependencyInjectionRefs
+
+`Microsoft.Extensions.DependencyInjection` types.
+
+| Member | Resolves To |
+|--------|-------------|
+| `DependencyInjectionRefs.IServiceCollection` | `IServiceCollection` |
+| `DependencyInjectionRefs.IServiceProvider` | `IServiceProvider` |
+| `DependencyInjectionRefs.IServiceScopeFactory` | `IServiceScopeFactory` |
+| `DependencyInjectionRefs.IServiceScope` | `IServiceScope` |
+| `DependencyInjectionRefs.ServiceDescriptor` | `ServiceDescriptor` |
+
+### LoggingRefs
+
+`Microsoft.Extensions.Logging` types.
+
+| Member | Resolves To |
+|--------|-------------|
+| `LoggingRefs.ILogger` | `ILogger` |
+| `LoggingRefs.ILoggerOf(categoryType)` | `ILogger<T>` |
+| `LoggingRefs.ILoggerFactory` | `ILoggerFactory` |
+| `LoggingRefs.LogLevel` | `LogLevel` |
+
+```csharp
+builder.AddField("_logger", LoggingRefs.ILoggerOf("CustomerService"))
+```
+
+### LinqRefs
+
+LINQ and expression types.
+
+| Method | Resolves To |
+|--------|-------------|
+| `LinqRefs.IQueryable(element)` | `IQueryable<T>` |
+| `LinqRefs.IOrderedQueryable(element)` | `IOrderedQueryable<T>` |
+| `LinqRefs.Expression(delegate)` | `Expression<TDelegate>` |
+
+### DelegateRefs
+
+`Func<>` and `Action<>` with arbitrary arity.
+
+| Method | Description |
+|--------|-------------|
+| `DelegateRefs.Func(typeArgs...)` | `Func<T1, ..., TResult>` |
+| `DelegateRefs.Action(typeArgs...)` | `Action<T1, ...>` |
+
+```csharp
+DelegateRefs.Func("string", "bool")  // Func<string, bool>
+DelegateRefs.Action("int")           // Action<int>
+```
+
+---
+
+## Extensibility
+
+Each `*Refs` class follows the same pattern — create your own for any namespace:
+
+```csharp
+public static class EfCoreRefs
+{
+    public static NamespaceRef Namespace =>
+        NamespaceRef.From("Microsoft.EntityFrameworkCore");
+
+    public static TypeRef DbContext => Namespace.Type("DbContext");
+    public static TypeRef DbSet(TypeRef entity) =>
+        Namespace.Type($"DbSet<{entity.Value}>");
+}
+
+// Usage:
+builder.AddField("_db", EfCoreRefs.DbContext)
+method.WithReturnType(EfCoreRefs.DbSet("Order"))
 ```

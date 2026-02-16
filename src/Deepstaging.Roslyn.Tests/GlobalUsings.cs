@@ -4,6 +4,7 @@
 global using System.Linq;
 global using System.Threading.Tasks;
 global using Deepstaging.Roslyn.Emit;
+global using Deepstaging.Roslyn.Emit.Refs;
 global using TUnit.Core;
 global using TUnit.Assertions;
 global using TUnit.Assertions.Extensions;

@@ -11,6 +11,7 @@ global using System.Threading.Tasks;
 global using System.Linq;
 global using System.Text.RegularExpressions;
 global using Deepstaging.Roslyn;
+global using Deepstaging.Roslyn.Emit.Refs;
 global using Microsoft.CodeAnalysis;
 global using Microsoft.CodeAnalysis.CSharp;
 global using Microsoft.CodeAnalysis.CSharp.Syntax;
