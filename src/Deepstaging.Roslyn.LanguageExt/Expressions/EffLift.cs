@@ -41,14 +41,6 @@ public readonly struct EffLift(string rt, string param)
         $"liftEff<{rt}, {result}>(async {param} => Optional(await {expr}))";
 
     /// <summary>
-    /// <c>liftEff&lt;{rt}, Option&lt;{innerType}&gt;&gt;(async {param} =&gt; Optional(await {expr}))</c>
-    /// </summary>
-    /// <param name="innerType">The unwrapped inner type (e.g., <c>"User"</c>). Wrapped in <c>Option&lt;&gt;</c> automatically.</param>
-    /// <param name="expr">The awaitable expression that may return null (without <c>await</c>).</param>
-    public string AsyncOptional(string innerType, string expr) =>
-        $"liftEff<{rt}, Option<{innerType}>>(async {param} => Optional(await {expr}))";
-
-    /// <summary>
     /// <c>liftEff&lt;{rt}, {result}&gt;({param} =&gt; {expr})</c>
     /// </summary>
     /// <param name="result">The result type.</param>
@@ -70,14 +62,6 @@ public readonly struct EffLift(string rt, string param)
     /// <param name="expr">The synchronous expression that may return null.</param>
     public string SyncOptional(OptionTypeRef result, string expr) =>
         $"liftEff<{rt}, {result}>({param} => Optional({expr}))";
-
-    /// <summary>
-    /// <c>liftEff&lt;{rt}, Option&lt;{innerType}&gt;&gt;({param} =&gt; Optional({expr}))</c>
-    /// </summary>
-    /// <param name="innerType">The unwrapped inner type. Wrapped in <c>Option&lt;&gt;</c> automatically.</param>
-    /// <param name="expr">The synchronous expression that may return null.</param>
-    public string SyncOptional(string innerType, string expr) =>
-        $"liftEff<{rt}, Option<{innerType}>>({param} => Optional({expr}))";
 
     /// <summary>
     /// <c>liftEff&lt;{rt}, {result}&gt;({lambdaBody})</c> — escape hatch for custom lambda bodies.
