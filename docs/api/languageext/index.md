@@ -17,7 +17,7 @@ The package is organized into three layers:
 ## Installation
 
 ```bash
-dotnet add package Deepstaging.Roslyn.LanguageExt
+dotnet add package Deepstaging.Roslyn.LanguageExt --prerelease
 ```
 
 ## Quick Start

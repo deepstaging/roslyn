@@ -10,8 +10,10 @@ It also includes support for **customizable templates** — letting consumers ov
 
 ## Installation
 
+Scriban support is included in the core `Deepstaging.Roslyn` package — no separate install needed.
+
 ```bash
-dotnet add package Deepstaging.Roslyn.Scriban
+dotnet add package Deepstaging.Roslyn --prerelease
 ```
 
 ## Quick Start

@@ -9,7 +9,7 @@ Create a new `netstandard2.0` class library (required for Roslyn analyzer/genera
 ```bash
 dotnet new classlib -n MyProject.Generators -f netstandard2.0
 cd MyProject.Generators
-dotnet add package Deepstaging.Roslyn
+dotnet add package Deepstaging.Roslyn --prerelease
 ```
 
 Then enable analyzer rules in `MyProject.Generators.csproj`:

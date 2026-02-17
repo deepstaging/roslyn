@@ -9,7 +9,7 @@ Roslyn APIs are powerful but awkward. This library wraps them in something that 
 ```bash
 dotnet new classlib -n MyProject.Generators -f netstandard2.0
 cd MyProject.Generators
-dotnet add package Deepstaging.Roslyn
+dotnet add package Deepstaging.Roslyn --prerelease
 ```
 
 ## What You Get

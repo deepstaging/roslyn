@@ -5,7 +5,7 @@ Test utilities for Roslyn analyzers, generators, and code fixes.
 ## Installation
 
 ```bash
-dotnet add package Deepstaging.Roslyn.Testing
+dotnet add package Deepstaging.Roslyn.Testing --prerelease
 ```
 
 ## Quick Start
