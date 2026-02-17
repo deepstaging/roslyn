@@ -40,6 +40,12 @@ public record struct XmlDocumentationBuilder
     /// <summary>The inheritdoc cref reference (null = no inheritdoc, empty = inheritdoc without cref).</summary>
     public string? InheritDoc { get; init; }
 
+    /// <summary>
+    /// When true, content in params, returns, value, exceptions, and seealso is emitted as raw XML
+    /// without escaping. Use this when content contains intentional XML markup (e.g., see-cref, list elements).
+    /// </summary>
+    public bool RawXml { get; init; }
+
     #region Factory Methods
 
     /// <summary>
@@ -167,6 +173,12 @@ public record struct XmlDocumentationBuilder
     public readonly XmlDocumentationBuilder WithInheritDoc(string? cref = null) =>
         this with { InheritDoc = cref ?? string.Empty };
 
+    /// <summary>
+    /// Enables raw XML mode. When enabled, content in params, returns, value, exceptions,
+    /// and seealso is emitted without XML escaping, allowing embedded markup.
+    /// </summary>
+    public readonly XmlDocumentationBuilder WithRawXml() => this with { RawXml = true };
+
     #endregion
 
     #region Building
@@ -225,25 +237,25 @@ public record struct XmlDocumentationBuilder
         var typeParams = TypeParams.IsDefault ? [] : TypeParams;
 
         foreach (var (name, description) in typeParams)
-            lines.Add($"/// <typeparam name=\"{EscapeXml(name)}\">{EscapeXml(description)}</typeparam>");
+            lines.Add($"/// <typeparam name=\"{Escape(name)}\">{Escape(description)}</typeparam>");
 
         // Params
         var @params = Params.IsDefault ? [] : Params;
 
         foreach (var (name, description) in @params)
-            lines.Add($"/// <param name=\"{EscapeXml(name)}\">{EscapeXml(description)}</param>");
+            lines.Add($"/// <param name=\"{Escape(name)}\">{Escape(description)}</param>");
 
         // Returns
-        if (Returns != null) lines.Add($"/// <returns>{EscapeXml(Returns)}</returns>");
+        if (Returns != null) lines.Add($"/// <returns>{Escape(Returns)}</returns>");
 
         // Value
-        if (Value != null) lines.Add($"/// <value>{EscapeXml(Value)}</value>");
+        if (Value != null) lines.Add($"/// <value>{Escape(Value)}</value>");
 
         // Exceptions
         var exceptions = Exceptions.IsDefault ? [] : Exceptions;
 
         foreach (var (type, description) in exceptions)
-            lines.Add($"/// <exception cref=\"{EscapeXml(type)}\">{EscapeXml(description)}</exception>");
+            lines.Add($"/// <exception cref=\"{Escape(type)}\">{Escape(description)}</exception>");
 
         // Remarks
         if (Remarks != null)
@@ -265,7 +277,7 @@ public record struct XmlDocumentationBuilder
 
         // SeeAlso
         var seeAlso = SeeAlso.IsDefault ? [] : SeeAlso;
-        foreach (var cref in seeAlso) lines.Add($"/// <seealso cref=\"{EscapeXml(cref)}\"/>");
+        foreach (var cref in seeAlso) lines.Add($"/// <seealso cref=\"{Escape(cref)}\"/>");
 
         // Build trivia
         var triviaList = new List<SyntaxTrivia>();
@@ -280,6 +292,8 @@ public record struct XmlDocumentationBuilder
     }
 
     private static string[] SplitLines(string text) => text.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
+
+    private readonly string Escape(string text) => RawXml ? text : EscapeXml(text);
 
     private static string EscapeXml(string text) => text
         .Replace("&", "&amp;")

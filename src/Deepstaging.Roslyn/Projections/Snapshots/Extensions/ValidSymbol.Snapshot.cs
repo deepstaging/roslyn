@@ -1,8 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
 
-using Access = Microsoft.CodeAnalysis.Accessibility;
-
 namespace Deepstaging.Roslyn;
 
 /// <summary>

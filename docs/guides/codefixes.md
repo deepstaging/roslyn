@@ -96,6 +96,7 @@ These extension methods on `Document` create ready-to-use `CodeAction` objects:
 | `AddInterfaceAction` | Add an interface implementation |
 | `AddAttributeAction` | Add an attribute to a member |
 | `RemoveAttributeAction` | Remove an attribute from a member |
+| `ReplaceAttributeAction` | Replace one attribute with another (preserves namespace prefix) |
 | `SuppressWithPragmaAction` | Suppress a diagnostic with `#pragma warning disable` |
 
 ## Examples
@@ -298,6 +299,108 @@ public sealed class SuppressLegacyApiWarningCodeFix : ClassCodeFix
     }
 }
 ```
+
+### Replace Attribute
+
+```csharp
+[CodeFix(DeprecatedAttributeAnalyzer.DiagnosticId)]
+public sealed class ReplaceDeprecatedAttributeCodeFix : ClassCodeFix
+{
+    protected override CodeAction? CreateFix(
+        Document document,
+        ValidSyntax<ClassDeclarationSyntax> syntax)
+    {
+        return document.ReplaceAttributeAction(
+            syntax, "EffectsModule", "Capability");
+    }
+}
+```
+
+## Project-Level Code Fixes
+
+For fixes that modify the project file (e.g., adding MSBuild properties) or write files to the project directory, use `ProjectCodeFix`:
+
+```csharp
+[CodeFix(MissingUserSecretsIdAnalyzer.DiagnosticId)]
+[ExportCodeFixProvider(LanguageNames.CSharp)]
+public sealed class AddUserSecretsIdCodeFix : ProjectCodeFix<INamedTypeSymbol>
+{
+    protected override CodeAction? CreateFix(
+        Project project, 
+        ValidSymbol<INamedTypeSymbol> symbol) =>
+        project.AddProjectPropertyAction("UserSecretsId", Guid.NewGuid().ToString());
+}
+```
+
+### Available Base Classes
+
+| Base Class | Use Case |
+|------------|----------|
+| `ProjectCodeFix` | Direct access to `Project` and `Diagnostic` |
+| `ProjectCodeFix<TSymbol>` | Automatic symbol resolution at diagnostic location |
+
+### Project-Level Actions
+
+| Helper | Description |
+|--------|-------------|
+| `project.AddProjectPropertyAction(name, value)` | Add MSBuild property to first `<PropertyGroup>` |
+| `project.WriteFileAction(path, content)` | Write a file to the project directory |
+| `project.WriteFilesAction(title, files)` | Write multiple files in a single operation |
+| `project.ModifyXmlFileAction(title, path, action)` | Modify (or create) an XML file |
+| `project.FileActions(title)` | Fluent builder for composing multiple file operations |
+
+### Composing Multiple File Operations
+
+Use `FileActions` to batch writes, conditional writes, JSON merges, and XML modifications into a single code action:
+
+```csharp
+[CodeFix(SchemaAnalyzer.DiagnosticId)]
+[ExportCodeFixProvider(LanguageNames.CSharp)]
+public sealed class GenerateSchemaCodeFix : ProjectCodeFix<INamedTypeSymbol>
+{
+    protected override CodeAction? CreateFix(
+        Project project,
+        ValidSymbol<INamedTypeSymbol> symbol) =>
+        project.FileActions("Generate schema files")
+            .Write($"{symbol.Name}.schema.json", SchemaGenerator.Generate(symbol))
+            .WriteIfNotExists("appsettings.json", "{}")
+            .MergeJsonFile("appsettings.json", DefaultSettings.Template)
+            .AppendLine(".gitignore", "*.local.json")
+            .ToCodeAction();
+}
+```
+
+### Managed Props Files
+
+For generators that need a local `.props` file with predictable defaults, use `ManagedPropsFile`:
+
+```csharp
+public sealed class MyGeneratorProps : ManagedPropsFile
+{
+    public override string FileName => "mygenerator.props";
+
+    protected override void ConfigureDefaults(PropsBuilder builder) =>
+        builder
+            .Property("CompilerGeneratedFilesOutputPath", "!generated")
+            .ItemGroup(items =>
+            {
+                items.Remove("Compile", "!generated/**");
+                items.Include("None", "!generated/**");
+            });
+}
+```
+
+Then use it in a code fix — defaults are ensured automatically:
+
+```csharp
+project.FileActions("Configure generator")
+    .ModifyPropsFile<MyGeneratorProps>(doc =>
+        doc.SetProperty("EnableFeature", "true"))
+    .Write("template.json", content)
+    .ToCodeAction();
+```
+
+See the [Workspace package docs](../packages/workspace.md#managedpropsfile) for full API details.
 
 ## Custom CodeFix Without Base Class
 

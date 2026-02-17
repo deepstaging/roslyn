@@ -13,93 +13,95 @@ namespace Deepstaging.Roslyn;
 /// </summary>
 public static class PropertyCodeFixActions
 {
-    extension(Document document)
+    #region Property Modifier Helpers
+
+    /// <summary>
+    /// Creates a code action that adds the 'partial' modifier to a property.
+    /// </summary>
+    public static CodeAction AddPartialModifierAction(
+        this Document document,
+        ValidSyntax<PropertyDeclarationSyntax> propertyDecl,
+        string title = "Add 'partial' modifier") =>
+        CodeAction.Create(
+            title,
+            ct => document.ReplaceNode(
+                propertyDecl.Node,
+                AddModifierWithOrdering(propertyDecl.Node, SyntaxKind.PartialKeyword),
+                ct),
+            title);
+
+    /// <summary>
+    /// Creates a code action that adds the 'required' modifier to a property.
+    /// </summary>
+    public static CodeAction AddRequiredModifierAction(
+        this Document document,
+        ValidSyntax<PropertyDeclarationSyntax> propertyDecl,
+        string title = "Add 'required' modifier") =>
+        CodeAction.Create(
+            title,
+            ct => document.ReplaceNode(
+                propertyDecl.Node,
+                propertyDecl.Node.AddModifiers(SyntaxFactory.Token(SyntaxKind.RequiredKeyword)),
+                ct),
+            title);
+
+    /// <summary>
+    /// Creates a code action that adds init accessor to property (replaces set with init).
+    /// </summary>
+    public static CodeAction MakePropertyInitOnlyAction(
+        this Document document,
+        ValidSyntax<PropertyDeclarationSyntax> propertyDecl,
+        string title = "Make property init-only") =>
+        CodeAction.Create(
+            title,
+            ct =>
+            {
+                var accessors = propertyDecl.Node.AccessorList?.Accessors ?? [];
+
+                var newAccessors = accessors.Select(a =>
+                    a.IsKind(SyntaxKind.SetAccessorDeclaration)
+                        ? SyntaxFactory.AccessorDeclaration(SyntaxKind.InitAccessorDeclaration)
+                            .WithModifiers(a.Modifiers)
+                            .WithBody(a.Body)
+                            .WithExpressionBody(a.ExpressionBody)
+                            .WithSemicolonToken(a.SemicolonToken)
+                        : a);
+
+                var newAccessorList = SyntaxFactory.AccessorList(SyntaxFactory.List(newAccessors));
+                var newProperty = propertyDecl.Node.WithAccessorList(newAccessorList);
+                return document.ReplaceNode(propertyDecl.Node, newProperty, ct);
+            },
+            title);
+
+    #endregion
+
+    #region Property Rename Helpers
+
+    /// <summary>
+    /// Creates a code action that renames a property.
+    /// </summary>
+    /// <param name="document">The document to modify.</param>
+    /// <param name="propertyDecl">The validated property declaration syntax.</param>
+    /// <param name="newName">The new name for the property.</param>
+    /// <param name="title">Optional title. Defaults to "Rename to 'newName'".</param>
+    public static CodeAction RenamePropertyAction(
+        this Document document,
+        ValidSyntax<PropertyDeclarationSyntax> propertyDecl,
+        string newName,
+        string? title = null)
     {
-        #region Property Modifier Helpers
+        title ??= $"Rename to '{newName}'";
 
-        /// <summary>
-        /// Creates a code action that adds the 'partial' modifier to a property.
-        /// </summary>
-        public CodeAction AddPartialModifierAction(
-            ValidSyntax<PropertyDeclarationSyntax> propertyDecl,
-            string title = "Add 'partial' modifier") =>
-            CodeAction.Create(
-                title,
-                ct => document.ReplaceNode(
-                    propertyDecl.Node,
-                    AddModifierWithOrdering(propertyDecl.Node, SyntaxKind.PartialKeyword),
-                    ct),
-                title);
-
-        /// <summary>
-        /// Creates a code action that adds the 'required' modifier to a property.
-        /// </summary>
-        public CodeAction AddRequiredModifierAction(
-            ValidSyntax<PropertyDeclarationSyntax> propertyDecl,
-            string title = "Add 'required' modifier") =>
-            CodeAction.Create(
-                title,
-                ct => document.ReplaceNode(
-                    propertyDecl.Node,
-                    propertyDecl.Node.AddModifiers(SyntaxFactory.Token(SyntaxKind.RequiredKeyword)),
-                    ct),
-                title);
-
-        /// <summary>
-        /// Creates a code action that adds init accessor to property (replaces set with init).
-        /// </summary>
-        public CodeAction MakePropertyInitOnlyAction(
-            ValidSyntax<PropertyDeclarationSyntax> propertyDecl,
-            string title = "Make property init-only") =>
-            CodeAction.Create(
-                title,
-                ct =>
-                {
-                    var accessors = propertyDecl.Node.AccessorList?.Accessors ?? [];
-
-                    var newAccessors = accessors.Select(a =>
-                        a.IsKind(SyntaxKind.SetAccessorDeclaration)
-                            ? SyntaxFactory.AccessorDeclaration(SyntaxKind.InitAccessorDeclaration)
-                                .WithModifiers(a.Modifiers)
-                                .WithBody(a.Body)
-                                .WithExpressionBody(a.ExpressionBody)
-                                .WithSemicolonToken(a.SemicolonToken)
-                            : a);
-
-                    var newAccessorList = SyntaxFactory.AccessorList(SyntaxFactory.List(newAccessors));
-                    var newProperty = propertyDecl.Node.WithAccessorList(newAccessorList);
-                    return document.ReplaceNode(propertyDecl.Node, newProperty, ct);
-                },
-                title);
-
-        #endregion
-
-        #region Property Rename Helpers
-
-        /// <summary>
-        /// Creates a code action that renames a property.
-        /// </summary>
-        /// <param name="propertyDecl">The validated property declaration syntax.</param>
-        /// <param name="newName">The new name for the property.</param>
-        /// <param name="title">Optional title. Defaults to "Rename to 'newName'".</param>
-        public CodeAction RenamePropertyAction(
-            ValidSyntax<PropertyDeclarationSyntax> propertyDecl,
-            string newName,
-            string? title = null)
-        {
-            title ??= $"Rename to '{newName}'";
-
-            return CodeAction.Create(
-                title,
-                ct => document.ReplaceNode(
-                    propertyDecl.Node,
-                    propertyDecl.Node.WithIdentifier(SyntaxFactory.Identifier(newName)),
-                    ct),
-                title);
-        }
-
-        #endregion
+        return CodeAction.Create(
+            title,
+            ct => document.ReplaceNode(
+                propertyDecl.Node,
+                propertyDecl.Node.WithIdentifier(SyntaxFactory.Identifier(newName)),
+                ct),
+            title);
     }
+
+    #endregion
 
     #region Private Helper Methods
 

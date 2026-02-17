@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: RPL-1.5
 
 using System.Composition;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 
 namespace Deepstaging.Roslyn.Scriban;

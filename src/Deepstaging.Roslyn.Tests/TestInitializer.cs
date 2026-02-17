@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: RPL-1.5
 
 using System.Runtime.CompilerServices;
-using Deepstaging.Roslyn.Testing;
 
 namespace Deepstaging.Roslyn.Tests;
 

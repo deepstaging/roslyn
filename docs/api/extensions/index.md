@@ -15,7 +15,7 @@ Extension methods organized by the type they extend. These wrap common Roslyn op
 | [Compilation Extensions](compilation-extensions.md) | Compilation and namespace queries |
 | [Attribute Extensions](attribute-extensions.md) | AttributeData extraction |
 | [String Extensions](string-extensions.md) | Case conversion utilities |
-| [Domain Extensions](domain-extensions.md) | Entity Framework, LanguageExt |
+| [Domain Extensions](domain-extensions.md) | Entity Framework, LanguageExt, JSON utilities |
 
 ---
 

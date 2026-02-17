@@ -4,7 +4,6 @@
 namespace Deepstaging.Roslyn.Tests.Emit.Expressions.LanguageExt;
 
 using Roslyn.LanguageExt.Expressions;
-using Roslyn.LanguageExt.Refs;
 
 public class LiftingStrategyTests
 {

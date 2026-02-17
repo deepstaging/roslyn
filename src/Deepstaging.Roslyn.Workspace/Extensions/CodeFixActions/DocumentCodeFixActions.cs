@@ -13,44 +13,43 @@ namespace Deepstaging.Roslyn;
 /// </summary>
 public static class DocumentCodeFixActions
 {
-    extension(Document document)
+    #region Using Directive Helpers
+
+    /// <summary>
+    /// Creates a code action that adds a using directive to the document.
+    /// </summary>
+    /// <param name="document">The document to modify.</param>
+    /// <param name="namespaceName">The namespace to add (e.g., "System.Linq").</param>
+    public static CodeAction AddUsingAction(this Document document, string namespaceName)
     {
-        #region Using Directive Helpers
+        var title = $"Add 'using {namespaceName};'";
 
-        /// <summary>
-        /// Creates a code action that adds a using directive to the document.
-        /// </summary>
-        /// <param name="namespaceName">The namespace to add (e.g., "System.Linq").</param>
-        public CodeAction AddUsingAction(string namespaceName)
-        {
-            var title = $"Add 'using {namespaceName};'";
-
-            return CodeAction.Create(
-                title,
-                ct => AddUsingDirectiveAsync(document, namespaceName, ct),
-                title);
-        }
-
-        #endregion
-
-        #region Pragma Suppression Helpers
-
-        /// <summary>
-        /// Creates a code action that suppresses a diagnostic with a pragma directive.
-        /// </summary>
-        /// <param name="diagnostic">The diagnostic to suppress.</param>
-        public CodeAction SuppressWithPragmaAction(Diagnostic diagnostic)
-        {
-            var title = $"Suppress '{diagnostic.Id}' with #pragma";
-
-            return CodeAction.Create(
-                title,
-                ct => SuppressWithPragmaAsync(document, diagnostic, ct),
-                title);
-        }
-
-        #endregion
+        return CodeAction.Create(
+            title,
+            ct => AddUsingDirectiveAsync(document, namespaceName, ct),
+            title);
     }
+
+    #endregion
+
+    #region Pragma Suppression Helpers
+
+    /// <summary>
+    /// Creates a code action that suppresses a diagnostic with a pragma directive.
+    /// </summary>
+    /// <param name="document">The document to modify.</param>
+    /// <param name="diagnostic">The diagnostic to suppress.</param>
+    public static CodeAction SuppressWithPragmaAction(this Document document, Diagnostic diagnostic)
+    {
+        var title = $"Suppress '{diagnostic.Id}' with #pragma";
+
+        return CodeAction.Create(
+            title,
+            ct => SuppressWithPragmaAsync(document, diagnostic, ct),
+            title);
+    }
+
+    #endregion
 
     #region Private Helper Methods
 

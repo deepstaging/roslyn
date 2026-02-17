@@ -394,3 +394,78 @@ public sealed class PipelineModelImmutableArrayAnalyzer : MultiDiagnosticTypeAna
 | **Attribute filter** | Generic `TAttribute` parameter | Manual in `GetDiagnosticItems` |
 
 See the [PipelineModel analyzers](../api/projections/pipeline-model.md) for a real-world example of four `MultiDiagnosticTypeAnalyzer` implementations.
+
+## Tracked File Analyzers
+
+When a source generator produces additional files (e.g., JSON schemas) and you need to detect when they're missing or stale, use `TrackedFileTypeAnalyzer`:
+
+```csharp
+[DiagnosticAnalyzer(LanguageNames.CSharp)]
+[TracksFiles("SCHEMA001",
+    MissingTitle = "Schema file should be generated",
+    MissingMessage = "Type '{0}' is missing its schema file",
+    StaleTitle = "Schema file is out of date",
+    StaleMessage = "Schema file for '{0}' is stale",
+    Category = "Schema")]
+public sealed class SchemaFileAnalyzer : TrackedFileTypeAnalyzer
+{
+    protected override bool IsTrackedFile(string filePath) =>
+        filePath.EndsWith(".schema.json");
+
+    protected override bool IsRelevant(ValidSymbol<INamedTypeSymbol> symbol) =>
+        symbol.HasAttribute<GenerateSchemaAttribute>();
+
+    protected override string ComputeHash(ValidSymbol<INamedTypeSymbol> symbol) =>
+        SchemaHasher.Compute(symbol);
+
+    protected override string? ExtractHash(string fileContent) =>
+        SchemaHasher.Extract(fileContent);
+
+    protected override IEnumerable<string> GetExpectedFileNames(ValidSymbol<INamedTypeSymbol> symbol)
+    {
+        yield return $"{symbol.Name}.schema.json";
+    }
+}
+```
+
+### How It Works
+
+1. On compilation start, scans `AdditionalTexts` for tracked files using `IsTrackedFile`
+2. For each type symbol, `IsRelevant` determines if it should be analyzed
+3. If **any** expected file is missing → reports the "missing" diagnostic
+4. If all files are present but any has a **stale hash** → reports the "stale" diagnostic
+
+Both diagnostics share the same diagnostic ID so a single code fix can handle either case.
+
+### TracksFilesAttribute
+
+Declarative configuration for the missing/stale diagnostic descriptors:
+
+| Property | Default | Description |
+|----------|---------|-------------|
+| `MissingTitle` | "Files should be generated" | Title for missing diagnostic |
+| `MissingMessage` | "{0}" | Message format (`{0}` = symbol name) |
+| `MissingSeverity` | Info | Severity for missing diagnostic |
+| `StaleTitle` | "Files are out of date" | Title for stale diagnostic |
+| `StaleMessage` | "{0}" | Message format (`{0}` = symbol name) |
+| `StaleSeverity` | Warning | Severity for stale diagnostic |
+| `Category` | "Usage" | Diagnostic category |
+
+### TrackedFiles
+
+Helper class that discovers and indexes additional files with embedded hashes:
+
+```csharp
+var files = TrackedFiles.Discover(additionalTexts, isTracked, extractHash);
+
+files.HasAny              // bool — any tracked files found?
+files.HasFile("name.json") // bool — specific file exists?
+files.GetHash("name.json") // string? — embedded hash value
+```
+
+### Virtual Overrides
+
+| Method | Default | Description |
+|--------|---------|-------------|
+| `GetMessageArgs(symbol)` | `[symbol.Name]` | Custom message format arguments |
+| `GetLocation(symbol)` | `symbol.Location` | Custom diagnostic location |

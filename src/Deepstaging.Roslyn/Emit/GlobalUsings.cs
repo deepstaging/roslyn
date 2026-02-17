@@ -1,8 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
 
-using Deepstaging.Roslyn.Emit.Refs;
-
 namespace Deepstaging.Roslyn.Emit;
 
 /// <summary>

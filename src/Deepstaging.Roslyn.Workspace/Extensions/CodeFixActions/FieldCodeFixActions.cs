@@ -13,84 +13,87 @@ namespace Deepstaging.Roslyn;
 /// </summary>
 public static class FieldCodeFixActions
 {
-    extension(Document document)
+    #region Field Modifier Helpers
+
+    /// <summary>
+    /// Creates a code action that makes a field private by replacing its accessibility modifiers.
+    /// </summary>
+    /// <param name="document">The document to modify.</param>
+    /// <param name="fieldDecl">The validated field declaration syntax.</param>
+    /// <param name="title">Optional title for the code action. Defaults to "Make field private".</param>
+    public static CodeAction MakeFieldPrivateAction(
+        this Document document,
+        ValidSyntax<FieldDeclarationSyntax> fieldDecl,
+        string title = "Make field private") =>
+        CodeAction.Create(
+            title,
+            ct => document.ReplaceNode(
+                fieldDecl.Node,
+                MakeFieldPrivate(fieldDecl.Node),
+                ct),
+            title);
+
+    /// <summary>
+    /// Creates a code action that adds the 'readonly' modifier to a field.
+    /// </summary>
+    public static CodeAction AddFieldReadonlyModifierAction(
+        this Document document,
+        ValidSyntax<FieldDeclarationSyntax> fieldDecl,
+        string title = "Add 'readonly' modifier") =>
+        CodeAction.Create(
+            title,
+            ct => document.ReplaceNode(
+                fieldDecl.Node,
+                fieldDecl.Node.AddModifiers(SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)),
+                ct),
+            title);
+
+    #endregion
+
+    #region Field Rename Helpers
+
+    /// <summary>
+    /// Creates a code action that renames a field.
+    /// </summary>
+    /// <param name="document">The document to modify.</param>
+    /// <param name="fieldDecl">The validated field declaration syntax.</param>
+    /// <param name="variableIndex">The index of the variable declarator to rename (for multi-variable declarations).</param>
+    /// <param name="newName">The new name for the field.</param>
+    /// <param name="title">Optional title. Defaults to "Rename to 'newName'".</param>
+    public static CodeAction RenameFieldAction(
+        this Document document,
+        ValidSyntax<FieldDeclarationSyntax> fieldDecl,
+        int variableIndex,
+        string newName,
+        string? title = null)
     {
-        #region Field Modifier Helpers
+        title ??= $"Rename to '{newName}'";
 
-        /// <summary>
-        /// Creates a code action that makes a field private by replacing its accessibility modifiers.
-        /// </summary>
-        /// <param name="fieldDecl">The validated field declaration syntax.</param>
-        /// <param name="title">Optional title for the code action. Defaults to "Make field private".</param>
-        public CodeAction MakeFieldPrivateAction(
-            ValidSyntax<FieldDeclarationSyntax> fieldDecl,
-            string title = "Make field private") =>
-            CodeAction.Create(
-                title,
-                ct => document.ReplaceNode(
-                    fieldDecl.Node,
-                    MakeFieldPrivate(fieldDecl.Node),
-                    ct),
-                title);
-
-        /// <summary>
-        /// Creates a code action that adds the 'readonly' modifier to a field.
-        /// </summary>
-        public CodeAction AddFieldReadonlyModifierAction(
-            ValidSyntax<FieldDeclarationSyntax> fieldDecl,
-            string title = "Add 'readonly' modifier") =>
-            CodeAction.Create(
-                title,
-                ct => document.ReplaceNode(
-                    fieldDecl.Node,
-                    fieldDecl.Node.AddModifiers(SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)),
-                    ct),
-                title);
-
-        #endregion
-
-        #region Field Rename Helpers
-
-        /// <summary>
-        /// Creates a code action that renames a field.
-        /// </summary>
-        /// <param name="fieldDecl">The validated field declaration syntax.</param>
-        /// <param name="variableIndex">The index of the variable declarator to rename (for multi-variable declarations).</param>
-        /// <param name="newName">The new name for the field.</param>
-        /// <param name="title">Optional title. Defaults to "Rename to 'newName'".</param>
-        public CodeAction RenameFieldAction(
-            ValidSyntax<FieldDeclarationSyntax> fieldDecl,
-            int variableIndex,
-            string newName,
-            string? title = null)
-        {
-            title ??= $"Rename to '{newName}'";
-
-            return CodeAction.Create(
-                title,
-                ct =>
-                {
-                    var variable = fieldDecl.Node.Declaration.Variables[variableIndex];
-                    var newVariable = variable.WithIdentifier(SyntaxFactory.Identifier(newName));
-                    var newVariables = fieldDecl.Node.Declaration.Variables.Replace(variable, newVariable);
-                    var newDeclaration = fieldDecl.Node.Declaration.WithVariables(newVariables);
-                    var newField = fieldDecl.Node.WithDeclaration(newDeclaration);
-                    return document.ReplaceNode(fieldDecl.Node, newField, ct);
-                },
-                title);
-        }
-
-        /// <summary>
-        /// Creates a code action that renames the first variable in a field declaration.
-        /// </summary>
-        public CodeAction RenameFieldAction(
-            ValidSyntax<FieldDeclarationSyntax> fieldDecl,
-            string newName,
-            string? title = null) =>
-            document.RenameFieldAction(fieldDecl, 0, newName, title);
-
-        #endregion
+        return CodeAction.Create(
+            title,
+            ct =>
+            {
+                var variable = fieldDecl.Node.Declaration.Variables[variableIndex];
+                var newVariable = variable.WithIdentifier(SyntaxFactory.Identifier(newName));
+                var newVariables = fieldDecl.Node.Declaration.Variables.Replace(variable, newVariable);
+                var newDeclaration = fieldDecl.Node.Declaration.WithVariables(newVariables);
+                var newField = fieldDecl.Node.WithDeclaration(newDeclaration);
+                return document.ReplaceNode(fieldDecl.Node, newField, ct);
+            },
+            title);
     }
+
+    /// <summary>
+    /// Creates a code action that renames the first variable in a field declaration.
+    /// </summary>
+    public static CodeAction RenameFieldAction(
+        this Document document,
+        ValidSyntax<FieldDeclarationSyntax> fieldDecl,
+        string newName,
+        string? title = null) =>
+        document.RenameFieldAction(fieldDecl, 0, newName, title);
+
+    #endregion
 
     #region Private Helper Methods
 

@@ -65,10 +65,21 @@ doc.SeeAlso("OtherClass")
 doc.Example("<code>var name = GetName(123);</code>")
 ```
 
+### Raw XML Mode
+
+When content contains intentional XML markup (e.g., `<see cref="..."/>`, `<list>` elements), enable raw XML mode to skip escaping:
+
+```csharp
+doc.WithRawXml()
+```
+
+This affects content in params, returns, value, exceptions, and seealso — summary and remarks are always unescaped.
+
 ### Properties
 
 ```csharp
 doc.HasContent  // bool
+doc.RawXml      // bool
 ```
 
 ---

@@ -121,6 +121,40 @@ public class CodeFixAssertion
     /// </summary>
     public AdditionalDocumentAssertion ShouldAddAdditionalDocument() => new(this);
 
+    /// <summary>
+    /// Assert that the code fix offers at least one action for the diagnostic.
+    /// Use this for project-level code fixes (e.g., modifying .csproj properties)
+    /// that don't produce <see cref="ApplyChangesOperation"/> results.
+    /// </summary>
+    /// <param name="expectedTitle">Optional expected title of the code action.</param>
+    public async Task ShouldOfferFix(string? expectedTitle = null)
+    {
+        var (document, diagnostic) = await GetDocumentAndDiagnosticAsync();
+
+        var codeActions = new List<CodeAction>();
+
+        var context = new CodeFixContext(
+            document,
+            diagnostic,
+            (action, _) => codeActions.Add(action),
+            CancellationToken.None);
+
+        await _context.CodeFix.RegisterCodeFixesAsync(context);
+
+        if (codeActions.Count == 0)
+            Assert.Fail($"Code fix provider did not register any fixes for diagnostic '{_diagnosticId}'");
+
+        if (expectedTitle is not null)
+        {
+            var titles = codeActions.Select(a => a.Title).ToList();
+
+            if (!titles.Any(t => t.Contains(expectedTitle)))
+                Assert.Fail(
+                    $"Expected code fix with title containing '{expectedTitle}', " +
+                    $"but found: {string.Join(", ", titles.Select(t => $"'{t}'"))}");
+        }
+    }
+
     internal async Task<Solution> ApplyFirstFixAsync()
     {
         var (document, diagnostic) = await GetDocumentAndDiagnosticAsync();
@@ -251,6 +285,8 @@ public class AdditionalDocumentAssertion
 {
     private readonly CodeFixAssertion _parent;
     private string? _expectedPathContains;
+    private readonly List<string> _expectedContains = [];
+    private readonly List<string> _expectedNotContains = [];
 
     internal AdditionalDocumentAssertion(CodeFixAssertion parent) => _parent = parent;
 
@@ -267,7 +303,28 @@ public class AdditionalDocumentAssertion
     /// Assert the added document's content contains the specified text.
     /// </summary>
     /// <param name="expectedContent">Text that should appear in the added document.</param>
-    public async Task WithContentContaining(string expectedContent)
+    public AdditionalDocumentAssertion WithContentContaining(string expectedContent)
+    {
+        _expectedContains.Add(expectedContent);
+        return this;
+    }
+
+    /// <summary>
+    /// Assert the added document's content does not contain the specified text.
+    /// </summary>
+    /// <param name="unexpectedContent">Text that should not appear in the added document.</param>
+    public AdditionalDocumentAssertion WithoutContentContaining(string unexpectedContent)
+    {
+        _expectedNotContains.Add(unexpectedContent);
+        return this;
+    }
+
+    /// <summary>
+    /// Enables awaiting on the assertion to verify all conditions.
+    /// </summary>
+    public TaskAwaiter GetAwaiter() => VerifyAsync().GetAwaiter();
+
+    private async Task VerifyAsync()
     {
         var solution = await _parent.ApplyFirstFixAsync();
 
@@ -284,38 +341,26 @@ public class AdditionalDocumentAssertion
                 $"Expected additional document path to contain '{_expectedPathContains}', " +
                 $"but was '{doc.Name}'.");
 
-        var text = await doc.GetTextAsync();
-        var content = text.ToString();
-
-        if (!content.Contains(expectedContent))
-            Assert.Fail(
-                $"Expected additional document to contain '{expectedContent}', " +
-                $"but content was:\n{content}");
-    }
-
-    /// <summary>
-    /// Enables awaiting on the assertion to verify all conditions (without content check).
-    /// </summary>
-    public TaskAwaiter GetAwaiter() => VerifyAsync().GetAwaiter();
-
-    private async Task VerifyAsync()
-    {
-        var solution = await _parent.ApplyFirstFixAsync();
-
-        var project = solution.Projects.First();
-        var additionalDocs = project.AdditionalDocuments.ToArray();
-
-        if (additionalDocs.Length == 0)
-            Assert.Fail("Expected code fix to add an additional document, but none were added.");
-
-        if (_expectedPathContains != null)
+        if (_expectedContains.Count > 0 || _expectedNotContains.Count > 0)
         {
-            var doc = additionalDocs[0];
+            var text = await doc.GetTextAsync();
+            var content = text.ToString();
 
-            if (!doc.Name.Contains(_expectedPathContains))
-                Assert.Fail(
-                    $"Expected additional document path to contain '{_expectedPathContains}', " +
-                    $"but was '{doc.Name}'.");
+            foreach (var expected in _expectedContains)
+            {
+                if (!content.Contains(expected))
+                    Assert.Fail(
+                        $"Expected additional document to contain '{expected}', " +
+                        $"but content was:\n{content}");
+            }
+
+            foreach (var unexpected in _expectedNotContains)
+            {
+                if (content.Contains(unexpected))
+                    Assert.Fail(
+                        $"Expected additional document to NOT contain '{unexpected}', " +
+                        $"but it was found in:\n{content}");
+            }
         }
     }
 }

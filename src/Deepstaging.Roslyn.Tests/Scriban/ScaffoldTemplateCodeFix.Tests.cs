@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: RPL-1.5
 
 using Deepstaging.Roslyn.Scriban;
-using Deepstaging.Roslyn.Testing;
 
 namespace Deepstaging.Roslyn.Tests.Scriban;
 

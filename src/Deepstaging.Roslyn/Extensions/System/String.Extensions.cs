@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: RPL-1.5
 
 using System.Globalization;
-using System.Text;
 
 namespace Deepstaging.Roslyn;
 

@@ -3,7 +3,6 @@
 
 using System.Collections.Immutable;
 using Deepstaging.Roslyn.Scriban;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Deepstaging.Roslyn.Tests.Scriban;

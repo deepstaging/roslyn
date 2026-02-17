@@ -110,6 +110,69 @@ This is equivalent to `AnalyzeAndFixWith<MyAnalyzer, MyCodeFix>`.
 
 ---
 
+## Additional Texts
+
+Provide additional documents (e.g., JSON schemas, config files) to the compilation:
+
+```csharp
+await AnalyzeAndFixWith<MyAnalyzer, MyCodeFix>(source)
+    .WithAdditionalText("appsettings.schema.json", schemaContent)
+    .ForDiagnostic("SCHEMA001")
+    .ShouldProduce(expectedSource);
+```
+
+---
+
+## Testing Project-Level Code Fixes
+
+For code fixes that modify the project rather than source code (e.g., `ProjectCodeFix`), use `ShouldOfferFix`:
+
+```csharp
+[Test]
+public async Task OffersCodeFix()
+{
+    var source = """
+        [GenerateSchema]
+        public partial class AppSettings { }
+        """;
+
+    await AnalyzeAndFixWith<SchemaAnalyzer, GenerateSchemaCodeFix>(source)
+        .ForDiagnostic("SCHEMA001")
+        .ShouldOfferFix("Generate schema");
+}
+```
+
+`ShouldOfferFix` verifies that at least one code action is registered, with an optional title match. Use this when the code fix produces operations other than `ApplyChangesOperation` (e.g., writing files to disk).
+
+---
+
+## Asserting Additional Documents
+
+### Basic Assertion
+
+```csharp
+await AnalyzeAndFixWith<MyAnalyzer, MyCodeFix>(source)
+    .ForDiagnostic("MY001")
+    .ShouldAddAdditionalDocument()
+    .WithPathContaining("schema.json");
+```
+
+### Chainable Content Assertions
+
+Assertions on additional document content are chainable — call multiple `WithContentContaining` and `WithoutContentContaining` before awaiting:
+
+```csharp
+await AnalyzeAndFixWith<MyAnalyzer, MyCodeFix>(source)
+    .ForDiagnostic("MY001")
+    .ShouldAddAdditionalDocument()
+    .WithPathContaining("schema.json")
+    .WithContentContaining("\"type\": \"object\"")
+    .WithContentContaining("\"properties\"")
+    .WithoutContentContaining("\"password\"");
+```
+
+---
+
 ## How Diagnostics Are Found
 
 ### Analyzer Diagnostics

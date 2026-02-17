@@ -65,7 +65,11 @@
     <ItemGroup>
         <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.Workspace/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.Workspace.dll"
               Pack="true" PackagePath="lib/netstandard2.0" Visible="false"/>
+        <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.Workspace/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.Workspace.xml"
+              Pack="true" PackagePath="lib/netstandard2.0" Visible="false"/>
         <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.Scriban/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.Scriban.dll"
+              Pack="true" PackagePath="lib/netstandard2.0" Visible="false"/>
+        <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.Scriban/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.Scriban.xml"
               Pack="true" PackagePath="lib/netstandard2.0" Visible="false"/>
     </ItemGroup>
 
@@ -93,7 +97,11 @@
     <ItemGroup>
         <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.Scriban.Analyzers/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.Scriban.Analyzers.dll"
               Pack="true" PackagePath="lib/netstandard2.0" Visible="false"/>
+        <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.Scriban.Analyzers/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.Scriban.Analyzers.xml"
+              Pack="true" PackagePath="lib/netstandard2.0" Visible="false"/>
         <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.Scriban.CodeFixes/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.Scriban.CodeFixes.dll"
+              Pack="true" PackagePath="lib/netstandard2.0" Visible="false"/>
+        <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.Scriban.CodeFixes/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.Scriban.CodeFixes.xml"
               Pack="true" PackagePath="lib/netstandard2.0" Visible="false"/>
     </ItemGroup>
 
