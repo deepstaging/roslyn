@@ -41,8 +41,14 @@ builder
         items.Remove("Compile", "!generated/**");
         items.Update("AdditionalFiles", "*.json", meta =>
             meta.Add("DependentUpon", "%(Filename).cs"));
-    });
+    })
+    .If(enableSecrets, b => b                   // Conditional property groups/item groups
+        .Property("UserSecretsId", secretsId))
+    .WithEach(extraItems, (b, item) => b        // Iterate a collection
+        .Property(item.Name, item.Value));
 ```
+
+All nested builders (`PropsPropertyGroupBuilder`, `PropsItemGroupBuilder`) support the same `If`/`WithEach` helpers:
 
 ## ManagedPropsFile Extensions
 
@@ -71,5 +77,9 @@ doc.SetProperty("Feature", "true", label: "MyLabel", comment: "Enable feature")
 // Replace a labeled ItemGroup with new items
 doc.SetItemGroup("Generated", items =>
     items.Item("None", "Update", "*.g.cs", meta =>
-        meta.Set("DependentUpon", "%(Filename).cs")));
+        meta.Set("DependentUpon", "%(Filename).cs"))
+    .If(includeJson, ig => ig
+        .Item("AdditionalFiles", "Include", "*.json"))
+    .WithEach(patterns, (ig, p) => ig
+        .Item(p.Type, p.Action, p.Pattern)));
 ```

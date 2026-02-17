@@ -144,6 +144,56 @@ public sealed class ItemGroupXmlBuilder
         return this;
     }
 
+    /// <summary>
+    /// Conditionally adds items to the group.
+    /// The <paramref name="configure"/> callback is invoked only when <paramref name="condition"/> is <see langword="true"/>.
+    /// </summary>
+    /// <param name="condition">When <see langword="true"/>, the callback is executed.</param>
+    /// <param name="configure">A callback that adds items to this builder.</param>
+    public ItemGroupXmlBuilder If(bool condition, Action<ItemGroupXmlBuilder> configure)
+    {
+        if (condition)
+            configure(this);
+        return this;
+    }
+
+    /// <summary>
+    /// Conditionally applies one of two sets of items to the group.
+    /// Invokes <paramref name="configure"/> when <paramref name="condition"/> is <see langword="true"/>,
+    /// or <paramref name="otherwise"/> when it is <see langword="false"/>.
+    /// </summary>
+    /// <param name="condition">Determines which callback is executed.</param>
+    /// <param name="configure">A callback applied when the condition is <see langword="true"/>.</param>
+    /// <param name="otherwise">A callback applied when the condition is <see langword="false"/>.</param>
+    public ItemGroupXmlBuilder If(
+        bool condition,
+        Action<ItemGroupXmlBuilder> configure,
+        Action<ItemGroupXmlBuilder> otherwise)
+    {
+        if (condition)
+            configure(this);
+        else
+            otherwise(this);
+        return this;
+    }
+
+    /// <summary>
+    /// Iterates over <paramref name="items"/> and invokes <paramref name="configure"/> for each element.
+    /// If <paramref name="items"/> is <see langword="null"/>, this is a no-op.
+    /// </summary>
+    /// <typeparam name="T">The element type of the collection.</typeparam>
+    /// <param name="items">The collection to iterate. May be <see langword="null"/>.</param>
+    /// <param name="configure">A callback that receives the builder and the current item.</param>
+    public ItemGroupXmlBuilder WithEach<T>(IEnumerable<T>? items, Action<ItemGroupXmlBuilder, T> configure)
+    {
+        if (items is null)
+            return this;
+
+        foreach (var item in items)
+            configure(this, item);
+        return this;
+    }
+
     internal List<XElement> Build() => _items;
 }
 
@@ -160,6 +210,56 @@ public sealed class ItemMetadataXmlBuilder
     public ItemMetadataXmlBuilder Set(string name, string value)
     {
         _metadata.Add((name, value));
+        return this;
+    }
+
+    /// <summary>
+    /// Conditionally adds metadata to the item.
+    /// The <paramref name="configure"/> callback is invoked only when <paramref name="condition"/> is <see langword="true"/>.
+    /// </summary>
+    /// <param name="condition">When <see langword="true"/>, the callback is executed.</param>
+    /// <param name="configure">A callback that adds metadata to this builder.</param>
+    public ItemMetadataXmlBuilder If(bool condition, Action<ItemMetadataXmlBuilder> configure)
+    {
+        if (condition)
+            configure(this);
+        return this;
+    }
+
+    /// <summary>
+    /// Conditionally applies one of two sets of metadata to the item.
+    /// Invokes <paramref name="configure"/> when <paramref name="condition"/> is <see langword="true"/>,
+    /// or <paramref name="otherwise"/> when it is <see langword="false"/>.
+    /// </summary>
+    /// <param name="condition">Determines which callback is executed.</param>
+    /// <param name="configure">A callback applied when the condition is <see langword="true"/>.</param>
+    /// <param name="otherwise">A callback applied when the condition is <see langword="false"/>.</param>
+    public ItemMetadataXmlBuilder If(
+        bool condition,
+        Action<ItemMetadataXmlBuilder> configure,
+        Action<ItemMetadataXmlBuilder> otherwise)
+    {
+        if (condition)
+            configure(this);
+        else
+            otherwise(this);
+        return this;
+    }
+
+    /// <summary>
+    /// Iterates over <paramref name="items"/> and invokes <paramref name="configure"/> for each element.
+    /// If <paramref name="items"/> is <see langword="null"/>, this is a no-op.
+    /// </summary>
+    /// <typeparam name="T">The element type of the collection.</typeparam>
+    /// <param name="items">The collection to iterate. May be <see langword="null"/>.</param>
+    /// <param name="configure">A callback that receives the builder and the current item.</param>
+    public ItemMetadataXmlBuilder WithEach<T>(IEnumerable<T>? items, Action<ItemMetadataXmlBuilder, T> configure)
+    {
+        if (items is null)
+            return this;
+
+        foreach (var item in items)
+            configure(this, item);
         return this;
     }
 
