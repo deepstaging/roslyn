@@ -20,6 +20,13 @@ prop.WithAutoPropertyAccessors()
 // Read-only auto-property { get; }
 prop.WithAutoPropertyAccessors().AsReadOnly()
 
+// Composable auto accessors (individual get/set/init)
+prop.WithAutoGetter()                       // { get; }
+prop.WithAutoGetter().WithAutoSetter()      // { get; set; }
+prop.WithAutoGetter().WithAutoInitSetter()  // { get; init; }
+prop.WithAutoSetter()                       // { set; }
+prop.WithAutoInitSetter()                   // { init; }
+
 // Expression-bodied getter => expression
 prop.WithGetter("_name")
 prop.WithGetter("=> _name")  // "=>" is optional

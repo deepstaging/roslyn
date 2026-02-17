@@ -40,6 +40,12 @@ public record struct PropertyBuilder
     /// <summary>Gets whether the property has an init-only setter.</summary>
     public bool HasInitSetter { get; init; }
 
+    /// <summary>Gets whether the property has an individual auto getter.</summary>
+    public bool HasAutoGetter { get; init; }
+
+    /// <summary>Gets whether the property has an individual auto setter.</summary>
+    public bool HasAutoSetter { get; init; }
+
     /// <summary>Gets the accessor style.</summary>
     internal PropertyAccessorStyle AccessorStyle { get; init; }
 
@@ -188,6 +194,28 @@ public record struct PropertyBuilder
     /// </summary>
     public readonly PropertyBuilder WithAutoPropertyAccessors() =>
         this with { AccessorStyle = PropertyAccessorStyle.Auto, GetterBody = null, SetterBody = null };
+
+    /// <summary>
+    /// Adds an auto getter to the property. Can be composed with <see cref="WithAutoSetter"/> or <see cref="WithAutoInitSetter"/>.
+    /// Example: <c>prop.WithAutoGetter()</c> → <c>{ get; }</c>
+    /// Example: <c>prop.WithAutoGetter().WithAutoSetter()</c> → <c>{ get; set; }</c>
+    /// </summary>
+    public readonly PropertyBuilder WithAutoGetter() =>
+        this with { HasAutoGetter = true };
+
+    /// <summary>
+    /// Adds an auto setter to the property. Can be composed with <see cref="WithAutoGetter"/>.
+    /// Example: <c>prop.WithAutoGetter().WithAutoSetter()</c> → <c>{ get; set; }</c>
+    /// </summary>
+    public readonly PropertyBuilder WithAutoSetter() =>
+        this with { HasAutoSetter = true };
+
+    /// <summary>
+    /// Adds an auto init-only setter to the property. Can be composed with <see cref="WithAutoGetter"/>.
+    /// Example: <c>prop.WithAutoGetter().WithAutoInitSetter()</c> → <c>{ get; init; }</c>
+    /// </summary>
+    public readonly PropertyBuilder WithAutoInitSetter() =>
+        this with { HasAutoSetter = true, HasInitSetter = true };
 
     /// <summary>
     /// Configures the property with an expression-bodied getter.
@@ -432,14 +460,18 @@ public record struct PropertyBuilder
         property = property.WithModifiers(
             SyntaxFactory.TokenList(modifiers.Select(SyntaxFactory.Token)));
 
-        // Add accessors based on style
-        property = AccessorStyle switch
+        // Add accessors based on style (composed auto accessors take priority)
+        property = (HasAutoGetter || HasAutoSetter) switch
         {
-            PropertyAccessorStyle.Auto => AddAutoAccessors(property),
-            PropertyAccessorStyle.ExpressionBodied => AddExpressionBody(property),
-            PropertyAccessorStyle.BlockBodied => AddBlockBodiedAccessors(property),
-            PropertyAccessorStyle.GetterOnly => AddGetterOnly(property),
-            _ => property
+            true => AddComposedAutoAccessors(property),
+            false => AccessorStyle switch
+            {
+                PropertyAccessorStyle.Auto => AddAutoAccessors(property),
+                PropertyAccessorStyle.ExpressionBodied => AddExpressionBody(property),
+                PropertyAccessorStyle.BlockBodied => AddBlockBodiedAccessors(property),
+                PropertyAccessorStyle.GetterOnly => AddGetterOnly(property),
+                _ => property
+            }
         };
 
         // Add initializer if specified
@@ -475,6 +507,28 @@ public record struct PropertyBuilder
                     SyntaxFactory.AccessorDeclaration(setterKind)
                         .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken))
                 })));
+    }
+
+    private readonly PropertyDeclarationSyntax AddComposedAutoAccessors(PropertyDeclarationSyntax property)
+    {
+        var accessors = new List<AccessorDeclarationSyntax>();
+
+        if (HasAutoGetter)
+        {
+            accessors.Add(SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+                .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
+        }
+
+        if (HasAutoSetter)
+        {
+            var setterKind = HasInitSetter ? SyntaxKind.InitAccessorDeclaration : SyntaxKind.SetAccessorDeclaration;
+
+            accessors.Add(SyntaxFactory.AccessorDeclaration(setterKind)
+                .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
+        }
+
+        return property.WithAccessorList(
+            SyntaxFactory.AccessorList(SyntaxFactory.List(accessors)));
     }
 
     private readonly PropertyDeclarationSyntax AddGetterOnly(PropertyDeclarationSyntax property) =>

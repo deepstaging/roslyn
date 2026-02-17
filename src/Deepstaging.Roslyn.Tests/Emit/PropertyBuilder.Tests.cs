@@ -80,6 +80,117 @@ public class PropertyBuilderTests : RoslynTestBase
 
     #endregion
 
+    #region Composed Auto Accessors
+
+    [Test]
+    public async Task Can_emit_auto_getter_only()
+    {
+        var property = PropertyBuilder
+            .For("Id", "Guid")
+            .WithAccessibility(Accessibility.Public)
+            .WithAutoGetter();
+
+        var result = TypeBuilder
+            .Class("Entity")
+            .AddProperty(property)
+            .Emit();
+
+        await Assert.That(result.Success).IsTrue();
+        await Assert.That(result.Code).Contains("public Guid Id { get; }");
+    }
+
+    [Test]
+    public async Task Can_emit_auto_getter_and_setter()
+    {
+        var property = PropertyBuilder
+            .For("Name", "string")
+            .WithAccessibility(Accessibility.Public)
+            .WithAutoGetter()
+            .WithAutoSetter();
+
+        var result = TypeBuilder
+            .Class("Person")
+            .AddProperty(property)
+            .Emit();
+
+        await Assert.That(result.Success).IsTrue();
+        await Assert.That(result.Code).Contains("public string Name { get; set; }");
+    }
+
+    [Test]
+    public async Task Can_emit_auto_getter_and_init_setter()
+    {
+        var property = PropertyBuilder
+            .For("CreatedAt", "DateTime")
+            .WithAccessibility(Accessibility.Public)
+            .WithAutoGetter()
+            .WithAutoInitSetter();
+
+        var result = TypeBuilder
+            .Class("Entity")
+            .AddProperty(property)
+            .Emit();
+
+        await Assert.That(result.Success).IsTrue();
+        await Assert.That(result.Code).Contains("public DateTime CreatedAt { get; init; }");
+    }
+
+    [Test]
+    public async Task Can_emit_auto_setter_only()
+    {
+        var property = PropertyBuilder
+            .For("Value", "int")
+            .WithAccessibility(Accessibility.Public)
+            .WithAutoSetter();
+
+        var result = TypeBuilder
+            .Class("WriteOnly")
+            .AddProperty(property)
+            .Emit();
+
+        await Assert.That(result.Success).IsTrue();
+        await Assert.That(result.Code).Contains("public int Value { set; }");
+    }
+
+    [Test]
+    public async Task Can_emit_auto_init_setter_only()
+    {
+        var property = PropertyBuilder
+            .For("Token", "string")
+            .WithAccessibility(Accessibility.Public)
+            .WithAutoInitSetter();
+
+        var result = TypeBuilder
+            .Class("Options")
+            .AddProperty(property)
+            .Emit();
+
+        await Assert.That(result.Success).IsTrue();
+        await Assert.That(result.Code).Contains("public string Token { init; }");
+    }
+
+    [Test]
+    public async Task Can_emit_auto_getter_with_initializer()
+    {
+        var property = PropertyBuilder
+            .For("Items", "List<string>")
+            .WithAccessibility(Accessibility.Public)
+            .WithAutoGetter()
+            .WithAutoSetter()
+            .WithInitializer("new()");
+
+        var result = TypeBuilder
+            .Class("Container")
+            .AddUsing("System.Collections.Generic")
+            .AddProperty(property)
+            .Emit();
+
+        await Assert.That(result.Success).IsTrue();
+        await Assert.That(result.Code).Contains("public List<string> Items { get; set; } = new();");
+    }
+
+    #endregion
+
     #region Expression-Bodied Properties
 
     [Test]
