@@ -6,18 +6,21 @@ This guide covers recommended patterns for organizing Roslyn projects using Deep
 
 | Guide | Description |
 |-------|-------------|
-| [Project Organization](guides/project-organization.md) | Folder structure, project responsibilities, file organization |
+| [Project Organization](guides/project-organization.md) | Five-layer architecture, file organization, dependency constraints |
+| [End-to-End Walkthrough](guides/end-to-end.md) | Trace a feature across all five layers with real production code |
 | [Projection Pattern](guides/projection-pattern.md) | AttributeQuery types, Models, Query extensions |
-| [Generators](guides/generators.md) | Generator pattern, Writer classes, Emit best practices |
-| [Analyzers](guides/analyzers.md) | Analyzer base classes, examples |
-| [CodeFixes](guides/codefixes.md) | CodeFix base classes, helpers |
+| [Generators](guides/generators.md) | Thin generators, Writer classes, Emit patterns |
+| [Analyzers](guides/analyzers.md) | Analyzer base classes, diagnostic reporting |
+| [CodeFixes](guides/codefixes.md) | CodeFix base classes, action helpers |
 | [Testing](guides/testing.md) | RoslynTestBase, snapshot testing, ModuleInitializer |
 
 ## Learning Resources
 
 | Resource | Purpose |
 |----------|---------|
-| [RoslynKit Template](https://github.com/deepstaging/roslyn/tree/main/templates) | Starting point for your own Roslyn projects. Use `dotnet new roslynkit` to scaffold a new solution with the recommended structure. |
+| [RoslynKit Template](https://github.com/deepstaging/roslyn/tree/main/templates) | Use `dotnet new roslynkit` to scaffold a new solution with the recommended structure |
+| [Deepstaging source](https://github.com/deepstaging/deepstaging) | Production reference — 6 generators, 25+ analyzers, 6 code fixes |
+| [Samples](https://github.com/deepstaging/samples) | See how end-users consume generated code in a real application |
 
 ## Summary
 

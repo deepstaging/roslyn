@@ -73,11 +73,11 @@ public static void Init() =>
 
 Each entry point returns a test context with fluent assertions:
 
-- **[SymbolTestContext](../testing/symbol-test-context.md)** — Query symbols from compiled source
-- **[AnalyzerTestContext](../testing/analyzer-test-context.md)** — Assert on analyzer diagnostics
-- **[GeneratorTestContext](../testing/generator-test-context.md)** — Assert on generator output
-- **[CodeFixTestContext](../testing/codefix-test-context.md)** — Assert on code fix transformations
-- **[TemplateTestContext](../testing/template-test-context.md)** — Assert on template rendering
+- **[SymbolTestContext](../../testing/symbol-test-context.md)** — Query symbols from compiled source
+- **[AnalyzerTestContext](../../testing/analyzer-test-context.md)** — Assert on analyzer diagnostics
+- **[GeneratorTestContext](../../testing/generator-test-context.md)** — Assert on generator output
+- **[CodeFixTestContext](../../testing/codefix-test-context.md)** — Assert on code fix transformations
+- **[TemplateTestContext](../../testing/template-test-context.md)** — Assert on template rendering
 
 ## Quick Examples
 
@@ -130,5 +130,5 @@ await RenderTemplateFrom<MyGenerator>(source)
 
 ## Detailed Documentation
 
-- **[RoslynTestBase](../testing/roslyn-test-base.md)** — Full API reference for the base class
-- **[ReferenceConfiguration](../testing/reference-configuration.md)** — Configure assembly references for tests
+- **[RoslynTestBase](../../testing/roslyn-test-base.md)** — Full API reference for the base class
+- **[ReferenceConfiguration](../../testing/reference-configuration.md)** — Configure assembly references for tests

@@ -1,31 +1,16 @@
 # Generator Pattern
 
-Generators should be thin—just wiring between the projection and writer layers.
+Generators should be thin — just wiring between the Projection and Writer layers. All examples in this guide are drawn from the [Deepstaging](https://github.com/deepstaging/deepstaging) source generator suite.
 
-## Basic Structure
+## The Thin Generator
 
-```csharp
-[Generator]
-public sealed class AutoNotifyGenerator : IIncrementalGenerator
-{
-    public void Initialize(IncrementalGeneratorInitializationContext context)
-    {
-        var models = context.ForAttribute<AutoNotifyAttribute>()
-            .Map(static (ctx, _) => ctx.TargetSymbol
-                .AsValidNamedType()
-                .QueryAutoNotify());  // Projection layer
+A generator's `Initialize` method does three things:
 
-        context.RegisterSourceOutput(models, static (ctx, model) => model
-            .WriteAutoNotifyClass()   // Writer layer
-            .AddSourceTo(ctx, HintName.From(model.Namespace, model.TypeName)));
-    }
-}
-```
-
-### More Generator Examples
+1. **Select** symbols via `ForAttribute<T>()`
+2. **Project** them into models via the Projection layer
+3. **Emit** code via Writer extension methods
 
 ```csharp
-// Generator with multiple output files
 [Generator]
 public sealed class StrongIdGenerator : IIncrementalGenerator
 {
@@ -34,238 +19,205 @@ public sealed class StrongIdGenerator : IIncrementalGenerator
         var models = context.ForAttribute<StrongIdAttribute>()
             .Map(static (ctx, _) => ctx.TargetSymbol
                 .AsValidNamedType()
-                .QueryStrongId());
+                .ToStrongIdModel(ctx.SemanticModel));
 
-        // Main type generation
-        context.RegisterSourceOutput(models, static (ctx, model) => model
-            .WriteStrongIdStruct()
-            .AddSourceTo(ctx, HintName.From(model.Namespace, model.TypeName)));
-
-        // Optional JSON converter
         context.RegisterSourceOutput(models, static (ctx, model) =>
         {
-            if (model?.GenerateJsonConverter != true) return;
-            model.WriteJsonConverter()
-                .AddSourceTo(ctx, HintName.From(model.Namespace, $"{model.TypeName}JsonConverter"));
+            model.WriteStrongId()
+                .AddSourceTo(ctx, HintName.From(model.Namespace, model.TypeName));
         });
     }
 }
+```
 
-// Generator combining multiple sources
+That's the entire generator — 14 lines. The complexity lives in the Projection layer (model construction) and the Writer (code emission).
+
+### Multiple Pipelines
+
+When a generator drives multiple features, register separate pipelines:
+
+```csharp
 [Generator]
 public sealed class EffectsGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
+        // Pipeline 1: Runtime classes
+        var runtimes = context.ForAttribute<RuntimeAttribute>()
+            .Map(static (ctx, _) => ctx.TargetSymbol
+                .AsValidNamedType()
+                .QueryRuntimeModel());
+
+        context.RegisterSourceOutput(runtimes, static (ctx, model) =>
+        {
+            model.WriteRuntimeClass()
+                .AddSourceTo(ctx, HintName.From(model.Namespace, model.TypeName));
+            model.WriteRuntimeBootstrapperClass()
+                .AddSourceTo(ctx, HintName.From(model.Namespace, $"{model.TypeName}Bootstrapper"));
+            model.WriteRuntimeCapabilitiesInterface()
+                .AddSourceTo(ctx, HintName.From(model.Namespace, $"I{model.TypeName}Capabilities"));
+        });
+
+        // Pipeline 2: Effects modules
         var modules = context.ForAttribute<EffectsModuleAttribute>()
             .Map(static (ctx, _) => ctx.TargetSymbol
                 .AsValidNamedType()
-                .QueryEffectsModule());
+                .QueryEffectsModules());
 
-        var compilation = context.CompilationProvider;
-
-        // Combine with compilation for additional context
-        context.RegisterSourceOutput(
-            modules.Combine(compilation),
-            static (ctx, tuple) =>
+        context.RegisterSourceOutput(modules, static (ctx, models) =>
+        {
+            foreach (var model in models)
             {
-                var (model, compilation) = tuple;
-                model.WriteEffectsModule(compilation)
+                model.WriteEffectsModule()
                     .AddSourceTo(ctx, HintName.From(model.Namespace, model.TypeName));
-            });
+            }
+        });
     }
 }
+```
 
-// Generator with post-initialization (static files)
+### Static Output with Post-Initialization
+
+Use `RegisterPostInitializationOutput` for code that doesn't depend on user source:
+
+```csharp
 [Generator]
-public sealed class FrameworkGenerator : IIncrementalGenerator
+public sealed class PreludeGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        // Emit static helper types once
         context.RegisterPostInitializationOutput(static ctx =>
         {
-            ctx.AddSource("FrameworkAttributes.g.cs", """
-                namespace MyFramework;
-                
-                [AttributeUsage(AttributeTargets.Class)]
-                internal sealed class GeneratedAttribute : Attribute { }
+            ctx.AddSource("Prelude.g.cs", """
+                // <auto-generated/>
+                global using LanguageExt;
+                global using LanguageExt.Common;
+                global using static LanguageExt.Prelude;
                 """);
         });
-
-        // Then emit per-type code
-        var models = context.ForAttribute<ServiceAttribute>()
-            .Map(static (ctx, _) => ctx.TargetSymbol.AsValidNamedType().QueryService());
-
-        context.RegisterSourceOutput(models, static (ctx, model) => model
-            .WriteServiceProxy()
-            .AddSourceTo(ctx, HintName.From(model.Namespace, model.TypeName)));
     }
 }
 ```
 
 ## Writer Classes
 
-Keep code generation logic in dedicated Writer classes:
+Writers are extension methods on model types that return `OptionalEmit`. They live in `Writers/` subdirectories, organized by domain.
+
+### Basic Writer
 
 ```csharp
-// Writers/AutoNotifyWriter.cs
-extension(AutoNotifyModel model)
+// Writers/Ids/StrongIdWriter.cs
+extension(StrongIdModel model)
 {
-    public OptionalEmit WriteAutoNotifyClass() => TypeBuilder
-        .Class(model.TypeName)
-        .AsPartial()
-        .InNamespace(model.Namespace)
-        .WithAccessibility(model.Accessibility)
-        // ... build the type
-        .Emit();
+    public OptionalEmit WriteStrongId()
+    {
+        var backingType = model.BackingTypeSnapshot;
+        var valueProperty = PropertyBuilder
+            .Parse($"public {backingType.FullyQualifiedName} Value {{ get; }}");
+
+        return TypeBuilder
+            .Parse($"{model.Accessibility} partial struct {model.TypeName}")
+            .InNamespace(model.Namespace)
+            .AddProperty(valueProperty)
+            .AddConstructor(model)
+            .ImplementsIEquatable(backingType, valueProperty)
+            .ImplementsIComparable(backingType, valueProperty)
+            .OverridesToString(
+                model.BackingType == BackingType.String
+                    ? $"{valueProperty.Name} ?? \"\""
+                    : $"{valueProperty.Name}.ToString()",
+                true)
+            .AddFactoryMethods(model)
+            .AddConverters(model, valueProperty)
+            .Emit();
+    }
 }
 ```
 
 !!! note "Why OptionalEmit?"
     `Emit()` returns `OptionalEmit` which safely handles null models. The `AddSourceTo` extension only emits when the result is valid.
 
-### More Writer Examples
+### Composition with WithEach and If
+
+Writers compose complex output using `WithEach` for collections and `If` for conditional sections:
 
 ```csharp
-// Writer generating properties from fields
-extension(AutoNotifyModel model)
-{
-    public OptionalEmit WriteAutoNotifyClass() => TypeBuilder
-        .Class(model.TypeName)
-        .AsPartial()
-        .InNamespace(model.Namespace)
-        .WithAccessibility(model.Accessibility)
-        .Implements("INotifyPropertyChanged")
-        .AddEvent("PropertyChanged", "PropertyChangedEventHandler?")
-        .WithEach(model.Properties, WriteProperty)
-        .AddMethod(WriteOnPropertyChanged())
-        .Emit();
-
-    static TypeBuilder WriteProperty(TypeBuilder builder, NotifyPropertyModel prop) => builder
-        .AddProperty(prop.PropertyName, prop.TypeName, p => p
-            .WithGetter(b => b.AddStatement($"return {prop.FieldName};"))
-            .WithSetter(b => b
-                .AddStatement($"if ({prop.FieldName} == value) return;")
-                .AddStatement($"{prop.FieldName} = value;")
-                .AddStatement($"OnPropertyChanged(nameof({prop.PropertyName}));")
-                .WithEach(prop.AlsoNotify, (bb, name) => bb
-                    .AddStatement($"OnPropertyChanged(nameof({name});"))));
-
-    static MethodBuilder WriteOnPropertyChanged() => MethodBuilder
-        .Parse("protected virtual void OnPropertyChanged(string? propertyName = null)")
-        .WithBody(b => b
-            .AddStatement("PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));"));
-}
-
-// Writer generating a complete class with constructor
-extension(StrongIdModel model)
-{
-    public OptionalEmit WriteStrongIdStruct() => TypeBuilder
-        .Struct(model.TypeName)
-        .AsPartial()
-        .AsReadonly()
-        .InNamespace(model.Namespace)
-        .Implements("IEquatable<" + model.TypeName + ">")
-        .AddField("_value", model.BackingType, f => f.AsPrivate().AsReadonly())
-        .AddConstructor(c => c
-            .AddParameter("value", model.BackingType)
-            .WithBody(b => b.AddStatement("_value = value;")))
-        .AddProperty("Value", model.BackingType, p => p
-            .WithGetter(b => b.AddStatement("return _value;")))
-        .AddMethod(WriteEqualsMethod(model))
-        .AddMethod(WriteGetHashCodeMethod())
-        .AddMethod(WriteToStringMethod())
-        .Emit();
-}
-
-// Writer with conditional sections
 extension(EffectsModuleModel model)
 {
     public OptionalEmit WriteEffectsModule() => TypeBuilder
-        .Class(model.TypeName + "Effects")
-        .AsPartial()
-        .AsSealed()
+        .Parse($"public static partial class {model.TypeName}")
         .InNamespace(model.Namespace)
-        .WithEach(model.Effects, WriteEffectMethod)
-        .If(model.HasAsyncEffects, b => b
-            .AddUsing("System.Threading.Tasks"))
-        .If(model.RequiresDependencyInjection, b => b
-            .AddConstructor(c => c
-                .AddParameter("provider", "IServiceProvider")
-                .WithBody(bb => bb.AddStatement("_provider = provider;")))
-            .AddField("_provider", "IServiceProvider", f => f.AsPrivate().AsReadonly()))
+        .WithEach(model.Methods, WriteEffectMethod)
+        .If(model.HasDbContext, b => b.AddDbSetQueries(model))
+        .Emit();
+
+    static TypeBuilder WriteEffectMethod(TypeBuilder builder, EffectMethodModel method) =>
+        builder.AddMethod(MethodBuilder
+            .Parse($"public static Eff<RT, {method.ReturnType}> {method.Name}<RT>()")
+            .WithTypeConstraint("RT", model.ConstraintInterface)
+            .WithBody(b => b
+                .AddStatement(method.IsAsync
+                    ? EffExpression.LiftIO().Async($"rt => rt.{model.PropertyName}.{method.Name}()")
+                    : EffExpression.Lift().Sync($"rt => rt.{model.PropertyName}.{method.Name}()"))));
+}
+```
+
+### Delegating to Sub-Writers
+
+For complex types, break the writer into focused helper methods:
+
+```csharp
+extension(StrongIdModel model)
+{
+    public OptionalEmit WriteStrongId() => TypeBuilder
+        .Parse($"{model.Accessibility} partial struct {model.TypeName}")
+        .InNamespace(model.Namespace)
+        .AddProperty(valueProperty)
+        .AddConstructor(model)
+
+        // Interface implementations — each is a separate extension method
+        .ImplementsIEquatable(backingType, valueProperty)
+        .ImplementsIComparable(backingType, valueProperty)
+        .ImplementsIParsable(backingType)
+
+        // Converters — conditionally added based on flags
+        .AddConverters(model, valueProperty)
         .Emit();
 }
 ```
 
+Each `.ImplementsIEquatable()`, `.AddConverters()`, etc. is its own extension method on `TypeBuilder`, keeping each piece focused and testable.
+
 ## Emit Best Practices
-
-### Use WithEach for Collections
-
-```csharp
-TypeBuilder.Class("Generated")
-    .WithEach(model.Properties, (builder, prop) => builder
-        .AddProperty(prop.Name, prop.Type))
-    .Emit();
-```
-
-### Use If for Conditional Generation
-
-```csharp
-TypeBuilder.Class("Generated")
-    .If(model.ImplementsInterface, b => b
-        .Implements("INotifyPropertyChanged")
-        .AddEvent("PropertyChanged", "PropertyChangedEventHandler?"))
-    .Emit();
-```
 
 ### Parse for Complex Signatures
 
+When a method or property has a non-trivial signature, use `Parse` instead of building piece by piece:
+
 ```csharp
-// Instead of building piece by piece:
-MethodBuilder.Parse("protected virtual void OnPropertyChanged(string? name = null)")
-    .WithBody(b => b.AddStatement("PropertyChanged?.Invoke(this, new(name))"));
+// Clear and readable
+MethodBuilder.Parse("public static Eff<RT, Option<Attendee>> GetById<RT>(AttendeeId id)")
+    .WithTypeConstraint("RT", "IHasWorkshopDb")
+    .WithBody(b => b.AddStatement("..."));
 ```
 
-### More Emit Patterns
+### Use TypeRef for Type-Safe References
 
 ```csharp
-// Chained conditionals
-TypeBuilder.Class("Repository")
-    .If(model.UseCaching, b => b.AddField("_cache", "ICache"))
-    .If(model.UseLogging, b => b.AddField("_logger", "ILogger"))
-    .If(model.UseMetrics, b => b.AddField("_metrics", "IMetrics"))
-    .Emit();
+// Pre-built type references — no magic strings
+var returnType = TaskRefs.Task(CollectionRefs.IReadOnlyList(TypeRef.Parse("Customer")));
+// Produces: Task<IReadOnlyList<Customer>>
+```
 
-// Nested builders
-TypeBuilder.Class("Outer")
-    .AddNestedType(TypeBuilder
-        .Class("Inner")
-        .AsPrivate()
-        .AddProperty("Value", "int"))
-    .Emit();
+### Use Patterns for Common Implementations
 
-// XML documentation
-TypeBuilder.Class("Documented")
-    .WithXmlDoc(d => d
-        .Summary("A well-documented class.")
-        .Remarks("Use this for important things."))
-    .AddMethod(m => m
-        .WithName("Calculate")
-        .WithReturnType("int")
-        .AddParameter("input", "string")
-        .WithXmlDoc(d => d
-            .Summary("Calculates something.")
-            .Param("input", "The input value.")
-            .Returns("The calculated result.")))
-    .Emit();
+The Emit layer includes pre-built pattern methods for common interface implementations:
 
-// Attributes on generated code
-TypeBuilder.Class("Generated")
-    .WithAttribute("GeneratedCode", a => a
-        .AddArgument("\"MyGenerator\"")
-        .AddArgument("\"1.0.0\""))
-    .WithAttribute("ExcludeFromCodeCoverage")
+```csharp
+TypeBuilder.Struct("OrderId")
+    .ImplementsIEquatable(backingType, valueProperty)  // Equals, GetHashCode, ==, !=
+    .ImplementsIComparable(backingType, valueProperty)  // CompareTo, <, >, <=, >=
+    .ImplementsIParsable(backingType)                   // Parse, TryParse
+    .ImplementsIFormattable(backingType, valueProperty) // ToString(format, provider)
     .Emit();
 ```

@@ -400,7 +400,7 @@ project.FileActions("Configure generator")
     .ToCodeAction();
 ```
 
-See the [Workspace package docs](../packages/workspace.md#managedpropsfile) for full API details.
+See the [Workspace docs](../api/workspace/managed-props.md) for full API details.
 
 ## Custom CodeFix Without Base Class
 

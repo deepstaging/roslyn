@@ -10,7 +10,8 @@ namespace Deepstaging.Roslyn;
 
 /// <summary>
 /// Fluent builder for composing multiple file operations into a single <see cref="CodeAction"/>.
-/// Supports writing (overwrite), conditional writing (skip if exists), and appending lines.
+/// Supports writing (overwrite), conditional writing (skip if exists), appending lines,
+/// JSON merging/syncing, and XML/project file modification.
 /// </summary>
 /// <remarks>
 /// Created via <c>project.FileActions("title")</c>. Example:
@@ -19,6 +20,13 @@ namespace Deepstaging.Roslyn;
 ///     .Write("schema.json", schemaContent)
 ///     .WriteIfNotExists("settings.json", "{}")
 ///     .AppendLine(".gitignore", "secrets.json")
+///     .MergeJsonFile("tsconfig.json", templateJson)
+///     .SyncJsonFile("config.json", templateJson)
+///     .ModifyProjectFile(doc => doc.Root?.Add(new XElement("ItemGroup")))
+///     .ModifyXmlFile("Directory.Build.props", doc => doc.Root?.Add(new XElement("PropertyGroup")))
+///     .If(useSecrets, b => b.Write("secrets.json", "{}"),
+///         otherwise: b => b.Write("config.json", defaultConfig))
+///     .WithEach(schemas, (b, s) => b.Write(s.Path, s.Content))
 ///     .ToCodeAction();
 /// </code>
 /// </remarks>
@@ -89,10 +97,15 @@ public sealed class ProjectFileActionsBuilder(string title, string? projectFileP
     /// Modifies the project file (.csproj) using the provided action on the XML document.
     /// The action receives the <see cref="XDocument"/> and can add, remove, or modify elements.
     /// </summary>
-    public ProjectFileActionsBuilder ModifyProjectFile(Action<XDocument> modify)
+    /// <param name="modify">An action that mutates the project XML document.</param>
+    /// <param name="createIfMissing">
+    /// When <see langword="true"/>, creates the file with an empty <c>&lt;Project&gt;</c> root if it does not exist.
+    /// When <see langword="false"/> (the default), the operation is silently skipped if the file is missing.
+    /// </param>
+    public ProjectFileActionsBuilder ModifyProjectFile(Action<XDocument> modify, bool createIfMissing = false)
     {
         if (projectFilePath is not null)
-            _operations.Add(("project", new ModifyProjectFileOperation(projectFilePath, modify)));
+            _operations.Add(("project", new ModifyProjectFileOperation(projectFilePath, modify, createIfMissing)));
         return this;
     }
 
@@ -223,14 +236,30 @@ public sealed class ProjectFileActionsBuilder(string title, string? projectFileP
         }
     }
 
-    private sealed class ModifyProjectFileOperation(string projectFilePath, Action<XDocument> modify) : CodeActionOperation
+    private sealed class ModifyProjectFileOperation(string projectFilePath, Action<XDocument> modify, bool createIfMissing) : CodeActionOperation
     {
         public override void Apply(Workspace workspace, CancellationToken cancellationToken)
         {
-            if (!File.Exists(projectFilePath))
-                return;
+            XDocument document;
 
-            var document = XDocument.Load(projectFilePath, LoadOptions.PreserveWhitespace);
+            if (File.Exists(projectFilePath))
+            {
+                document = XDocument.Load(projectFilePath, LoadOptions.PreserveWhitespace);
+            }
+            else if (createIfMissing)
+            {
+                var directory = Path.GetDirectoryName(projectFilePath);
+
+                if (directory is not null)
+                    Directory.CreateDirectory(directory);
+
+                document = new XDocument(new XElement("Project"));
+            }
+            else
+            {
+                return;
+            }
+
             modify(document);
             document.Save(projectFilePath);
         }
@@ -271,4 +300,55 @@ public sealed class ProjectFileActionsBuilder(string title, string? projectFileP
     }
 
     #endregion
+    
+    /// <summary>
+    /// Conditionally applies a set of operations to the builder.
+    /// The <paramref name="configure"/> callback is invoked only when <paramref name="condition"/> is <see langword="true"/>.
+    /// </summary>
+    /// <param name="condition">When <see langword="true"/>, the callback is executed.</param>
+    /// <param name="configure">A callback that adds operations to this builder.</param>
+    public ProjectFileActionsBuilder If(bool condition, Action<ProjectFileActionsBuilder> configure)
+    {
+        if (condition)
+            configure(this);
+        return this;
+    }
+
+    /// <summary>
+    /// Conditionally applies one of two sets of operations to the builder.
+    /// Invokes <paramref name="configure"/> when <paramref name="condition"/> is <see langword="true"/>,
+    /// or <paramref name="otherwise"/> when it is <see langword="false"/>.
+    /// </summary>
+    /// <param name="condition">Determines which callback is executed.</param>
+    /// <param name="configure">A callback applied when the condition is <see langword="true"/>.</param>
+    /// <param name="otherwise">A callback applied when the condition is <see langword="false"/>.</param>
+    public ProjectFileActionsBuilder If(
+        bool condition,
+        Action<ProjectFileActionsBuilder> configure,
+        Action<ProjectFileActionsBuilder> otherwise)
+    {
+        if (condition)
+            configure(this);
+        else
+            otherwise(this);
+        return this;
+    }
+
+    /// <summary>
+    /// Iterates over <paramref name="items"/> and invokes <paramref name="configure"/> for each element,
+    /// allowing batch file operations driven by a runtime collection.
+    /// If <paramref name="items"/> is <see langword="null"/>, this is a no-op.
+    /// </summary>
+    /// <typeparam name="T">The element type of the collection.</typeparam>
+    /// <param name="items">The collection to iterate. May be <see langword="null"/>.</param>
+    /// <param name="configure">A callback that receives the builder and the current item.</param>
+    public ProjectFileActionsBuilder WithEach<T>(IEnumerable<T>? items, Action<ProjectFileActionsBuilder, T> configure)
+    {
+        if (items is null)
+            return this;
+
+        foreach (var item in items)
+            configure(this, item);
+        return this;
+    }
 }

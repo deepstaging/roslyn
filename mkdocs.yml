@@ -70,9 +70,9 @@ nav:
   - Best Practices: best-practices.md
   - Guides:
     - Project Organization: guides/project-organization.md
+    - End-to-End Walkthrough: guides/end-to-end.md
     - Projection Pattern: guides/projection-pattern.md
     - Generators: guides/generators.md
-    - Customizable Templates: guides/customizable-templates.md
     - Analyzers: guides/analyzers.md
     - CodeFixes: guides/codefixes.md
     - Testing: guides/testing.md
@@ -135,16 +135,23 @@ nav:
       - Attribute Extensions: api/extensions/attribute-extensions.md
       - String Extensions: api/extensions/string-extensions.md
       - Domain Extensions: api/extensions/domain-extensions.md
-  - Packages:
-    - Roslyn.Scriban: packages/scriban.md
-    - Roslyn.Workspace: packages/workspace.md
-    - Roslyn.Testing: packages/testing.md
-    - Roslyn.LanguageExt:
-      - Overview: packages/languageext/index.md
-      - Refs: packages/languageext/refs.md
-      - Expressions: packages/languageext/expressions.md
-      - Eff Lifting: packages/languageext/eff-lifting.md
-      - Extensions: packages/languageext/extensions.md
+    - Workspace:
+      - Overview: api/workspace/index.md
+      - Code Fix Base Classes: api/workspace/code-fix-base.md
+      - Code Fix Actions: api/workspace/code-fix-actions.md
+      - ProjectFileActionsBuilder: api/workspace/file-actions.md
+      - ManagedPropsFile: api/workspace/managed-props.md
+      - Context Extensions: api/workspace/context-extensions.md
+    - Scriban:
+      - Overview: api/scriban/index.md
+    - Testing:
+      - Overview: api/testing/index.md
+    - LanguageExt:
+      - Overview: api/languageext/index.md
+      - Refs: api/languageext/refs.md
+      - Expressions: api/languageext/expressions.md
+      - Eff Lifting: api/languageext/eff-lifting.md
+      - Extensions: api/languageext/extensions.md
   - Testing:
     - RoslynTestBase: testing/roslyn-test-base.md
     - GeneratorTestContext: testing/generator-test-context.md

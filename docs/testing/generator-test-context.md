@@ -2,7 +2,7 @@
 
 Test Roslyn source generators with fluent output assertions.
 
-> **See also:** [RoslynTestBase](roslyn-test-base.md) | [Scriban Templates](../packages/scriban.md)
+> **See also:** [RoslynTestBase](roslyn-test-base.md) | [Scriban Templates](../api/scriban/index.md)
 
 ## Overview
 

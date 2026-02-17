@@ -7,8 +7,9 @@ Roslyn APIs are powerful but awkward. This library wraps them in something that 
 ## Quick Start
 
 ```bash
+dotnet new classlib -n MyProject.Generators -f netstandard2.0
+cd MyProject.Generators
 dotnet add package Deepstaging.Roslyn
-dotnet add package Deepstaging.Roslyn.Scriban  # Optional: Scriban templates
 ```
 
 ## What You Get
@@ -49,10 +50,11 @@ var code = TypeBuilder.Class("CustomerDto")
 
 | Package | Purpose |
 |---------|---------|
-| [`Deepstaging.Roslyn`](api/queries/index.md) | Core toolkit: Queries, Projections, Emit builders |
-| [`Deepstaging.Roslyn.Scriban`](packages/scriban.md) | Scriban template integration for source generators |
-| [`Deepstaging.Roslyn.Workspace`](packages/workspace.md) | Code fix provider infrastructure |
-| [`Deepstaging.Roslyn.Testing`](packages/testing.md) | Test utilities for generators and analyzers |
+| [`Deepstaging.Roslyn`](getting-started.md) | Core toolkit — [Queries](api/queries/index.md), [Projections](api/projections/index.md), [Emit](api/emit/index.md), [Scriban](api/scriban/index.md), [Workspace](api/workspace/index.md) |
+| [`Deepstaging.Roslyn.Testing`](api/testing/index.md) | Test utilities for generators, analyzers, and code fixes |
+| [`Deepstaging.Roslyn.LanguageExt`](api/languageext/index.md) | LanguageExt integration — Eff lifting, expressions, refs |
+
+Scriban and Workspace are bundled inside the core package — no separate install needed.
 
 ## Architecture
 
@@ -66,8 +68,8 @@ var code = TypeBuilder.Class("CustomerDto")
 │  MethodQuery      │  ValidSymbol<T>    │  MethodBuilder         │
 │  PropertyQuery    │  OptionalAttribute │  PropertyBuilder       │
 │  FieldQuery       │  ValidAttribute    │  FieldBuilder          │
-│  ParameterQuery   │  XmlDocumentation  │  ConstructorBuilder    │
-│  ConstructorQuery │                    │  AttributeBuilder      │
+│  ParameterQuery   │  AttributeQuery    │  ConstructorBuilder    │
+│  ConstructorQuery │  XmlDocumentation  │  AttributeBuilder      │
 │  EventQuery       │                    │  BodyBuilder           │
 └─────────────────────────────────────────────────────────────────┘
 ```

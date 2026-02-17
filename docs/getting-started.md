@@ -4,13 +4,15 @@ This guide walks you through building your first source generator with Deepstagi
 
 ## Installation
 
-Add the package to your analyzer/generator project:
+Create a new `netstandard2.0` class library (required for Roslyn analyzer/generator compatibility):
 
 ```bash
+dotnet new classlib -n MyProject.Generators -f netstandard2.0
+cd MyProject.Generators
 dotnet add package Deepstaging.Roslyn
 ```
 
-Your `.csproj` should target `netstandard2.0` for Roslyn compatibility:
+Then enable analyzer rules in `MyProject.Generators.csproj`:
 
 ```xml
 <PropertyGroup>
@@ -184,4 +186,4 @@ See [Emit](api/emit/index.md) for the full API.
 - [Queries API Reference](api/queries/index.md)
 - [Projections API Reference](api/projections/index.md)
 - [Emit API Reference](api/emit/index.md)
-- [Testing your generators](packages/testing.md)
+- [Testing your generators](api/testing/index.md)

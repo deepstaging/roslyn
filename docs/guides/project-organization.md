@@ -1,69 +1,197 @@
 # Project Organization
 
-A well-structured Roslyn toolkit separates concerns across multiple projects:
+A well-structured Roslyn toolkit separates concerns across five projects. This guide uses the [Deepstaging](https://github.com/deepstaging/deepstaging) source generator suite as a reference architecture.
+
+## The Five-Layer Pattern
 
 ```
-MyProject/
-├── src/
-│   ├── MyProject.RoslynKit/           # Attributes only
-│   ├── MyProject.RoslynKit.Projection/ # Queries and Models
-│   ├── MyProject.RoslynKit.Generators/ # Source generators
-│   ├── MyProject.RoslynKit.Analyzers/  # Diagnostic analyzers
-│   ├── MyProject.RoslynKit.CodeFixes/  # Code fix providers
-│   └── MyProject.RoslynKit.Tests/      # All tests
+src/
+├── Deepstaging/                    # Attributes & enums only
+├── Deepstaging.Projection/        # Queries and Models
+├── Deepstaging.Generators/        # Source generators
+├── Deepstaging.Analyzers/         # Diagnostic analyzers
+├── Deepstaging.CodeFixes/         # Code fix providers
+└── Deepstaging.Tests/             # All tests
 ```
 
-## Project Responsibilities
+Each layer has a single responsibility and a strict dependency direction:
 
-| Project | Purpose | Dependencies |
-|---------|---------|--------------|
-| **RoslynKit** | Attribute definitions only | None (users reference this) |
-| **Projection** | Query + Model layer | RoslynKit, Deepstaging.Roslyn |
-| **Generators** | Source generation | Projection |
-| **Analyzers** | Diagnostics | Projection |
-| **CodeFixes** | Quick fixes | Analyzers (for DiagnosticId) |
+```
+Attributes ← Projection ← Generators
+                        ← Analyzers ← CodeFixes
+```
+
+| Project | Purpose | References |
+|---------|---------|------------|
+| **Attributes** | Attribute definitions and enums only. This is what users reference. | None |
+| **Projection** | Queries and models — the single source of truth for interpreting attributes. | Attributes, Deepstaging.Roslyn |
+| **Generators** | Thin wiring + Writer classes for code generation. | Projection |
+| **Analyzers** | Diagnostic rules. | Projection |
+| **CodeFixes** | Quick-fix providers. | Analyzers (for diagnostic IDs) |
 
 !!! tip "Why separate Projection?"
-    The Projection layer is the **single source of truth** for interpreting your attributes. Both generators and analyzers consume the same queries and models, ensuring consistent behavior.
+    Both generators and analyzers need to interpret the same attributes. The Projection layer ensures they share the same logic — one set of queries, one set of models, consistent behavior everywhere.
 
 ## File Organization
 
-### Projection Layer
+### Attributes
+
+Keep this project minimal. Users depend on it directly, so it should have no Roslyn or Deepstaging.Roslyn dependency.
 
 ```
-Projection/
-├── Attributes/           # AttributeQuery wrapper types
-│   └── AutoNotifyAttributeQuery.cs
-├── Models/               # Data models
-│   ├── AutoNotifyModel.cs
-│   └── NotifyPropertyModel.cs
-├── Queries.cs            # ValidAttribute → AttributeQuery conversions
-├── AutoNotify.cs         # ValidSymbol extensions for AutoNotify
+Deepstaging/
+├── Effects/
+│   ├── RuntimeAttribute.cs
+│   ├── EffectsModuleAttribute.cs
+│   ├── UsesAttribute.cs
+│   └── CapabilityAttribute.cs
+├── Ids/
+│   ├── StrongIdAttribute.cs
+│   ├── BackingType.cs
+│   └── IdConverters.cs
+├── Config/
+│   └── ConfigProviderAttribute.cs
+└── HttpClient/
+    ├── HttpClientAttribute.cs
+    ├── GetAttribute.cs
+    └── PostAttribute.cs
+```
+
+Group by feature domain. Each domain gets its own namespace.
+
+### Projection
+
+Organize by domain, with a consistent three-part structure: `Attributes/` (queries), `Models/` (records), and `Queries.cs` (extensions).
+
+```
+Deepstaging.Projection/
+├── Ids/
+│   ├── Attributes/
+│   │   └── StrongIdAttributeQuery.cs
+│   ├── Models/
+│   │   └── StrongIdModel.cs
+│   └── Queries.cs
+├── Effects/
+│   ├── Attributes/
+│   │   ├── EffectsModuleAttributeQuery.cs
+│   │   ├── UsesAttributeQuery.cs
+│   │   └── CapabilityAttributeQuery.cs
+│   ├── Models/
+│   │   ├── RuntimeModel.cs
+│   │   ├── EffectsModuleModel.cs
+│   │   ├── CapabilityModel.cs
+│   │   ├── EffectMethodModel.cs
+│   │   └── EffectParameterModel.cs
+│   └── Queries.cs
+├── Config/
+│   ├── Attributes/
+│   ├── Models/
+│   └── Queries.cs
+├── HttpClient/
+│   ├── Attributes/
+│   ├── Models/
+│   └── Queries.cs
 └── GlobalUsings.cs
 ```
 
-### Generators Layer
+Each domain follows the same pattern:
+
+- **Attributes/** — `AttributeQuery` records that wrap `AttributeData` with typed properties
+- **Models/** — `[PipelineModel]` records capturing everything needed for generation
+- **Queries.cs** — Extension methods on `ValidSymbol<T>` that chain queries into models
+
+### Generators
+
+Generators are thin — they wire the Projection layer to Writer classes. Writers live in a `Writers/` directory, organized by domain.
 
 ```
-Generators/
-├── Writers/              # Code generation logic
-│   └── AutoNotifyWriter.cs
-├── AutoNotifyGenerator.cs
+Deepstaging.Generators/
+├── StrongIdGenerator.cs
+├── EffectsGenerator.cs
+├── ConfigGenerator.cs
+├── HttpClientGenerator.cs
+├── PreludeGenerator.cs
+├── Writers/
+│   ├── Ids/
+│   │   └── StrongIdWriter.cs
+│   ├── Effects/
+│   │   ├── RuntimeWriter.cs
+│   │   ├── EffectsModuleWriter.cs
+│   │   └── CapabilityWriter.cs
+│   ├── Config/
+│   │   └── ConfigWriter.cs
+│   └── HttpClient/
+│       ├── ClientWriter.cs
+│       └── RequestWriter.cs
 └── GlobalUsings.cs
 ```
 
-### Analyzers Layer
+### Analyzers
+
+One file per diagnostic. Group by domain.
 
 ```
-Analyzers/
-├── AutoNotifyMustBePartialAnalyzer.cs
-├── AutoNotifyFieldMustBePrivateAnalyzer.cs
-└── README.md             # Document all diagnostic IDs
+Deepstaging.Analyzers/
+├── Effects/
+│   ├── RuntimeMustBePartialAnalyzer.cs
+│   ├── EffectsModuleMustBePartialAnalyzer.cs
+│   ├── EffectsModuleShouldBeSealedAnalyzer.cs
+│   └── EffectsModuleTargetMustBeInterfaceAnalyzer.cs
+├── Ids/
+│   ├── StrongIdMustBePartialAnalyzer.cs
+│   └── StrongIdShouldBeReadonlyAnalyzer.cs
+├── Config/
+│   └── ConfigProviderMustBePartialAnalyzer.cs
+└── HttpClient/
+    └── HttpClientMustBePartialAnalyzer.cs
 ```
 
-## Learning Resources
+### CodeFixes
+
+Code fixes reference the Analyzers project to access diagnostic IDs. Group by fix type.
+
+```
+Deepstaging.CodeFixes/
+├── ClassMustBePartialCodeFix.cs
+├── StructMustBePartialCodeFix.cs
+├── ClassShouldBeSealedCodeFix.cs
+└── StructShouldBeReadonlyCodeFix.cs
+```
+
+### Tests
+
+A single test project covers all layers. Mirror the source project structure.
+
+```
+Deepstaging.Tests/
+├── Ids/
+│   ├── StrongIdGeneratorTests.cs
+│   ├── StrongIdAnalyzerTests.cs
+│   └── StrongIdModelTests.cs
+├── Effects/
+│   ├── RuntimeGeneratorTests.cs
+│   ├── EffectsModuleGeneratorTests.cs
+│   └── EffectsModuleAnalyzerTests.cs
+└── ModuleInitializer.cs
+```
+
+## Dependency Constraints
+
+These constraints prevent circular dependencies and keep the architecture clean:
+
+1. **Attributes → nothing.** This is the user-facing package. No Roslyn dependencies.
+2. **Projection → Attributes.** The Projection layer reads attributes but never generates code.
+3. **Generators → Projection.** Generators never reference Analyzers. They get all data through the Projection layer.
+4. **Analyzers → Projection.** Analyzers use the same queries as generators but for validation, not generation.
+5. **CodeFixes → Analyzers.** Code fixes need analyzer diagnostic IDs for `[CodeFix("...")]` attributes.
+
+!!! warning "Never reference Generators from Analyzers"
+    If you find an analyzer needing generator logic, move that logic to the Projection layer.
+
+## Getting Started
 
 | Resource | Purpose |
 |----------|---------|
-| [RoslynKit Template](https://github.com/deepstaging/templates) | Starting point for your own Roslyn projects. Use `dotnet new roslynkit` to scaffold a new solution with the recommended structure. |
-| [Deepstaging.Ids](https://github.com/deepstaging/ids) | Reference implementation of a complete Roslyn toolkit. A strongly-typed ID generator demonstrating the Projection pattern, Emit API extensions, and testing practices. |
+| [RoslynKit Template](https://github.com/deepstaging/roslyn/tree/main/templates) | Use `dotnet new roslynkit` to scaffold a new solution with this structure |
+| [Deepstaging source](https://github.com/deepstaging/deepstaging) | Production reference with 6 generators, 25+ analyzers, and 6 code fixes |
+| [Samples](https://github.com/deepstaging/samples) | See how end-users consume the generated code |

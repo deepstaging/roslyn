@@ -1,241 +1,224 @@
 # The Projection Pattern
 
-The Projection layer converts Roslyn symbols into strongly-typed models through three components.
+The Projection layer converts Roslyn symbols into strongly-typed models through three components. All examples in this guide are drawn from the [Deepstaging](https://github.com/deepstaging/deepstaging) source generator suite.
+
+## Overview
+
+The pattern flows in one direction:
+
+```
+Symbol → AttributeQuery → Model
+```
+
+| Component | Role | Location |
+|-----------|------|----------|
+| **AttributeQuery** | Wraps `AttributeData` with typed properties and defaults | `Projection/Domain/Attributes/` |
+| **Model** | A `[PipelineModel]` record capturing everything for generation | `Projection/Domain/Models/` |
+| **Query** | Extension methods that chain queries into models | `Projection/Domain/Queries.cs` |
 
 ## 1. AttributeQuery Types
 
-Wrap attribute access with typed properties and defaults:
+An `AttributeQuery` wraps `AttributeData` and exposes typed properties with safe defaults. Here's the real `StrongIdAttributeQuery`:
 
 ```csharp
-// Attributes/AutoNotifyAttributeQuery.cs
-public sealed record AutoNotifyAttributeQuery(AttributeData AttributeData)
-    : AttributeQuery(AttributeData)
-{
-    public bool GenerateBaseImplementation => 
-        NamedArg<bool>("GenerateBaseImplementation").OrDefault(true);
-}
-```
-
-### More AttributeQuery Examples
-
-```csharp
-// Handle constructor arguments
 public sealed record StrongIdAttributeQuery(AttributeData AttributeData)
     : AttributeQuery(AttributeData)
 {
-    public string BackingType => ConstructorArg<string>(0).OrDefault("Guid");
-    public bool GenerateJsonConverter => NamedArg<bool>("Json").OrDefault(true);
-    public string? Prefix => NamedArg<string>("Prefix").OrNull();
-}
+    public BackingType BackingType =>
+        NamedArg<int>(nameof(StrongIdAttribute.BackingType))
+            .ToEnum<BackingType>()
+            .OrDefault(BackingType.Guid);
 
-// Handle enum values (Roslyn stores enums as int)
-public sealed record CacheAttributeQuery(AttributeData AttributeData)
+    public ValidSymbol<INamedTypeSymbol> BackingTypeSymbol(SemanticModel model) =>
+        BackingType switch
+        {
+            BackingType.Guid => model.WellKnownSymbols.Guid,
+            BackingType.Int => model.WellKnownSymbols.Int32,
+            BackingType.Long => model.WellKnownSymbols.Int64,
+            BackingType.String => model.WellKnownSymbols.String,
+            _ => throw new ArgumentOutOfRangeException(nameof(BackingType))
+        };
+
+    public IdConverters Converters =>
+        NamedArg<int>(nameof(StrongIdAttribute.Converters))
+            .ToEnum<IdConverters>()
+            .OrDefault(IdConverters.None);
+}
+```
+
+Key patterns:
+
+- **`NamedArg<T>(name)`** — reads a named attribute argument with type safety
+- **`ConstructorArg<T>(index)`** — reads a positional constructor argument
+- **`.OrDefault(value)`** — provides a fallback when the argument is missing
+- **`.OrNull()`** — returns null for truly optional values
+- **`.OrThrow(message)`** — fails explicitly for required values
+- **`.ToEnum<T>()`** — converts int arguments to enum types (Roslyn stores enums as ints)
+
+### More AttributeQuery Examples
+
+A query that reads a type argument from a generic attribute:
+
+```csharp
+public sealed record HttpClientAttributeQuery(AttributeData AttributeData)
     : AttributeQuery(AttributeData)
 {
-    public CacheStrategy Strategy => NamedArg<int>("Strategy").ToEnum<CacheStrategy>().OrDefault(CacheStrategy.Memory);
-    public int ExpirationSeconds => NamedArg<int>("ExpirationSeconds").OrDefault(300);
-}
+    public OptionalSymbol<INamedTypeSymbol> ConfigurationType =>
+        AttributeData.Query()
+            .GetTypeArgument(0)
+            .Map(symbol => symbol.AsNamedType())
+            .OrDefault(OptionalSymbol<INamedTypeSymbol>.Empty);
 
-// Handle array arguments
-public sealed record ValidateAttributeQuery(AttributeData AttributeData)
+    public string? BaseAddress => NamedArg<string>("BaseAddress").OrNull();
+}
+```
+
+A query that resolves referenced types:
+
+```csharp
+public sealed record UsesAttributeQuery(AttributeData AttributeData)
     : AttributeQuery(AttributeData)
 {
-    public string[] Rules => NamedArg<string[]>("Rules").OrDefault([]);
+    public ValidSymbol<INamedTypeSymbol> ModuleType =>
+        ConstructorArg<INamedTypeSymbol>(0)
+            .Map(symbol => symbol.AsValidNamedType())
+            .OrThrow("UsesAttribute must have a valid module type.");
+
+    public ImmutableArray<EffectsModuleModel> EffectsModules =>
+        ModuleType.QueryEffectsModules();
 }
 ```
 
 ## 2. Models
 
-Simple records capturing data needed for generation. Mark them with `[PipelineModel]` and use [`EquatableArray<T>`](../api/projections/equatable-array.md) instead of `ImmutableArray<T>` for correct incremental caching. When you need symbol data in a model, use [snapshot types](../api/projections/snapshots.md) instead of `ValidSymbol<T>` or `ISymbol`.
+Models are `[PipelineModel]` records that capture everything needed for generation. They use `required` properties and [`EquatableArray<T>`](../api/projections/equatable-array.md) for correct incremental caching.
 
 ```csharp
-// Models/AutoNotifyModel.cs
-[PipelineModel]
-public sealed record AutoNotifyModel
-{
-    public required string Namespace { get; init; }
-    public required string TypeName { get; init; }
-    public required Accessibility Accessibility { get; init; }
-    public required EquatableArray<NotifyPropertyModel> Properties { get; init; }
-}
-```
-
-### More Model Examples
-
-```csharp
-// Nested models for complex generation
-[PipelineModel]
-public sealed record NotifyPropertyModel
-{
-    public required string FieldName { get; init; }
-    public required string PropertyName { get; init; }
-    public required string TypeName { get; init; }
-    public required EquatableArray<string> AlsoNotify { get; init; }
-}
-
-// Model with generation options
 [PipelineModel]
 public sealed record StrongIdModel
 {
     public required string Namespace { get; init; }
     public required string TypeName { get; init; }
-    public required string BackingType { get; init; }
-    public required bool GenerateJsonConverter { get; init; }
-    public required bool GenerateTypeConverter { get; init; }
-    public required bool GenerateEfConverter { get; init; }
-}
-
-// Model using snapshots for rich symbol data
-[PipelineModel]
-public sealed record EffectMethodModel
-{
-    public required MethodSnapshot Method { get; init; }
-    public required bool IsAsync { get; init; }
+    public required string Accessibility { get; init; }
+    public required BackingType BackingType { get; init; }
+    public required IdConverters Converters { get; init; }
+    public required TypeSnapshot BackingTypeSnapshot { get; init; }
 }
 ```
 
 !!! tip "When to use snapshots vs. strings"
-    Use **snapshot types** (`TypeSnapshot`, `MethodSnapshot`, etc.) when your writer needs multiple properties from a symbol — they capture everything in one call. Use **plain strings** when you only need a name or type reference.
+    Use **[snapshot types](../api/projections/snapshots.md)** (`TypeSnapshot`, `MethodSnapshot`) when your writer needs multiple properties from a symbol — they capture everything in one call. Use **plain strings** when you only need a name or type reference.
+
+### Nested Models
+
+Complex features use nested models:
+
+```csharp
+[PipelineModel]
+public sealed record ConfigModel
+{
+    public required string Namespace { get; init; }
+    public required TypeRef TypeName { get; init; }
+    public required string Accessibility { get; init; }
+    public required string Section { get; init; }
+    public EquatableArray<ConfigTypeModel> ExposedConfigurationTypes { get; init; } = [];
+    public bool HasSecrets => ExposedConfigurationTypes.Any(ct => ct.Properties.Any(p => p.IsSecret));
+}
+```
+
+### Model Rules
+
+1. **Always use `[PipelineModel]`** — it generates equality members for incremental caching
+2. **Use `EquatableArray<T>`** instead of `ImmutableArray<T>` for collections
+3. **Use snapshot types** instead of `ISymbol` for symbol data — symbols are not safe across pipeline stages
+4. **Use `required`** on all properties that must be set
 
 ## 3. Query Extensions
 
-Extension methods on `ValidSymbol<T>` that build models:
+Query extensions are the glue — they chain from symbols to attribute queries to models. Here's the real StrongId query:
 
 ```csharp
-// AutoNotify.cs
 extension(ValidSymbol<INamedTypeSymbol> symbol)
 {
-    public AutoNotifyModel? QueryAutoNotify()
-    {
-        var properties = symbol.QueryNotifyProperties();
-        if (properties.IsEmpty)
-            return null;
-
-        return new AutoNotifyModel
-        {
-            Namespace = symbol.Namespace ?? "",
-            TypeName = symbol.Name,
-            Accessibility = symbol.Accessibility,
-            Properties = properties
-        };
-    }
+    public StrongIdModel ToStrongIdModel(SemanticModel model) =>
+        symbol.GetAttribute<StrongIdAttribute>()
+            .Map(attr => attr.AsQuery<StrongIdAttributeQuery>())
+            .Map(attr => new StrongIdModel
+            {
+                Namespace = symbol.Namespace ?? "",
+                TypeName = symbol.Name,
+                Accessibility = symbol.AccessibilityString,
+                BackingType = attr.BackingType,
+                BackingTypeSnapshot = attr.BackingTypeSymbol(model).ToSnapshot(),
+                Converters = attr.Converters
+            })
+            .OrThrow($"Expected '{symbol.FullyQualifiedName}' to have StrongIdAttribute.");
 }
 ```
 
-### More Query Extension Examples
+### Querying Multiple Attributes
+
+When a symbol can have multiple instances of the same attribute:
 
 ```csharp
-// Query fields with a specific attribute
 extension(ValidSymbol<INamedTypeSymbol> symbol)
 {
-    public EquatableArray<NotifyPropertyModel> QueryNotifyProperties()
-    {
-        return symbol.QueryFields()
-            .ThatArePrivate()
-            .WithAttribute<NotifyAttribute>()
-            .Select(field => new NotifyPropertyModel
-            {
-                FieldName = field.Name,
-                PropertyName = field.Name.TrimStart('_').ToPascalCase(),
-                TypeName = field.Type.ToDisplayString(),
-                AlsoNotify = field.GetAttribute<AlsoNotifyAttribute>()
-                    .NamedArgArray<string>("Properties")
-                    .OrEmpty()
-            })
-            .ToEquatableArray();
-    }
-}
-
-// Query methods matching a pattern — using snapshots
-extension(ValidSymbol<INamedTypeSymbol> symbol)
-{
-    public EquatableArray<EffectMethodModel> QueryEffectMethods()
-    {
-        return symbol.QueryMethods()
-            .ThatArePublic()
-            .ThatAreNotStatic()
-            .WithAttribute<EffectAttribute>()
-            .Select(method => new EffectMethodModel
-            {
-                Method = method.ToSnapshot(),
-                IsAsync = method.IsAsync()
-            })
-            .ToEquatableArray();
-    }
-}
-
-// Query with validation
-extension(ValidSymbol<INamedTypeSymbol> symbol)
-{
-    public StrongIdModel? QueryStrongId()
-    {
-        var attr = symbol.GetAttribute<StrongIdAttribute>();
-        if (attr.IsNotValid(out var valid))
-            return null;
-
-        var query = new StrongIdAttributeQuery(valid.AttributeData);
-
-        return new StrongIdModel
-        {
-            Namespace = symbol.Namespace ?? "",
-            TypeName = symbol.Name,
-            BackingType = query.BackingType,
-            GenerateJsonConverter = query.GenerateJsonConverter,
-            GenerateTypeConverter = query.GenerateTypeConverter,
-            GenerateEfConverter = query.GenerateEfConverter
-        };
-    }
+    public ImmutableArray<EffectsModuleAttributeQuery> EffectsModuleAttributes() =>
+    [
+        ..symbol.GetAttributes<EffectsModuleAttribute>()
+            .Select(attr => attr.AsQuery<EffectsModuleAttributeQuery>())
+    ];
 }
 ```
 
-## Query Best Practices
+### Querying Methods and Parameters
 
-### Use Fluent Chains
+Queries compose across symbol types — from types to methods to parameters:
 
-Compose filters naturally:
+```csharp
+extension(ValidSymbol<INamedTypeSymbol> symbol)
+{
+    public HttpClientModel? QueryHttpClient() =>
+        symbol.GetAttribute<HttpClientAttribute>()
+            .OrElse(() => symbol.GetAttribute(typeof(HttpClientAttribute<>)))
+            .Map(attr => attr.AsQuery<HttpClientAttributeQuery>())
+            .Map(query => new HttpClientModel
+            {
+                Namespace = symbol.Namespace ?? "",
+                TypeName = symbol.Name,
+                Accessibility = symbol.AccessibilityString,
+                ConfigurationType = query.ConfigurationType.FullyQualifiedName,
+                BaseAddress = query.BaseAddress,
+                Requests =
+                [
+                    ..symbol.QueryMethods()
+                        .ThatArePartialDefinitions()
+                        .Select(method => method.QueryHttpRequest())
+                        .Where(model => model.HasValue)
+                        .Select(model => model.Value)
+                ]
+            })
+            .OrNull();
+}
+```
+
+## Fluent Query Chains
+
+Compose symbol queries naturally:
 
 ```csharp
 // Good: fluent chain
 var methods = type.QueryMethods()
     .ThatArePublic()
-    .ThatAreAsync()
-    .WithReturnType("Task")
+    .ThatAreNotStatic()
+    .WithAttribute<EffectAttribute>()
     .GetAll();
 
-// Avoid: manual filtering
+// Avoid: manual LINQ over raw Roslyn APIs
 var methods = type.GetMembers()
     .OfType<IMethodSymbol>()
     .Where(m => m.DeclaredAccessibility == Accessibility.Public)
-    .Where(m => m.IsAsync)
-    .Where(m => m.ReturnType.Name == "Task");
-```
-
-### More Fluent Chain Examples
-
-```csharp
-// Find all public properties with setters
-var mutableProperties = type.QueryProperties()
-    .ThatArePublic()
-    .ThatHaveSetter()
-    .GetAll();
-
-// Find constructors with parameters
-var parameterizedCtors = type.QueryConstructors()
-    .WithMinParameters(1)
-    .GetAll();
-
-// Find fields of a specific type
-var loggerFields = type.QueryFields()
-    .OfType("ILogger")
-    .GetAll();
-
-// Combine multiple filters
-var commandMethods = type.QueryMethods()
-    .ThatArePublic()
-    .ThatAreNotStatic()
-    .WithReturnType("Task")
-    .WithAttribute<CommandAttribute>()
-    .GetAll();
+    .Where(m => !m.IsStatic);
 ```
 
 ### Early Exit with IsNotValid
@@ -243,39 +226,28 @@ var commandMethods = type.QueryMethods()
 Use the projection pattern for null-safety:
 
 ```csharp
-var attr = symbol.GetAttribute("MyAttribute");
+var attr = symbol.GetAttribute<StrongIdAttribute>();
 
 if (attr.IsNotValid(out var valid))
     return null;  // Early exit
 
-// valid is guaranteed non-null
-var name = valid.NamedArg("Name").OrDefault("Default");
+// valid is guaranteed non-null here
+var query = valid.AsQuery<StrongIdAttributeQuery>();
 ```
 
-### Use OrDefault for Optional Values
+### Chaining with Map and OrDefault
 
 ```csharp
-var maxRetries = attr.NamedArg("MaxRetries").OrDefault(3);
-var prefix = attr.NamedArg("Prefix").OrDefault("");
-```
+// OrDefault for optional values with fallbacks
+var maxRetries = attr.NamedArg<int>("MaxRetries").OrDefault(3);
 
-### Handle Missing Values Explicitly
-
-```csharp
 // OrNull for truly optional values
-var customName = attr.NamedArg<string>("CustomName").OrNull();
-if (customName is not null)
-{
-    // Use custom name
-}
+var prefix = attr.NamedArg<string>("Prefix").OrNull();
 
 // OrThrow for required values
-var requiredId = attr.NamedArg<string>("Id").OrThrow("Id is required");
+var id = attr.NamedArg<string>("Id").OrThrow("Id is required");
 
-// Check validity before accessing
-var optional = attr.NamedArg<int>("Timeout");
-if (optional.IsValid(out var timeout))
-{
-    // Use timeout value
-}
+// OrElse for fallback chains
+var target = symbol.GetAttribute<PrimaryAttribute>()
+    .OrElse(() => symbol.GetAttribute<FallbackAttribute>());
 ```
