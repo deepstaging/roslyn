@@ -4,13 +4,8 @@ name: Publish NuGet Packages
 
 on:
   push:
-    branches:
-      - main
     tags:
       - 'v*'
-    paths:
-      - 'src/**'
-      - 'test/**'
   workflow_dispatch:
     inputs:
       version-suffix:
