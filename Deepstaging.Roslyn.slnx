@@ -7,5 +7,5 @@
     <Project Path="src/Deepstaging.Roslyn.Workspace/Deepstaging.Roslyn.Workspace.csproj"/>
     <Project Path="src/Deepstaging.Roslyn.LanguageExt/Deepstaging.Roslyn.LanguageExt.csproj"/>
     <Project Path="src/Deepstaging.Roslyn.Testing/Deepstaging.Roslyn.Testing.csproj"/>
-    <Project Path="src/Deepstaging.Roslyn.Tests/Deepstaging.Roslyn.Tests.csproj"/>
+    <Project Path="test/Deepstaging.Roslyn.Tests/Deepstaging.Roslyn.Tests.csproj"/>
 </Solution>

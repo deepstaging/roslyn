@@ -1,0 +1,32 @@
+<!-- SPDX-FileCopyrightText: 2024-present Deepstaging -->
+<!-- SPDX-License-Identifier: RPL-1.5 -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <IsPackable>false</IsPackable>
+        <IsTestProject>true</IsTestProject>
+        <EnableMSTestRunner>true</EnableMSTestRunner>
+        <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+        <RootNamespace>Deepstaging.Roslyn.Tests</RootNamespace>
+        <NoWarn>$(NoWarn);CS1591</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="TUnit"/>
+        <PackageReference Include="TUnit.Engine"/>
+        <PackageReference Include="Scriban"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\Deepstaging.Roslyn.Analyzers\Deepstaging.Roslyn.Analyzers.csproj"/>
+        <ProjectReference Include="..\..\src\Deepstaging.Roslyn.Scriban\Deepstaging.Roslyn.Scriban.csproj"/>
+        <ProjectReference Include="..\..\src\Deepstaging.Roslyn.Scriban.Analyzers\Deepstaging.Roslyn.Scriban.Analyzers.csproj"/>
+        <ProjectReference Include="..\..\src\Deepstaging.Roslyn.Scriban.CodeFixes\Deepstaging.Roslyn.Scriban.CodeFixes.csproj"/>
+        <ProjectReference Include="..\..\src\Deepstaging.Roslyn.LanguageExt\Deepstaging.Roslyn.LanguageExt.csproj"/>
+        <ProjectReference Include="..\..\src\Deepstaging.Roslyn.Workspace\Deepstaging.Roslyn.Workspace.csproj"/>
+        <ProjectReference Include="..\..\src\Deepstaging.Roslyn.Testing\Deepstaging.Roslyn.Testing.csproj"/>
+        <ProjectReference Include="..\..\src\Deepstaging.Roslyn\Deepstaging.Roslyn.csproj"/>
+    </ItemGroup>
+
+</Project>

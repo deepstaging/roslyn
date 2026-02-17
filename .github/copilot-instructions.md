@@ -7,19 +7,19 @@
 dotnet build Deepstaging.Roslyn.slnx
 
 # Test (all) — prefer `dotnet run` for TUnit (easier flag passing)
-dotnet run --project src/Deepstaging.Roslyn.Tests -c Release
+dotnet run --project test/Deepstaging.Roslyn.Tests -c Release
 
 # Test (by class name)
-dotnet run --project src/Deepstaging.Roslyn.Tests -c Release --treenode-filter /*/*/TypeQueryTests/*
+dotnet run --project test/Deepstaging.Roslyn.Tests -c Release --treenode-filter /*/*/TypeQueryTests/*
 
 # Test (by test name)
-dotnet run --project src/Deepstaging.Roslyn.Tests -c Release --treenode-filter /*/*/*/MyTestName
+dotnet run --project test/Deepstaging.Roslyn.Tests -c Release --treenode-filter /*/*/*/MyTestName
 
 # Test (by namespace wildcard)
-dotnet run --project src/Deepstaging.Roslyn.Tests -c Release --treenode-filter /*/Deepstaging.Roslyn.Tests.Emit*/*/*
+dotnet run --project test/Deepstaging.Roslyn.Tests -c Release --treenode-filter /*/Deepstaging.Roslyn.Tests.Emit*/*/*
 
 # Test via dotnet test (flags go after --)
-dotnet test --project src/Deepstaging.Roslyn.Tests -c Release -- --treenode-filter /*/*/TypeQueryTests/*
+dotnet test --project test/Deepstaging.Roslyn.Tests -c Release -- --treenode-filter /*/*/TypeQueryTests/*
 
 # Pack (local dev)
 ./build/pack.sh
@@ -54,7 +54,7 @@ Reading and writing are symmetric: `TypeQuery` finds types → `TypeBuilder` cre
 | `Deepstaging.Roslyn.Scriban.CodeFixes` | netstandard2.0 | Template scaffolding code fixes (bundled into core package) |
 | `Deepstaging.Roslyn.Workspace` | netstandard2.0 | Code fix provider infrastructure (bundled into core package) |
 | `Deepstaging.Roslyn.Testing` | net10.0 | Test base classes (`RoslynTestBase`) (packable) |
-| `Deepstaging.Roslyn.Tests` | net10.0 | Test suite (not packable) |
+| `Deepstaging.Roslyn.Tests` | net10.0 | Test suite in `test/` (not packable) |
 
 Scriban and Workspace are not published as separate NuGet packages — they are packaged within `Deepstaging.Roslyn`. All library projects target `netstandard2.0` for Roslyn analyzer/generator compatibility. Only test projects target `net10.0`.
 
