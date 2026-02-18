@@ -25,8 +25,9 @@ That's all the user writes. The generator produces the full implementation: cons
 
 The user-facing package contains only the attribute and supporting enums. No Roslyn dependencies.
 
+<a href="https://github.com/deepstaging/deepstaging/blob/main/src/Deepstaging/Ids/StrongIdAttribute.cs" target="_blank">`StrongIdAttribute.cs`</a>
+
 ```csharp
-// Deepstaging/Ids/StrongIdAttribute.cs
 [AttributeUsage(AttributeTargets.Struct)]
 public sealed class StrongIdAttribute : Attribute
 {
@@ -35,13 +36,15 @@ public sealed class StrongIdAttribute : Attribute
 }
 ```
 
+<a href="https://github.com/deepstaging/deepstaging/blob/main/src/Deepstaging/Ids/BackingType.cs" target="_blank">`BackingType.cs`</a>
+
 ```csharp
-// Deepstaging/Ids/BackingType.cs
 public enum BackingType { Guid, Int, Long, String }
 ```
 
+<a href="https://github.com/deepstaging/deepstaging/blob/main/src/Deepstaging/Ids/IdConverters.cs" target="_blank">`IdConverters.cs`</a>
+
 ```csharp
-// Deepstaging/Ids/IdConverters.cs
 [Flags]
 public enum IdConverters
 {
@@ -60,8 +63,9 @@ The Projection layer extracts attribute data and builds a pipeline-safe model.
 
 ### AttributeQuery
 
+<a href="https://github.com/deepstaging/deepstaging/blob/main/src/Deepstaging.Projection/Ids/Attributes/StrongIdAttributeQuery.cs" target="_blank">`StrongIdAttributeQuery.cs`</a>
+
 ```csharp
-// Deepstaging.Projection/Ids/Attributes/StrongIdAttributeQuery.cs
 public sealed record StrongIdAttributeQuery(AttributeData AttributeData)
     : AttributeQuery(AttributeData)
 {
@@ -89,8 +93,9 @@ public sealed record StrongIdAttributeQuery(AttributeData AttributeData)
 
 ### Model
 
+<a href="https://github.com/deepstaging/deepstaging/blob/main/src/Deepstaging.Projection/Ids/Models/StrongIdModel.cs" target="_blank">`StrongIdModel.cs`</a>
+
 ```csharp
-// Deepstaging.Projection/Ids/Models/StrongIdModel.cs
 [PipelineModel]
 public sealed record StrongIdModel
 {
@@ -105,8 +110,9 @@ public sealed record StrongIdModel
 
 ### Query
 
+<a href="https://github.com/deepstaging/deepstaging/blob/main/src/Deepstaging.Projection/Ids/Queries.cs" target="_blank">`Queries.cs`</a>
+
 ```csharp
-// Deepstaging.Projection/Ids/Queries.cs
 extension(ValidSymbol<INamedTypeSymbol> symbol)
 {
     public StrongIdModel ToStrongIdModel(SemanticModel model) =>
@@ -129,8 +135,9 @@ extension(ValidSymbol<INamedTypeSymbol> symbol)
 
 The generator is thin — 14 lines of wiring:
 
+<a href="https://github.com/deepstaging/deepstaging/blob/main/src/Deepstaging.Generators/StrongIdGenerator.cs" target="_blank">`StrongIdGenerator.cs`</a>
+
 ```csharp
-// Deepstaging.Generators/StrongIdGenerator.cs
 [Generator]
 public sealed class StrongIdGenerator : IIncrementalGenerator
 {
@@ -152,8 +159,9 @@ public sealed class StrongIdGenerator : IIncrementalGenerator
 
 The writer does the heavy lifting:
 
+<a href="https://github.com/deepstaging/deepstaging/blob/main/src/Deepstaging.Generators/Writers/Ids/StrongIdWriter.cs" target="_blank">`StrongIdWriter.cs`</a>
+
 ```csharp
-// Deepstaging.Generators/Writers/Ids/StrongIdWriter.cs
 extension(StrongIdModel model)
 {
     public OptionalEmit WriteStrongId()
