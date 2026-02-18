@@ -9,7 +9,7 @@
         <EnableMSTestRunner>true</EnableMSTestRunner>
         <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
         <RootNamespace>Deepstaging.Roslyn.Tests</RootNamespace>
-        <NoWarn>$(NoWarn);CS1591</NoWarn>
+        <NoWarn>$(NoWarn);CS1591;RS1038;RS1041;RS1036</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
