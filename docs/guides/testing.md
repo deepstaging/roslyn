@@ -1,8 +1,18 @@
-# Testing Best Practices
+# Testing Guide
 
-All Roslyn tests inherit from `RoslynTestBase`.
+How to test Roslyn analyzers, generators, and code fixes using `Deepstaging.Roslyn.Testing`.
 
-## Inherit from RoslynTestBase
+## Setup
+
+### 1. Install the package
+
+```bash
+dotnet add package Deepstaging.Roslyn.Testing --prerelease
+```
+
+### 2. Inherit from RoslynTestBase
+
+All tests inherit from `RoslynTestBase`, which provides entry points for every test type:
 
 ```csharp
 public class MyGeneratorTests : RoslynTestBase
@@ -26,14 +36,19 @@ public class MyGeneratorTests : RoslynTestBase
 }
 ```
 
-## Use ModuleInitializer for References
+### 3. Configure references for your types
+
+If test source code references types from your own assemblies, configure once via `ModuleInitializer`:
 
 ```csharp
 [ModuleInitializer]
-public static void Init() => 
+public static void Init() =>
     ReferenceConfiguration.AddReferencesFromTypes(
         typeof(AutoNotifyAttribute));
 ```
+
+!!! tip
+    Only add assemblies that your test source code directly references. Standard .NET and Roslyn assemblies are included automatically.
 
 ## Generator Tests
 
@@ -487,7 +502,6 @@ public async Task Handles_Generic_Types()
 [Test]
 public async Task Works_With_Multiple_Partial_Declarations()
 {
-    // Combine source files into a single compilation unit
     const string source = """
         public partial class Person
         {
@@ -507,4 +521,32 @@ public async Task Works_With_Multiple_Partial_Declarations()
 }
 ```
 
-For more detailed testing documentation, see the [Testing section](../testing/roslyn-test-base.md).
+## Tips & Troubleshooting
+
+### "Type or namespace not found" in tests
+
+Your test compilation is missing a reference. Add it in your `ModuleInitializer`:
+
+```csharp
+ReferenceConfiguration.AddReferencesFromTypes(typeof(MissingType));
+```
+
+### Code fix tests only apply the first action
+
+If your code fix registers multiple code actions for the same diagnostic, `ShouldProduce` applies the **first** one. Test each action individually if needed.
+
+### Prefer `AddReferencesFromTypes` over path-based configuration
+
+Type-based configuration is refactoring-safe and works across machines. Avoid `AddReferencesFromPaths` unless you have a specific reason.
+
+### Call `ReferenceConfiguration` only during initialization
+
+Configure once in `[ModuleInitializer]`, not in individual tests. The configuration is global and additive.
+
+## API Reference
+
+For full method signatures and assertion APIs, see the [Testing API Reference](../api/testing/index.md):
+
+- [RoslynTestBase](../api/testing/roslyn-test-base.md) — All entry points
+- [Assertions](../api/testing/assertions.md) — TUnit assertion extensions for symbols, emit, and compilations
+- [ReferenceConfiguration](../api/testing/reference-configuration.md) — Assembly reference setup
