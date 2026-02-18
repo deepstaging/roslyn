@@ -127,6 +127,20 @@ nav:
         - Entity Framework: api/emit/refs/efcore.md
       - GlobalUsings: api/emit/global-usings.md
       - Support Types: api/emit/support-types.md
+    - Analyzers:
+      - Overview: api/analyzers/index.md
+      - SymbolAnalyzer: api/analyzers/symbol-analyzer.md
+      - MultiDiagnosticSymbolAnalyzer: api/analyzers/multi-diagnostic-analyzer.md
+      - AssemblyAttributeAnalyzer: api/analyzers/assembly-attribute-analyzer.md
+      - ReportsAttribute: api/analyzers/reports-attribute.md
+      - TrackedFileTypeAnalyzer: api/analyzers/tracked-file-analyzer.md
+      - BuildPropertyExtensions: api/analyzers/build-property-extensions.md
+      - PipelineModel: api/analyzers/pipeline-model.md
+    - Generators:
+      - Overview: api/generators/index.md
+      - ForAttribute: api/generators/for-attribute.md
+      - HintName: api/generators/hint-name.md
+      - Source Output: api/generators/source-output.md
     - Extensions:
       - Overview: api/extensions/index.md
       - Symbol Extensions: api/extensions/symbol-extensions.md
