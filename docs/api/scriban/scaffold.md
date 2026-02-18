@@ -1,5 +1,8 @@
 # Template Scaffolding
 
+!!! warning "Experimental"
+    This API is experimental and has no consumer usage yet. The design may change significantly in future releases. Do not build critical workflows on it.
+
 The scaffold system auto-generates starter templates from default emit output, making it easy for consumers to begin customizing generated code.
 
 ## How It Works

@@ -1,5 +1,8 @@
 # Customizable Templates
 
+!!! warning "Experimental"
+    This API is experimental and has no consumer usage yet. The design may change significantly in future releases. Do not build critical workflows on it.
+
 The customizable template system lets consumers override generated code by providing their own Scriban templates. This is built from three types working together: `TemplateMap<TModel>`, `CustomizableEmit`, and `UserTemplates`.
 
 ## Architecture
