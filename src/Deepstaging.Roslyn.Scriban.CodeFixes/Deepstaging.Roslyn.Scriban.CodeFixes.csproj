@@ -23,7 +23,7 @@
 
     <ItemGroup>
         <ProjectReference Include="../Deepstaging.Roslyn.Scriban/Deepstaging.Roslyn.Scriban.csproj"/>
-        <ProjectReference Include="../Deepstaging.Roslyn.Workspace/Deepstaging.Roslyn.Workspace.csproj"/>
+        <ProjectReference Include="../Deepstaging.Roslyn.CodeFixes/Deepstaging.Roslyn.CodeFixes.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -149,7 +149,7 @@ nav:
       - Attribute Extensions: api/extensions/attribute-extensions.md
       - String Extensions: api/extensions/string-extensions.md
       - Domain Extensions: api/extensions/domain-extensions.md
-    - Workspace:
+    - Code Fixes:
       - Overview: api/workspace/index.md
       - Code Fix Base Classes: api/workspace/code-fix-base.md
       - Code Fix Actions: api/workspace/code-fix-actions.md

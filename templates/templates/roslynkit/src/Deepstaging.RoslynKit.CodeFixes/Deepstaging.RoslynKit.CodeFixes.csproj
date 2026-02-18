@@ -22,7 +22,7 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Deepstaging.Roslyn"/>
-        <PackageReference Include="Deepstaging.Roslyn.Workspace"/>
+        <PackageReference Include="Deepstaging.Roslyn.CodeFixes"/>
     </ItemGroup>
 
     <ItemGroup>

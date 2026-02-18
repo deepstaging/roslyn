@@ -1,13 +1,13 @@
-# Workspace
+# Code Fixes
 
-Code fix infrastructure for Roslyn analyzers using the Workspace API.
+Code fix infrastructure for Roslyn analyzers.
 
 ## What is this?
 
 This library provides base classes and utilities for building Roslyn code fix providers. It simplifies the boilerplate of registering code fixes and working with syntax nodes.
 
 !!! note "Bundled package"
-    `Deepstaging.Roslyn.Workspace` is not published as a separate NuGet package — it ships inside `Deepstaging.Roslyn`.
+    `Deepstaging.Roslyn.CodeFixes` is not published as a separate NuGet package — it ships inside `Deepstaging.Roslyn`.
 
 ## Quick Start
 

@@ -52,11 +52,11 @@ Reading and writing are symmetric: `TypeQuery` finds types → `TypeBuilder` cre
 | `Deepstaging.Roslyn.Scriban` | netstandard2.0 | Scriban template integration (bundled into core package) |
 | `Deepstaging.Roslyn.Scriban.Analyzers` | netstandard2.0 | Template scaffolding analyzers (bundled into core package) |
 | `Deepstaging.Roslyn.Scriban.CodeFixes` | netstandard2.0 | Template scaffolding code fixes (bundled into core package) |
-| `Deepstaging.Roslyn.Workspace` | netstandard2.0 | Code fix provider infrastructure (bundled into core package) |
+| `Deepstaging.Roslyn.CodeFixes` | netstandard2.0 | Code fix provider infrastructure (bundled into core package) |
 | `Deepstaging.Roslyn.Testing` | net10.0 | Test base classes (`RoslynTestBase`) (packable) |
 | `Deepstaging.Roslyn.Tests` | net10.0 | Test suite in `test/` (not packable) |
 
-Scriban and Workspace are not published as separate NuGet packages — they are packaged within `Deepstaging.Roslyn`. All library projects target `netstandard2.0` for Roslyn analyzer/generator compatibility. Only test projects target `net10.0`.
+Scriban and CodeFixes are not published as separate NuGet packages — they are packaged within `Deepstaging.Roslyn`. All library projects target `netstandard2.0` for Roslyn analyzer/generator compatibility. Only test projects target `net10.0`.
 
 ## Conventions
 

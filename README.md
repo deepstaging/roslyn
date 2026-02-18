@@ -12,7 +12,7 @@ Roslyn APIs are powerful but awkward. This library wraps them in something that 
 |---------|---------|
 | `Deepstaging.Roslyn` | Core toolkit: Queries, Projections, Emit builders |
 | `Deepstaging.Roslyn.Scriban` | Scriban template integration for source generators |
-| `Deepstaging.Roslyn.Workspace` | Code fix provider infrastructure |
+| `Deepstaging.Roslyn.CodeFixes` | Code fix provider infrastructure |
 | `Deepstaging.Roslyn.Testing` | Test utilities for generators and analyzers |
 
 ## Installation
@@ -131,7 +131,7 @@ public partial class {{ type_name }}
   - [Emit](https://deepstaging.github.io/roslyn/api/emit/) — Generate C# code with fluent builders
   - [Extensions](https://deepstaging.github.io/roslyn/api/extensions/) — Convenience methods for Roslyn types
 - **[Scriban Templates](https://deepstaging.github.io/roslyn/packages/scriban/)** — Template infrastructure
-- **[Workspace / Code Fixes](https://deepstaging.github.io/roslyn/packages/workspace/)** — Code fix providers
+- **[Code Fixes](https://deepstaging.github.io/roslyn/packages/workspace/)** — Code fix providers
 - **[Testing](https://deepstaging.github.io/roslyn/packages/testing/)** — Test infrastructure for analyzers and generators
 
 ## Build & Test

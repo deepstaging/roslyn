@@ -61,11 +61,11 @@
         <None Include="buildTransitive/Deepstaging.Roslyn.targets" Pack="true" PackagePath="buildTransitive\"/>
     </ItemGroup>
 
-    <!-- Bundled library assemblies (Workspace and Scriban) -->
+    <!-- Bundled library assemblies (CodeFixes and Scriban) -->
     <ItemGroup>
-        <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.Workspace/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.Workspace.dll"
+        <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.CodeFixes/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.CodeFixes.dll"
               Pack="true" PackagePath="lib/netstandard2.0" Visible="false"/>
-        <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.Workspace/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.Workspace.xml"
+        <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.CodeFixes/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.CodeFixes.xml"
               Pack="true" PackagePath="lib/netstandard2.0" Visible="false"/>
         <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.Scriban/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.Scriban.dll"
               Pack="true" PackagePath="lib/netstandard2.0" Visible="false"/>
@@ -89,7 +89,7 @@
               Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
         <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.Scriban/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.Scriban.dll"
               Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
-        <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.Workspace/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.Workspace.dll"
+        <None Include="$(BundleArtifactsPath)/Deepstaging.Roslyn.CodeFixes/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.CodeFixes.dll"
               Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
     </ItemGroup>
 

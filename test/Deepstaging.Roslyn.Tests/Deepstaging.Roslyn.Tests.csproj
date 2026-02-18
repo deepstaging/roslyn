@@ -24,7 +24,7 @@
         <ProjectReference Include="..\..\src\Deepstaging.Roslyn.Scriban.Analyzers\Deepstaging.Roslyn.Scriban.Analyzers.csproj"/>
         <ProjectReference Include="..\..\src\Deepstaging.Roslyn.Scriban.CodeFixes\Deepstaging.Roslyn.Scriban.CodeFixes.csproj"/>
         <ProjectReference Include="..\..\src\Deepstaging.Roslyn.LanguageExt\Deepstaging.Roslyn.LanguageExt.csproj"/>
-        <ProjectReference Include="..\..\src\Deepstaging.Roslyn.Workspace\Deepstaging.Roslyn.Workspace.csproj"/>
+        <ProjectReference Include="..\..\src\Deepstaging.Roslyn.CodeFixes\Deepstaging.Roslyn.CodeFixes.csproj"/>
         <ProjectReference Include="..\..\src\Deepstaging.Roslyn.Testing\Deepstaging.Roslyn.Testing.csproj"/>
         <ProjectReference Include="..\..\src\Deepstaging.Roslyn\Deepstaging.Roslyn.csproj"/>
     </ItemGroup>

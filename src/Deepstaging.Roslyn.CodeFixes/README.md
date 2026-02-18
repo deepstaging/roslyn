@@ -1,6 +1,6 @@
-# Deepstaging.Roslyn.Workspace
+# Deepstaging.Roslyn.CodeFixes
 
-Code fix infrastructure for Roslyn analyzers using the Workspace API.
+Code fix infrastructure for Roslyn analyzers.
 
 📚 **[Full Documentation](https://deepstaging.github.io/roslyn)**
 
