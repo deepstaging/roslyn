@@ -395,6 +395,169 @@ public sealed class PipelineModelImmutableArrayAnalyzer : MultiDiagnosticTypeAna
 
 See the [PipelineModel analyzers](../api/projections/pipeline-model.md) for a real-world example of four `MultiDiagnosticTypeAnalyzer` implementations.
 
+## Assembly Attribute Analyzers
+
+When you need to analyze **assembly-level** attributes (e.g., `[assembly: RequiresTool("dotnet-ef")]`) rather than per-symbol attributes, use `AssemblyAttributeAnalyzer<TItem>`:
+
+```csharp
+[DiagnosticAnalyzer(LanguageNames.CSharp)]
+[Reports("DSDT001", "Required environment variable not set",
+    Message = "Environment variable '{0}' is not set",
+    Category = "DevTools",
+    Severity = DiagnosticSeverity.Warning)]
+[Reports("DSDT002", "Optional environment variable not set",
+    Message = "Optional environment variable '{0}' is not set",
+    Category = "DevTools",
+    Severity = DiagnosticSeverity.Info)]
+public sealed class RequiresEnvAnalyzer : AssemblyAttributeAnalyzer<RequiredEnvVar>
+{
+    protected override string AttributeFullyQualifiedName =>
+        "MyApp.RequiresEnvAttribute";
+
+    protected override bool TryExtractItem(
+        ValidAttribute attribute, Location location, out RequiredEnvVar item)
+    {
+        var name = attribute.ConstructorArg<string>(0).OrNull();
+        if (name == null) { item = default; return false; }
+
+        var optional = attribute.NamedArg<bool>("Optional").OrDefault(false);
+        item = new RequiredEnvVar(name, optional, location);
+        return true;
+    }
+
+    protected override void Analyze(
+        CompilationAnalysisContext context, ImmutableArray<RequiredEnvVar> items)
+    {
+        var globalOptions = context.Options.AnalyzerConfigOptionsProvider.GlobalOptions;
+
+        foreach (var required in items)
+        {
+            if (globalOptions.TryGetBuildProperty($"Env_{required.Name}", out _))
+                continue;
+
+            var rule = required.IsOptional ? GetRule(1) : GetRule(0);
+            context.ReportDiagnostic(Diagnostic.Create(rule, required.Location, required.Name));
+        }
+    }
+}
+```
+
+### How It Works
+
+1. Annotate with one or more `[Reports]` attributes — multiple diagnostics supported
+2. The base class handles `Initialize`, `ConfigureGeneratedCodeAnalysis`, `EnableConcurrentExecution`, and `SupportedDiagnostics`
+3. On compilation, scans assembly attributes matching `AttributeFullyQualifiedName`
+4. Projects each match through `ValidAttribute` and calls `TryExtractItem`
+5. Passes all extracted items to `Analyze` in a single batch
+
+### Key Differences from SymbolAnalyzer
+
+| | `SymbolAnalyzer<TSymbol>` | `AssemblyAttributeAnalyzer<TItem>` |
+|---|---|---|
+| **Scope** | Per-symbol (`RegisterSymbolAction`) | Compilation-level (`RegisterCompilationAction`) |
+| **Trigger** | Symbol with specific attribute | Assembly-level attributes |
+| **[Reports]** | Single | One or more (via `AllowMultiple`) |
+| **Access rules** | `SupportedDiagnostics[0]` | `GetRule(index)` by declaration order |
+| **Item extraction** | Automatic (attribute match) | Manual via `TryExtractItem` |
+
+### Multiple [Reports] Attributes
+
+Each `[Reports]` attribute declares a diagnostic descriptor. Access them by index matching declaration order:
+
+```csharp
+GetRule(0) // First [Reports] — e.g., "Required env var not set" (Warning)
+GetRule(1) // Second [Reports] — e.g., "Optional env var not set" (Info)
+```
+
+## Build Properties
+
+MSBuild properties exposed via `<CompilerVisibleProperty>` appear in `AnalyzerConfigOptions.GlobalOptions` with a `build_property.` prefix. The `BuildPropertyExtensions` handle this prefix automatically.
+
+### Reading Properties
+
+```csharp
+using Deepstaging.Roslyn.Analyzers;
+
+var globalOptions = context.Options.AnalyzerConfigOptionsProvider.GlobalOptions;
+
+// String access with fallback
+var dataDir = globalOptions.GetBuildProperty("DeepstagingDataDirectory", ".config");
+
+// Typed access (bool, int, long, double)
+var isDirty = globalOptions.GetBuildProperty("IsDirty", false);
+var count = globalOptions.GetBuildProperty("DirtyCount", 0);
+
+// Try-pattern
+if (globalOptions.TryGetBuildProperty("MyProperty", out var value))
+{
+    // value is non-null and non-empty
+}
+```
+
+### Discovering Properties
+
+Collect all properties matching a prefix into an `ImmutableDictionary` — useful for forwarding to code fixes via `Diagnostic.Properties`:
+
+```csharp
+// All Deepstaging* properties (default prefix)
+var props = globalOptions.DiscoverBuildProperties();
+
+// Custom prefix
+var gitProps = globalOptions.DiscoverBuildProperties("_DeepstagingGit");
+
+// Forward to code fix via Diagnostic.Properties
+context.ReportDiagnostic(Diagnostic.Create(rule, location, props, args));
+```
+
+The dictionary keys have the `build_property.` prefix stripped, so a property declared as:
+
+```xml
+<CompilerVisibleProperty Include="DeepstagingDataDirectory"/>
+```
+
+appears with the key `"DeepstagingDataDirectory"` in the returned dictionary.
+
+### Using in Generators
+
+The extensions work with `AnalyzerConfigOptions` from any context — generators, analyzers, or compilation actions:
+
+```csharp
+var gitState = context.AnalyzerConfigOptionsProvider
+    .Select(static (provider, _) =>
+    {
+        var g = provider.GlobalOptions;
+        return new GitState(
+            Branch: g.GetBuildProperty("GitBranch", "unknown"),
+            IsDirty: g.GetBuildProperty("GitIsDirty", false),
+            DirtyCount: g.GetBuildProperty("GitDirtyCount", 0)
+        );
+    });
+```
+
+### Using in Code Fixes
+
+Properties forwarded via `Diagnostic.Properties` arrive in code fixes without the `build_property.` prefix:
+
+```csharp
+protected override CodeAction CreateFix(
+    Project project, ValidSymbol<INamedTypeSymbol> symbol, Diagnostic diagnostic)
+{
+    diagnostic.Properties.TryGetValue("DeepstagingDataDirectory", out var dataDir);
+    dataDir ??= ".config";
+
+    return project.ModifyPropsFileAction<MyProps>("Fix it", dataDir, doc => { ... });
+}
+```
+
+### Available Methods
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `GetBuildProperty(name, fallback)` | `string` | String value with fallback |
+| `GetBuildProperty<T>(name, fallback)` | `T` | Typed value (`bool`, `int`, `long`, `double`) |
+| `TryGetBuildProperty(name, out value)` | `bool` | Try-pattern, `false` if missing or empty |
+| `DiscoverBuildProperties(prefix?)` | `ImmutableDictionary<string, string?>` | All properties matching prefix (default: `"Deepstaging"`) |
+
 ## Tracked File Analyzers
 
 When a source generator produces additional files (e.g., JSON schemas) and you need to detect when they're missing or stale, use `TrackedFileTypeAnalyzer`:
@@ -461,6 +624,21 @@ var files = TrackedFiles.Discover(additionalTexts, isTracked, extractHash);
 files.HasAny              // bool — any tracked files found?
 files.HasFile("name.json") // bool — specific file exists?
 files.GetHash("name.json") // string? — embedded hash value
+```
+
+### Build Property Forwarding
+
+`TrackedFileTypeAnalyzer` automatically discovers all `Deepstaging*` build properties via `DiscoverBuildProperties()` and includes them in every reported diagnostic's `Properties` dictionary. Code fixes receive these properties without any additional wiring:
+
+```csharp
+// In your code fix — properties arrive automatically
+diagnostic.Properties.TryGetValue("DeepstagingDataDirectory", out var dataDir);
+```
+
+To expose a new property to the analyzer, add it to your NuGet `.props` file:
+
+```xml
+<CompilerVisibleProperty Include="DeepstagingMyNewProperty"/>
 ```
 
 ### Virtual Overrides
