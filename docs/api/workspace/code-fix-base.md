@@ -101,7 +101,7 @@ public abstract class AdditionalDocumentCodeFix : CodeFixProvider
 With automatic symbol resolution:
 
 ```csharp
-public abstract class AdditionalDocumentCodeFix<TSymbol> : AdditionalDocumentCodeFix
+public abstract class AdditionalDocumentCodeFix<TSymbol> : AdditionalDocumentCodeFix<TSymbol>
     where TSymbol : class, ISymbol
 {
     // Symbol is resolved from the diagnostic location
@@ -146,7 +146,7 @@ public abstract class SourceDocumentCodeFix : CodeFixProvider
 With automatic symbol resolution:
 
 ```csharp
-public abstract class SourceDocumentCodeFix<TSymbol> : SourceDocumentCodeFix
+public abstract class SourceDocumentCodeFix<TSymbol> : SourceDocumentCodeFix<TSymbol>
     where TSymbol : class, ISymbol
 {
     // Symbol is resolved from the diagnostic location
