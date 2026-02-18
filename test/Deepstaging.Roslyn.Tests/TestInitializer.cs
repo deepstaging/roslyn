@@ -14,6 +14,7 @@ internal static class TestInitializer
             typeof(ValidSymbol<>),
             typeof(EquatableArray<>),
             typeof(ISymbol),
-            typeof(INamedTypeSymbol)
+            typeof(INamedTypeSymbol),
+            typeof(CodeFixes.GenerateHelperAttribute)
         );
 }

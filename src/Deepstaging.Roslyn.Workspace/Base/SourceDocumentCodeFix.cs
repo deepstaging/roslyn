@@ -1,0 +1,150 @@
+// SPDX-FileCopyrightText: 2024-present Deepstaging
+// SPDX-License-Identifier: RPL-1.5
+
+using System.Collections.Immutable;
+using System.Reflection;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeActions;
+using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.Text;
+
+namespace Deepstaging.Roslyn;
+
+/// <summary>
+/// Represents a source file to be added to a project by a code fix.
+/// Unlike <see cref="AdditionalDocument"/>, this creates a compilable source document
+/// that appears in the IDE preview pane as real source code.
+/// </summary>
+public readonly struct SourceDocument
+{
+    /// <summary>
+    /// The relative file path (e.g., "Effects/IEmailService.g.cs").
+    /// </summary>
+    public string Path { get; }
+
+    /// <summary>
+    /// The source code content.
+    /// </summary>
+    public string Content { get; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SourceDocument"/> struct.
+    /// </summary>
+    public SourceDocument(string path, string content)
+    {
+        Path = path;
+        Content = content;
+    }
+}
+
+/// <summary>
+/// Base class for code fix providers that add source documents to a project.
+/// Uses declarative configuration via <see cref="CodeFixAttribute"/>.
+/// </summary>
+/// <remarks>
+/// Unlike <see cref="AdditionalDocumentCodeFix"/> which creates non-compilable files,
+/// this base class creates compilable source documents (.cs files) that appear in
+/// the IDE preview pane as real source code. This enables a powerful UX pattern
+/// where developers can preview generated code before applying it.
+/// </remarks>
+public abstract class SourceDocumentCodeFix : CodeFixProvider
+{
+    /// <inheritdoc />
+    public sealed override ImmutableArray<string> FixableDiagnosticIds { get; }
+
+    /// <inheritdoc />
+    public override FixAllProvider? GetFixAllProvider() => null;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SourceDocumentCodeFix"/> class.
+    /// </summary>
+    protected SourceDocumentCodeFix()
+    {
+        var codeFixAttrs = GetType()
+            .GetCustomAttributes<CodeFixAttribute>()
+            .ToArray();
+
+        if (codeFixAttrs.Length == 0)
+            throw new InvalidOperationException(
+                $"CodeFix {GetType().Name} must have at least one [CodeFix] attribute.");
+
+        FixableDiagnosticIds = [..codeFixAttrs.Select(a => a.DiagnosticId)];
+    }
+
+    /// <inheritdoc />
+    public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
+    {
+        var diagnostic = context.Diagnostics[0];
+
+        var compilation = await context.Document.Project
+            .GetCompilationAsync(context.CancellationToken)
+            .ConfigureAwait(false);
+
+        if (compilation is null) return;
+
+        var result = CreateDocument(compilation, diagnostic);
+        if (result is not { } doc) return;
+
+        var title = GetTitle(doc, diagnostic);
+
+        context.RegisterCodeFix(
+            CodeAction.Create(
+                title,
+                _ => Task.FromResult(AddDocument(context.Document.Project, doc)),
+                title),
+            diagnostic);
+    }
+
+    /// <summary>
+    /// Creates the source document to add to the project.
+    /// </summary>
+    /// <param name="compilation">The current compilation (for reading metadata).</param>
+    /// <param name="diagnostic">The diagnostic being fixed.</param>
+    /// <returns>The document to add, or null to skip.</returns>
+    protected abstract SourceDocument? CreateDocument(Compilation compilation, Diagnostic diagnostic);
+
+    /// <summary>
+    /// Gets the title for the code action shown in the IDE lightbulb menu.
+    /// Default returns "Generate file: {path}".
+    /// </summary>
+    /// <param name="document">The document that will be created.</param>
+    /// <param name="diagnostic">The diagnostic being fixed.</param>
+    protected virtual string GetTitle(SourceDocument document, Diagnostic diagnostic) => $"Generate file: {document.Path}";
+
+    private static Solution AddDocument(Project project, SourceDocument doc) =>
+        project.AddDocument(
+            doc.Path,
+            SourceText.From(doc.Content),
+            filePath: doc.Path).Project.Solution;
+}
+
+/// <summary>
+/// Base class for code fix providers that add source documents to a project,
+/// with automatic symbol resolution from the diagnostic location.
+/// </summary>
+/// <typeparam name="TSymbol">The expected symbol type at the diagnostic location.</typeparam>
+/// <remarks>
+/// Combines <see cref="SourceDocumentCodeFix"/> with automatic symbol resolution.
+/// The diagnostic location is used to find and validate a symbol of type <typeparamref name="TSymbol"/>,
+/// which is then passed to <see cref="CreateDocument(Compilation, ValidSymbol{TSymbol})"/>.
+/// </remarks>
+public abstract class SourceDocumentCodeFix<TSymbol> : SourceDocumentCodeFix
+    where TSymbol : class, ISymbol
+{
+    /// <inheritdoc />
+    protected sealed override SourceDocument? CreateDocument(Compilation compilation, Diagnostic diagnostic)
+    {
+        if (compilation.GetSymbolAtDiagnostic(diagnostic).OfType<TSymbol>().IsNotValid(out var symbol))
+            return null;
+
+        return CreateDocument(compilation, symbol);
+    }
+
+    /// <summary>
+    /// Creates the source document to add to the project.
+    /// </summary>
+    /// <param name="compilation">The current compilation (for reading metadata).</param>
+    /// <param name="symbol">The validated symbol at the diagnostic location.</param>
+    /// <returns>The document to add, or null to skip.</returns>
+    protected abstract SourceDocument? CreateDocument(Compilation compilation, ValidSymbol<TSymbol> symbol);
+}
