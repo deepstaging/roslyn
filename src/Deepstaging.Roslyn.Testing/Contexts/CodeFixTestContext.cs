@@ -135,24 +135,14 @@ public class CodeFixAssertion
     /// <param name="expectedTitle">Optional expected title of the code action.</param>
     public async Task ShouldOfferFix(string? expectedTitle = null)
     {
-        var (document, diagnostic) = await GetDocumentAndDiagnosticAsync();
+        var actions = await GetCodeActionsAsync();
 
-        var codeActions = new List<CodeAction>();
-
-        var context = new CodeFixContext(
-            document,
-            diagnostic,
-            (action, _) => codeActions.Add(action),
-            CancellationToken.None);
-
-        await _context.CodeFix.RegisterCodeFixesAsync(context);
-
-        if (codeActions.Count == 0)
+        if (actions.Count == 0)
             Assert.Fail($"Code fix provider did not register any fixes for diagnostic '{_diagnosticId}'");
 
         if (expectedTitle is not null)
         {
-            var titles = codeActions.Select(a => a.Title).ToList();
+            var titles = actions.Select(a => a.Title).ToList();
 
             if (!titles.Any(t => t.Contains(expectedTitle)))
                 Assert.Fail(
@@ -161,7 +151,41 @@ public class CodeFixAssertion
         }
     }
 
+    /// <summary>
+    /// Assert that the code fix does not offer any action for the diagnostic.
+    /// Use this for code fixes that conditionally skip (e.g., returning null from CreateDocument).
+    /// </summary>
+    public async Task ShouldNotOfferFix()
+    {
+        var actions = await GetCodeActionsAsync();
+
+        if (actions.Count > 0)
+            Assert.Fail(
+                $"Expected no code fix for diagnostic '{_diagnosticId}', " +
+                $"but found: {string.Join(", ", actions.Select(a => $"'{a.Title}'"))}");
+    }
+
     internal async Task<Solution> ApplyFirstFixAsync()
+    {
+        var actions = await GetCodeActionsAsync();
+
+        if (actions.Count == 0)
+            Assert.Fail($"Code fix provider did not register any fixes for diagnostic '{_diagnosticId}'");
+
+        var operations = await actions[0].GetOperationsAsync(CancellationToken.None);
+
+        var solution = operations
+            .OfType<ApplyChangesOperation>()
+            .FirstOrDefault()
+            ?.ChangedSolution;
+
+        if (solution == null)
+            Assert.Fail("Code fix did not produce a solution with changes");
+
+        return solution!;
+    }
+
+    private async Task<List<CodeAction>> GetCodeActionsAsync()
     {
         var (document, diagnostic) = await GetDocumentAndDiagnosticAsync();
 
@@ -175,20 +199,7 @@ public class CodeFixAssertion
 
         await _context.CodeFix.RegisterCodeFixesAsync(context);
 
-        if (codeActions.Count == 0)
-            Assert.Fail($"Code fix provider did not register any fixes for diagnostic '{_diagnosticId}'");
-
-        var operations = await codeActions[0].GetOperationsAsync(CancellationToken.None);
-
-        var solution = operations
-            .OfType<ApplyChangesOperation>()
-            .FirstOrDefault()
-            ?.ChangedSolution;
-
-        if (solution == null)
-            Assert.Fail("Code fix did not produce a solution with changes");
-
-        return solution!;
+        return codeActions;
     }
 
     private async Task<(Document document, Diagnostic diagnostic)> GetDocumentAndDiagnosticAsync()
