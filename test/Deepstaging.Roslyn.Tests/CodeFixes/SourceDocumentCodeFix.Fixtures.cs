@@ -64,19 +64,17 @@ public sealed class GenerateHelperWithSymbolCodeFix : SourceDocumentCodeFix<INam
 {
     protected override SourceDocument? CreateDocument(Compilation compilation, ValidSymbol<INamedTypeSymbol> symbol)
     {
-        var ns = symbol.Value.ContainingNamespace?.ToDisplayString() ?? "Global";
-        var name = symbol.Name;
+        var content =
+            $$"""
+              namespace {{symbol.Namespace ?? "Global"}};
 
-        var content = $$"""
-                        namespace {{ns}};
+              public static class {{symbol.Name}}Helper
+              {
+                  public static string Describe() => "Helper for {{symbol.Name}}";
+              }
+              """;
 
-                        public static class {{name}}Helper
-                        {
-                            public static string Describe() => "Helper for {{name}}";
-                        }
-                        """;
-
-        return new SourceDocument($"{name}Helper.g.cs", content);
+        return new SourceDocument($"{symbol.Name}Helper.g.cs", content);
     }
 
     protected override string GetTitle(SourceDocument document, Diagnostic diagnostic) =>

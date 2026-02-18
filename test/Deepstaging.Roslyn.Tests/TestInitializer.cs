@@ -15,6 +15,10 @@ internal static class TestInitializer
             typeof(EquatableArray<>),
             typeof(ISymbol),
             typeof(INamedTypeSymbol),
-            typeof(CodeFixes.GenerateHelperAttribute)
+            typeof(CodeFixes.GenerateHelperAttribute),
+            typeof(CodeFixes.NeedsTypeFixAttribute),
+            typeof(CodeFixes.NeedsMethodFixAttribute),
+            typeof(CodeFixes.NeedsPropertyFixAttribute),
+            typeof(CodeFixes.NeedsFieldFixAttribute)
         );
 }
