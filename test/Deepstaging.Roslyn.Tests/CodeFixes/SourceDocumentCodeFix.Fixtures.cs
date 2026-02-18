@@ -35,19 +35,18 @@ public sealed class GenerateHelperCodeFix : SourceDocumentCodeFix
         if (compilation.GetSymbolAtDiagnostic(diagnostic).IsNotValid(out var symbol))
             return null;
 
-        var ns = symbol.Value.ContainingNamespace?.ToDisplayString() ?? "Global";
-        var name = symbol.Name;
+        var emit = TypeBuilder
+            .Parse($"public static class {symbol.Name}Helper")
+            .InNamespace(symbol.Namespace ?? "Global")
+            .AddMethod(MethodBuilder
+                .Parse($"public static string Describe()")
+                .WithExpressionBody($"\"Helper for {symbol.Name}\""))
+            .Emit();
 
-        var content = $$"""
-                        namespace {{ns}};
+        if (emit.IsNotValid(out var source))
+            return null;
 
-                        public static class {{name}}Helper
-                        {
-                            public static string Describe() => "Helper for {{name}}";
-                        }
-                        """;
-
-        return new SourceDocument($"{name}Helper.g.cs", content);
+        return new SourceDocument($"{symbol.Name}Helper.g.cs", source.Code);
     }
 }
 
@@ -58,17 +57,18 @@ public sealed class GenerateHelperWithSymbolCodeFix : SourceDocumentCodeFix<INam
 {
     protected override SourceDocument? CreateDocument(Compilation compilation, ValidSymbol<INamedTypeSymbol> symbol)
     {
-        var content =
-            $$"""
-              namespace {{symbol.Namespace ?? "Global"}};
+        var emit = TypeBuilder
+            .Parse($"public static class {symbol.Name}Helper")
+            .InNamespace(symbol.Namespace ?? "Global")
+            .AddMethod(MethodBuilder
+                .Parse($"public static string Describe()")
+                .WithExpressionBody($"\"Helper for {symbol.Name}\""))
+            .Emit();
 
-              public static class {{symbol.Name}}Helper
-              {
-                  public static string Describe() => "Helper for {{symbol.Name}}";
-              }
-              """;
+        if (emit.IsNotValid(out var source))
+            return null;
 
-        return new SourceDocument($"{symbol.Name}Helper.g.cs", content);
+        return new SourceDocument($"{symbol.Name}Helper.g.cs", source.Code);
     }
 
     protected override string GetTitle(SourceDocument document, Diagnostic diagnostic) =>
