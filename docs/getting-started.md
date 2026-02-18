@@ -27,7 +27,7 @@ Then configure `MyProject.Generators.csproj`:
 
 ## Your First Generator
 
-Here's a complete incremental generator that finds classes with `[AutoNotify]` and generates property change notifications:
+Delete the default `Class1.cs` and create `AutoNotifyGenerator.cs` with the following content — a complete incremental generator that finds classes with `[AutoNotify]` and generates property change notifications:
 
 ```csharp
 using System;
