@@ -1,8 +1,8 @@
 # Test Assertions
 
-TUnit assertion extensions for Roslyn symbols, emit results, and compilations.
+TUnit source-generated assertion extensions for Roslyn symbols, emit results, and compilations.
 
-These extensions integrate with TUnit's `Assert.That(...).` fluent API, providing domain-specific assertions for Deepstaging.Roslyn types.
+These assertions use TUnit's [`[GenerateAssertion]`](https://tunit.dev/docs/assertions/extensibility/source-generator-assertions) attribute to generate fluent `Assert.That(x).IsNamed("Foo")` style assertions automatically.
 
 ## ValidSymbol Assertions
 
@@ -11,35 +11,35 @@ Assertions for `ValidSymbol<T>` — a wrapper guaranteeing a non-null Roslyn sym
 ### Name
 
 ```csharp
-await Assert.That(symbol.IsNamed("Customer")).IsTrue();
-await Assert.That(symbol.NameStartsWith("I")).IsTrue();
-await Assert.That(symbol.NameEndsWith("Service")).IsTrue();
-await Assert.That(symbol.NameContains("Base")).IsTrue();
+await Assert.That(symbol).IsNamed("Customer");
+await Assert.That(symbol).NameStartsWith("I");
+await Assert.That(symbol).NameEndsWith("Service");
+await Assert.That(symbol).NameContains("Base");
 ```
 
 ### Accessibility
 
 ```csharp
-await Assert.That(symbol.IsPublicSymbol()).IsTrue();
-await Assert.That(symbol.IsPrivateSymbol()).IsTrue();
-await Assert.That(symbol.IsInternalSymbol()).IsTrue();
-await Assert.That(symbol.IsProtectedSymbol()).IsTrue();
+await Assert.That(symbol).IsPublicSymbol();
+await Assert.That(symbol).IsPrivateSymbol();
+await Assert.That(symbol).IsInternalSymbol();
+await Assert.That(symbol).IsProtectedSymbol();
 ```
 
 ### Modifiers
 
 ```csharp
-await Assert.That(symbol.IsStaticSymbol()).IsTrue();
-await Assert.That(symbol.IsAbstractSymbol()).IsTrue();
-await Assert.That(symbol.IsSealedSymbol()).IsTrue();
-await Assert.That(symbol.IsVirtualSymbol()).IsTrue();
+await Assert.That(symbol).IsStaticSymbol();
+await Assert.That(symbol).IsAbstractSymbol();
+await Assert.That(symbol).IsSealedSymbol();
+await Assert.That(symbol).IsVirtualSymbol();
 ```
 
 ### Attributes
 
 ```csharp
-await Assert.That(symbol.HasAttribute("ObsoleteAttribute")).IsTrue();
-await Assert.That(symbol.DoesNotHaveAttribute("Obsolete")).IsTrue();
+await Assert.That(symbol).HasAttribute("ObsoleteAttribute");
+await Assert.That(symbol).DoesNotHaveAttribute("Obsolete");
 ```
 
 ## Named Type Assertions
@@ -47,15 +47,15 @@ await Assert.That(symbol.DoesNotHaveAttribute("Obsolete")).IsTrue();
 For `ValidSymbol<INamedTypeSymbol>` and `OptionalSymbol<INamedTypeSymbol>`:
 
 ```csharp
-await Assert.That(type.IsClassSymbol()).IsTrue();
-await Assert.That(type.IsInterfaceSymbol()).IsTrue();
-await Assert.That(type.IsStructSymbol()).IsTrue();
-await Assert.That(type.IsRecordSymbol()).IsTrue();
-await Assert.That(type.IsEnumSymbol()).IsTrue();
-await Assert.That(type.IsDelegateSymbol()).IsTrue();
-await Assert.That(type.IsPartialSymbol()).IsTrue();
-await Assert.That(type.IsGenericSymbol()).IsTrue();
-await Assert.That(type.HasTypeParameterCount(2)).IsTrue();
+await Assert.That(type).IsClassSymbol();
+await Assert.That(type).IsInterfaceSymbol();
+await Assert.That(type).IsStructSymbol();
+await Assert.That(type).IsRecordSymbol();
+await Assert.That(type).IsEnumSymbol();
+await Assert.That(type).IsDelegateSymbol();
+await Assert.That(type).IsPartialSymbol();
+await Assert.That(type).IsGenericSymbol();
+await Assert.That(type).HasTypeParameterCount(2);
 ```
 
 ## Method Assertions
@@ -63,14 +63,14 @@ await Assert.That(type.HasTypeParameterCount(2)).IsTrue();
 For `ValidSymbol<IMethodSymbol>` and `OptionalSymbol<IMethodSymbol>`:
 
 ```csharp
-await Assert.That(method.IsAsyncSymbol()).IsTrue();
-await Assert.That(method.ReturnsVoid()).IsTrue();
-await Assert.That(method.HasParameterCount(2)).IsTrue();
-await Assert.That(method.IsExtension()).IsTrue();
-await Assert.That(method.IsGeneric()).IsTrue();
-await Assert.That(method.IsConstructor()).IsTrue();
-await Assert.That(method.IsOperator()).IsTrue();
-await Assert.That(method.HasReturnType()).IsTrue();
+await Assert.That(method).IsAsyncSymbol();
+await Assert.That(method).ReturnsVoid();
+await Assert.That(method).HasParameterCount(2);
+await Assert.That(method).IsExtension();
+await Assert.That(method).IsGeneric();
+await Assert.That(method).IsConstructor();
+await Assert.That(method).IsOperator();
+await Assert.That(method).HasReturnType();
 ```
 
 ## Property Assertions
@@ -78,13 +78,13 @@ await Assert.That(method.HasReturnType()).IsTrue();
 For `ValidSymbol<IPropertySymbol>` and `OptionalSymbol<IPropertySymbol>`:
 
 ```csharp
-await Assert.That(prop.IsReadOnlySymbol()).IsTrue();
-await Assert.That(prop.IsWriteOnly()).IsTrue();
-await Assert.That(prop.HasGetter()).IsTrue();
-await Assert.That(prop.HasSetter()).IsTrue();
-await Assert.That(prop.IsIndexer()).IsTrue();
-await Assert.That(prop.HasInitOnlySetter()).IsTrue();
-await Assert.That(prop.IsRequired()).IsTrue();
+await Assert.That(prop).IsReadOnlySymbol();
+await Assert.That(prop).IsWriteOnly();
+await Assert.That(prop).HasGetter();
+await Assert.That(prop).HasSetter();
+await Assert.That(prop).IsIndexer();
+await Assert.That(prop).HasInitOnlySetter();
+await Assert.That(prop).IsRequired();
 ```
 
 ## Field Assertions
@@ -92,10 +92,10 @@ await Assert.That(prop.IsRequired()).IsTrue();
 For `ValidSymbol<IFieldSymbol>` and `OptionalSymbol<IFieldSymbol>`:
 
 ```csharp
-await Assert.That(field.IsReadOnlySymbol()).IsTrue();
-await Assert.That(field.IsConst()).IsTrue();
-await Assert.That(field.IsVolatile()).IsTrue();
-await Assert.That(field.HasConstantValue()).IsTrue();
+await Assert.That(field).IsReadOnlySymbol();
+await Assert.That(field).IsConst();
+await Assert.That(field).IsVolatile();
+await Assert.That(field).HasConstantValue();
 ```
 
 ## OptionalSymbol Assertions
@@ -103,8 +103,8 @@ await Assert.That(field.HasConstantValue()).IsTrue();
 For `OptionalSymbol<T>` — a nullable wrapper:
 
 ```csharp
-await Assert.That(symbol.HasValue()).IsTrue();
-await Assert.That(symbol.IsEmpty()).IsTrue();
+await Assert.That(symbol).HasValue();
+await Assert.That(symbol).IsEmpty();
 ```
 
 ## OptionalEmit Assertions
@@ -112,20 +112,22 @@ await Assert.That(symbol.IsEmpty()).IsTrue();
 For `OptionalEmit` — the result of calling `.Emit()`:
 
 ```csharp
-await Assert.That(emit.IsSuccessful()).IsTrue();
-await Assert.That(emit.HasFailed()).IsTrue();
-await Assert.That(emit.HasValue()).IsTrue();
-await Assert.That(emit.IsEmpty()).IsTrue();
-await Assert.That(emit.HasDiagnostics()).IsTrue();
-await Assert.That(emit.HasNoDiagnostics()).IsTrue();
-await Assert.That(emit.HasErrors()).IsTrue();
-await Assert.That(emit.HasWarnings()).IsTrue();
-await Assert.That(emit.CodeContains("partial class")).IsTrue();
-await Assert.That(emit.CodeDoesNotContain("sealed")).IsTrue();
+await Assert.That(emit).IsSuccessful();
+await Assert.That(emit).HasFailed();
+await Assert.That(emit).HasValue();
+await Assert.That(emit).IsEmpty();
+await Assert.That(emit).HasDiagnostics();
+await Assert.That(emit).HasNoDiagnostics();
+await Assert.That(emit).HasErrors();
+await Assert.That(emit).HasWarnings();
+await Assert.That(emit).CodeContains("partial class");
+await Assert.That(emit).CodeDoesNotContain("sealed");
 ```
 
 ## Compilation Assertions
 
 ```csharp
-await Assert.That(compilation.IsSuccessful()).IsTrue();
+await Assert.That(compilation).IsSuccessful();
 ```
+
+`IsSuccessful` returns an `AssertionResult` with detailed error output including all compilation errors and the source tree on failure.
