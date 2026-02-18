@@ -9,7 +9,8 @@ return project.FileActions("Generate configuration files")
     .AppendLine(".gitignore", "secrets.json")
     .MergeJsonFile("appsettings.json", templateJson)
     .SyncJsonFile("config.schema.json", schemaJson)
-    .ModifyProjectFile(doc => doc.SetProperty("EnableFeature", "true"))
+    .ModifyProjectFile(doc => doc.SetPropertyGroup("Features", pg => pg
+        .Property("EnableFeature", "true")))
     .ModifyXmlFile("deepstaging.props", doc => { ... })
     .If(useSecrets, b => b.Write("secrets.json", "{}"),
         otherwise: b => b.Write("config.json", defaultConfig))
@@ -70,7 +71,8 @@ The builder integrates with [ManagedPropsFile](managed-props.md) for managed `.p
 ```csharp
 project.FileActions("Setup generator")
     .ModifyPropsFile<MyGeneratorProps>(doc =>
-        doc.SetProperty("MyProp", "value"))
+        doc.SetPropertyGroup("MyLabel", pg => pg
+            .Property("MyProp", "value")))
     .Write("template.json", content)
     .ToCodeAction();
 ```

@@ -395,7 +395,8 @@ Then use it in a code fix — defaults are ensured automatically:
 ```csharp
 project.FileActions("Configure generator")
     .ModifyPropsFile<MyGeneratorProps>(doc =>
-        doc.SetProperty("EnableFeature", "true"))
+        doc.SetPropertyGroup("Generator", pg => pg
+            .Property("EnableFeature", "true")))
     .Write("template.json", content)
     .ToCodeAction();
 ```

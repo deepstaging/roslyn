@@ -251,7 +251,7 @@ public static class ProjectCodeFixActions
                 Directory.CreateDirectory(directory);
 
             var document = File.Exists(fullPath)
-                ? XDocument.Load(fullPath, LoadOptions.PreserveWhitespace)
+                ? XDocument.Load(fullPath)
                 : new XDocument(new XElement("Project"));
 
             modify(document);

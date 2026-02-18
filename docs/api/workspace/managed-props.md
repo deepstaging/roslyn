@@ -55,31 +55,69 @@ All nested builders (`PropsPropertyGroupBuilder`, `PropsItemGroupBuilder`) suppo
 ```csharp
 // Standalone code action — ensures defaults, then applies modification
 project.ModifyPropsFileAction<MyGeneratorProps>("Add property", doc =>
-    doc.SetProperty("MyProp", "value"))
+    doc.SetPropertyGroup("MyLabel", pg => pg
+        .Property("MyProp", "value")))
 
 // Inside a FileActions builder
 project.FileActions("Setup generator")
     .ModifyPropsFile<MyGeneratorProps>(doc =>
-        doc.SetProperty("MyProp", "value"))
+        doc.SetPropertyGroup("MyLabel", pg => pg
+            .Property("MyProp", "value")))
     .Write("template.json", content)
     .ToCodeAction();
 ```
 
 ## PropsXmlExtensions
 
-Helper methods for manipulating `.props` XML documents:
+Fluent helper methods for manipulating `.props` XML documents. All methods return the same `XDocument` for chaining.
+
+`SetPropertyGroup` and `SetItemGroup` preserve existing user content in the group. By default, entries are added only if they don't already exist. Use `MergeAction` per entry to control behavior:
+
+| Action | Behavior |
+|--------|----------|
+| `MergeAction.Add` | Add the entry only if it does not already exist (default) |
+| `MergeAction.Remove` | Remove the entry if it exists |
+| `MergeAction.Set` | Add the entry if missing, or overwrite its value if it already exists |
 
 ```csharp
-// Set a property (no-op if already exists)
-doc.SetProperty("UserSecretsId", Guid.NewGuid().ToString())
-doc.SetProperty("Feature", "true", label: "MyLabel", comment: "Enable feature")
+doc.SetPropertyGroup("Generator", pg => pg
+       .Property("EmitCompilerGeneratedFiles", "true")
+       .Property("CompilerGeneratedFilesOutputPath", "!generated",
+           comment: "Redirect generated files")
+       .Property("OldFeature", MergeAction.Remove)
+       .Property("OutputPath", "bin", MergeAction.Set))
+   .SetItemGroup("Generated", items =>
+       items.Item("None", "Update", "*.g.cs", meta =>
+           meta.Set("DependentUpon", "%(Filename).cs"))
+       .Item("Compile", "Remove", "!generated/**",
+           comment: "Exclude generated files from compilation")
+       .Item("Compile", "Remove", "old/**", MergeAction.Remove)
+       .If(includeJson, ig => ig
+           .Item("AdditionalFiles", "Include", "*.json"))
+       .WithEach(patterns, (ig, p) => ig
+           .Item(p.Type, p.Action, p.Pattern)));
+```
 
-// Replace a labeled ItemGroup with new items
-doc.SetItemGroup("Generated", items =>
-    items.Item("None", "Update", "*.g.cs", meta =>
-        meta.Set("DependentUpon", "%(Filename).cs"))
-    .If(includeJson, ig => ig
-        .Item("AdditionalFiles", "Include", "*.json"))
-    .WithEach(patterns, (ig, p) => ig
-        .Item(p.Type, p.Action, p.Pattern)));
+Both builders support a `Comment()` method that sets an XML comment before the group element when it is first created:
+
+```csharp
+doc.SetPropertyGroup("Generator", pg => pg
+       .Comment("Generator configuration")
+       .Property("EmitCompilerGeneratedFiles", "true"))
+   .SetItemGroup("Generated", items => items
+       .Comment("Generated file handling")
+       .Item("None", "Update", "*.g.cs"));
+```
+
+Produces:
+
+```xml
+<!-- Generator configuration -->
+<PropertyGroup Label="Generator">
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+</PropertyGroup>
+<!-- Generated file handling -->
+<ItemGroup Label="Generated">
+    <None Update="*.g.cs" />
+</ItemGroup>
 ```

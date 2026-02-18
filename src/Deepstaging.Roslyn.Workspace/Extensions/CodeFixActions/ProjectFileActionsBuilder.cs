@@ -275,7 +275,7 @@ public sealed class ProjectFileActionsBuilder(string title, string? projectFileP
                 Directory.CreateDirectory(directory);
 
             var document = File.Exists(fullPath)
-                ? XDocument.Load(fullPath, LoadOptions.PreserveWhitespace)
+                ? XDocument.Load(fullPath)
                 : new XDocument(new XElement("Project"));
 
             modify(document);

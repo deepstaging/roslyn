@@ -92,7 +92,7 @@ public abstract class ManagedPropsFile
         foreach (var (name, value) in group.Properties)
         {
             if (propertyGroup.Element(name) is null)
-                propertyGroup.Add(Indent(2), new XElement(name, value), Indent(1));
+                propertyGroup.Add(new XElement(name, value));
         }
     }
 
@@ -119,10 +119,10 @@ public abstract class ManagedPropsFile
             if (item.Metadata is { Count: > 0 })
             {
                 foreach (var (name, value) in item.Metadata)
-                    itemElement.Add(Indent(3), new XElement(name, value), Indent(2));
+                    itemElement.Add(new XElement(name, value));
             }
 
-            element.Add(Indent(2), itemElement);
+            element.Add(itemElement);
         }
     }
 
@@ -140,19 +140,8 @@ public abstract class ManagedPropsFile
         if (label is not null)
             group.Add(new XAttribute("Label", label));
 
-        group.Add(Indent(1));
-
-        // Insert after last PropertyGroup or ItemGroup
-        var insertAfter = root.Elements("PropertyGroup").LastOrDefault()
-                          ?? root.Elements("ItemGroup").LastOrDefault();
-
-        if (insertAfter is not null)
-            insertAfter.AddAfterSelf(Indent(1), group);
-        else
-            root.AddFirst(Indent(1), group);
+        root.Add(group);
 
         return group;
     }
-
-    private static XText Indent(int level) => new("\n" + new string(' ', level * 4));
 }
