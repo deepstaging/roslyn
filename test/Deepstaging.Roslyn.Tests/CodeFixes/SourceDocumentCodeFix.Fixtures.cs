@@ -35,16 +35,14 @@ public sealed class GenerateHelperCodeFix : SourceDocumentCodeFix
         if (compilation.GetSymbolAtDiagnostic(diagnostic).IsNotValid(out var symbol))
             return null;
 
-        var emit = TypeBuilder
+        var source = TypeBuilder
             .Parse($"public static class {symbol.Name}Helper")
             .InNamespace(symbol.Namespace ?? "Global")
             .AddMethod(MethodBuilder
                 .Parse($"public static string Describe()")
                 .WithExpressionBody($"\"Helper for {symbol.Name}\""))
-            .Emit();
-
-        if (emit.IsNotValid(out var source))
-            return null;
+            .Emit()
+            .ValidateOrThrow();
 
         return new SourceDocument($"{symbol.Name}Helper.g.cs", source.Code);
     }
@@ -57,16 +55,14 @@ public sealed class GenerateHelperWithSymbolCodeFix : SourceDocumentCodeFix<INam
 {
     protected override SourceDocument? CreateDocument(Compilation compilation, ValidSymbol<INamedTypeSymbol> symbol)
     {
-        var emit = TypeBuilder
+        var source = TypeBuilder
             .Parse($"public static class {symbol.Name}Helper")
             .InNamespace(symbol.Namespace ?? "Global")
             .AddMethod(MethodBuilder
                 .Parse($"public static string Describe()")
                 .WithExpressionBody($"\"Helper for {symbol.Name}\""))
-            .Emit();
-
-        if (emit.IsNotValid(out var source))
-            return null;
+            .Emit()
+            .ValidateOrThrow();
 
         return new SourceDocument($"{symbol.Name}Helper.g.cs", source.Code);
     }
