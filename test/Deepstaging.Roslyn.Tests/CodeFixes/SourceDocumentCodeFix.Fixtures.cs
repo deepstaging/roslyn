@@ -32,16 +32,10 @@ public sealed class GenerateHelperCodeFix : SourceDocumentCodeFix
 {
     protected override SourceDocument? CreateDocument(Compilation compilation, Diagnostic diagnostic)
     {
-        var tree = diagnostic.Location.SourceTree;
-        if (tree is null) return null;
+        if (compilation.GetSymbolAtDiagnostic(diagnostic).IsNotValid(out var symbol))
+            return null;
 
-        var root = tree.GetRoot();
-        var node = root.FindNode(diagnostic.Location.SourceSpan);
-        var semanticModel = compilation.GetSemanticModel(tree);
-        var symbol = semanticModel.GetDeclaredSymbol(node);
-        if (symbol is null) return null;
-
-        var ns = symbol.ContainingNamespace?.ToDisplayString() ?? "Global";
+        var ns = symbol.Value.ContainingNamespace?.ToDisplayString() ?? "Global";
         var name = symbol.Name;
 
         var content = $$"""
