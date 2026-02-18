@@ -10,13 +10,17 @@ Create a new `netstandard2.0` class library (required for Roslyn analyzer/genera
 dotnet new classlib -n MyProject.Generators -f netstandard2.0
 cd MyProject.Generators
 dotnet add package Deepstaging.Roslyn --prerelease
+dotnet add package PolySharp
 ```
 
-Then enable analyzer rules in `MyProject.Generators.csproj`:
+[PolySharp](https://github.com/Sergio0694/PolySharp) provides compiler polyfills (`record`, `init`, etc.) for `netstandard2.0` targets.
+
+Then configure `MyProject.Generators.csproj`:
 
 ```xml
 <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>preview</LangVersion>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
 </PropertyGroup>
 ```
@@ -26,6 +30,7 @@ Then enable analyzer rules in `MyProject.Generators.csproj`:
 Here's a complete incremental generator that finds classes with `[AutoNotify]` and generates property change notifications:
 
 ```csharp
+using System;
 using Deepstaging.Roslyn;
 using Deepstaging.Roslyn.Emit;
 using Deepstaging.Roslyn.Emit.Interfaces.Observable;
