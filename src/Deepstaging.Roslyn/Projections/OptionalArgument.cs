@@ -63,7 +63,7 @@ public readonly struct OptionalArgument<TSource> : IProjection<TSource?>, IEquat
             return OptionalArgument<TEnum>.Empty();
 
         // Handle int → enum conversion (Roslyn stores enums as int)
-        if (_value is int intValue && Enum.IsDefined(typeof(TEnum), intValue))
+        if (_value is int intValue)
             return OptionalArgument<TEnum>.WithValue((TEnum)Enum.ToObject(typeof(TEnum), intValue));
 
         // Handle string → enum conversion

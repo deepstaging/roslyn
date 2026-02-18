@@ -327,7 +327,8 @@ public sealed class AddUserSecretsIdCodeFix : ProjectCodeFix<INamedTypeSymbol>
 {
     protected override CodeAction? CreateFix(
         Project project, 
-        ValidSymbol<INamedTypeSymbol> symbol) =>
+        ValidSymbol<INamedTypeSymbol> symbol,
+        Diagnostic diagnostic) =>
         project.AddProjectPropertyAction("UserSecretsId", Guid.NewGuid().ToString());
 }
 ```
@@ -360,7 +361,8 @@ public sealed class GenerateSchemaCodeFix : ProjectCodeFix<INamedTypeSymbol>
 {
     protected override CodeAction? CreateFix(
         Project project,
-        ValidSymbol<INamedTypeSymbol> symbol) =>
+        ValidSymbol<INamedTypeSymbol> symbol,
+        Diagnostic diagnostic) =>
         project.FileActions("Generate schema files")
             .Write($"{symbol.Name}.schema.json", SchemaGenerator.Generate(symbol))
             .WriteIfNotExists("appsettings.json", "{}")

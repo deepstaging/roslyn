@@ -73,7 +73,11 @@ public abstract class ProjectCodeFix : CodeFixProvider
 /// <remarks>
 /// Combines <see cref="ProjectCodeFix"/> with automatic symbol resolution.
 /// The diagnostic location is used to find and validate a symbol of type <typeparamref name="TSymbol"/>,
-/// which is then passed to <see cref="CreateFix(Project, ValidSymbol{TSymbol})"/>.
+/// which is then passed to <see cref="CreateFix(Project, ValidSymbol{TSymbol}, Diagnostic)"/>.
+/// <para>
+/// Diagnostic properties (e.g., MSBuild build properties forwarded by <c>TrackedFileTypeAnalyzer</c>)
+/// are available via <c>diagnostic.Properties</c>.
+/// </para>
 /// </remarks>
 public abstract class ProjectCodeFix<TSymbol> : ProjectCodeFix
     where TSymbol : class, ISymbol
@@ -89,7 +93,7 @@ public abstract class ProjectCodeFix<TSymbol> : ProjectCodeFix
         if (compilation.GetSymbolAtDiagnostic(diagnostic).OfType<TSymbol>().IsNotValid(out var symbol))
             return null;
 
-        return CreateFix(project, symbol);
+        return CreateFix(project, symbol, diagnostic);
     }
 
     /// <summary>
@@ -97,6 +101,8 @@ public abstract class ProjectCodeFix<TSymbol> : ProjectCodeFix
     /// </summary>
     /// <param name="project">The project containing the diagnostic.</param>
     /// <param name="symbol">The validated symbol at the diagnostic location.</param>
+    /// <param name="diagnostic">The diagnostic being fixed. Use <c>diagnostic.Properties</c> to
+    /// access build properties forwarded by the analyzer.</param>
     /// <returns>A code action to fix the diagnostic, or null to skip.</returns>
-    protected abstract CodeAction? CreateFix(Project project, ValidSymbol<TSymbol> symbol);
+    protected abstract CodeAction? CreateFix(Project project, ValidSymbol<TSymbol> symbol, Diagnostic diagnostic);
 }
