@@ -96,7 +96,6 @@ context.AddFromTemplate(
 |------|-------------|
 | [TemplateName](template-name.md) | Identifies an embedded template by resource name and assembly |
 | [Template / RenderResult](template.md) | Load, parse, render with two-level caching |
-| [Customizable Templates](customizable-templates.md) | TemplateMap, CustomizableEmit, UserTemplates |
-| [Scaffold](scaffold.md) | Auto-generate starter templates for consumers |
 | [Context Extensions](context-extensions.md) | AddFromTemplate, UserTemplatesProvider, ScribanExtension |
+| [Experimental](experimental.md) | Customizable Templates, Scaffolding (⚠️ experimental) |
 

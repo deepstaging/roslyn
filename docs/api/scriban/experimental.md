@@ -1,9 +1,9 @@
-# Customizable Templates
+# Customizable Templates & Scaffolding
 
 !!! warning "Experimental"
     This API is experimental and has no consumer usage yet. The design may change significantly in future releases. Do not build critical workflows on it.
 
-The customizable template system lets consumers override generated code by providing their own Scriban templates. This is built from three types working together: `TemplateMap<TModel>`, `CustomizableEmit`, and `UserTemplates`.
+The customizable template system lets consumers override generated code by providing their own Scriban templates, and auto-generates starter templates to make that easy.
 
 ## Architecture
 
@@ -19,19 +19,25 @@ Generator
   │               │
   │               ├── Has: default emit + template name + model + bindings
   │               │
-  │               └── ResolveFrom(UserTemplates)
-  │                     │
-  │                     ├── User template exists → render it with model
-  │                     └── No user template → use default emit
+  │               ├── ResolveFrom(UserTemplates)
+  │               │     ├── User template exists → render it with model
+  │               │     └── No user template → use default emit
+  │               │
+  │               └── ScaffoldEmitter.EmitScaffold(ctx, customizable, trigger)
+  │                     ├── TemplateScaffold.Generate(customizable)
+  │                     │     Replaces bound values with {{ model.property }}
+  │                     └── Emits [assembly: AssemblyMetadata(...)]
+  │                           ├── ScaffoldAvailableAnalyzer → DSRK005 info
+  │                           └── ScaffoldTemplateCodeFix → creates file
   │
   └── Output
 ```
 
+---
+
 ## TemplateMap&lt;TModel&gt;
 
 Records which model properties were used during emit construction. This enables scaffold generation — the system knows which values to replace with `{{ model.property_name }}` placeholders.
-
-### Usage
 
 ```csharp
 var map = new TemplateMap<MyModel>();
@@ -42,22 +48,12 @@ var builder = TypeBuilder.ForClass(map.Bind(model.Name, m => m.Name))
     .AddField("MaxRetries", map.Bind(model.MaxRetries.ToString(), m => m.MaxRetries));
 ```
 
-### Members
-
 | Member | Returns | Description |
 |--------|---------|-------------|
 | `Bind<T>(T value, Expression<Func<TModel, T>> selector)` | `T` | Records mapping, returns value unchanged |
 | `Bindings` | `IReadOnlyList<TemplateBinding>` | All recorded bindings |
 
-### TemplateBinding
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `PropertyPath` | `string` | Dot-separated path (e.g., `Type.CodeName`) |
-| `Value` | `string` | String representation of the bound value |
-
-!!! note
-    Only non-null, non-empty string values are recorded as bindings.
+**TemplateBinding** — `readonly struct` with `PropertyPath` (dot-separated, e.g., `Type.CodeName`) and `Value` (string representation). Only non-null, non-empty values are recorded.
 
 ---
 
@@ -66,8 +62,6 @@ var builder = TypeBuilder.ForClass(map.Bind(model.Name, m => m.Name))
 Bridges `OptionalEmit` (the default code) with user-overridable Scriban templates.
 
 ### Creating
-
-Use the extension methods on `OptionalEmit`:
 
 ```csharp
 OptionalEmit defaultEmit = builder.Emit();
@@ -92,8 +86,6 @@ Resolution logic:
 2. Validate rendered output is valid C# (report `DSRK006` if not)
 3. If no user template → use the default emit
 
-### Properties
-
 | Property | Type | Description |
 |----------|------|-------------|
 | `DefaultEmit` | `OptionalEmit` | The default generated code |
@@ -114,7 +106,6 @@ public void Initialize(IncrementalGeneratorInitializationContext context)
 {
     var userTemplates = context.UserTemplatesProvider();
 
-    // Combine with your model pipeline
     var combined = models.Combine(userTemplates);
 
     context.RegisterSourceOutput(combined, (ctx, pair) =>
@@ -125,8 +116,6 @@ public void Initialize(IncrementalGeneratorInitializationContext context)
 }
 ```
 
-### Members
-
 | Member | Returns | Description |
 |--------|---------|-------------|
 | `From(ImmutableArray<AdditionalText> additionalTexts)` | `UserTemplates` | Load from additional texts |
@@ -135,19 +124,70 @@ public void Initialize(IncrementalGeneratorInitializationContext context)
 | `HasTemplate(string templateName)` | `bool` | Check existence |
 | `GetFilePath(string templateName)` | `string?` | Get file path for diagnostics |
 
-### Convention
+**Convention:** User templates are discovered at `Templates/{ProjectPrefix}/{Name}.scriban-cs`. For example, `Templates/MyProject/MyType.scriban-cs` matches template name `MyProject.MyType`.
 
-User templates are discovered by file name convention:
+---
 
+## Scaffolding
+
+The scaffold system auto-generates starter templates from default emit output by replacing bound values with `{{ model.property }}` placeholders.
+
+### ScaffoldEmitter
+
+Emits `[assembly: AssemblyMetadata]` attributes to advertise customizable templates:
+
+```csharp
+ScaffoldEmitter.EmitScaffold(ctx, customizable, "MyNamespace.MyAttribute");
 ```
-Templates/{ProjectPrefix}/{Name}.scriban-cs
+
+| Key Pattern | Value |
+|-------------|-------|
+| `Deepstaging.Scaffold:{Name}` | Trigger attribute fully qualified name |
+| `Deepstaging.Scaffold:{Name}:Content` | Scaffold template content |
+
+### TemplateScaffold
+
+Generates a scaffold by replacing bound values with Scriban placeholders:
+
+```csharp
+string? scaffold = TemplateScaffold.Generate(customizable);
 ```
 
-For example, `Templates/MyProject/MyType.scriban-cs` matches template name `MyProject.MyType`.
+Given default emit `namespace MyApp; public partial class Customer { }` with bindings `Namespace` → `"MyApp"`, `Name` → `"Customer"`:
+
+```scriban
+namespace {{ model.namespace }};
+public partial class {{ model.name }} { }
+```
+
+Returns `null` if the default emit is invalid. Replacements are sorted by value length (descending) to prevent partial matches.
+
+### ScaffoldMetadata / ScaffoldInfo
+
+Read scaffold info from compilation assembly attributes:
+
+```csharp
+ImmutableArray<ScaffoldInfo> scaffolds = ScaffoldMetadata.ReadFrom(compilation);
+```
+
+`ScaffoldInfo` is a `readonly record struct` with `TemplateName`, `TriggerAttributeName`, and `Scaffold` (nullable content).
+
+### Bundled Analyzer & Code Fix
+
+**ScaffoldAvailableAnalyzer** — Reports info diagnostic when a trigger attribute has a customizable template but no user template file exists.
+
+| ID | Severity | Message |
+|----|----------|---------|
+| `DSRK005` | Info | Customizable template available for `{type}` |
+
+**ScaffoldTemplateCodeFix** — Creates `Templates/{templateName}.scriban-cs` with scaffold content when the user invokes the DSRK005 code fix.
+
+---
 
 ## Diagnostics
 
 | ID | Severity | Description |
 |----|----------|-------------|
-| `DSRK006` | Error | User template rendered invalid C# — includes template name and syntax errors |
-| `DSRK007` | Error | User template has Scriban parse or render errors — includes template name and details |
+| `DSRK005` | Info | Customizable template available (code fix creates starter template) |
+| `DSRK006` | Error | User template rendered invalid C# |
+| `DSRK007` | Error | User template has Scriban parse or render errors |

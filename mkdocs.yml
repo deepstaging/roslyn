@@ -160,9 +160,8 @@ nav:
       - Overview: api/scriban/index.md
       - TemplateName: api/scriban/template-name.md
       - Template / RenderResult: api/scriban/template.md
-      - Customizable Templates: api/scriban/customizable-templates.md
-      - Scaffold: api/scriban/scaffold.md
       - Context Extensions: api/scriban/context-extensions.md
+      - Experimental: api/scriban/experimental.md
     - Testing:
       - Overview: api/testing/index.md
       - RoslynTestBase: api/testing/roslyn-test-base.md
