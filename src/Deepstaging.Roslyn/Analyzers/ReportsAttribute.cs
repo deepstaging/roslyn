@@ -6,7 +6,7 @@ namespace Deepstaging.Roslyn.Analyzers;
 /// <summary>
 /// Declares the diagnostic that an analyzer reports.
 /// </summary>
-[AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
 public sealed class ReportsAttribute : Attribute
 {
     /// <summary>
