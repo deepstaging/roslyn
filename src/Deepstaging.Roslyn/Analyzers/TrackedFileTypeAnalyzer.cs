@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
 
+using System.Linq;
 using System.Reflection;
 using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -19,10 +20,18 @@ namespace Deepstaging.Roslyn.Analyzers;
 /// The analyzer follows this pipeline:
 /// <list type="number">
 /// <item>On compilation start, discovers tracked files from <c>AdditionalTexts</c></item>
+/// <item>Collects all <c>build_property.Deepstaging*</c> MSBuild properties from global options</item>
 /// <item>For each type symbol, checks if it is relevant (e.g., has a specific attribute)</item>
 /// <item>If any expected file is missing → reports the "missing" diagnostic</item>
 /// <item>If all files are present but any has a stale hash → reports the "stale" diagnostic</item>
 /// </list>
+/// </para>
+/// <para>
+/// All <c>build_property.Deepstaging*</c> values are automatically forwarded into
+/// <see cref="Diagnostic.Properties"/> (with the <c>build_property.</c> prefix stripped),
+/// so code fixes can read them without additional wiring. To expose a new property,
+/// add <c>&lt;CompilerVisibleProperty Include="DeepstagingMyProperty"/&gt;</c> to
+/// the NuGet <c>.props</c> file.
 /// </para>
 /// </remarks>
 public abstract class TrackedFileTypeAnalyzer : DiagnosticAnalyzer
@@ -71,12 +80,18 @@ public abstract class TrackedFileTypeAnalyzer : DiagnosticAnalyzer
             IsTrackedFile,
             ExtractHash);
 
+        var buildProperties = context.Options.AnalyzerConfigOptionsProvider.GlobalOptions
+            .DiscoverBuildProperties();
+
         context.RegisterSymbolAction(
-            ctx => AnalyzeSymbol(ctx, files),
+            ctx => AnalyzeSymbol(ctx, files, buildProperties),
             SymbolKind.NamedType);
     }
 
-    private void AnalyzeSymbol(SymbolAnalysisContext context, TrackedFiles files)
+    private void AnalyzeSymbol(
+        SymbolAnalysisContext context,
+        TrackedFiles files,
+        ImmutableDictionary<string, string?> buildProperties)
     {
         if (context.Symbol is not INamedTypeSymbol type)
             return;
@@ -93,7 +108,7 @@ public abstract class TrackedFileTypeAnalyzer : DiagnosticAnalyzer
         {
             var location = GetLocation(valid);
             var messageArgs = GetMessageArgs(valid);
-            context.ReportDiagnostic(Diagnostic.Create(_missingRule, location, messageArgs));
+            context.ReportDiagnostic(Diagnostic.Create(_missingRule, location, buildProperties, messageArgs));
             return;
         }
 
@@ -104,7 +119,7 @@ public abstract class TrackedFileTypeAnalyzer : DiagnosticAnalyzer
         {
             var location = GetLocation(valid);
             var messageArgs = GetMessageArgs(valid);
-            context.ReportDiagnostic(Diagnostic.Create(_staleRule, location, messageArgs));
+            context.ReportDiagnostic(Diagnostic.Create(_staleRule, location, buildProperties, messageArgs));
         }
     }
 
