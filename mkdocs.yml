@@ -158,8 +158,21 @@ nav:
       - Context Extensions: api/workspace/context-extensions.md
     - Scriban:
       - Overview: api/scriban/index.md
+      - TemplateName: api/scriban/template-name.md
+      - Template / RenderResult: api/scriban/template.md
+      - Customizable Templates: api/scriban/customizable-templates.md
+      - Scaffold: api/scriban/scaffold.md
+      - Context Extensions: api/scriban/context-extensions.md
     - Testing:
       - Overview: api/testing/index.md
+      - RoslynTestBase: api/testing/roslyn-test-base.md
+      - SymbolTestContext: api/testing/symbol-test-context.md
+      - AnalyzerTestContext: api/testing/analyzer-test-context.md
+      - GeneratorTestContext: api/testing/generator-test-context.md
+      - CodeFixTestContext: api/testing/codefix-test-context.md
+      - TemplateTestContext: api/testing/template-test-context.md
+      - Assertions: api/testing/assertions.md
+      - ReferenceConfiguration: api/testing/reference-configuration.md
     - LanguageExt:
       - Overview: api/languageext/index.md
       - Refs: api/languageext/refs.md
