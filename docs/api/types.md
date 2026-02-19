@@ -110,6 +110,130 @@ set.ToString()  // → "global::System.Collections.Generic.HashSet<string>"
 
 ---
 
+## Collection Interfaces
+
+### EnumerableTypeRef
+
+Represents `IEnumerable<T>`.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `ElementType` | `TypeRef` | The element type |
+
+```csharp
+var items = new EnumerableTypeRef("Order");
+items.ToString()  // → "global::System.Collections.Generic.IEnumerable<Order>"
+```
+
+### CollectionInterfaceTypeRef
+
+Represents `ICollection<T>`.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `ElementType` | `TypeRef` | The element type |
+
+```csharp
+var col = new CollectionInterfaceTypeRef("string");
+col.ToString()  // → "global::System.Collections.Generic.ICollection<string>"
+```
+
+### ListInterfaceTypeRef
+
+Represents `IList<T>`.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `ElementType` | `TypeRef` | The element type |
+
+```csharp
+var list = new ListInterfaceTypeRef("Customer");
+list.ToString()  // → "global::System.Collections.Generic.IList<Customer>"
+```
+
+### SetInterfaceTypeRef
+
+Represents `ISet<T>`.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `ElementType` | `TypeRef` | The element type |
+
+```csharp
+var tags = new SetInterfaceTypeRef("string");
+tags.ToString()  // → "global::System.Collections.Generic.ISet<string>"
+```
+
+### ReadOnlyListTypeRef
+
+Represents `IReadOnlyList<T>`.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `ElementType` | `TypeRef` | The element type |
+
+```csharp
+var items = new ReadOnlyListTypeRef("Order");
+items.ToString()  // → "global::System.Collections.Generic.IReadOnlyList<Order>"
+```
+
+### ReadOnlyCollectionTypeRef
+
+Represents `IReadOnlyCollection<T>`.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `ElementType` | `TypeRef` | The element type |
+
+```csharp
+var items = new ReadOnlyCollectionTypeRef("int");
+items.ToString()  // → "global::System.Collections.Generic.IReadOnlyCollection<int>"
+```
+
+### DictionaryInterfaceTypeRef
+
+Represents `IDictionary<TKey, TValue>`.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `KeyType` | `TypeRef` | The key type |
+| `ValueType` | `TypeRef` | The value type |
+
+```csharp
+var dict = new DictionaryInterfaceTypeRef("string", "int");
+dict.ToString()  // → "global::System.Collections.Generic.IDictionary<string, int>"
+```
+
+### ReadOnlyDictionaryTypeRef
+
+Represents `IReadOnlyDictionary<TKey, TValue>`.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `KeyType` | `TypeRef` | The key type |
+| `ValueType` | `TypeRef` | The value type |
+
+```csharp
+var config = new ReadOnlyDictionaryTypeRef("string", "object");
+config.ToString()  // → "global::System.Collections.Generic.IReadOnlyDictionary<string, object>"
+```
+
+### KeyValuePairTypeRef
+
+Represents `KeyValuePair<TKey, TValue>`.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `KeyType` | `TypeRef` | The key type |
+| `ValueType` | `TypeRef` | The value type |
+
+```csharp
+var kvp = new KeyValuePairTypeRef("string", "int");
+kvp.ToString()  // → "global::System.Collections.Generic.KeyValuePair<string, int>"
+```
+
+---
+
 ## Nullable
 
 ### NullableTypeRef
@@ -233,6 +357,19 @@ var arr = new ImmutableArrayTypeRef("string");
 arr.ToString()  // → "global::System.Collections.Immutable.ImmutableArray<string>"
 ```
 
+### ImmutableListTypeRef
+
+Represents `ImmutableList<T>`.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `ElementType` | `TypeRef` | The element type |
+
+```csharp
+var list = new ImmutableListTypeRef("Order");
+list.ToString()  // → "global::System.Collections.Immutable.ImmutableList<Order>"
+```
+
 ### ImmutableDictionaryTypeRef
 
 Represents `ImmutableDictionary<TKey, TValue>`.
@@ -245,6 +382,111 @@ Represents `ImmutableDictionary<TKey, TValue>`.
 ```csharp
 var idict = new ImmutableDictionaryTypeRef("string", "int");
 idict.ToString()  // → "global::System.Collections.Immutable.ImmutableDictionary<string, int>"
+```
+
+---
+
+## LINQ
+
+### QueryableTypeRef
+
+Represents `IQueryable<T>`.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `ElementType` | `TypeRef` | The element type |
+
+```csharp
+var query = new QueryableTypeRef("Customer");
+query.ToString()  // → "global::System.Linq.IQueryable<Customer>"
+```
+
+### OrderedQueryableTypeRef
+
+Represents `IOrderedQueryable<T>`.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `ElementType` | `TypeRef` | The element type |
+
+```csharp
+var ordered = new OrderedQueryableTypeRef("Product");
+ordered.ToString()  // → "global::System.Linq.IOrderedQueryable<Product>"
+```
+
+### LinqExpressionTypeRef
+
+Represents `Expression<TDelegate>` from `System.Linq.Expressions`.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `DelegateType` | `TypeRef` | The delegate type |
+
+```csharp
+// With a string delegate type
+var expr = new LinqExpressionTypeRef("Func<Customer, bool>");
+expr.ToString()  // → "global::System.Linq.Expressions.Expression<Func<Customer, bool>>"
+
+// Composing with FuncTypeRef
+var func = new FuncTypeRef([TypeRef.From("Customer")], TypeRef.From("bool"));
+var expr = new LinqExpressionTypeRef(func);
+expr.ToString()  // → "global::System.Linq.Expressions.Expression<global::System.Func<Customer, bool>>"
+```
+
+---
+
+## Span & Memory
+
+### SpanTypeRef
+
+Represents `Span<T>`.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `ElementType` | `TypeRef` | The element type |
+
+```csharp
+var span = new SpanTypeRef("byte");
+span.ToString()  // → "global::System.Span<byte>"
+```
+
+### ReadOnlySpanTypeRef
+
+Represents `ReadOnlySpan<T>`.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `ElementType` | `TypeRef` | The element type |
+
+```csharp
+var span = new ReadOnlySpanTypeRef("char");
+span.ToString()  // → "global::System.ReadOnlySpan<char>"
+```
+
+### MemoryTypeRef
+
+Represents `Memory<T>`.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `ElementType` | `TypeRef` | The element type |
+
+```csharp
+var mem = new MemoryTypeRef("byte");
+mem.ToString()  // → "global::System.Memory<byte>"
+```
+
+### ReadOnlyMemoryTypeRef
+
+Represents `ReadOnlyMemory<T>`.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `ElementType` | `TypeRef` | The element type |
+
+```csharp
+var mem = new ReadOnlyMemoryTypeRef("byte");
+mem.ToString()  // → "global::System.ReadOnlyMemory<byte>"
 ```
 
 ---

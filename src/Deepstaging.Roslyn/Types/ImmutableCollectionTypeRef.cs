@@ -29,6 +29,31 @@ public readonly record struct ImmutableArrayTypeRef
 }
 
 /// <summary>
+/// A type-safe wrapper representing an <c>ImmutableList&lt;T&gt;</c> type reference.
+/// Carries the element type for typed expression building.
+/// </summary>
+public readonly record struct ImmutableListTypeRef
+{
+    /// <summary>Gets the element type (e.g., <c>"string"</c>).</summary>
+    public TypeRef ElementType { get; }
+
+    /// <summary>Creates an <c>ImmutableListTypeRef</c> for the given element type.</summary>
+    public ImmutableListTypeRef(TypeRef elementType) => ElementType = elementType;
+
+    /// <summary>Gets the globally qualified <c>ImmutableList&lt;T&gt;</c> type string.</summary>
+    public override string ToString() =>
+        $"global::System.Collections.Immutable.ImmutableList<{ElementType.Value}>";
+
+    /// <summary>Implicitly converts to <see cref="TypeRef"/> for use in type declarations.</summary>
+    public static implicit operator TypeRef(ImmutableListTypeRef self) =>
+        TypeRef.From(self.ToString());
+
+    /// <summary>Implicitly converts to <see cref="string"/> for use in string interpolation.</summary>
+    public static implicit operator string(ImmutableListTypeRef self) =>
+        self.ToString();
+}
+
+/// <summary>
 /// A type-safe wrapper representing an <c>ImmutableDictionary&lt;TKey, TValue&gt;</c> type reference.
 /// Carries the key and value types for typed expression building.
 /// </summary>
