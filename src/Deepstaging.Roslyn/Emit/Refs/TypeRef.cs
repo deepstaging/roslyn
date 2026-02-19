@@ -23,6 +23,7 @@ namespace Deepstaging.Roslyn.Emit.Refs;
 /// <item><see cref="LinqRefs"/> — <c>System.Linq</c> and <c>System.Linq.Expressions</c></item>
 /// <item><see cref="DelegateRefs"/> — <c>System.Func</c> and <c>System.Action</c></item>
 /// <item><see cref="DiagnosticsRefs"/> — <c>System.Diagnostics</c></item>
+/// <item><see cref="ComponentModelRefs"/> — <c>System.ComponentModel</c></item>
 /// <item><see cref="SystemRefs"/> — <c>System</c> (Guid, DateTime, Uri, etc.)</item>
 /// <item><see cref="EntityFrameworkRefs"/> — <c>Microsoft.EntityFrameworkCore</c></item>
 /// </list>

@@ -1,47 +1,22 @@
 # Deepstaging.RoslynKit.Projection
 
-Shared projection layer containing queries and models for extracting attribute data from Roslyn symbols. This project is the **single source of truth** for attribute interpretation, used by both generators and analyzers.
+Shared projection layer — the single source of truth for extracting data from Roslyn symbols.
 
-## Architecture
-
-```
-Roslyn Symbols → Queries → Models → Generators/Analyzers
-```
-
-The Projection pattern ensures consistent behavior across all Roslyn tools by:
-- Defining strongly-typed models instead of passing raw symbols
-- Providing reusable query extension methods
-- Centralizing validation logic
+Both the generator and analyzer consume models from this project. This avoids duplicating symbol-walking logic and ensures consistent interpretation of attributes.
 
 ## Key Files
 
 | File | Purpose |
 |------|---------|
-| `Attributes/` | `AttributeQuery` extensions for finding attributes on symbols |
-| `Queries.cs` | Extension methods on `ValidSymbol<T>` for extracting data |
-| `Models/` | Strongly-typed models representing projected data |
-| `AutoNotify.cs` | Projection for `[AutoNotify]` attribute |
-| `WithMethods.cs` | Projection for `[GenerateWith]` attribute |
+| `AutoNotifyProjection.cs` | `ValidSymbol<INamedTypeSymbol>.QueryAutoNotify()` extension |
+| `Models/AutoNotifyModel.cs` | Strongly-typed model for the class |
+| `Models/AutoNotifyFieldModel.cs` | Strongly-typed model per field |
+| `Attributes/AlsoNotifyAttributeQuery.cs` | Typed accessor for `[AlsoNotify]` constructor args |
 
-## Usage
+## The Pattern
 
-```csharp
-using Deepstaging.RoslynKit.Projection;
-
-// In a generator or analyzer:
-var model = validSymbol.QueryAutoNotify();
-if (model is not null)
-{
-    foreach (var property in model.Properties)
-    {
-        // Use strongly-typed property data
-    }
-}
+```
+Roslyn Symbol → QueryAutoNotify() → AutoNotifyModel → Generator / Analyzer
 ```
 
-## Related Projects
-
-- [RoslynKit](../Deepstaging.RoslynKit/) - Attribute definitions
-- [RoslynKit.Generators](../Deepstaging.RoslynKit.Generators/) - Consumes projections for code generation
-- [RoslynKit.Analyzers](../Deepstaging.RoslynKit.Analyzers/) - Consumes projections for diagnostics
-- [Project README](../../README.md) - Full documentation
+Models are `[PipelineModel]` records with `EquatableArray<T>` fields, making them safe for incremental generator caching.

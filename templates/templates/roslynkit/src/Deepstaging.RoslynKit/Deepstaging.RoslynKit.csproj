@@ -7,11 +7,16 @@
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
         <!-- Package metadata -->
+        <IsPackable>true</IsPackable>
         <PackageId>Deepstaging.RoslynKit</PackageId>
         <Title>Deepstaging.RoslynKit</Title>
-        <Description>Attributes for Deepstaging.RoslynKit source generators.</Description>
-        <PackageTags>deepstaging;roslynkit;source-generator;attributes</PackageTags>
+        <Description>AutoNotify source generator, analyzers, and code fixes for INotifyPropertyChanged. Built with Deepstaging.Roslyn.</Description>
+        <PackageTags>deepstaging;roslynkit;source-generator;analyzer;codefix;inpc;mvvm</PackageTags>
     </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="../../README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
 
     <ItemGroup>
         <!-- PolySharp for polyfills on netstandard2.0 -->
@@ -20,5 +25,69 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         Single-package bundling
+         All generator, analyzer, code-fix, and projection assemblies are
+         bundled into this one NuGet package so consumers only need:
+           <PackageReference Include="Deepstaging.RoslynKit" />
+         ══════════════════════════════════════════════════════════════════ -->
+    <PropertyGroup>
+        <BundleArtifactsPath>$(MSBuildThisFileDirectory)..</BundleArtifactsPath>
+    </PropertyGroup>
+
+    <!-- Source generator — loaded by the compiler -->
+    <ItemGroup>
+        <None Include="$(BundleArtifactsPath)/Deepstaging.RoslynKit.Generators/bin/$(Configuration)/netstandard2.0/Deepstaging.RoslynKit.Generators.dll"
+              Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+    </ItemGroup>
+
+    <!-- Analyzers and code fixes — loaded by compiler / IDE -->
+    <ItemGroup>
+        <None Include="$(BundleArtifactsPath)/Deepstaging.RoslynKit.Analyzers/bin/$(Configuration)/netstandard2.0/Deepstaging.RoslynKit.Analyzers.dll"
+              Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+        <None Include="$(BundleArtifactsPath)/Deepstaging.RoslynKit.CodeFixes/bin/$(Configuration)/netstandard2.0/Deepstaging.RoslynKit.CodeFixes.dll"
+              Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+    </ItemGroup>
+
+    <!-- Analyzer dependencies — must be co-located in the analyzers folder for the compiler to load -->
+    <ItemGroup>
+        <None Include="$(BundleArtifactsPath)/Deepstaging.RoslynKit.Projection/bin/$(Configuration)/netstandard2.0/Deepstaging.RoslynKit.Projection.dll"
+              Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+        <None Include="$(BundleArtifactsPath)/Deepstaging.RoslynKit/bin/$(Configuration)/netstandard2.0/Deepstaging.RoslynKit.dll"
+              Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+        <None Include="$(BundleArtifactsPath)/Deepstaging.RoslynKit.Generators/bin/$(Configuration)/netstandard2.0/Deepstaging.Roslyn.dll"
+              Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+    </ItemGroup>
+
+    <!-- Expose analyzer/codefix types as compile-time references (for test projects) -->
+    <ItemGroup>
+        <None Include="$(BundleArtifactsPath)/Deepstaging.RoslynKit.Generators/bin/$(Configuration)/netstandard2.0/Deepstaging.RoslynKit.Generators.dll"
+              Pack="true" PackagePath="lib/netstandard2.0" Visible="false"/>
+        <None Include="$(BundleArtifactsPath)/Deepstaging.RoslynKit.Generators/bin/$(Configuration)/netstandard2.0/Deepstaging.RoslynKit.Generators.xml"
+              Pack="true" PackagePath="lib/netstandard2.0" Visible="false"/>
+        <None Include="$(BundleArtifactsPath)/Deepstaging.RoslynKit.Analyzers/bin/$(Configuration)/netstandard2.0/Deepstaging.RoslynKit.Analyzers.dll"
+              Pack="true" PackagePath="lib/netstandard2.0" Visible="false"/>
+        <None Include="$(BundleArtifactsPath)/Deepstaging.RoslynKit.Analyzers/bin/$(Configuration)/netstandard2.0/Deepstaging.RoslynKit.Analyzers.xml"
+              Pack="true" PackagePath="lib/netstandard2.0" Visible="false"/>
+        <None Include="$(BundleArtifactsPath)/Deepstaging.RoslynKit.CodeFixes/bin/$(Configuration)/netstandard2.0/Deepstaging.RoslynKit.CodeFixes.dll"
+              Pack="true" PackagePath="lib/netstandard2.0" Visible="false"/>
+        <None Include="$(BundleArtifactsPath)/Deepstaging.RoslynKit.CodeFixes/bin/$(Configuration)/netstandard2.0/Deepstaging.RoslynKit.CodeFixes.xml"
+              Pack="true" PackagePath="lib/netstandard2.0" Visible="false"/>
+        <None Include="$(BundleArtifactsPath)/Deepstaging.RoslynKit.Projection/bin/$(Configuration)/netstandard2.0/Deepstaging.RoslynKit.Projection.dll"
+              Pack="true" PackagePath="lib/netstandard2.0" Visible="false"/>
+        <None Include="$(BundleArtifactsPath)/Deepstaging.RoslynKit.Projection/bin/$(Configuration)/netstandard2.0/Deepstaging.RoslynKit.Projection.xml"
+              Pack="true" PackagePath="lib/netstandard2.0" Visible="false"/>
+    </ItemGroup>
+
+    <!--#if (includeRuntime) -->
+    <!-- Runtime library — ships as a normal lib dependency for consumers -->
+    <ItemGroup>
+        <None Include="$(BundleArtifactsPath)/Deepstaging.RoslynKit.Runtime/bin/$(Configuration)/net10.0/Deepstaging.RoslynKit.Runtime.dll"
+              Pack="true" PackagePath="lib/net10.0" Visible="false"/>
+        <None Include="$(BundleArtifactsPath)/Deepstaging.RoslynKit.Runtime/bin/$(Configuration)/net10.0/Deepstaging.RoslynKit.Runtime.xml"
+              Pack="true" PackagePath="lib/net10.0" Visible="false"/>
+    </ItemGroup>
+    <!--#endif -->
 
 </Project>

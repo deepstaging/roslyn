@@ -53,7 +53,7 @@ jobs:
           dotnet-version: '10.0.x'
       - run: dotnet restore Deepstaging.RoslynKit.slnx
       - run: dotnet build Deepstaging.RoslynKit.slnx -c Release --no-restore
-      - run: dotnet test --project src/Deepstaging.RoslynKit.Tests/Deepstaging.RoslynKit.Tests.csproj -c Release --no-build
+      - run: dotnet test --project test/Deepstaging.RoslynKit.Tests/Deepstaging.RoslynKit.Tests.csproj -c Release --no-build
 
   publish:
     needs: test

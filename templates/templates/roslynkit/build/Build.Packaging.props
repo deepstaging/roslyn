@@ -43,7 +43,9 @@
       These files are included in the NuGet package for display on nuget.org
     -->
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <!-- Uncomment when you add an icon.png to your packable project directory:
     <PackageIcon>icon.png</PackageIcon>
+    -->
 
     <!-- 
       PackageTags: Semicolon-separated tags for discoverability on nuget.org

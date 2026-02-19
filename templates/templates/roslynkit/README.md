@@ -1,306 +1,153 @@
 # Deepstaging.RoslynKit
 
-A complete Roslyn project template demonstrating source generators, analyzers, and code fixes using [Deepstaging.Roslyn](https://github.com/deepstaging/roslyn).
+A starter kit for building Roslyn source generators, analyzers, and code fixes with [Deepstaging.Roslyn](https://github.com/deepstaging/roslyn).
 
-## Quick Start
+## Philosophy
 
-```bash
-# Create a new project from this template
-dotnet new roslynkit -n MyCompany.MyProject
+Every Roslyn tool does three things: **query** symbols, **validate** them, and **emit** code or diagnostics. This project separates those concerns into distinct projects so each piece is testable and reusable.
 
-# Build and test
-cd MyCompany.MyProject
-dotnet build
-dotnet test
-```
+The **Projection** layer is the key insight — it extracts strongly-typed models from Roslyn symbols once, then both the generator and analyzer consume the same models. No duplicated symbol-walking logic.
 
-## What's Included
-
-| Project | Description |
-|---------|-------------|
-| `*.RoslynKit` | Attribute library containing `[GenerateWith]`, `[AutoNotify]`, `[AlsoNotify]` |
-| `*.RoslynKit.Projection` | Queries and models for extracting attribute data (shared across generators/analyzers) |
-| `*.RoslynKit.Generators` | Source generators for `With*()` methods and `INotifyPropertyChanged` |
-| `*.RoslynKit.Analyzers` | Analyzers that validate attribute usage |
-| `*.RoslynKit.CodeFixes` | Code fixes for analyzer diagnostics |
-| `*.RoslynKit.Tests` | Unit tests using TUnit and Deepstaging.Roslyn.Testing |
-
-## Architecture: The Projection Pattern
-
-This template demonstrates the **Projection Pattern** for Roslyn tools:
+## Project Map
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                     RoslynKit (Attributes)                       │
-│  [GenerateWith], [AutoNotify], [AlsoNotify]                     │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                  RoslynKit.Projection                            │
-│  ┌─────────────────┐  ┌────────────────┐  ┌──────────────────┐  │
-│  │ AttributeQuery  │  │    Queries     │  │     Models       │  │
-│  │ - AutoNotify    │  │ extension      │  │ - AutoNotifyModel│  │
-│  │ - AlsoNotify    │  │ methods on     │  │ - NotifyProperty │  │
-│  │   AttributeQuery│  │ ValidSymbol<T> │  │   Model          │  │
-│  └─────────────────┘  └────────────────┘  └──────────────────┘  │
-└─────────────────────────────────────────────────────────────────┘
-           │                    │                    │
-           ▼                    ▼                    ▼
-    ┌──────────┐         ┌───────────┐        ┌──────────┐
-    │Generators│         │ Analyzers │        │ CodeFixes│
-    └──────────┘         └───────────┘        └──────────┘
+src/
+├── RoslynKit/              Attributes — what consumers put on their code
+├── RoslynKit.Projection/   Queries + Models — extract data from symbols
+├── RoslynKit.Generators/   Source generator — emit code from models
+├── RoslynKit.Analyzers/    Analyzers — validate symbols, report diagnostics
+├── RoslynKit.CodeFixes/    Code fixes — auto-fix analyzer diagnostics
+<!--#if (includeRuntime) -->
+└── RoslynKit.Runtime/      Base classes (ObservableObject) for generated code
+<!--#else -->
+└── (optional: RoslynKit.Runtime — add with --includeRuntime)
+<!--#endif -->
+test/
+└── RoslynKit.Tests/        Tests for all of the above
 ```
 
-**Benefits:**
-- **Single source of truth** for attribute interpretation
-- **Consistent validation** across generators and analyzers
-- **Strongly-typed models** instead of raw Roslyn symbols
-- **Testable projections** independent of code generation
 
-## Example 1: `[GenerateWith]` (Simple)
+## What It Does
+
+The `[AutoNotify]` attribute generates `INotifyPropertyChanged` implementations from private backing fields:
 
 ```csharp
-using Deepstaging.RoslynKit;
-
-[GenerateWith]
-public partial class Person
-{
-    public string Name { get; init; } = "";
-    public int Age { get; init; }
-    public string? Email { get; init; }
-}
-```
-
-The source generator produces:
-
-```csharp
-public partial class Person
-{
-    public Person WithName(string value) => new Person
-    {
-        Name = value,
-        Age = this.Age,
-        Email = this.Email,
-    };
-
-    public Person WithAge(int value) => new Person
-    {
-        Name = this.Name,
-        Age = value,
-        Email = this.Email,
-    };
-
-    public Person WithEmail(string? value) => new Person
-    {
-        Name = this.Name,
-        Age = this.Age,
-        Email = value,
-    };
-}
-```
-
-Usage:
-
-```csharp
-var person = new Person { Name = "Alice", Age = 30 };
-var updated = person.WithAge(31).WithEmail("alice@example.com");
-```
-
-## Example 2: `[AutoNotify]` (Complex with Projections)
-
-This example demonstrates the full Projection pattern with queries and models.
-
-```csharp
-using Deepstaging.RoslynKit;
-
 [AutoNotify]
-public partial class PersonViewModel
+public partial class Person
 {
-    [AlsoNotify(nameof(FullName))]
+    [AlsoNotify("FullName")]
     private string _firstName = "";
-
-    [AlsoNotify(nameof(FullName))]
     private string _lastName = "";
-
     private int _age;
-
-    public string FullName => $"{FirstName} {LastName}".Trim();
 }
 ```
 
-The source generator produces:
+<!--#if (includeRuntime) -->
+The generator emits a partial class that inherits from `ObservableObject` and uses `SetField` for equality-checked property setters. The `[AlsoNotify]` attribute teaches the generator to raise additional property notifications.
+<!--#else -->
+The generator emits a partial class with public properties, `INotifyPropertyChanged` implementation, and a `SetProperty<T>` helper for equality-checked setters. The `[AlsoNotify]` attribute teaches the generator to raise additional property notifications.
+<!--#endif -->
 
-```csharp
-public partial class PersonViewModel : INotifyPropertyChanged
-{
-    public event PropertyChangedEventHandler? PropertyChanged;
-    
-    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
+Analyzers enforce that `[AutoNotify]` classes are `partial` (RK001) and fields are `private` (RK002), with one-click code fixes for both.
 
-    protected bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
-    {
-        if (EqualityComparer<T>.Default.Equals(field, value)) return false;
-        field = value;
-        OnPropertyChanged(propertyName);
-        return true;
-    }
-
-    public string FirstName
-    {
-        get => _firstName;
-        set
-        {
-            if (SetField(ref _firstName, value))
-            {
-                OnPropertyChanged(nameof(FullName));
-            }
-        }
-    }
-
-    public string LastName
-    {
-        get => _lastName;
-        set
-        {
-            if (SetField(ref _lastName, value))
-            {
-                OnPropertyChanged(nameof(FullName));
-            }
-        }
-    }
-
-    public int Age
-    {
-        get => _age;
-        set => SetField(ref _age, value);
-    }
-}
-```
-
-### How the Projection Works
-
-The `AutoNotify.cs` projection builds a model from the symbol:
-
-```csharp
-// In Deepstaging.RoslynKit.Projection/AutoNotify.cs
-public static AutoNotifyModel? QueryAutoNotify(this ValidSymbol<INamedTypeSymbol> symbol)
-{
-    var attributes = symbol.AutoNotifyAttributes();
-    if (attributes.IsEmpty)
-        return null;
-
-    return new AutoNotifyModel
-    {
-        TypeName = symbol.Name,
-        Properties = symbol.QueryNotifyProperties()  // Queries fields with naming convention
-    };
-}
-```
-
-This model is then used by:
-- **Generator**: To emit properties with change notification
-- **Analyzer**: To validate field accessibility
-- **CodeFix**: To understand what needs fixing
-
-## Analyzer Diagnostics
-
-| ID | Severity | Description |
-|----|----------|-------------|
-| RK1001 | Error | Type with `[GenerateWith]` must be declared as `partial` |
-| RK1002 | Error | Type with `[AutoNotify]` must be declared as `partial` |
-| RK1003 | Warning | AutoNotify backing field should be `private` |
-
-## Project Structure
-
-```
-├── src/
-│   ├── Deepstaging.RoslynKit/            # Attributes
-│   ├── Deepstaging.RoslynKit.Projection/ # Queries and Models (shared)
-│   ├── Deepstaging.RoslynKit.Generators/ # Source generators
-│   ├── Deepstaging.RoslynKit.Analyzers/  # Diagnostic analyzers
-│   ├── Deepstaging.RoslynKit.CodeFixes/  # Code fix providers
-│   └── Deepstaging.RoslynKit.Tests/      # Unit tests
-├── samples/
-│   └── RoslynKit.Sample/                 # Example usage
-├── build/                                # Build configuration
-└── Deepstaging.RoslynKit.slnx           # Solution file
-```
-
-## CI/CD
-
-### Build & Test (enabled by default)
-
-Push to `main` or open a PR and the **Build & Test** workflow runs automatically.
-
-### Publishing to NuGet (disabled by default)
-
-The **Publish NuGet Packages** workflow is included but only available via manual dispatch until you configure it.
-
-#### 1. Configure Trusted Publishing (recommended)
-
-1. Register or sign in at [nuget.org](https://www.nuget.org)
-2. Go to **Manage Packages → Manage GitHub Repositories** and add your repository
-3. In your GitHub repo, go to **Settings → Variables → Actions** and create a variable:
-   - Name: `NUGET_USER` — Value: your NuGet username
-
-#### 2. Enable automatic publishing
-
-Edit `.github/workflows/publish.yml` and replace the `on:` trigger:
-
-```yaml
-on:
-  push:
-    branches: [main]
-    tags: ['v*']
-    paths: ['src/**']
-  workflow_dispatch:
-    inputs:
-      version-suffix:
-        description: 'Version suffix (leave empty for release)'
-        required: false
-        default: ''
-```
-
-#### Alternative: API key authentication
-
-If you prefer API keys over Trusted Publishing:
-
-1. Generate a key at [nuget.org/account/apikeys](https://www.nuget.org/account/apikeys)
-2. Add it as `NUGET_API_KEY` in **Settings → Secrets → Actions**
-3. Replace the `NuGet Login` step in the workflow with:
-   ```yaml
-   env:
-     NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-   ```
-
-## Building
-
-### Prerequisites
-
-For local development with Deepstaging packages, set the `DEEPSTAGING_PACKAGES_DIR` environment variable:
+## Build & Test
 
 ```bash
-# Add to ~/.zshrc or ~/.bashrc
-export DEEPSTAGING_PACKAGES_DIR="$HOME/org/deepstaging/artifacts/packages"
-```
-
-### Commands
-
-```bash
-# Build all projects
 dotnet build
+dotnet run --project test/Deepstaging.RoslynKit.Tests -c Release
+```
 
-# Run tests
-dotnet test
+## Packaging
 
-# Create NuGet packages
+<!--#if (includeRuntime) -->
+This project produces a single NuGet package that bundles everything — attributes, source generator, analyzers, code fixes, and the runtime library (`ObservableObject`). Consumers only need one reference:
+<!--#else -->
+This project produces a single NuGet package that bundles everything — attributes, source generator, analyzers, and code fixes. Consumers only need one reference:
+<!--#endif -->
+
+```xml
+<PackageReference Include="Deepstaging.RoslynKit" Version="1.0.0" />
+```
+
+```bash
+# Pack with a dev version suffix (default: dev.<commit-count>)
+./build/pack.sh
+
+# Pack a release version (no suffix)
+./build/pack.sh --no-version-suffix
+
+# Custom suffix
+./build/pack.sh --version-suffix beta.1
+```
+
+Packages are written to `artifacts/packages/`.
+
+## Local Development Loop
+
+Tests cover correctness, but sometimes you need to see your generator/analyzer running in a real project. The fastest iteration loop:
+
+### 1. Pack locally
+
+```bash
 ./build/pack.sh
 ```
 
+This produces a package with a `dev.<N>` version suffix in `artifacts/packages/`.
+
+### 2. Add a local NuGet source
+
+In your consumer project's `NuGet.Config`, add a local source pointing to the packages directory:
+
+```xml
+<packageSources>
+  <add key="local" value="/path/to/roslynkit/artifacts/packages" />
+  <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
+</packageSources>
+```
+
+### 3. Reference the dev package
+
+```xml
+<PackageReference Include="Deepstaging.RoslynKit" Version="1.0.0-dev.42" />
+```
+
+### 4. Iterate
+
+After making changes, re-pack and restore:
+
+```bash
+./build/pack.sh && dotnet restore --no-cache && dotnet build
+```
+
+The `--no-cache` flag is critical — NuGet caches packages by version, so without it you'll keep getting the stale build.
+
+> **Tip:** Bump the version suffix each iteration (`--version-suffix dev.43`) to avoid cache issues entirely.
+
+## CI/CD
+
+**Build & Test** runs on every push and PR automatically.
+
+**Documentation** deploys to GitHub Pages when docs change on `main`. To enable, go to repo **Settings → Pages** and set **Source** to **GitHub Actions**.
+
+**Dependabot** keeps NuGet packages, GitHub Actions, and docs dependencies up to date weekly. See `.github/dependabot.yml`.
+
+```bash
+# Preview docs locally (creates .venv automatically)
+./build/docs.sh serve
+
+# Build static site
+./build/docs.sh build
+```
+
+**Publish to NuGet** is available via manual dispatch. To enable automated publishing:
+
+1. Configure [Trusted Publishing](https://devblogs.microsoft.com/nuget/introducing-trusted-publishers/) at nuget.org
+2. Add your repo under **Manage Packages → Manage GitHub Repositories**
+3. Set `NUGET_USER` in GitHub repo **Settings → Variables → Actions**
+4. Edit `.github/workflows/publish.yml` to trigger on tags or pushes
+
+See the workflow file for detailed instructions.
+
 ## License
 
-RPL-1.5 - This template uses [Deepstaging.Roslyn](https://github.com/deepstaging/roslyn) which is licensed under RPL-1.5.
+RPL-1.5 — This template uses [Deepstaging.Roslyn](https://github.com/deepstaging/roslyn) which is licensed under RPL-1.5.

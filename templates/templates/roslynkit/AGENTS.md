@@ -11,6 +11,10 @@ src/
 ├── *.RoslynKit.Generators/   # Source generators — emit code from models
 ├── *.RoslynKit.Analyzers/    # Analyzers — validate attribute usage
 ├── *.RoslynKit.CodeFixes/    # Code fixes — auto-fix analyzer diagnostics
+<!--#if (includeRuntime) -->
+└── *.RoslynKit.Runtime/      # Runtime base classes (ObservableObject)
+<!--#endif -->
+test/
 └── *.RoslynKit.Tests/        # Tests — TUnit + Deepstaging.Roslyn.Testing
 ```
 
@@ -18,18 +22,26 @@ src/
 
 The Projection layer is the shared core. Generators, analyzers, and code fixes all consume the same query methods and models — they never interpret attributes independently.
 
-## Build & Test
+## Build, Test, Lint
 
 ```bash
-dotnet build                    # Build all projects (also the lint step — warnings are errors)
-dotnet test                     # Run all tests
-./build/pack.sh                 # Create NuGet packages
+dotnet build                                                          # Build all (warnings are errors — this is the lint step)
+dotnet run --project test/Deepstaging.RoslynKit.Tests -c Release      # Run all tests
+dotnet run --project test/Deepstaging.RoslynKit.Tests -c Release \
+  --treenode-filter /*/*/AutoNotifyGeneratorTests/*                    # Run one test class
+./build/pack.sh                                                       # Create NuGet package
+./build/docs.sh serve                                                 # Preview docs locally
 ```
+
+The `--treenode-filter` syntax is `/<Assembly>/<Namespace>/<Class>/<Test>` with `*` wildcards.
 
 ## Target Frameworks
 
 - **Library projects** (attributes, projection, generators, analyzers, code fixes): `netstandard2.0` — required for Roslyn analyzer/generator host compatibility
-- **Test project**: modern TFM (net10.0+)
+<!--#if (includeRuntime) -->
+- **Runtime project**: `net10.0` — ships as a runtime dependency in the NuGet package
+<!--#endif -->
+- **Test project**: `net10.0`
 
 ## Deepstaging.Roslyn Patterns
 
@@ -52,11 +64,10 @@ var name = attr.NamedArg<string>("Name").OrDefault("default");
 Find symbols with chainable filters. Returns real `ISymbol` instances:
 
 ```csharp
-TypeQuery.From(compilation)
-    .ThatArePublic()
-    .ThatAreClasses()
-    .WithAttribute("MyAttribute")
-    .GetAll();
+symbol.QueryFields()
+    .ThatArePrivate()
+    .ThatAreInstance()
+    .Where(f => f.Name.StartsWith("_"));
 ```
 
 ### Emit
@@ -64,10 +75,13 @@ TypeQuery.From(compilation)
 Fluent builders that produce compilable C#:
 
 ```csharp
-TypeBuilder.Class("Generated")
+TypeBuilder
+    .Parse("public partial class Generated")
     .InNamespace("MyApp")
-    .AsPartial()
-    .AddProperty("Name", "string")
+    .ImplementsINotifyPropertyChanged()
+    .AddProperty("Name", "string", p => p
+        .WithGetter(b => b.AddStatement("return _name"))
+        .WithSetter(b => b.AddStatement("_name = value")))
     .Emit();
 ```
 
@@ -82,14 +96,6 @@ var value = symbol
     .OrDefault(0);
 ```
 
-### Scriban Templates
-
-Source generators can use `.scriban-cs` templates instead of emit builders:
-
-- Templates live alongside the generator that uses them
-- Use `TemplateRenderer` to render with a model
-- Test with `RenderTemplateFrom<T>(source)` in test classes
-
 ## Testing Patterns
 
 Tests inherit from `RoslynTestBase`:
@@ -98,31 +104,32 @@ Tests inherit from `RoslynTestBase`:
 public class MyTests : RoslynTestBase
 {
     [Test]
-    public async Task AnalyzerReportsError()
-    {
+    public async Task AnalyzerReportsError() =>
         await AnalyzeWith<MyAnalyzer>(source)
-            .ShouldReportDiagnostic("RK1001");
-    }
+            .ShouldReportDiagnostic("RK001");
 
     [Test]
-    public async Task GeneratorEmitsCode()
-    {
+    public async Task GeneratorEmitsCode() =>
+        await GenerateWith<MyGenerator>(source)
+            .ShouldGenerate()
+            .WithFileContaining("public string Name")
+            .CompilesSuccessfully();
+
+    [Test]
+    public async Task SnapshotTest() =>
         await GenerateWith<MyGenerator>(source)
             .ShouldGenerate()
             .VerifySnapshot();
-    }
 
     [Test]
-    public async Task CodeFixWorks()
-    {
+    public async Task CodeFixWorks() =>
         await AnalyzeAndFixWith<MyAnalyzer, MyCodeFix>(source)
-            .ForDiagnostic("RK1001")
+            .ForDiagnostic("RK001")
             .ShouldProduce(expectedSource);
-    }
 }
 ```
 
-Register custom type references once via `ModuleInitializer`:
+Register custom type references once via `ModuleInitializer` in `ModuleInit.cs`:
 
 ```csharp
 [ModuleInitializer]
@@ -130,9 +137,21 @@ public static void Init() =>
     ReferenceConfiguration.AddReferencesFromTypes(typeof(MyAttribute));
 ```
 
+## Packaging
+
+This project uses single-package bundling. The root csproj packs everything into one NuGet package:
+
+- Attributes → `lib/netstandard2.0/`
+- Generator + Projection → `analyzers/dotnet/cs/`
+- Analyzers + CodeFixes → `analyzers/dotnet/cs/`
+<!--#if (includeRuntime) -->
+- Runtime → `lib/net10.0/`
+<!--#endif -->
+
 ## Adding New Features
 
 1. **Define attribute** in the RoslynKit project
-2. **Add queries and model** in the Projection project — extract attribute data into a strongly-typed model
+2. **Add queries and model** in the Projection project — extract attribute data into a `[PipelineModel]` record
 3. **Implement generator** (or analyzer/code fix) consuming the projection model
 4. **Write tests** using the appropriate `RoslynTestBase` entry point
+5. **Update snapshot** files if generator output changes

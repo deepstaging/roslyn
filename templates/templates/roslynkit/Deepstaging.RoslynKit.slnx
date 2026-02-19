@@ -4,5 +4,8 @@
     <Project Path="src/Deepstaging.RoslynKit.Generators/Deepstaging.RoslynKit.Generators.csproj"/>
     <Project Path="src/Deepstaging.RoslynKit.Analyzers/Deepstaging.RoslynKit.Analyzers.csproj"/>
     <Project Path="src/Deepstaging.RoslynKit.CodeFixes/Deepstaging.RoslynKit.CodeFixes.csproj"/>
-    <Project Path="src/Deepstaging.RoslynKit.Tests/Deepstaging.RoslynKit.Tests.csproj"/>
+    <!--#if (includeRuntime) -->
+    <Project Path="src/Deepstaging.RoslynKit.Runtime/Deepstaging.RoslynKit.Runtime.csproj"/>
+    <!--#endif -->
+    <Project Path="test/Deepstaging.RoslynKit.Tests/Deepstaging.RoslynKit.Tests.csproj"/>
 </Solution>

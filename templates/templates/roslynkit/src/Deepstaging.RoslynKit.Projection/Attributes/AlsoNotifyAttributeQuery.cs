@@ -1,19 +1,20 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
-
 namespace Deepstaging.RoslynKit.Projection.Attributes;
 
+using Deepstaging.Roslyn;
+
 /// <summary>
-/// A queryable wrapper over <see cref="AlsoNotifyAttribute"/> data.
-/// Provides access to the property names that should also be notified.
+/// 
 /// </summary>
-/// <param name="AttributeData">The underlying Roslyn attribute data.</param>
-public sealed record AlsoNotifyAttributeQuery(AttributeData AttributeData) : AttributeQuery(AttributeData)
+/// <param name="AttributeData"></param>
+public record AlsoNotifyAttributeQuery(AttributeData AttributeData) : AttributeQuery(AttributeData)
 {
     /// <summary>
-    /// Gets the property names that should also be notified.
+    /// An array of property names to also raise PropertyChanged for when the attributed field changes.
     /// </summary>
-    public ImmutableArray<string> PropertyNames => ConstructorArg<string[]>(0)
-        .Map(ImmutableArray.Create)
+    public EquatableArray<string> AlsoNotify => AttributeData
+        .GetConstructorArgument<string[]>(0)
+        .Map(values => values.ToEquatableArray())
         .OrDefault([]);
 }

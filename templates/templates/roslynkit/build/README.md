@@ -16,7 +16,8 @@ This directory contains modular MSBuild configuration files imported by `Directo
 
 | Script | Purpose |
 |--------|---------|
-| `pack.sh` | Build and create NuGet packages |
+| `pack.sh` | Build and create NuGet package |
+| `docs.sh` | Preview or build the documentation site |
 
 ## Usage
 
@@ -29,4 +30,10 @@ This directory contains modular MSBuild configuration files imported by `Directo
 
 # See all options
 ./build/pack.sh --help
+
+# Preview docs locally
+./build/docs.sh serve
+
+# Build static site
+./build/docs.sh build
 ```

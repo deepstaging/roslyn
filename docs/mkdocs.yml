@@ -69,6 +69,7 @@ plugins:
 nav:
   - Home: index.md
   - Getting Started: getting-started.md
+  - Templates: templates.md
   - Best Practices: best-practices.md
   - Guides:
     - Project Organization: guides/project-organization.md

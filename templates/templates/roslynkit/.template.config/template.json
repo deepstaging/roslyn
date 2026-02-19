@@ -11,7 +11,7 @@
   "identity": "Deepstaging.RoslynKit",
   "name": "Deepstaging Roslyn Kit",
   "shortName": "roslynkit",
-  "description": "A complete Roslyn project template with source generator, analyzer, and codefix using Deepstaging.Roslyn. Demonstrates the Builder pattern with immutable With*() methods.",
+  "description": "A complete Roslyn project template with source generator, analyzer, and code fix using Deepstaging.Roslyn. Demonstrates the AutoNotify pattern for INotifyPropertyChanged.",
   "tags": {
     "language": "C#",
     "type": "solution"
@@ -32,6 +32,13 @@
       "description": "The author name for package metadata.",
       "defaultValue": "Deepstaging",
       "replaces": "{{AuthorName}}"
+    },
+    "includeRuntime": {
+      "type": "parameter",
+      "datatype": "bool",
+      "description": "Include a Runtime project with base classes (e.g., ObservableObject) for generated code.",
+      "defaultValue": "false",
+      "displayName": "Include Runtime project"
     }
   },
   "sources": [
@@ -46,7 +53,21 @@
             "**/bin/**",
             "**/obj/**",
             "**/*.user",
-            "**/samples/**"
+            "**/samples/**",
+            "**/site/**"
+          ]
+        },
+        {
+          "condition": "(!includeRuntime)",
+          "exclude": [
+            "src/Deepstaging.RoslynKit.Runtime/**",
+            "**/AutoNotifyGeneratorTests.SnapshotRuntime.verified.txt"
+          ]
+        },
+        {
+          "condition": "(includeRuntime)",
+          "exclude": [
+            "**/AutoNotifyGeneratorTests.Snapshot.verified.txt"
           ]
         }
       ]

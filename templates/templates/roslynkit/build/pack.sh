@@ -1,7 +1,7 @@
 #!/bin/bash
 # SPDX-FileCopyrightText: 2024-present Deepstaging
 # SPDX-License-Identifier: RPL-1.5
-# Build and package Deepstaging.RoslynKit NuGet packages
+# Build and package Deepstaging.RoslynKit NuGet package
 #
 # Usage:
 #   ./build/pack.sh                    # Build Release with dev version suffix
@@ -11,9 +11,6 @@
 #
 # Output: artifacts/packages/
 #   - Deepstaging.RoslynKit.{version}.nupkg
-#   - Deepstaging.RoslynKit.Generators.{version}.nupkg
-#   - Deepstaging.RoslynKit.Analyzers.{version}.nupkg
-#   - Deepstaging.RoslynKit.CodeFixes.{version}.nupkg
 
 set -euo pipefail
 
@@ -62,21 +59,6 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Build common pack args
-build_pack_args() {
-    local project="$1"
-    local args=(
-        "$project"
-        --configuration "$CONFIGURATION"
-        --output "$OUTPUT_DIR"
-        --no-build
-    )
-    if [[ -n "$VERSION_SUFFIX" ]]; then
-        args+=(--version-suffix "$VERSION_SUFFIX")
-    fi
-    echo "${args[@]}"
-}
-
 echo "Building Deepstaging.RoslynKit ($CONFIGURATION)..."
 HUSKY=0 dotnet build "$REPO_ROOT/Deepstaging.RoslynKit.slnx" --configuration "$CONFIGURATION"
 
@@ -86,15 +68,23 @@ mkdir -p "$OUTPUT_DIR"
 
 echo ""
 echo "Packing Deepstaging.RoslynKit..."
-dotnet pack $(build_pack_args "$REPO_ROOT/src/Deepstaging.RoslynKit/Deepstaging.RoslynKit.csproj")
-dotnet pack $(build_pack_args "$REPO_ROOT/src/Deepstaging.RoslynKit.Generators/Deepstaging.RoslynKit.Generators.csproj")
-dotnet pack $(build_pack_args "$REPO_ROOT/src/Deepstaging.RoslynKit.Analyzers/Deepstaging.RoslynKit.Analyzers.csproj")
-dotnet pack $(build_pack_args "$REPO_ROOT/src/Deepstaging.RoslynKit.CodeFixes/Deepstaging.RoslynKit.CodeFixes.csproj")
+
+PACK_ARGS=(
+    "$REPO_ROOT/src/Deepstaging.RoslynKit/Deepstaging.RoslynKit.csproj"
+    --configuration "$CONFIGURATION"
+    --output "$OUTPUT_DIR"
+    --no-build
+)
+if [[ -n "$VERSION_SUFFIX" ]]; then
+    PACK_ARGS+=(--version-suffix "$VERSION_SUFFIX")
+fi
+
+dotnet pack "${PACK_ARGS[@]}"
 
 echo ""
-echo "Packages created in: $OUTPUT_DIR"
+echo "Package created in: $OUTPUT_DIR"
 
-# Clean up old package versions (keep only last 3 per package)
+# Clean up old package versions (keep only last 3)
 for prefix in $(ls "$OUTPUT_DIR"/*.nupkg 2>/dev/null | xargs -n1 basename | sed 's/\.[0-9][0-9]*\..*//' | sort -u); do
     ls -t "$OUTPUT_DIR/$prefix".[0-9]*.nupkg 2>/dev/null | tail -n +4 | xargs rm -f
 done

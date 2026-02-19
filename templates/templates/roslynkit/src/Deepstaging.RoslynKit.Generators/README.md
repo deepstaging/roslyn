@@ -1,56 +1,26 @@
 # Deepstaging.RoslynKit.Generators
 
-Source generators that produce code based on RoslynKit attributes. Uses the [Deepstaging.Roslyn](https://github.com/deepstaging/roslyn) framework and consumes projections from the Projection layer.
+Source generator that emits partial classes with property implementations for `[AutoNotify]` types.
 
-## Generators
+## How It Works
 
-| Generator | Attribute | Output |
-|-----------|-----------|--------|
-| `WithMethodsGenerator` | `[GenerateWith]` | Immutable `With*()` methods for each `init` property |
-| `AutoNotifyGenerator` | `[AutoNotify]` | `INotifyPropertyChanged` implementation with properties |
+1. `ForAttribute<AutoNotifyAttribute>()` discovers annotated types
+2. `QueryAutoNotify()` projects each type into an `AutoNotifyModel`
+3. `WriteAutoNotifyClass()` emits the partial class via the Emit API
 
-## Architecture
-
-```
-Symbol → Projection Query → Model → Template → Generated Code
-```
-
-Each generator:
-1. Queries the Projection layer for a strongly-typed model
-2. Passes the model to a template/writer
-3. Emits the generated source
+<!--#if (includeRuntime) -->
+The generated class inherits from `ObservableObject` and uses `SetField` for equality-checked property setters. No `INotifyPropertyChanged` boilerplate is emitted — it's all provided by the base class.
+<!--#else -->
+The generated class implements `INotifyPropertyChanged` directly, emitting the event, `OnPropertyChanged`, and a private `SetProperty<T>` helper for equality-checked setters.
+<!--#endif -->
 
 ## Key Files
 
 | File | Purpose |
 |------|---------|
-| `WithMethodsGenerator.cs` | Generator for `[GenerateWith]` |
-| `AutoNotifyGenerator.cs` | Generator for `[AutoNotify]` |
-| `Templates/` | Source generation templates |
-| `Writers/` | Code emission helpers |
+| `AutoNotifyGenerator.cs` | Entry point — wires pipeline stages together |
+| `Writers/AutoNotifyWriter.cs` | Emit logic — builds the partial class with properties |
 
-## Generated Output Example
+## Bundling
 
-For a type with `[GenerateWith]`:
-
-```csharp
-// Input
-[GenerateWith]
-public partial class Person
-{
-    public string Name { get; init; } = "";
-}
-
-// Generated
-public partial class Person
-{
-    public Person WithName(string value) => new Person { Name = value };
-}
-```
-
-## Related Projects
-
-- [RoslynKit](../Deepstaging.RoslynKit/) - Attribute definitions
-- [RoslynKit.Projection](../Deepstaging.RoslynKit.Projection/) - Queries and models
-- [RoslynKit.Tests](../Deepstaging.RoslynKit.Tests/) - Generator tests
-- [Project README](../../README.md) - Full documentation
+The csproj uses `GetDependencyTargetPaths` to bundle `Deepstaging.Roslyn`, the attribute assembly, and `Projection` DLLs alongside the generator. Source generators are loaded in isolation by the compiler, so all dependencies must be co-located.
