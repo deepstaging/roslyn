@@ -14,10 +14,11 @@ public static class LanguageExtExtensions
     private const string LangExtNamespace = "LanguageExt";
 
     /// <summary>
-    /// 
+    /// Checks if the symbol is a LanguageExt Eff&lt;RT, A&gt; type.
     /// </summary>
     /// <returns></returns>
-    public static MethodQuery ReturningLanguageExtEff(this MethodQuery query) => query.WithReturnType(IsLanguageExtEff);
+    public static MethodQuery ReturningLanguageExtEff(this MethodQuery query) => 
+        query.WithReturnType(IsLanguageExtEff);
 
     /// <summary>
     /// 
@@ -26,5 +27,5 @@ public static class LanguageExtExtensions
     /// <returns></returns>
     public static bool IsLanguageExtEff(this ISymbol symbol) =>
         symbol is INamedTypeSymbol { Name: "Eff", TypeArguments.Length: 2 } type &&
-        type.ContainingNamespace?.ToDisplayString() == LangExtNamespace;
+        type.ContainingNamespace?.ToDisplayString() == NamespaceRef.From("LanguageExt");
 }

@@ -14,14 +14,11 @@ namespace Deepstaging.Roslyn.LanguageExt.Types;
 /// </remarks>
 public static class LanguageExtRefs
 {
-    /// <summary>Gets the <c>LanguageExt</c> namespace.</summary>
-    public static NamespaceRef Namespace => NamespaceRef.From("LanguageExt");
-
     /// <summary>Gets the <c>LanguageExt.Effects</c> namespace.</summary>
-    public static NamespaceRef EffectsNamespace => Namespace.Append("Effects");
+    public static NamespaceRef EffectsNamespace => NamespaceRef.From("LanguageExt").Append("Effects");
 
     /// <summary>Gets a <c>static LanguageExt.Prelude</c> using reference.</summary>
-    public static string PreludeStatic => Namespace.Append("Prelude").AsStatic();
+    public static string PreludeStatic => NamespaceRef.From("LanguageExt").Append("Prelude").AsStatic();
 
     // ── Core Types ──────────────────────────────────────────────────────
 
@@ -44,5 +41,5 @@ public static class LanguageExtRefs
     public static HashMapTypeRef HashMap(TypeRef keyType, TypeRef valueType) => new(keyType, valueType);
 
     /// <summary>Gets a <c>Unit</c> type reference.</summary>
-    public static TypeRef Unit => Namespace.GlobalType("Unit");
+    public static TypeRef Unit => NamespaceRef.From("LanguageExt").GlobalType("Unit");
 }

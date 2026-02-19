@@ -18,5 +18,5 @@ public static class TypeBuilderExtensions
     /// Adds <c>LanguageExt</c>, <c>LanguageExt.Effects</c>, and <c>static LanguageExt.Prelude</c>.
     /// </remarks>
     public static TypeBuilder AddLanguageExtUsings(this TypeBuilder builder) =>
-        builder.AddUsings(LanguageExtRefs.Namespace, LanguageExtRefs.EffectsNamespace, LanguageExtRefs.PreludeStatic);
+        builder.AddUsings(NamespaceRef.From("LanguageExt"), LanguageExtRefs.EffectsNamespace, LanguageExtRefs.PreludeStatic);
 }

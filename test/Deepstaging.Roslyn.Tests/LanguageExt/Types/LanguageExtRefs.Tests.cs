@@ -10,7 +10,7 @@ public class LanguageExtRefsTests
     [Test]
     public async Task Namespace_returns_LanguageExt()
     {
-        var ns = LanguageExtRefs.Namespace;
+        var ns = NamespaceRef.From("LanguageExt");
 
         await Assert.That(ns.Value).IsEqualTo("LanguageExt");
     }

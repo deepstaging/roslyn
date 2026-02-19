@@ -30,8 +30,11 @@ public static class MethodBuilderExtensions
         this MethodBuilder builder,
         string rt,
         TypeRef capability,
-        TypeRef resultType) => builder
-        .AsStatic()
-        .AddTypeParameter(rt, tp => tp.WithConstraint(capability))
-        .WithReturnType(LanguageExtRefs.Eff(rt, resultType));
+        TypeRef resultType)
+    {
+        return builder
+            .AsStatic()
+            .AddTypeParameter(rt, tp => tp.WithConstraint(capability))
+            .WithReturnType(LanguageExtRefs.Eff(rt, resultType));
+    }
 }
