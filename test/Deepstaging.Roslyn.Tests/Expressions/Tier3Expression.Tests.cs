@@ -61,4 +61,22 @@ public class ImmutableCollectionExpressionTests
         await Assert.That(expr.Value)
             .IsEqualTo("global::System.Collections.Immutable.ImmutableDictionary.CreateBuilder<string, int>()");
     }
+
+    [Test]
+    public async Task EmptyList_produces_empty_expression()
+    {
+        var expr = ImmutableCollectionExpression.EmptyList("string");
+
+        await Assert.That(expr.Value)
+            .IsEqualTo("global::System.Collections.Immutable.ImmutableList<string>.Empty");
+    }
+
+    [Test]
+    public async Task CreateList_produces_create_expression()
+    {
+        var expr = ImmutableCollectionExpression.CreateList("int", "1", "2", "3");
+
+        await Assert.That(expr.Value)
+            .IsEqualTo("global::System.Collections.Immutable.ImmutableList.Create<int>(1, 2, 3)");
+    }
 }

@@ -3,7 +3,7 @@
 
 namespace Deepstaging.Roslyn.Expressions;
 
-using Deepstaging.Roslyn.Types;
+using Types;
 
 /// <summary>
 /// Expression factory for Entity Framework Core operations.

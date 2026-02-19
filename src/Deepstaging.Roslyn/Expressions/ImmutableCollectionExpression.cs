@@ -23,6 +23,9 @@ public static class ImmutableCollectionExpression
     private static readonly TypeRef ImmutableDictionaryType =
         TypeRef.Global("System.Collections.Immutable.ImmutableDictionary");
 
+    private static readonly TypeRef ImmutableListType =
+        TypeRef.Global("System.Collections.Immutable.ImmutableList");
+
     // ── ImmutableArray ──────────────────────────────────────────────────
 
     /// <summary>
@@ -57,4 +60,21 @@ public static class ImmutableCollectionExpression
     /// <param name="valueType">The value type.</param>
     public static ExpressionRef CreateDictionaryBuilder(TypeRef keyType, TypeRef valueType) =>
         ImmutableDictionaryType.Call($"CreateBuilder<{keyType.Value}, {valueType.Value}>");
+
+    // ── ImmutableList ───────────────────────────────────────────────────
+
+    /// <summary>
+    /// <c>ImmutableList&lt;T&gt;.Empty</c> — the empty immutable list for the given element type.
+    /// </summary>
+    /// <param name="elementType">The element type.</param>
+    public static ExpressionRef EmptyList(TypeRef elementType) =>
+        ExpressionRef.From($"{new ImmutableListTypeRef(elementType)}.Empty");
+
+    /// <summary>
+    /// <c>ImmutableList.Create&lt;T&gt;(items)</c> — creates an immutable list from the given items.
+    /// </summary>
+    /// <param name="elementType">The element type.</param>
+    /// <param name="items">The item expressions.</param>
+    public static ExpressionRef CreateList(TypeRef elementType, params ExpressionRef[] items) =>
+        ImmutableListType.Call($"Create<{elementType.Value}>", items);
 }

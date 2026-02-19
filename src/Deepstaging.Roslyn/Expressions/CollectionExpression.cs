@@ -58,4 +58,16 @@ public static class CollectionExpression
     /// <param name="comparer">The equality comparer expression.</param>
     public static ExpressionRef NewHashSet(TypeRef elementType, ExpressionRef comparer) =>
         ((TypeRef)new HashSetTypeRef(elementType)).New(comparer);
+
+    // ── Empty sequences ─────────────────────────────────────────────────
+
+    /// <summary>Produces an <c>Enumerable.Empty&lt;T&gt;()</c> expression.</summary>
+    /// <param name="elementType">The element type.</param>
+    public static ExpressionRef EmptyEnumerable(TypeRef elementType) =>
+        TypeRef.Global("System.Linq.Enumerable").Call($"Empty<{elementType.Value}>");
+
+    /// <summary>Produces an <c>Array.Empty&lt;T&gt;()</c> expression.</summary>
+    /// <param name="elementType">The element type.</param>
+    public static ExpressionRef EmptyArray(TypeRef elementType) =>
+        TypeRef.Global("System.Array").Call($"Empty<{elementType.Value}>");
 }

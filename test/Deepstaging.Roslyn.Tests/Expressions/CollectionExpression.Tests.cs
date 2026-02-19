@@ -40,4 +40,22 @@ public class CollectionExpressionTests
         await Assert.That(expr.Value)
             .IsEqualTo("new global::System.Collections.Generic.HashSet<int>()");
     }
+
+    [Test]
+    public async Task EmptyEnumerable_produces_expression()
+    {
+        var expr = CollectionExpression.EmptyEnumerable("string");
+
+        await Assert.That(expr.Value)
+            .IsEqualTo("global::System.Linq.Enumerable.Empty<string>()");
+    }
+
+    [Test]
+    public async Task EmptyArray_produces_expression()
+    {
+        var expr = CollectionExpression.EmptyArray("int");
+
+        await Assert.That(expr.Value)
+            .IsEqualTo("global::System.Array.Empty<int>()");
+    }
 }
