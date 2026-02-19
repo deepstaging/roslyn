@@ -11,7 +11,6 @@ Roslyn APIs are powerful but awkward. This library wraps them in something that 
 | Package | Purpose |
 |---------|---------|
 | `Deepstaging.Roslyn` | Core toolkit: Queries, Projections, Types, Expressions, Emit builders, Scriban templates, Code fixes |
-
 | `Deepstaging.Roslyn.LanguageExt` | LanguageExt type references, expression builders, and effect lifting |
 | `Deepstaging.Roslyn.Testing` | Test utilities for generators and analyzers |
 
