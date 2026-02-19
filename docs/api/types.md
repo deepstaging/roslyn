@@ -491,6 +491,212 @@ mem.ToString()  // → "global::System.ReadOnlyMemory<byte>"
 
 ---
 
+## JSON
+
+### JsonConverterTypeRef
+
+Represents `JsonConverter<T>` from `System.Text.Json.Serialization`.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `ValueType` | `TypeRef` | The type being converted |
+
+```csharp
+var converter = new JsonConverterTypeRef("MyEnum");
+converter.ToString()  // → "global::System.Text.Json.Serialization.JsonConverter<MyEnum>"
+```
+
+### JsonTypes
+
+Static `TypeRef` constants for `System.Text.Json`.
+
+| Property | Produces |
+|----------|----------|
+| `Namespace` | `NamespaceRef` for `System.Text.Json` |
+| `SerializationNamespace` | `NamespaceRef` for `System.Text.Json.Serialization` |
+| `Serializer` | `global::System.Text.Json.JsonSerializer` |
+| `SerializerOptions` | `global::System.Text.Json.JsonSerializerOptions` |
+| `Reader` | `global::System.Text.Json.Utf8JsonReader` |
+| `Writer` | `global::System.Text.Json.Utf8JsonWriter` |
+
+### JsonAttributes
+
+| Property | Produces |
+|----------|----------|
+| `Converter` | `[global::System.Text.Json.Serialization.JsonConverter]` |
+
+---
+
+## HTTP
+
+### HttpTypes
+
+Static `TypeRef` constants for `System.Net.Http`.
+
+| Property | Produces |
+|----------|----------|
+| `Namespace` | `NamespaceRef` for `System.Net.Http` |
+| `Client` | `global::System.Net.Http.HttpClient` |
+| `RequestMessage` | `global::System.Net.Http.HttpRequestMessage` |
+| `ResponseMessage` | `global::System.Net.Http.HttpResponseMessage` |
+| `Method` | `global::System.Net.Http.HttpMethod` |
+| `Content` | `global::System.Net.Http.HttpContent` |
+| `StringContent` | `global::System.Net.Http.StringContent` |
+| `ByteArrayContent` | `global::System.Net.Http.ByteArrayContent` |
+| `StreamContent` | `global::System.Net.Http.StreamContent` |
+
+---
+
+## Entity Framework
+
+### DbSetTypeRef
+
+Represents `DbSet<T>`.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `EntityType` | `TypeRef` | The entity type |
+
+```csharp
+var dbSet = new DbSetTypeRef("Customer");
+dbSet.ToString()  // → "global::Microsoft.EntityFrameworkCore.DbSet<Customer>"
+```
+
+### EntityTypeBuilderTypeRef
+
+Represents `EntityTypeBuilder<T>`.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `EntityType` | `TypeRef` | The entity type |
+
+```csharp
+var builder = new EntityTypeBuilderTypeRef("Customer");
+builder.ToString()  // → "global::Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Customer>"
+```
+
+### EntityTypeConfigurationTypeRef
+
+Represents `IEntityTypeConfiguration<T>`.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `EntityType` | `TypeRef` | The entity type |
+
+```csharp
+var config = new EntityTypeConfigurationTypeRef("Customer");
+config.ToString()  // → "global::Microsoft.EntityFrameworkCore.IEntityTypeConfiguration<Customer>"
+```
+
+### EntityFrameworkTypes
+
+| Property | Produces |
+|----------|----------|
+| `Namespace` | `NamespaceRef` for `Microsoft.EntityFrameworkCore` |
+| `BuildersNamespace` | `NamespaceRef` for `Microsoft.EntityFrameworkCore.Metadata.Builders` |
+| `DbContext` | `global::Microsoft.EntityFrameworkCore.DbContext` |
+| `ModelBuilder` | `global::Microsoft.EntityFrameworkCore.ModelBuilder` |
+
+### EntityFrameworkAttributes
+
+Data annotation `AttributeRef` constants for EF models.
+
+| Property | Attribute |
+|----------|-----------|
+| `Key` | `[Key]` |
+| `Required` | `[Required]` |
+| `MaxLength` | `[MaxLength]` |
+| `StringLength` | `[StringLength]` |
+| `Range` | `[Range]` |
+| `Table` | `[Table]` |
+| `Column` | `[Column]` |
+| `ForeignKey` | `[ForeignKey]` |
+| `NotMapped` | `[NotMapped]` |
+| `DatabaseGenerated` | `[DatabaseGenerated]` |
+
+---
+
+## Dependency Injection
+
+### DependencyInjectionTypes
+
+Static `TypeRef` constants for `Microsoft.Extensions.DependencyInjection`.
+
+| Property | Produces |
+|----------|----------|
+| `Namespace` | `NamespaceRef` for `Microsoft.Extensions.DependencyInjection` |
+| `IServiceCollection` | `global::Microsoft.Extensions.DependencyInjection.IServiceCollection` |
+| `IServiceProvider` | `global::System.IServiceProvider` |
+| `IServiceScopeFactory` | `global::Microsoft.Extensions.DependencyInjection.IServiceScopeFactory` |
+| `IServiceScope` | `global::Microsoft.Extensions.DependencyInjection.IServiceScope` |
+| `ServiceDescriptor` | `global::Microsoft.Extensions.DependencyInjection.ServiceDescriptor` |
+
+---
+
+## Logging
+
+### LoggerTypeRef
+
+Represents `ILogger<T>`.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `CategoryType` | `TypeRef` | The logger category type |
+
+```csharp
+var logger = new LoggerTypeRef("MyService");
+logger.ToString()  // → "global::Microsoft.Extensions.Logging.ILogger<MyService>"
+```
+
+### LoggingTypes
+
+| Property | Produces |
+|----------|----------|
+| `Namespace` | `NamespaceRef` for `Microsoft.Extensions.Logging` |
+| `ILogger` | `global::Microsoft.Extensions.Logging.ILogger` |
+| `ILoggerFactory` | `global::Microsoft.Extensions.Logging.ILoggerFactory` |
+| `LogLevel` | `global::Microsoft.Extensions.Logging.LogLevel` |
+
+---
+
+## Configuration
+
+### ConfigurationTypes
+
+Static `TypeRef` constants for `Microsoft.Extensions.Configuration`.
+
+| Property | Produces |
+|----------|----------|
+| `Namespace` | `NamespaceRef` for `Microsoft.Extensions.Configuration` |
+| `IConfiguration` | `global::Microsoft.Extensions.Configuration.IConfiguration` |
+| `IConfigurationSection` | `global::Microsoft.Extensions.Configuration.IConfigurationSection` |
+| `IConfigurationRoot` | `global::Microsoft.Extensions.Configuration.IConfigurationRoot` |
+| `IConfigurationBuilder` | `global::Microsoft.Extensions.Configuration.IConfigurationBuilder` |
+
+---
+
+## Diagnostics
+
+### DiagnosticsTypes
+
+Static `TypeRef` constants for `System.Diagnostics`.
+
+| Property | Produces |
+|----------|----------|
+| `Namespace` | `NamespaceRef` for `System.Diagnostics` |
+| `Activity` | `global::System.Diagnostics.Activity` |
+| `ActivitySource` | `global::System.Diagnostics.ActivitySource` |
+| `ActivityKind` | `global::System.Diagnostics.ActivityKind` |
+| `ActivityStatusCode` | `global::System.Diagnostics.ActivityStatusCode` |
+| `DiagnosticSource` | `global::System.Diagnostics.DiagnosticSource` |
+| `Stopwatch` | `global::System.Diagnostics.Stopwatch` |
+| `Process` | `global::System.Diagnostics.Process` |
+| `Debug` | `global::System.Diagnostics.Debug` |
+| `Trace` | `global::System.Diagnostics.Trace` |
+| `Debugger` | `global::System.Diagnostics.Debugger` |
+
+---
+
 ## Composability
 
 Typed wrappers compose naturally because they implicitly convert to `TypeRef`:

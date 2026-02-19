@@ -82,13 +82,18 @@ Constructor expressions for `List<T>`, `Dictionary<K,V>`, and `HashSet<T>`.
 | `NewDictionary(keyType, valueType, capacity)` | `new Dictionary<K, V>(capacity)` |
 | `NewHashSet(elementType)` | `new HashSet<T>()` |
 | `NewHashSet(elementType, comparer)` | `new HashSet<T>(comparer)` |
+| `EmptyEnumerable(elementType)` | `Enumerable.Empty<T>()` |
+| `EmptyArray(elementType)` | `Array.Empty<T>()` |
 
 ```csharp
 CollectionExpression.NewList("Order")
 // → "new global::System.Collections.Generic.List<Order>()"
 
-CollectionExpression.NewDictionary("string", "int", "16")
-// → "new global::System.Collections.Generic.Dictionary<string, int>(16)"
+CollectionExpression.EmptyEnumerable("string")
+// → "global::System.Linq.Enumerable.Empty<string>()"
+
+CollectionExpression.EmptyArray("int")
+// → "global::System.Array.Empty<int>()"
 ```
 
 ---
@@ -199,6 +204,8 @@ Factory methods for immutable collections.
 | `CreateArray(type, items...)` | `ImmutableArray.Create<T>(items)` |
 | `EmptyDictionary(keyType, valueType)` | `ImmutableDictionary<K, V>.Empty` |
 | `CreateDictionaryBuilder(keyType, valueType)` | `ImmutableDictionary.CreateBuilder<K, V>()` |
+| `EmptyList(elementType)` | `ImmutableList<T>.Empty` |
+| `CreateList(elementType, items...)` | `ImmutableList.Create<T>(items)` |
 
 ```csharp
 ImmutableCollectionExpression.EmptyArray("string")
@@ -206,6 +213,174 @@ ImmutableCollectionExpression.EmptyArray("string")
 
 ImmutableCollectionExpression.CreateArray("int", "1", "2", "3")
 // → "global::System.Collections.Immutable.ImmutableArray.Create<int>(1, 2, 3)"
+
+ImmutableCollectionExpression.EmptyList("Order")
+// → "global::System.Collections.Immutable.ImmutableList<Order>.Empty"
+```
+
+---
+
+## JsonExpression
+
+Serialization patterns for `System.Text.Json.JsonSerializer`.
+
+| Method | Produces |
+|--------|----------|
+| `Serialize(value)` | `JsonSerializer.Serialize(value)` |
+| `Serialize(value, options)` | `JsonSerializer.Serialize(value, options)` |
+| `Deserialize(type, json)` | `JsonSerializer.Deserialize<T>(json)` |
+| `Deserialize(type, json, options)` | `JsonSerializer.Deserialize<T>(json, options)` |
+
+```csharp
+JsonExpression.Serialize("entity")
+// → "global::System.Text.Json.JsonSerializer.Serialize(entity)"
+
+JsonExpression.Deserialize("Customer", "json")
+// → "global::System.Text.Json.JsonSerializer.Deserialize<Customer>(json)"
+```
+
+---
+
+## HttpExpression
+
+HTTP verb constants and async request patterns.
+
+| Method | Produces |
+|--------|----------|
+| `Get` | `HttpMethod.Get` |
+| `Post` | `HttpMethod.Post` |
+| `Put` | `HttpMethod.Put` |
+| `Patch` | `HttpMethod.Patch` |
+| `Delete` | `HttpMethod.Delete` |
+| `Verb(name)` | `HttpMethod.{name}` |
+| `GetAsync(client, url)` | `client.GetAsync(url)` |
+| `PostAsync(client, url, content)` | `client.PostAsync(url, content)` |
+| `PutAsync(client, url, content)` | `client.PutAsync(url, content)` |
+| `DeleteAsync(client, url)` | `client.DeleteAsync(url)` |
+| `SendAsync(client, request)` | `client.SendAsync(request)` |
+| `SendAsync(client, request, ct)` | `client.SendAsync(request, ct)` |
+| `EnsureSuccessStatusCode(response)` | `response.EnsureSuccessStatusCode()` |
+| `ReadAsStringAsync(response)` | `response.Content.ReadAsStringAsync()` |
+
+```csharp
+HttpExpression.GetAsync("_client", "url")
+// → "_client.GetAsync(url)"
+
+HttpExpression.EnsureSuccessStatusCode("response")
+// → "response.EnsureSuccessStatusCode()"
+```
+
+---
+
+## EntityFrameworkExpression
+
+EF Core CRUD patterns.
+
+| Method | Produces |
+|--------|----------|
+| `Set(context, entityType)` | `context.Set<T>()` |
+| `SaveChangesAsync(context)` | `context.SaveChangesAsync()` |
+| `SaveChangesAsync(context, ct)` | `context.SaveChangesAsync(ct)` |
+| `FindAsync(dbSet, keys...)` | `dbSet.FindAsync(keys)` |
+| `AddAsync(dbSet, entity)` | `dbSet.AddAsync(entity)` |
+| `Remove(dbSet, entity)` | `dbSet.Remove(entity)` |
+
+```csharp
+EntityFrameworkExpression.Set("_context", "Customer")
+// → "_context.Set<Customer>()"
+
+EntityFrameworkExpression.SaveChangesAsync("_context", "cancellationToken")
+// → "_context.SaveChangesAsync(cancellationToken)"
+```
+
+---
+
+## DependencyInjectionExpression
+
+Service registration and resolution patterns.
+
+| Method | Produces |
+|--------|----------|
+| `AddSingleton(services, service, impl)` | `services.AddSingleton<TService, TImpl>()` |
+| `AddSingleton(services, service)` | `services.AddSingleton<TService>()` |
+| `AddScoped(services, service, impl)` | `services.AddScoped<TService, TImpl>()` |
+| `AddScoped(services, service)` | `services.AddScoped<TService>()` |
+| `AddTransient(services, service, impl)` | `services.AddTransient<TService, TImpl>()` |
+| `AddTransient(services, service)` | `services.AddTransient<TService>()` |
+| `GetRequiredService(provider, type)` | `provider.GetRequiredService<T>()` |
+| `GetService(provider, type)` | `provider.GetService<T>()` |
+
+```csharp
+DependencyInjectionExpression.AddScoped("services", "IOrderService", "OrderService")
+// → "services.AddScoped<IOrderService, OrderService>()"
+
+DependencyInjectionExpression.GetRequiredService("provider", "IOrderService")
+// → "provider.GetRequiredService<IOrderService>()"
+```
+
+---
+
+## LoggingExpression
+
+Structured logging method calls.
+
+| Method | Produces |
+|--------|----------|
+| `LogTrace(logger, args...)` | `logger.LogTrace(args)` |
+| `LogDebug(logger, args...)` | `logger.LogDebug(args)` |
+| `LogInformation(logger, args...)` | `logger.LogInformation(args)` |
+| `LogWarning(logger, args...)` | `logger.LogWarning(args)` |
+| `LogError(logger, args...)` | `logger.LogError(args)` |
+| `LogCritical(logger, args...)` | `logger.LogCritical(args)` |
+
+```csharp
+LoggingExpression.LogInformation("_logger", "\"Processing order {OrderId}\"", "order.Id")
+// → "_logger.LogInformation(\"Processing order {OrderId}\", order.Id)"
+```
+
+---
+
+## ConfigurationExpression
+
+Configuration access patterns.
+
+| Method | Produces |
+|--------|----------|
+| `GetSection(config, key)` | `config.GetSection(key)` |
+| `GetValue(config, type, key)` | `config.GetValue<T>(key)` |
+| `GetConnectionString(config, name)` | `config.GetConnectionString(name)` |
+| `Bind(config, key, instance)` | `config.GetSection(key).Bind(instance)` |
+
+```csharp
+ConfigurationExpression.GetValue("_config", "int", "\"MaxRetries\"")
+// → "_config.GetValue<int>(\"MaxRetries\")"
+
+ConfigurationExpression.GetConnectionString("_config", "\"Default\"")
+// → "_config.GetConnectionString(\"Default\")"
+```
+
+---
+
+## DiagnosticsExpression
+
+OpenTelemetry / `System.Diagnostics` patterns.
+
+| Method | Produces |
+|--------|----------|
+| `StartActivity(source, name)` | `source.StartActivity(name)` |
+| `StartActivity(source, name, kind)` | `source.StartActivity(name, kind)` |
+| `SetTag(activity, key, value)` | `activity.SetTag(key, value)` |
+| `SetStatus(activity, statusCode)` | `activity.SetStatus(statusCode)` |
+| `StartNew()` | `Stopwatch.StartNew()` |
+| `Assert(condition)` | `Debug.Assert(condition)` |
+| `Assert(condition, message)` | `Debug.Assert(condition, message)` |
+
+```csharp
+DiagnosticsExpression.StartNew()
+// → "global::System.Diagnostics.Stopwatch.StartNew()"
+
+DiagnosticsExpression.SetTag("activity", "\"user.id\"", "userId")
+// → "activity.SetTag(\"user.id\", userId)"
 ```
 
 ---
