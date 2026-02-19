@@ -34,13 +34,13 @@ Type references model the TypeScript type system:
 
 ```csharp
 // Primitives and custom types
-TsTypeRef.String, TsTypeRef.Number, TsTypeRef.Boolean
+var str = TsTypeRef.From("string");
 var custom = TsTypeRef.From("MyType");
 
 // Generics, unions, intersections
-var generic = TsTypeRef.From("Map").Generic("string", "number");
-var union = TsTypeRef.String.Union(TsTypeRef.Number);
-var intersection = typeA.Intersection(typeB);
+var generic = TsTypeRef.From("Map").Of("string", "number");
+var union = TsTypeRef.Union("string", "number");
+var intersection = TsTypeRef.Intersection("A", "B");
 
 // .NET Type → TypeScript mapping
 TsTypeRef.From(typeof(string));           // string
@@ -48,9 +48,9 @@ TsTypeRef.From(typeof(Dictionary<,>));    // Record<string, unknown>
 TsTypeRef.From(typeof(Task<int>));        // Promise<number>
 
 // Specialized types
-TsPromiseType.Of("string");              // Promise<string>
-TsArrayType.Of("number");                // number[]
-TsRecordType.Of("string", "unknown");    // Record<string, unknown>
+new TsPromiseTypeRef("string");           // Promise<string>
+new TsArrayTypeRef("number");             // number[]
+new TsRecordTypeRef("string", "unknown"); // Record<string, unknown>
 ```
 
 ## Expressions
@@ -58,15 +58,14 @@ TsRecordType.Of("string", "unknown");    // Record<string, unknown>
 ```csharp
 // Compose TypeScript expressions
 TsExpressionRef.From("fetch")
-    .Call("'/api/users'")
+    .Invoke("'/api/users'")
     .Await()
-    .Member("json")
-    .Call();
+    .Call("json")
 // → (await fetch('/api/users')).json()
 
 // Factory methods
 TsConsoleExpression.Log("'hello'");       // console.log('hello')
-TsFetchExpression.Get("'/api/data'");     // await fetch('/api/data')
+TsFetchExpression.Get("'/api/data'");     // fetch('/api/data')
 TsJsonExpression.Parse("raw");            // JSON.parse(raw)
 ```
 
@@ -75,12 +74,13 @@ TsJsonExpression.Parse("raw");            // JSON.parse(raw)
 ```csharp
 // Classes, interfaces, type aliases, enums
 TsTypeBuilder.Class("UserService").Exported()
-    .AddConstructor(c => c.AddParameter("http", "HttpClient", p => p.AsPrivate()))
+    .AddConstructor(c => c
+        .AddParameter("http", "HttpClient", p => p.AsParameterProperty(TsAccessibility.Private)))
     .AddMethod("getUsers", m => m
         .Async()
-        .WithReturnType(TsPromiseType.Of(TsArrayType.Of("User")))
+        .WithReturnType(new TsPromiseTypeRef(new TsArrayTypeRef("User")))
         .WithBody(b => b
-            .Return(TsExpressionRef.From("this.http.get").Call("'/api/users'").Await())));
+            .AddReturn("await this.http.get('/api/users')")));
 ```
 
 ## Package Structure

@@ -72,6 +72,7 @@ Reading and writing are symmetric: `TypeQuery` finds types → `TypeBuilder` cre
 | `Deepstaging.Roslyn.CodeFixes` | netstandard2.0 | Code fix provider infrastructure (bundled into core package) |
 | `Deepstaging.Roslyn.Testing` | net10.0 | Test base classes (`RoslynTestBase`) (packable) |
 | `Deepstaging.Roslyn.TypeScript` | netstandard2.0 | TypeScript emit: fluent builders, tsc validation, dprint formatting (packable) |
+| `Deepstaging.Roslyn.TypeScript.Testing` | net10.0 | TypeScript test base classes (`TsTestBase`), Verify snapshots, TUnit assertions (packable) |
 | `Deepstaging.Roslyn.Tests` | net10.0 | Test suite in `test/` (not packable) |
 | `Deepstaging.Roslyn.TypeScript.Tests` | net10.0 | TypeScript emit tests in `test/` — requires Node.js (not packable) |
 
