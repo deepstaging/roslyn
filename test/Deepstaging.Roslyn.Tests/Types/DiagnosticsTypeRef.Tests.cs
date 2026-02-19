@@ -32,4 +32,46 @@ public class DiagnosticsTypesTests
         await Assert.That(DiagnosticsTypes.Debug.Value)
             .IsEqualTo("global::System.Diagnostics.Debug");
     }
+
+    [Test]
+    public async Task ActivityKind_produces_correct_type()
+    {
+        await Assert.That(DiagnosticsTypes.ActivityKind.Value)
+            .IsEqualTo("global::System.Diagnostics.ActivityKind");
+    }
+
+    [Test]
+    public async Task ActivityStatusCode_produces_correct_type()
+    {
+        await Assert.That(DiagnosticsTypes.ActivityStatusCode.Value)
+            .IsEqualTo("global::System.Diagnostics.ActivityStatusCode");
+    }
+
+    [Test]
+    public async Task DiagnosticSource_produces_correct_type()
+    {
+        await Assert.That(DiagnosticsTypes.DiagnosticSource.Value)
+            .IsEqualTo("global::System.Diagnostics.DiagnosticSource");
+    }
+
+    [Test]
+    public async Task Process_produces_correct_type()
+    {
+        await Assert.That(DiagnosticsTypes.Process.Value)
+            .IsEqualTo("global::System.Diagnostics.Process");
+    }
+
+    [Test]
+    public async Task Trace_produces_correct_type()
+    {
+        await Assert.That(DiagnosticsTypes.Trace.Value)
+            .IsEqualTo("global::System.Diagnostics.Trace");
+    }
+
+    [Test]
+    public async Task Debugger_produces_correct_type()
+    {
+        await Assert.That(DiagnosticsTypes.Debugger.Value)
+            .IsEqualTo("global::System.Diagnostics.Debugger");
+    }
 }

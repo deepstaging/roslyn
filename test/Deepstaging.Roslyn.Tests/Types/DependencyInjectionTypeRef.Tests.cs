@@ -25,4 +25,18 @@ public class DependencyInjectionTypesTests
         await Assert.That(DependencyInjectionTypes.IServiceScopeFactory.Value)
             .IsEqualTo("global::Microsoft.Extensions.DependencyInjection.IServiceScopeFactory");
     }
+
+    [Test]
+    public async Task IServiceScope_produces_correct_type()
+    {
+        await Assert.That(DependencyInjectionTypes.IServiceScope.Value)
+            .IsEqualTo("global::Microsoft.Extensions.DependencyInjection.IServiceScope");
+    }
+
+    [Test]
+    public async Task ServiceDescriptor_produces_correct_type()
+    {
+        await Assert.That(DependencyInjectionTypes.ServiceDescriptor.Value)
+            .IsEqualTo("global::Microsoft.Extensions.DependencyInjection.ServiceDescriptor");
+    }
 }

@@ -39,4 +39,25 @@ public class HttpTypesTests
         await Assert.That(HttpTypes.StringContent.Value)
             .IsEqualTo("global::System.Net.Http.StringContent");
     }
+
+    [Test]
+    public async Task Content_produces_correct_type()
+    {
+        await Assert.That(HttpTypes.Content.Value)
+            .IsEqualTo("global::System.Net.Http.HttpContent");
+    }
+
+    [Test]
+    public async Task ByteArrayContent_produces_correct_type()
+    {
+        await Assert.That(HttpTypes.ByteArrayContent.Value)
+            .IsEqualTo("global::System.Net.Http.ByteArrayContent");
+    }
+
+    [Test]
+    public async Task StreamContent_produces_correct_type()
+    {
+        await Assert.That(HttpTypes.StreamContent.Value)
+            .IsEqualTo("global::System.Net.Http.StreamContent");
+    }
 }

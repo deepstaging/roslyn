@@ -95,4 +95,60 @@ public class EntityFrameworkAttributesTests
         await Assert.That(EntityFrameworkAttributes.Required.Value)
             .IsEqualTo("global::System.ComponentModel.DataAnnotations.RequiredAttribute");
     }
+
+    [Test]
+    public async Task MaxLength_produces_valid_attribute()
+    {
+        await Assert.That(EntityFrameworkAttributes.MaxLength.Value)
+            .IsEqualTo("global::System.ComponentModel.DataAnnotations.MaxLengthAttribute");
+    }
+
+    [Test]
+    public async Task StringLength_produces_valid_attribute()
+    {
+        await Assert.That(EntityFrameworkAttributes.StringLength.Value)
+            .IsEqualTo("global::System.ComponentModel.DataAnnotations.StringLengthAttribute");
+    }
+
+    [Test]
+    public async Task Range_produces_valid_attribute()
+    {
+        await Assert.That(EntityFrameworkAttributes.Range.Value)
+            .IsEqualTo("global::System.ComponentModel.DataAnnotations.RangeAttribute");
+    }
+
+    [Test]
+    public async Task Table_produces_valid_attribute()
+    {
+        await Assert.That(EntityFrameworkAttributes.Table.Value)
+            .IsEqualTo("global::System.ComponentModel.DataAnnotations.Schema.TableAttribute");
+    }
+
+    [Test]
+    public async Task Column_produces_valid_attribute()
+    {
+        await Assert.That(EntityFrameworkAttributes.Column.Value)
+            .IsEqualTo("global::System.ComponentModel.DataAnnotations.Schema.ColumnAttribute");
+    }
+
+    [Test]
+    public async Task ForeignKey_produces_valid_attribute()
+    {
+        await Assert.That(EntityFrameworkAttributes.ForeignKey.Value)
+            .IsEqualTo("global::System.ComponentModel.DataAnnotations.Schema.ForeignKeyAttribute");
+    }
+
+    [Test]
+    public async Task NotMapped_produces_valid_attribute()
+    {
+        await Assert.That(EntityFrameworkAttributes.NotMapped.Value)
+            .IsEqualTo("global::System.ComponentModel.DataAnnotations.Schema.NotMappedAttribute");
+    }
+
+    [Test]
+    public async Task DatabaseGenerated_produces_valid_attribute()
+    {
+        await Assert.That(EntityFrameworkAttributes.DatabaseGenerated.Value)
+            .IsEqualTo("global::System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedAttribute");
+    }
 }

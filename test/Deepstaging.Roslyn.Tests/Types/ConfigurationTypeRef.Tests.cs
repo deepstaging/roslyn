@@ -25,4 +25,11 @@ public class ConfigurationTypesTests
         await Assert.That(ConfigurationTypes.IConfigurationRoot.Value)
             .IsEqualTo("global::Microsoft.Extensions.Configuration.IConfigurationRoot");
     }
+
+    [Test]
+    public async Task IConfigurationBuilder_produces_correct_type()
+    {
+        await Assert.That(ConfigurationTypes.IConfigurationBuilder.Value)
+            .IsEqualTo("global::Microsoft.Extensions.Configuration.IConfigurationBuilder");
+    }
 }
