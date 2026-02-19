@@ -1,0 +1,33 @@
+# .NET build artifacts
+bin/
+obj/
+artifacts/
+
+# .NET user/IDE files
+*.user
+*.DotSettings.user
+
+# NuGet
+*.nupkg
+*.snupkg
+
+# Test results
+TestResults/
+
+# MkDocs
+.venv/
+site/
+
+# Husky
+.husky/.installed
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vs/
+.vscode/
+*.swp
+*~
