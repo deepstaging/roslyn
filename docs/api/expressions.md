@@ -385,6 +385,25 @@ DiagnosticsExpression.SetTag("activity", "\"user.id\"", "userId")
 
 ---
 
+## HostingExpression
+
+Hosted service registration patterns for `Microsoft.Extensions.Hosting`.
+
+| Method | Produces |
+|--------|----------|
+| `AddHostedService(services, type)` | `services.AddHostedService<T>()` |
+| `AddHostedServiceFromProvider(services, type)` | `services.AddHostedService(sp => sp.GetRequiredService<T>())` |
+
+```csharp
+HostingExpression.AddHostedService("services", "MyWorker")
+// → "services.AddHostedService<MyWorker>()"
+
+HostingExpression.AddHostedServiceFromProvider("services", "MyWorker")
+// → "services.AddHostedService(sp => sp.GetRequiredService<MyWorker>())"
+```
+
+---
+
 ## Builder Extensions
 
 Expression factories also include builder extensions that wire common patterns into `TypeBuilder` and `PropertyBuilder`.

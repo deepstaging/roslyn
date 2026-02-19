@@ -83,6 +83,87 @@ builder.AsSingleton("Current")  // Generates: public static Logger Current => ..
 
 ---
 
+## BackgroundService Pattern
+
+Scaffolds a `BackgroundService` subclass with the `ExecuteAsync` override already wired up.
+
+### Body Builder Overload
+
+```csharp
+var result = TypeBuilder
+    .Class("OrderProcessor")
+    .AsSealed()
+    .AsBackgroundService(body => body
+        .AddStatement("await foreach (var item in _channel.Reader.ReadAllAsync(stoppingToken))")
+        .AddStatement("{")
+        .AddStatement("    await ProcessItemAsync(item);")
+        .AddStatement("}"))
+    .Emit();
+```
+
+Generates:
+
+```csharp
+public sealed class OrderProcessor : global::Microsoft.Extensions.Hosting.BackgroundService
+{
+    protected async override global::System.Threading.Tasks.Task ExecuteAsync(
+        global::System.Threading.CancellationToken stoppingToken)
+    {
+        await foreach (var item in _channel.Reader.ReadAllAsync(stoppingToken))
+        {
+            await ProcessItemAsync(item);
+        }
+    }
+}
+```
+
+### Expression Body Overload
+
+```csharp
+TypeBuilder
+    .Class("PingWorker")
+    .AsSealed()
+    .AsBackgroundService("RunLoopAsync(stoppingToken)")
+    .Emit();
+```
+
+### Dispose Override
+
+Add a `Dispose(bool)` override that runs cleanup before calling `base.Dispose(disposing)`:
+
+```csharp
+TypeBuilder
+    .Class("QueueService")
+    .AsSealed()
+    .AsBackgroundService(body => body
+        .AddStatement("await ProcessAsync(stoppingToken);"))
+    .WithDisposeOverride("_channel?.Writer.TryComplete();")
+    .Emit();
+```
+
+Generates a `Dispose` method that executes the provided statements then calls `base.Dispose(disposing);`.
+
+### Combining with Constructor Injection
+
+```csharp
+TypeBuilder
+    .Class("EventWorker")
+    .AsSealed()
+    .AddField("_channel", ChannelTypes.Channel(TypeRef.From("DomainEvent")),
+        f => f.WithAccessibility(Accessibility.Private).AsReadOnly())
+    .AddConstructor(c => c
+        .AddParameter("channel", ChannelTypes.Channel(TypeRef.From("DomainEvent")))
+        .WithBody(body => body.AddStatement("_channel = channel;")))
+    .AsBackgroundService(body => body
+        .AddStatement("await foreach (var evt in _channel.Reader.ReadAllAsync(stoppingToken))")
+        .AddStatement("{")
+        .AddStatement("    await HandleAsync(evt);")
+        .AddStatement("}"))
+    .Emit();
+```
+
+---
+
 ## ToString Override
 
 Override `ToString()` to delegate to a backing value.

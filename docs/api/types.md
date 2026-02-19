@@ -616,6 +616,43 @@ Data annotation `AttributeRef` constants for EF models.
 
 ---
 
+## Hosting
+
+### HostingTypes
+
+Static `TypeRef` constants for `Microsoft.Extensions.Hosting`.
+
+| Property | Produces |
+|----------|----------|
+| `Namespace` | `NamespaceRef` for `Microsoft.Extensions.Hosting` |
+| `BackgroundService` | `global::Microsoft.Extensions.Hosting.BackgroundService` |
+| `IHostedService` | `global::Microsoft.Extensions.Hosting.IHostedService` |
+| `IHost` | `global::Microsoft.Extensions.Hosting.IHost` |
+| `IHostApplicationLifetime` | `global::Microsoft.Extensions.Hosting.IHostApplicationLifetime` |
+| `IHostEnvironment` | `global::Microsoft.Extensions.Hosting.IHostEnvironment` |
+
+### ChannelTypes
+
+Static factory/constant for `System.Threading.Channels`.
+
+| Member | Produces |
+|--------|----------|
+| `Namespace` | `NamespaceRef` for `System.Threading.Channels` |
+| `Channel(itemType)` | `global::System.Threading.Channels.Channel<T>` |
+| `BoundedChannelOptions` | `global::System.Threading.Channels.BoundedChannelOptions` |
+| `UnboundedChannelOptions` | `global::System.Threading.Channels.UnboundedChannelOptions` |
+| `BoundedChannelFullMode` | `global::System.Threading.Channels.BoundedChannelFullMode` |
+
+```csharp
+HostingTypes.BackgroundService.ToString()
+// → "global::Microsoft.Extensions.Hosting.BackgroundService"
+
+ChannelTypes.Channel(TypeRef.From("OrderEvent")).ToString()
+// → "global::System.Threading.Channels.Channel<OrderEvent>"
+```
+
+---
+
 ## Dependency Injection
 
 ### DependencyInjectionTypes
