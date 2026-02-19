@@ -92,22 +92,3 @@ public class ReadOnlyMemoryTypeRefTests
     }
 }
 
-public class ImmutableListTypeRefTests
-{
-    [Test]
-    public async Task Creates_globally_qualified_type()
-    {
-        var typeRef = new ImmutableListTypeRef("string");
-
-        await Assert.That((string)typeRef)
-            .IsEqualTo("global::System.Collections.Immutable.ImmutableList<string>");
-    }
-
-    [Test]
-    public async Task Carries_element_type()
-    {
-        var typeRef = new ImmutableListTypeRef("Order");
-
-        await Assert.That((string)typeRef.ElementType).IsEqualTo("Order");
-    }
-}

@@ -3,21 +3,21 @@
 
 namespace Deepstaging.Roslyn.Tests.Types;
 
-public class TaskTypeRefTests
+public class ValueTaskTypeRefTests
 {
     [Test]
     public async Task Creates_globally_qualified_type()
     {
-        var typeRef = new TaskTypeRef("int");
+        var typeRef = new ValueTaskTypeRef("int");
 
         await Assert.That((string)typeRef)
-            .IsEqualTo("global::System.Threading.Tasks.Task<int>");
+            .IsEqualTo("global::System.Threading.Tasks.ValueTask<int>");
     }
 
     [Test]
     public async Task Carries_result_type()
     {
-        var typeRef = new TaskTypeRef("string");
+        var typeRef = new ValueTaskTypeRef("string");
 
         await Assert.That((string)typeRef.ResultType).IsEqualTo("string");
     }
@@ -25,9 +25,9 @@ public class TaskTypeRefTests
     [Test]
     public async Task Implicitly_converts_to_TypeRef()
     {
-        TypeRef typeRef = new TaskTypeRef("bool");
+        TypeRef typeRef = new ValueTaskTypeRef("bool");
 
         await Assert.That(typeRef.Value)
-            .IsEqualTo("global::System.Threading.Tasks.Task<bool>");
+            .IsEqualTo("global::System.Threading.Tasks.ValueTask<bool>");
     }
 }
