@@ -2,7 +2,7 @@
 
 Prelude-style construction expressions for LanguageExt types. All methods return `ExpressionRef` for composability.
 
-> **See also:** [Overview](index.md) | [Refs](refs.md) | [Eff Lifting](eff-lifting.md)
+> **See also:** [Overview](index.md) | [Types](types.md) | [Eff Lifting](eff-lifting.md)
 
 ---
 

@@ -9,7 +9,7 @@ This is a satellite package — it extends the core `Deepstaging.Roslyn` emit AP
 Type refs carry constituent types for compile-time introspection, not just string names:
 
 ```csharp
-using Deepstaging.Roslyn.LanguageExt.Refs;
+using Deepstaging.Roslyn.LanguageExt.Types;
 
 var eff    = LanguageExtRefs.Eff("RT", "int");           // Eff<RT, int>
 var option = LanguageExtRefs.Option("string");            // Option<string>
@@ -84,6 +84,6 @@ MethodBuilder
 
 | Folder         | Purpose                                       |
 |----------------|-----------------------------------------------|
-| `Refs/`        | Type-safe wrappers carrying constituent types |
+| `Types/`       | Type-safe wrappers carrying constituent types |
 | `Expressions/` | Prelude-style expression builders             |
-| `Extensions/`  | `TypeBuilder` / `MethodBuilder` extensions    |
+| `Extensions/`  | `TypeBuilder` / `MethodBuilder` extensions + `LanguageExtExtensions` query helpers |

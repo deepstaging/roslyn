@@ -2,11 +2,11 @@
 
 Type-safe primitives for referencing types, expressions, attributes, and namespaces in generated code.
 
-> **See also:** [Refs Overview](refs/index.md) | [Emit Overview](index.md) | [Support Types](support-types.md)
+> **See also:** [Types](../types.md) | [Expressions](../expressions.md) | [Emit Overview](index.md) | [Support Types](support-types.md)
 
 ## Overview
 
-The Refs system has four primitive types. Each represents a different domain in generated C# code:
+The type system has four primitive types. Each represents a different domain in generated C# code:
 
 | Primitive | Domain | Example |
 |-----------|--------|---------|
@@ -15,20 +15,19 @@ The Refs system has four primitive types. Each represents a different domain in 
 | `AttributeRef` | Attribute positions — decorators | `[Key]`, `[MaxLength(100)]` |
 | `NamespaceRef` | Namespace declarations and using directives | `System.Text.Json` |
 
-Pre-built references for common .NET namespaces are in the [Refs](refs/index.md) section.
+For type-safe generic wrappers (e.g., `TaskTypeRef`, `ListTypeRef`), see [Types](../types.md).
+For expression factories (e.g., `TaskExpression`, `EqualityComparerExpression`), see [Expressions](../expressions.md).
 
 ```csharp
 // TypeRef → type positions
-method.WithReturnType(TaskRefs.Task("string"))
-method.AddParameter("id", SystemRefs.Guid)
+var task = new TaskTypeRef("string");
+method.WithReturnType(task);  // implicit TypeRef conversion
 
 // ExpressionRef → value positions
-body.AddReturn(TaskRefs.CompletedTask)
-body.AddStatement($"var id = {SystemRefs.NewGuid()};")
+body.AddReturn(TaskExpression.CompletedTask)
 
 // AttributeRef → attribute positions
-property.WithAttribute(EntityFrameworkRefs.Key)
-property.WithAttribute(EntityFrameworkRefs.MaxLength.WithArgument("100"))
+property.WithAttribute(AttributeRef.Global("System.ComponentModel.DataAnnotations.KeyAttribute"))
 ```
 
 ---
@@ -86,11 +85,17 @@ These methods cross from the **type domain** into the **expression domain**, ret
 | `OrDefault(fallback)` | `ExpressionRef` | Null coalescing: `value ?? fallback` |
 
 ```csharp
-ExceptionRefs.ArgumentNull.New("nameof(value)")           // new global::System.ArgumentNullException(nameof(value))
-TypeRef.From("Guid").Call("Parse", "input", "provider")   // Guid.Parse(input, provider)
-TypeRef.From("string").Member("Empty")                    // string.Empty
-JsonRefs.ConverterOf("OrderId").TypeOf()                  // typeof(global::...JsonConverter<OrderId>)
-TaskRefs.CancellationToken.Default()                      // default(global::System.Threading.CancellationToken)
+TypeRef.Global("System.ArgumentNullException").New("nameof(value)")
+// → new global::System.ArgumentNullException(nameof(value))
+
+TypeRef.From("Guid").Call("Parse", "input", "provider")
+// → Guid.Parse(input, provider)
+
+TypeRef.From("string").Member("Empty")
+// → string.Empty
+
+TypeRef.Global("System.Threading.CancellationToken").Default()
+// → default(global::System.Threading.CancellationToken)
 ```
 
 ### Tuples
@@ -110,8 +115,8 @@ TypeRef.Tuple(
 
 ```csharp
 TypeRef typeRef = "string";                        // from string
-string code = TaskRefs.Task("string");             // to string
-ExpressionRef expr = TaskRefs.Task();              // to ExpressionRef (one-way)
+string code = new TaskTypeRef("string");           // to string (via implicit)
+ExpressionRef expr = TypeRef.From("Task");         // to ExpressionRef (one-way)
 ```
 
 ---
@@ -157,7 +162,7 @@ ExpressionRef.From("value").Member("Name").Call("ToUpper")
 // "value.Name.ToUpper()"
 
 // Delegate invocation with fallback
-TypeRef.From("OnSave").Invoke("id").OrDefault(TaskRefs.CompletedTask)
+TypeRef.From("OnSave").Invoke("id").OrDefault(TaskExpression.CompletedTask)
 // "OnSave?.Invoke(id) ?? global::System.Threading.Tasks.Task.CompletedTask"
 
 // Async dispose pattern
@@ -207,22 +212,25 @@ These methods return an `AttributeBuilder` for configuring arguments:
 
 ```csharp
 // 1. Simple — implicit string conversion
-property.WithAttribute(EntityFrameworkRefs.Key)
+property.WithAttribute(AttributeRef.Global("System.ComponentModel.DataAnnotations.KeyAttribute"))
 
 // 2. With arguments — bridge to AttributeBuilder
-property.WithAttribute(EntityFrameworkRefs.MaxLength.WithArgument("100"))
+property.WithAttribute(
+    AttributeRef.Global("System.ComponentModel.DataAnnotations.MaxLengthAttribute")
+        .WithArgument("100"))
 
 // 3. With configure callback — implicit string conversion for name
-property.WithAttribute(EntityFrameworkRefs.Column, a => a
-    .WithArgument("\"order_date\"")
-    .WithNamedArgument("TypeName", "\"date\""))
+property.WithAttribute(
+    AttributeRef.Global("System.ComponentModel.DataAnnotations.Schema.ColumnAttribute"),
+    a => a.WithArgument("\"order_date\"").WithNamedArgument("TypeName", "\"date\""))
 ```
 
 ### Implicit Conversions
 
 ```csharp
-string name = EntityFrameworkRefs.Key;             // to string
-AttributeBuilder builder = EntityFrameworkRefs.Key; // to AttributeBuilder
+var key = AttributeRef.Global("System.ComponentModel.DataAnnotations.KeyAttribute");
+string name = key;              // to string
+AttributeBuilder builder = key; // to AttributeBuilder
 ```
 
 ---

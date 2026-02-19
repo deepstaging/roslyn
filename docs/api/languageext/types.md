@@ -1,8 +1,8 @@
-# Refs
+# Types
 
 Type-safe wrappers for LanguageExt types, created through the `LanguageExtRefs` factory.
 
-> **See also:** [Overview](index.md) | [TypeRef & Primitives](../../api/emit/type-ref.md) | [Refs Overview](../../api/emit/refs/index.md)
+> **See also:** [Overview](index.md) | [TypeRef & Primitives](../emit/type-ref.md) | [Core Types](../types.md)
 
 ---
 
@@ -11,7 +11,7 @@ Type-safe wrappers for LanguageExt types, created through the `LanguageExtRefs` 
 All refs are created through `LanguageExtRefs` — the central factory class:
 
 ```csharp
-using Deepstaging.Roslyn.LanguageExt.Refs;
+using Deepstaging.Roslyn.LanguageExt.Types;
 ```
 
 ### Type Factories

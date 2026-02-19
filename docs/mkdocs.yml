@@ -116,18 +116,8 @@ nav:
       - Patterns: api/emit/patterns.md
       - Directives: api/emit/directives.md
       - TypeRef: api/emit/type-ref.md
-      - Refs:
-        - Overview: api/emit/refs/index.md
-        - Collections: api/emit/refs/collections.md
-        - Tasks: api/emit/refs/tasks.md
-        - JSON & Encoding: api/emit/refs/json.md
-        - HTTP: api/emit/refs/http.md
-        - Exceptions: api/emit/refs/exceptions.md
-        - Hosting (DI, Config, Logging): api/emit/refs/hosting.md
-        - LINQ & Delegates: api/emit/refs/linq.md
-        - System: api/emit/refs/system.md
-        - Diagnostics: api/emit/refs/diagnostics.md
-        - Entity Framework: api/emit/refs/efcore.md
+      - Types: api/types.md
+      - Expressions: api/expressions.md
       - GlobalUsings: api/emit/global-usings.md
       - Support Types: api/emit/support-types.md
     - Analyzers:
@@ -177,7 +167,7 @@ nav:
       - ReferenceConfiguration: api/testing/reference-configuration.md
     - LanguageExt:
       - Overview: api/languageext/index.md
-      - Refs: api/languageext/refs.md
+      - Types: api/languageext/types.md
       - Expressions: api/languageext/expressions.md
       - Eff Lifting: api/languageext/eff-lifting.md
       - Extensions: api/languageext/extensions.md

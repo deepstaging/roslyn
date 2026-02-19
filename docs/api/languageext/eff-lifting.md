@@ -2,7 +2,7 @@
 
 Builders for lifting operations into the LanguageExt `Eff` monad — the core pattern for effect-based source generators.
 
-> **See also:** [Overview](index.md) | [Refs](refs.md) | [Expressions](expressions.md) | [Extensions](extensions.md)
+> **See also:** [Overview](index.md) | [Types](types.md) | [Expressions](expressions.md) | [Extensions](extensions.md)
 
 ---
 
@@ -19,7 +19,7 @@ Both are created through the `EffExpression` entry point:
 
 ```csharp
 using Deepstaging.Roslyn.LanguageExt.Expressions;
-using Deepstaging.Roslyn.LanguageExt.Refs;
+using Deepstaging.Roslyn.LanguageExt.Types;
 
 var lift   = EffExpression.Lift("RT", "rt");
 var liftIO = EffExpression.LiftIO(LanguageExtRefs.Eff("RT", "int"), "rt");
@@ -227,7 +227,7 @@ A complete generator pattern that uses `LiftingStrategyAnalysis` to fully automa
 ```csharp
 using Deepstaging.Roslyn.LanguageExt.Expressions;
 using Deepstaging.Roslyn.LanguageExt.Extensions;
-using Deepstaging.Roslyn.LanguageExt.Refs;
+using Deepstaging.Roslyn.LanguageExt.Types;
 
 var lift = EffExpression.Lift("RT", "rt");
 

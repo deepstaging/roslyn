@@ -17,6 +17,16 @@ Four layers — reading and writing are symmetric:
 
 Symmetry: `TypeQuery` finds types ↔ `TypeBuilder` creates types. Both are fluent and immutable.
 
+### Three-Layer Type System
+
+The core primitives and typed wrappers live outside Emit:
+
+| Namespace                     | Purpose                                                             |
+|-------------------------------|---------------------------------------------------------------------|
+| `Deepstaging.Roslyn`          | Core primitives: `TypeRef`, `ExpressionRef`, `AttributeRef`, `NamespaceRef` |
+| `Deepstaging.Roslyn.Types`    | Typed wrappers: `TaskTypeRef`, `ListTypeRef`, `EqualityComparerTypeRef`, etc. |
+| `Deepstaging.Roslyn.Expressions` | Expression factories: `TaskExpression`, `EqualityComparerExpression`, builder extensions |
+
 ## Critical Pattern: IsNotValid Early Exit
 
 This is the primary convention. Unwrap optional projections with `IsNotValid` to exit early when data is missing:

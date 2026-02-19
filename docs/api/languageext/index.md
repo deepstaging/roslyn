@@ -10,7 +10,7 @@ The package is organized into three layers:
 
 | Layer | Namespace | Purpose |
 |-------|-----------|---------|
-| **[Refs](refs.md)** | `Refs` | Type-safe wrappers for LanguageExt types (`EffTypeRef`, `OptionTypeRef`, etc.) |
+| **[Types](types.md)** | `Types` | Type-safe wrappers for LanguageExt types (`EffTypeRef`, `OptionTypeRef`, etc.) |
 | **[Expressions](expressions.md)** | `Expressions` | Prelude-style construction expressions and [Eff lifting](eff-lifting.md) |
 | **[Extensions](extensions.md)** | `Extensions` | `TypeBuilder` / `MethodBuilder` extensions for common patterns |
 
@@ -25,7 +25,7 @@ dotnet add package Deepstaging.Roslyn.LanguageExt --prerelease
 A typical generator that produces LanguageExt effect methods:
 
 ```csharp
-using Deepstaging.Roslyn.LanguageExt.Refs;
+using Deepstaging.Roslyn.LanguageExt.Types;
 using Deepstaging.Roslyn.LanguageExt.Expressions;
 using Deepstaging.Roslyn.LanguageExt.Extensions;
 
@@ -93,7 +93,7 @@ Every `*TypeRef` has implicit conversions to `TypeRef` and `string`, so they dro
 
 ## Pages
 
-- **[Refs](refs.md)** — `LanguageExtRefs` factory and type-safe ref structs
+- **[Types](types.md)** — `LanguageExtRefs` factory and type-safe ref structs
 - **[Expressions](expressions.md)** — Option, Either, Fin, Seq, HashMap expression builders
 - **[Eff Lifting](eff-lifting.md)** — `EffLift`, `EffLiftIO`, `LiftingStrategy`, and `LiftingStrategyAnalysis`
 - **[Extensions](extensions.md)** — `AddLanguageExtUsings`, `AsEffMethod`

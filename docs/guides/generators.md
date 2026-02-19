@@ -204,8 +204,8 @@ MethodBuilder.Parse("public static Eff<RT, Option<Attendee>> GetById<RT>(Attende
 ### Use TypeRef for Type-Safe References
 
 ```csharp
-// Pre-built type references — no magic strings
-var returnType = TaskRefs.Task(CollectionRefs.IReadOnlyList(TypeRef.Parse("Customer")));
+// Type-safe wrappers — no magic strings
+var returnType = new TaskTypeRef(TypeRef.Global("System.Collections.Generic.IReadOnlyList<Customer>"));
 // Produces: Task<IReadOnlyList<Customer>>
 ```
 

@@ -6,7 +6,7 @@ with [Deepstaging.Roslyn](https://github.com/deepstaging/roslyn).
 ## Usage
 
 ```csharp
-using Deepstaging.Roslyn.LanguageExt.Refs;
+using Deepstaging.Roslyn.LanguageExt.Types;
 
 // Type references carry constituent types for compile-time introspection
 var effType = LanguageExtRefs.Eff("RT", "int");        // EffTypeRef → global::LanguageExt.Eff<RT, int>
