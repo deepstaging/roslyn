@@ -50,11 +50,11 @@ var code = TypeBuilder.Class("CustomerDto")
 
 | Package | Purpose |
 |---------|---------|
-| [`Deepstaging.Roslyn`](getting-started.md) | Core toolkit — [Queries](api/queries/index.md), [Projections](api/projections/index.md), [Emit](api/emit/index.md), [Scriban](api/scriban/index.md), [Workspace](api/workspace/index.md) |
+| [`Deepstaging.Roslyn`](getting-started.md) | Core toolkit — [Queries](api/queries/index.md), [Projections](api/projections/index.md), [Emit](api/emit/index.md), [Analyzers](api/analyzers/index.md), [Generators](api/generators/index.md), [Code Fixes](api/workspace/index.md), [Scriban](api/scriban/index.md) |
 | [`Deepstaging.Roslyn.Testing`](api/testing/index.md) | Test utilities for generators, analyzers, and code fixes |
 | [`Deepstaging.Roslyn.LanguageExt`](api/languageext/index.md) | LanguageExt integration — Eff lifting, expressions, refs |
 
-Scriban and Workspace are bundled inside the core package — no separate install needed.
+Everything ships in a single package — `dotnet add package Deepstaging.Roslyn` is all you need.
 
 ## Architecture
 
