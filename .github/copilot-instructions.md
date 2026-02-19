@@ -25,7 +25,7 @@ dotnet test --project test/Deepstaging.Roslyn.Tests -c Release -- --treenode-fil
 ./build/pack.sh
 
 # Docs (local preview)
-./docs.sh serve
+./build/docs.sh serve
 ```
 
 There is no separate lint command. Warnings are treated as errors via `TreatWarningsAsErrors`, so `dotnet build` is the lint step.

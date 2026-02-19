@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2024-present Deepstaging
+# SPDX-License-Identifier: RPL-1.5
 set -e
 
-cd "$(dirname "$0")"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+cd "$REPO_ROOT"
 
 # Create virtual environment if it doesn't exist
 if [ ! -d ".venv" ]; then
@@ -14,7 +18,7 @@ source .venv/bin/activate
 
 # Install/update dependencies
 echo "Installing dependencies..."
-pip install -q -r requirements.txt
+pip install -q -r docs/requirements.txt
 
 # Parse command
 CMD="${1:-serve}"
@@ -22,11 +26,11 @@ CMD="${1:-serve}"
 case "$CMD" in
     serve)
         echo "Starting dev server at http://127.0.0.1:8000"
-        mkdocs serve
+        mkdocs serve -f docs/mkdocs.yml
         ;;
     build)
         echo "Building site..."
-        mkdocs build --strict
+        mkdocs build --strict -f docs/mkdocs.yml
         echo "Site built to ./site"
         ;;
     *)

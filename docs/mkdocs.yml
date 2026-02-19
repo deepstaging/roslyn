@@ -5,6 +5,8 @@ site_description: A fluent toolkit for building Roslyn source generators, analyz
 site_url: https://deepstaging.github.io/roslyn
 repo_url: https://github.com/deepstaging/roslyn
 repo_name: deepstaging/roslyn
+docs_dir: .
+site_dir: ../site
 
 theme:
   name: material

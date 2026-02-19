@@ -26,7 +26,7 @@
       - Additional diagnostic warnings
       - Local package sources
       
-      See Directory.Build.Dev.props.template for examples.
+      See build/Directory.Build.Dev.props.template for examples.
     -->
     <Import Project="$(MSBuildThisFileDirectory)Directory.Build.Dev.props"
             Condition="Exists('$(MSBuildThisFileDirectory)Directory.Build.Dev.props') AND '$(Configuration)' == 'Debug'"/>
