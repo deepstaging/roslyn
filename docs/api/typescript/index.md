@@ -97,4 +97,5 @@ If you're familiar with the C# Emit layer, here's how concepts map:
 - **[Emit](emit.md)** — `TsTypeBuilder`, member builders, `TsBodyBuilder`, `TsEmitOptions`, emit pipeline
 - **[Types](types.md)** — `TsTypeRef`, specialized type refs, utility type refs
 - **[Expressions](expressions.md)** — `TsExpressionRef`, expression factories
+- **[Testing](testing.md)** — `TsTestBase`, option presets, assertions, `VerifyEmit` snapshots
 - **[Integration](integration.md)** — Real-world usage: analyzer + code fix, MSBuild extraction, CLI tool

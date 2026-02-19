@@ -171,6 +171,7 @@ nav:
       - Emit: api/typescript/emit.md
       - Types: api/typescript/types.md
       - Expressions: api/typescript/expressions.md
+      - Testing: api/typescript/testing.md
       - Integration: api/typescript/integration.md
     - LanguageExt:
       - Overview: api/languageext/index.md
