@@ -11,7 +11,9 @@
 #
 # Output: ../../artifacts/packages/
 #   - Deepstaging.Roslyn.{version}.nupkg
+#   - Deepstaging.Roslyn.LanguageExt.{version}.nupkg
 #   - Deepstaging.Roslyn.Testing.{version}.nupkg
+#   - Deepstaging.Templates.{version}.nupkg
 #
 # After packing, automatically updates Deepstaging.Roslyn.Versions.props
 # with the new version so consumer repos pick it up on next restore.
@@ -121,6 +123,19 @@ dotnet pack $(build_pack_args "$REPO_ROOT/src/Deepstaging.Roslyn.LanguageExt/Dee
 echo ""
 echo "Packing Deepstaging.Roslyn.Testing..."
 dotnet pack $(build_pack_args "$REPO_ROOT/src/Deepstaging.Roslyn.Testing/Deepstaging.Roslyn.Testing.csproj")
+
+echo ""
+echo "Packing Deepstaging.Templates..."
+# Template packs don't need a prior build — pack directly
+TEMPLATE_ARGS=(
+    "$REPO_ROOT/templates/Deepstaging.Templates.csproj"
+    --configuration "$CONFIGURATION"
+    --output "$OUTPUT_DIR"
+)
+if [[ -n "$VERSION_SUFFIX" ]]; then
+    TEMPLATE_ARGS+=(--version-suffix "$VERSION_SUFFIX")
+fi
+dotnet pack "${TEMPLATE_ARGS[@]}"
 
 echo ""
 echo "Packages created in: $OUTPUT_DIR"

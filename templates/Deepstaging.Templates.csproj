@@ -10,12 +10,14 @@
         <Authors>Deepstaging</Authors>
         <PackageTags>dotnet-new;templates;roslyn;source-generator;analyzer;codefix;deepstaging</PackageTags>
         <PackageLicenseExpression>RPL-1.5</PackageLicenseExpression>
-        <PackageProjectUrl>https://github.com/deepstaging/templates</PackageProjectUrl>
-        <RepositoryUrl>https://github.com/deepstaging/templates</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/deepstaging/roslyn</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/deepstaging/roslyn</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageIcon>icon.png</PackageIcon>
         
         <TargetFramework>netstandard2.0</TargetFramework>
+        <IsPackable>true</IsPackable>
         
         <!-- Template pack settings -->
         <IncludeContentInPack>true</IncludeContentInPack>
@@ -25,7 +27,6 @@
         
         <!-- Versioning -->
         <VersionPrefix>1.0.0</VersionPrefix>
-        <VersionSuffix>alpha.1</VersionSuffix>
         
         <!-- Suppress NU5128 - expected for template packs with no lib assemblies -->
         <NoWarn>$(NoWarn);NU5128</NoWarn>
@@ -33,7 +34,7 @@
 
     <ItemGroup>
         <!-- Include all templates -->
-        <Content Include="templates/**/*" Exclude="templates/**/bin/**;templates/**/obj/**;templates/**/artifacts/**" />
+        <Content Include="templates/**/*" Exclude="templates/**/bin/**;templates/**/obj/**;templates/**/artifacts/**;templates/**/.idea/**" />
         <Compile Remove="**/*" />
         
         <!-- Package README -->
