@@ -115,11 +115,12 @@ nav:
       - BodyBuilder: api/emit/body-builder.md
       - Patterns: api/emit/patterns.md
       - Directives: api/emit/directives.md
-      - TypeRef: api/emit/type-ref.md
-      - Types: api/types.md
-      - Expressions: api/expressions.md
       - GlobalUsings: api/emit/global-usings.md
       - Support Types: api/emit/support-types.md
+    - Type System:
+      - Primitives: api/emit/type-ref.md
+      - Types: api/types.md
+      - Expressions: api/expressions.md
     - Analyzers:
       - Overview: api/analyzers/index.md
       - SymbolAnalyzer: api/analyzers/symbol-analyzer.md
