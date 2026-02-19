@@ -9,6 +9,9 @@ dotnet build Deepstaging.Roslyn.slnx
 # Test (all) — prefer `dotnet run` for TUnit (easier flag passing)
 dotnet run --project test/Deepstaging.Roslyn.Tests -c Release
 
+# Test TypeScript emit (requires Node.js — see prerequisites below)
+dotnet run --project test/Deepstaging.Roslyn.TypeScript.Tests -c Release
+
 # Test (by class name)
 dotnet run --project test/Deepstaging.Roslyn.Tests -c Release --treenode-filter /*/*/TypeQueryTests/*
 
@@ -29,6 +32,20 @@ dotnet test --project test/Deepstaging.Roslyn.Tests -c Release -- --treenode-fil
 ```
 
 There is no separate lint command. Warnings are treated as errors via `TreatWarningsAsErrors`, so `dotnet build` is the lint step.
+
+### TypeScript Test Prerequisites
+
+The `Deepstaging.Roslyn.TypeScript.Tests` project shells out to `tsc` for validation and `dprint` for formatting. Install before running:
+
+```bash
+# Required: TypeScript compiler
+cd test/Deepstaging.Roslyn.TypeScript.Tests && npm install
+
+# Optional: dprint formatter (tests fall back gracefully if missing)
+brew install dprint
+```
+
+The core `Deepstaging.Roslyn.Tests` has no Node.js dependency.
 
 The `--treenode-filter` syntax is `/<Assembly>/<Namespace>/<Class>/<Test>` with `*` wildcards. Combine conditions with `&` (AND) or `|` (OR within parentheses).
 
@@ -54,7 +71,9 @@ Reading and writing are symmetric: `TypeQuery` finds types → `TypeBuilder` cre
 | `Deepstaging.Roslyn.Scriban.CodeFixes` | netstandard2.0 | Template scaffolding code fixes (bundled into core package) |
 | `Deepstaging.Roslyn.CodeFixes` | netstandard2.0 | Code fix provider infrastructure (bundled into core package) |
 | `Deepstaging.Roslyn.Testing` | net10.0 | Test base classes (`RoslynTestBase`) (packable) |
+| `Deepstaging.Roslyn.TypeScript` | netstandard2.0 | TypeScript emit: fluent builders, tsc validation, dprint formatting (packable) |
 | `Deepstaging.Roslyn.Tests` | net10.0 | Test suite in `test/` (not packable) |
+| `Deepstaging.Roslyn.TypeScript.Tests` | net10.0 | TypeScript emit tests in `test/` — requires Node.js (not packable) |
 
 Scriban and CodeFixes are not published as separate NuGet packages — they are packaged within `Deepstaging.Roslyn`. All library projects target `netstandard2.0` for Roslyn analyzer/generator compatibility. Only test projects target `net10.0`.
 

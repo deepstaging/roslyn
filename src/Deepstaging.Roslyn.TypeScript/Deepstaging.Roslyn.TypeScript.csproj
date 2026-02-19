@@ -1,0 +1,42 @@
+<!-- SPDX-FileCopyrightText: 2024-present Deepstaging -->
+<!-- SPDX-License-Identifier: RPL-1.5 -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <RootNamespace>Deepstaging.Roslyn.TypeScript</RootNamespace>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+
+        <!-- Package metadata -->
+        <IsPackable>true</IsPackable>
+        <PackageId>Deepstaging.Roslyn.TypeScript</PackageId>
+        <Title>Deepstaging.Roslyn.TypeScript</Title>
+        <Description>Fluent TypeScript code emitter for .NET source generators and code-gen pipelines. Mirrors the Deepstaging.Roslyn emit patterns for TypeScript output.</Description>
+        <PackageTags>deepstaging;roslyn;typescript;emit;source-generator;codegen</PackageTags>
+
+        <!-- Generate XML documentation for IntelliSense -->
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Deepstaging.Roslyn\Deepstaging.Roslyn.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="PolySharp">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <PropertyGroup>
+        <PolySharpUsePublicAccessibilityForGeneratedTypes>false</PolySharpUsePublicAccessibilityForGeneratedTypes>
+        <PolySharpIncludeGeneratedTypes>System.Index;System.Range;System.Runtime.CompilerServices.IsExternalInit;System.Runtime.CompilerServices.RequiredMemberAttribute;System.Runtime.CompilerServices.CompilerFeatureRequiredAttribute;System.Runtime.CompilerServices.CollectionBuilderAttribute;System.Diagnostics.CodeAnalysis.SetsRequiredMembersAttribute;System.Diagnostics.CodeAnalysis.NotNullWhenAttribute;System.Diagnostics.CodeAnalysis.DoesNotReturnAttribute</PolySharpIncludeGeneratedTypes>
+    </PropertyGroup>
+
+</Project>

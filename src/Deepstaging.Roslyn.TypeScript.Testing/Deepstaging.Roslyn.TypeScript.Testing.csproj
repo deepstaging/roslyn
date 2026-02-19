@@ -1,0 +1,41 @@
+<!-- SPDX-FileCopyrightText: 2024-present Deepstaging -->
+<!-- SPDX-License-Identifier: RPL-1.5 -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <IsTestProject>false</IsTestProject>
+        <RootNamespace>Deepstaging.Roslyn.TypeScript.Testing</RootNamespace>
+
+        <!-- Package metadata -->
+        <IsPackable>true</IsPackable>
+        <PackageId>Deepstaging.Roslyn.TypeScript.Testing</PackageId>
+        <Title>Deepstaging.Roslyn.TypeScript.Testing</Title>
+        <Description>Testing infrastructure for TypeScript code generation. Includes TUnit base classes, fluent assertions for TsOptionalEmit/TsValidEmit, and automatic tsc discovery.</Description>
+        <PackageTags>deepstaging;roslyn;typescript;testing;tunit;source-generator;codegen</PackageTags>
+
+        <!-- This is test infrastructure, not an analyzer -->
+        <EnforceExtendedAnalyzerRules>false</EnforceExtendedAnalyzerRules>
+        <IsRoslynComponent>false</IsRoslynComponent>
+
+        <!-- Suppress CS1591 for generated code (TUnit generators don't include XML docs) -->
+        <NoWarn>$(NoWarn);CS1591</NoWarn>
+
+        <!-- Don't auto-include README.md from parent folders -->
+        <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="TUnit"/>
+        <PackageReference Include="TUnit.Engine"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../Deepstaging.Roslyn.TypeScript/Deepstaging.Roslyn.TypeScript.csproj"/>
+    </ItemGroup>
+
+</Project>

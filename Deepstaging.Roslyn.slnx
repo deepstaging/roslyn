@@ -7,5 +7,8 @@
     <Project Path="src/Deepstaging.Roslyn.CodeFixes/Deepstaging.Roslyn.CodeFixes.csproj"/>
     <Project Path="src/Deepstaging.Roslyn.LanguageExt/Deepstaging.Roslyn.LanguageExt.csproj"/>
     <Project Path="src/Deepstaging.Roslyn.Testing/Deepstaging.Roslyn.Testing.csproj"/>
+    <Project Path="src/Deepstaging.Roslyn.TypeScript/Deepstaging.Roslyn.TypeScript.csproj"/>
+    <Project Path="src/Deepstaging.Roslyn.TypeScript.Testing/Deepstaging.Roslyn.TypeScript.Testing.csproj"/>
     <Project Path="test/Deepstaging.Roslyn.Tests/Deepstaging.Roslyn.Tests.csproj"/>
+    <Project Path="test/Deepstaging.Roslyn.TypeScript.Tests/Deepstaging.Roslyn.TypeScript.Tests.csproj"/>
 </Solution>

@@ -11,6 +11,7 @@ Roslyn APIs are powerful but awkward. This library wraps them in something that 
 | Package | Purpose |
 |---------|---------|
 | `Deepstaging.Roslyn` | Core toolkit: Queries, Projections, Types, Expressions, Emit builders, Scriban templates, Code fixes |
+| `Deepstaging.Roslyn.TypeScript` | TypeScript emit: fluent builders that generate TypeScript source code, with optional `tsc` validation and `dprint` formatting |
 | `Deepstaging.Roslyn.LanguageExt` | LanguageExt type references, expression builders, and effect lifting |
 | `Deepstaging.Roslyn.Testing` | Test utilities for generators and analyzers |
 
@@ -162,6 +163,28 @@ public partial class {{ type_name }}
 dotnet build Deepstaging.Roslyn.slnx
 dotnet run --project test/Deepstaging.Roslyn.Tests -c Release
 ```
+
+### TypeScript Tests
+
+The TypeScript emit library tests shell out to `tsc` for validation and `dprint` for formatting. Install these before running the TypeScript test suite:
+
+```bash
+# Required: TypeScript compiler (used by tsc validation tests)
+cd test/Deepstaging.Roslyn.TypeScript.Tests
+npm install
+
+# Optional: dprint formatter (falls back gracefully if missing)
+brew install dprint  # macOS
+# or: cargo install dprint / scoop install dprint / npm install -g dprint
+```
+
+Then run the TypeScript tests:
+
+```bash
+dotnet run --project test/Deepstaging.Roslyn.TypeScript.Tests -c Release
+```
+
+> **Note:** The core `Deepstaging.Roslyn.Tests` suite has no Node.js dependency — only the TypeScript satellite library tests require it.
 
 ## Philosophy
 
