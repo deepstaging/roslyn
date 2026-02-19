@@ -3,15 +3,14 @@
 
 namespace Deepstaging.Roslyn.LanguageExt.Expressions;
 
-using Emit.Refs;
-using Refs;
+using Types;
 
 /// <summary>
 /// Builds <c>HashMap</c> construction expressions using LanguageExt Prelude functions and static members.
 /// </summary>
 /// <remarks>
 /// Prelude functions require <c>using static LanguageExt.Prelude</c> in the generated code.
-/// Use <see cref="Extensions.TypeBuilderExtensions.AddLanguageExtUsings"/> to add the standard usings.
+/// Use <see cref="TypeBuilderExtensions.AddLanguageExtUsings"/> to add the standard usings.
 /// </remarks>
 public static class HashMapExpression
 {

@@ -60,6 +60,7 @@ public static class BuildPropertyExtensions
         public T GetBuildProperty<T>(string name, T fallback) where T : struct
         {
             options.TryGetValue(Prefix + name, out var raw);
+
             if (string.IsNullOrEmpty(raw))
                 return fallback;
 

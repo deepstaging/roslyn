@@ -3,14 +3,12 @@
 
 namespace Deepstaging.Roslyn.LanguageExt.Expressions;
 
-using Emit.Refs;
-
 /// <summary>
 /// Builds <c>Either</c> construction expressions using LanguageExt Prelude functions.
 /// </summary>
 /// <remarks>
 /// These expressions require <c>using static LanguageExt.Prelude</c> in the generated code.
-/// Use <see cref="Extensions.TypeBuilderExtensions.AddLanguageExtUsings"/> to add the standard usings.
+/// Use <see cref="TypeBuilderExtensions.AddLanguageExtUsings"/> to add the standard usings.
 /// </remarks>
 public static class EitherExpression
 {

@@ -37,6 +37,7 @@ public abstract class AssemblyAttributeAnalyzer<TItem> : DiagnosticAnalyzer
     {
         var reportsAttrs = GetType().GetCustomAttributes<ReportsAttribute>(false);
         var builder = ImmutableArray.CreateBuilder<DiagnosticDescriptor>();
+
         foreach (var attr in reportsAttrs)
             builder.Add(attr.ToDescriptor());
 
@@ -58,6 +59,7 @@ public abstract class AssemblyAttributeAnalyzer<TItem> : DiagnosticAnalyzer
     private void AnalyzeCompilation(CompilationAnalysisContext context)
     {
         var attributeSymbol = context.Compilation.GetTypeByMetadataName(AttributeFullyQualifiedName);
+
         if (attributeSymbol == null)
             return;
 

@@ -514,10 +514,8 @@ public record struct PropertyBuilder
         var accessors = new List<AccessorDeclarationSyntax>();
 
         if (HasAutoGetter)
-        {
             accessors.Add(SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
                 .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
-        }
 
         if (HasAutoSetter)
         {

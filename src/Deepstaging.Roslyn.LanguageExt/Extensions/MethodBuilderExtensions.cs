@@ -1,11 +1,10 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
 
-namespace Deepstaging.Roslyn.LanguageExt.Extensions;
+namespace Deepstaging.Roslyn.LanguageExt;
 
 using Emit;
-using Emit.Refs;
-using Refs;
+using Types;
 
 /// <summary>
 /// LanguageExt convenience extensions for <see cref="MethodBuilder"/>.

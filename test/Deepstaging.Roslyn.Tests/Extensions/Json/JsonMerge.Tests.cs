@@ -105,25 +105,26 @@ public class JsonMergeTests
     public async Task Sync_removes_nested_keys_not_in_template()
     {
         var existing = """
-        {
-            "Section": {
-                "Config": {
-                    "OldProp": "old",
-                    "KeptProp": "user"
-                }
-            }
-        }
-        """;
+                       {
+                           "Section": {
+                               "Config": {
+                                   "OldProp": "old",
+                                   "KeptProp": "user"
+                               }
+                           }
+                       }
+                       """;
+
         var template = """
-        {
-            "Section": {
-                "Config": {
-                    "KeptProp": "default",
-                    "NewProp": "new"
-                }
-            }
-        }
-        """;
+                       {
+                           "Section": {
+                               "Config": {
+                                   "KeptProp": "default",
+                                   "NewProp": "new"
+                               }
+                           }
+                       }
+                       """;
 
         var result = JsonMerge.Sync(existing, template);
         var config = JsonNode.Parse(result)!["Section"]!["Config"]!.AsObject();
@@ -137,20 +138,21 @@ public class JsonMergeTests
     public async Task Sync_removes_nested_section_not_in_template()
     {
         var existing = """
-        {
-            "Section": {
-                "RemovedType": { "Prop": "val" },
-                "KeptType": { "Prop": "user" }
-            }
-        }
-        """;
+                       {
+                           "Section": {
+                               "RemovedType": { "Prop": "val" },
+                               "KeptType": { "Prop": "user" }
+                           }
+                       }
+                       """;
+
         var template = """
-        {
-            "Section": {
-                "KeptType": { "Prop": "default" }
-            }
-        }
-        """;
+                       {
+                           "Section": {
+                               "KeptType": { "Prop": "default" }
+                           }
+                       }
+                       """;
 
         var result = JsonMerge.Sync(existing, template);
         var section = JsonNode.Parse(result)!["Section"]!.AsObject();

@@ -263,13 +263,11 @@ public static class MemberCodeFixActions
         var suffixes = new[] { "." + oldShort, "." + oldWithoutSuffix };
 
         foreach (var suffix in suffixes)
-        {
             if (sourceName.EndsWith(suffix))
             {
                 var prefix = sourceName.Substring(0, sourceName.Length - suffix.Length);
                 return prefix + "." + newName;
             }
-        }
 
         return newName;
     }

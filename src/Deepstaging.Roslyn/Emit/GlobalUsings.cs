@@ -47,16 +47,12 @@ public static class GlobalUsings
                 UsingDirectiveSyntax directive;
 
                 if (ns.StartsWith("static ", StringComparison.Ordinal))
-                {
                     directive = SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(ns.Substring(7)))
                         .WithStaticKeyword(SyntaxFactory.Token(SyntaxKind.StaticKeyword))
                         .WithGlobalKeyword(SyntaxFactory.Token(SyntaxKind.GlobalKeyword));
-                }
                 else
-                {
                     directive = SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(ns))
                         .WithGlobalKeyword(SyntaxFactory.Token(SyntaxKind.GlobalKeyword));
-                }
 
                 compilationUnit = compilationUnit.AddUsings(directive);
             }

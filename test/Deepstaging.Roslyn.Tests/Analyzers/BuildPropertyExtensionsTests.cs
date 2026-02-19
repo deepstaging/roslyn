@@ -1,8 +1,6 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
 
-using System.Collections.Generic;
-using System.Collections.Immutable;
 using Deepstaging.Roslyn.Analyzers;
 using Microsoft.CodeAnalysis.Diagnostics;
 

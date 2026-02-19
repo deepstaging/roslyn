@@ -58,13 +58,13 @@ var returnType = LiftingStrategy.AsyncOptional.EffReturnType("User");
 
 ### LiftingStrategy Values
 
-| Strategy | Lambda Shape | Return Type |
-|----------|-------------|-------------|
-| `Async` | `async rt => await expr` | `A` |
-| `AsyncOptional` | `async rt => Optional(await expr)` | `Option<A>` |
-| `AsyncVoid` | `async rt => { await expr; return unit; }` | `Unit` |
-| `SyncValue` | `rt => expr` | `A` |
-| `SyncVoid` | `rt => { expr; return unit; }` | `Unit` |
+| Strategy        | Lambda Shape                               | Return Type |
+|-----------------|--------------------------------------------|-------------|
+| `Async`         | `async rt => await expr`                   | `A`         |
+| `AsyncOptional` | `async rt => Optional(await expr)`         | `Option<A>` |
+| `AsyncVoid`     | `async rt => { await expr; return unit; }` | `Unit`      |
+| `SyncValue`     | `rt => expr`                               | `A`         |
+| `SyncVoid`      | `rt => { expr; return unit; }`             | `Unit`      |
 
 ## Method Builder Extension
 
@@ -82,8 +82,8 @@ MethodBuilder
 
 ## Package Structure
 
-| Folder | Purpose |
-|--------|---------|
-| `Refs/` | Type-safe wrappers carrying constituent types |
-| `Expressions/` | Prelude-style expression builders |
-| `Extensions/` | `TypeBuilder` / `MethodBuilder` extensions |
+| Folder         | Purpose                                       |
+|----------------|-----------------------------------------------|
+| `Refs/`        | Type-safe wrappers carrying constituent types |
+| `Expressions/` | Prelude-style expression builders             |
+| `Extensions/`  | `TypeBuilder` / `MethodBuilder` extensions    |

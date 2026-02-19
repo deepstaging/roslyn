@@ -8,12 +8,12 @@ Docs: https://deepstaging.github.io/roslyn
 
 Four layers — reading and writing are symmetric:
 
-| Layer | Purpose | Key Types |
-|-------|---------|-----------|
-| **Queries** | Find symbols with chainable filters | `TypeQuery`, `MethodQuery`, `PropertyQuery`, `FieldQuery`, `ConstructorQuery`, `EventQuery`, `ParameterQuery` |
-| **Projections** | Safe nullable wrappers over Roslyn symbols | `OptionalSymbol<T>`, `ValidSymbol<T>`, `OptionalAttribute`, `ValidAttribute` |
-| **Emit** | Fluent builders that produce `CompilationUnitSyntax` | `TypeBuilder`, `MethodBuilder`, `PropertyBuilder`, `FieldBuilder`, `ConstructorBuilder` |
-| **Scriban** | Template infrastructure for source generators | `.scriban-cs` templates |
+| Layer           | Purpose                                              | Key Types                                                                                                     |
+|-----------------|------------------------------------------------------|---------------------------------------------------------------------------------------------------------------|
+| **Queries**     | Find symbols with chainable filters                  | `TypeQuery`, `MethodQuery`, `PropertyQuery`, `FieldQuery`, `ConstructorQuery`, `EventQuery`, `ParameterQuery` |
+| **Projections** | Safe nullable wrappers over Roslyn symbols           | `OptionalSymbol<T>`, `ValidSymbol<T>`, `OptionalAttribute`, `ValidAttribute`                                  |
+| **Emit**        | Fluent builders that produce `CompilationUnitSyntax` | `TypeBuilder`, `MethodBuilder`, `PropertyBuilder`, `FieldBuilder`, `ConstructorBuilder`                       |
+| **Scriban**     | Template infrastructure for source generators        | `.scriban-cs` templates                                                                                       |
 
 Symmetry: `TypeQuery` finds types ↔ `TypeBuilder` creates types. Both are fluent and immutable.
 
@@ -158,12 +158,12 @@ MethodBuilder.Parse("public async Task<string> GetAsync(int id)")
 
 Extensions are organized by what they extend. Key namespaces:
 
-| Namespace | Extensions On | Purpose |
-|-----------|--------------|---------|
-| `Deepstaging.Roslyn` | `OptionalSymbol<T>`, `ValidSymbol<T>` | Symbol navigation (`.Methods()`, `.Properties()`, `.Fields()`, `.BaseType`, `.Interfaces`) |
-| `Deepstaging.Roslyn` | `OptionalAttribute`, `ValidAttribute` | Attribute argument extraction |
-| `Deepstaging.Roslyn.Emit` | `TypeBuilder` | Design patterns, interface implementations, operators, converters |
-| `Deepstaging.Roslyn.Emit` | `MethodBuilder`, `PropertyBuilder` | Modifier helpers |
+| Namespace                 | Extensions On                         | Purpose                                                                                    |
+|---------------------------|---------------------------------------|--------------------------------------------------------------------------------------------|
+| `Deepstaging.Roslyn`      | `OptionalSymbol<T>`, `ValidSymbol<T>` | Symbol navigation (`.Methods()`, `.Properties()`, `.Fields()`, `.BaseType`, `.Interfaces`) |
+| `Deepstaging.Roslyn`      | `OptionalAttribute`, `ValidAttribute` | Attribute argument extraction                                                              |
+| `Deepstaging.Roslyn.Emit` | `TypeBuilder`                         | Design patterns, interface implementations, operators, converters                          |
+| `Deepstaging.Roslyn.Emit` | `MethodBuilder`, `PropertyBuilder`    | Modifier helpers                                                                           |
 
 ## Key Design Rules
 

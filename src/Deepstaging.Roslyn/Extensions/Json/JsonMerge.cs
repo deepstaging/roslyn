@@ -12,7 +12,8 @@ namespace Deepstaging.Roslyn;
 /// </summary>
 public static class JsonMerge
 {
-    private static readonly JsonDocumentOptions ParseOptions = new() { AllowTrailingCommas = true, CommentHandling = JsonCommentHandling.Skip };
+    private static readonly JsonDocumentOptions ParseOptions = new()
+        { AllowTrailingCommas = true, CommentHandling = JsonCommentHandling.Skip };
 
     /// <summary>
     /// Deep merges a template JSON into an existing JSON document.
@@ -61,7 +62,6 @@ public static class JsonMerge
     private static void MergeObjects(JsonObject target, JsonObject source)
     {
         foreach (var property in source)
-        {
             if (target.ContainsKey(property.Key))
             {
                 // Existing key — recurse into nested objects, preserve everything else
@@ -73,7 +73,6 @@ public static class JsonMerge
                 // Missing key — add from template
                 target[property.Key] = property.Value?.DeepClone();
             }
-        }
     }
 
     private static void SyncObjects(JsonObject target, JsonObject source)
@@ -89,7 +88,6 @@ public static class JsonMerge
 
         // Add missing keys, recurse into nested objects
         foreach (var property in source)
-        {
             if (target.ContainsKey(property.Key))
             {
                 if (target[property.Key] is JsonObject targetChild && property.Value is JsonObject sourceChild)
@@ -99,7 +97,6 @@ public static class JsonMerge
             {
                 target[property.Key] = property.Value?.DeepClone();
             }
-        }
     }
 
     private static string Serialize(JsonNode node) =>

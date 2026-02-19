@@ -19,6 +19,7 @@ public sealed class PropsBuilder
     public PropsBuilder Property(string name, string value)
     {
         var group = PropertyGroups.FirstOrDefault(g => g.Label is null);
+
         if (group is null)
         {
             group = new PropsPropertyGroup(null);
@@ -63,6 +64,7 @@ public sealed class PropsBuilder
     {
         if (condition)
             configure(this);
+
         return this;
     }
 
@@ -83,6 +85,7 @@ public sealed class PropsBuilder
             configure(this);
         else
             otherwise(this);
+
         return this;
     }
 
@@ -100,6 +103,7 @@ public sealed class PropsBuilder
 
         foreach (var item in items)
             configure(this, item);
+
         return this;
     }
 }
@@ -150,6 +154,7 @@ public sealed class PropsItemGroupBuilder
     {
         if (condition)
             configure(this);
+
         return this;
     }
 
@@ -170,6 +175,7 @@ public sealed class PropsItemGroupBuilder
             configure(this);
         else
             otherwise(this);
+
         return this;
     }
 
@@ -187,6 +193,7 @@ public sealed class PropsItemGroupBuilder
 
         foreach (var item in items)
             configure(this, item);
+
         return this;
     }
 
@@ -277,6 +284,7 @@ public sealed class PropsPropertyGroupBuilder
     {
         if (condition)
             configure(this);
+
         return this;
     }
 
@@ -297,6 +305,7 @@ public sealed class PropsPropertyGroupBuilder
             configure(this);
         else
             otherwise(this);
+
         return this;
     }
 
@@ -314,6 +323,7 @@ public sealed class PropsPropertyGroupBuilder
 
         foreach (var item in items)
             configure(this, item);
+
         return this;
     }
 }

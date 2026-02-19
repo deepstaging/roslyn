@@ -21,7 +21,8 @@ public static class CodeFixContextExtensions
     /// <typeparam name="TSyntax">The type of syntax node to find.</typeparam>
     /// <param name="context">The code fix context.</param>
     /// <returns>An OptionalSyntax containing the found declaration, or empty if not found.</returns>
-    public static async Task<OptionalSyntax<TSyntax>> FindDeclaration<TSyntax>(this CodeFixContext context) where TSyntax : SyntaxNode
+    public static async Task<OptionalSyntax<TSyntax>> FindDeclaration<TSyntax>(this CodeFixContext context)
+        where TSyntax : SyntaxNode
     {
         var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
@@ -45,7 +46,8 @@ public static class CodeFixContextExtensions
     /// <typeparam name="TSyntax">The type of type declaration syntax to find.</typeparam>
     /// <param name="context">The code fix context.</param>
     /// <returns>An OptionalSyntax that can be validated to a ValidTypeSyntax.</returns>
-    public static async Task<OptionalSyntax<TSyntax>> FindTypeDeclaration<TSyntax>(this CodeFixContext context) where TSyntax : TypeDeclarationSyntax =>
+    public static async Task<OptionalSyntax<TSyntax>> FindTypeDeclaration<TSyntax>(this CodeFixContext context)
+        where TSyntax : TypeDeclarationSyntax =>
         await context.FindDeclaration<TSyntax>().ConfigureAwait(false);
 
     #endregion

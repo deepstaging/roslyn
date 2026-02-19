@@ -3,7 +3,7 @@
 
 namespace Deepstaging.Roslyn.LanguageExt.Expressions;
 
-using Refs;
+using Types;
 
 /// <summary>
 /// Builds <c>Eff.LiftIO</c> expressions for lifting IO operations into a typed Eff.

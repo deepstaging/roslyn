@@ -31,7 +31,7 @@ public sealed class TrackedFiles
             if (!isTracked(text.Path))
                 continue;
 
-            var fileName = System.IO.Path.GetFileName(text.Path);
+            var fileName = Path.GetFileName(text.Path);
             var content = text.GetText()?.ToString();
             var hash = content is not null ? extractHash(content) : null;
 

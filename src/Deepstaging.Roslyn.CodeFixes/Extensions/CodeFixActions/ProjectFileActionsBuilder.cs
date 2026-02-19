@@ -40,8 +40,10 @@ public sealed class ProjectFileActionsBuilder(string title, string? projectFileP
     public ProjectFileActionsBuilder Write(string relativePath, string content)
     {
         var fullPath = ResolvePath(relativePath);
+
         if (fullPath is not null)
             _operations.Add((relativePath, new WriteFileOperation(fullPath, content)));
+
         return this;
     }
 
@@ -51,8 +53,10 @@ public sealed class ProjectFileActionsBuilder(string title, string? projectFileP
     public ProjectFileActionsBuilder WriteIfNotExists(string relativePath, string content)
     {
         var fullPath = ResolvePath(relativePath);
+
         if (fullPath is not null)
             _operations.Add((relativePath, new WriteFileIfNotExistsOperation(fullPath, content)));
+
         return this;
     }
 
@@ -63,8 +67,10 @@ public sealed class ProjectFileActionsBuilder(string title, string? projectFileP
     public ProjectFileActionsBuilder AppendLine(string relativePath, string line)
     {
         var fullPath = ResolvePath(relativePath);
+
         if (fullPath is not null)
             _operations.Add((relativePath, new AppendLineToFileOperation(fullPath, line)));
+
         return this;
     }
 
@@ -75,8 +81,10 @@ public sealed class ProjectFileActionsBuilder(string title, string? projectFileP
     public ProjectFileActionsBuilder MergeJsonFile(string relativePath, string templateContent)
     {
         var fullPath = ResolvePath(relativePath);
+
         if (fullPath is not null)
             _operations.Add((relativePath, new MergeJsonFileOperation(fullPath, templateContent)));
+
         return this;
     }
 
@@ -88,8 +96,10 @@ public sealed class ProjectFileActionsBuilder(string title, string? projectFileP
     public ProjectFileActionsBuilder SyncJsonFile(string relativePath, string templateContent)
     {
         var fullPath = ResolvePath(relativePath);
+
         if (fullPath is not null)
             _operations.Add((relativePath, new SyncJsonFileOperation(fullPath, templateContent)));
+
         return this;
     }
 
@@ -106,6 +116,7 @@ public sealed class ProjectFileActionsBuilder(string title, string? projectFileP
     {
         if (projectFilePath is not null)
             _operations.Add(("project", new ModifyProjectFileOperation(projectFilePath, modify, createIfMissing)));
+
         return this;
     }
 
@@ -116,8 +127,10 @@ public sealed class ProjectFileActionsBuilder(string title, string? projectFileP
     public ProjectFileActionsBuilder ModifyXmlFile(string relativePath, Action<XDocument> modify)
     {
         var fullPath = ResolvePath(relativePath);
+
         if (fullPath is not null)
             _operations.Add((relativePath, new ModifyOrCreateXmlFileOperation(fullPath, modify)));
+
         return this;
     }
 
@@ -179,6 +192,7 @@ public sealed class ProjectFileActionsBuilder(string title, string? projectFileP
             if (File.Exists(fullPath))
             {
                 var existing = File.ReadAllText(fullPath);
+
                 if (existing.Contains(line))
                     return;
 
@@ -236,7 +250,8 @@ public sealed class ProjectFileActionsBuilder(string title, string? projectFileP
         }
     }
 
-    private sealed class ModifyProjectFileOperation(string projectFilePath, Action<XDocument> modify, bool createIfMissing) : CodeActionOperation
+    private sealed class ModifyProjectFileOperation(string projectFilePath, Action<XDocument> modify, bool createIfMissing)
+        : CodeActionOperation
     {
         public override void Apply(Workspace workspace, CancellationToken cancellationToken)
         {
@@ -300,7 +315,7 @@ public sealed class ProjectFileActionsBuilder(string title, string? projectFileP
     }
 
     #endregion
-    
+
     /// <summary>
     /// Conditionally applies a set of operations to the builder.
     /// The <paramref name="configure"/> callback is invoked only when <paramref name="condition"/> is <see langword="true"/>.
@@ -311,6 +326,7 @@ public sealed class ProjectFileActionsBuilder(string title, string? projectFileP
     {
         if (condition)
             configure(this);
+
         return this;
     }
 
@@ -331,6 +347,7 @@ public sealed class ProjectFileActionsBuilder(string title, string? projectFileP
             configure(this);
         else
             otherwise(this);
+
         return this;
     }
 
@@ -349,6 +366,7 @@ public sealed class ProjectFileActionsBuilder(string title, string? projectFileP
 
         foreach (var item in items)
             configure(this, item);
+
         return this;
     }
 }

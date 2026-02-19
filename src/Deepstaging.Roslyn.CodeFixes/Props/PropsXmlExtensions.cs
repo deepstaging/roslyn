@@ -17,7 +17,7 @@ public enum MergeAction
     Remove,
 
     /// <summary>Add the entry if missing, or overwrite its value if it already exists.</summary>
-    Set,
+    Set
 }
 
 /// <summary>
@@ -52,8 +52,10 @@ public static class PropsXmlExtensions
             {
                 case MergeAction.Add:
                     if (existing is not null) break;
+
                     if (propertyComment is not null)
                         propertyGroup.Add(Indent(2), new XComment($" {propertyComment} "));
+
                     propertyGroup.Add(Indent(2), new XElement(name, value), Indent(1));
                     break;
 
@@ -70,8 +72,10 @@ public static class PropsXmlExtensions
                     {
                         if (propertyComment is not null)
                             propertyGroup.Add(Indent(2), new XComment($" {propertyComment} "));
+
                         propertyGroup.Add(Indent(2), new XElement(name, value), Indent(1));
                     }
+
                     break;
             }
         }
@@ -108,8 +112,10 @@ public static class PropsXmlExtensions
             {
                 case MergeAction.Add:
                     if (existing is not null) break;
+
                     if (entry.Comment is not null)
                         itemGroup.Add(Indent(2), new XComment($" {entry.Comment} "));
+
                     itemGroup.Add(Indent(2), entry.Element, Indent(1));
                     break;
 
@@ -126,8 +132,10 @@ public static class PropsXmlExtensions
                     {
                         if (entry.Comment is not null)
                             itemGroup.Add(Indent(2), new XComment($" {entry.Comment} "));
+
                         itemGroup.Add(Indent(2), entry.Element, Indent(1));
                     }
+
                     break;
             }
         }
@@ -147,6 +155,7 @@ public static class PropsXmlExtensions
     {
         if (condition)
             configure(document);
+
         return document;
     }
 
@@ -170,6 +179,7 @@ public static class PropsXmlExtensions
             configure(document);
         else
             otherwise(document);
+
         return document;
     }
 
@@ -189,6 +199,7 @@ public static class PropsXmlExtensions
 
         foreach (var item in items)
             configure(document, item);
+
         return document;
     }
 
@@ -203,8 +214,7 @@ public static class PropsXmlExtensions
 
         group.Add(Indent(1));
 
-        var insertAfter = root.Elements("PropertyGroup").LastOrDefault()
-                          ?? root.Elements("ItemGroup").LastOrDefault();
+        var insertAfter = root.Elements("PropertyGroup").LastOrDefault() ?? root.Elements("ItemGroup").LastOrDefault();
 
         if (insertAfter is not null)
         {
@@ -259,8 +269,12 @@ public sealed class ItemGroupXmlBuilder
     /// <param name="pattern">The pattern value for the action attribute.</param>
     /// <param name="metadata">Optional child metadata elements (e.g., <c>DependentUpon</c>).</param>
     /// <param name="comment">Optional XML comment placed before the item element when added.</param>
-    public ItemGroupXmlBuilder Item(string itemType, string action, string pattern,
-        Action<ItemMetadataXmlBuilder>? metadata = null, string? comment = null)
+    public ItemGroupXmlBuilder Item(
+        string itemType,
+        string action,
+        string pattern,
+        Action<ItemMetadataXmlBuilder>? metadata = null,
+        string? comment = null)
         => Item(itemType, action, pattern, MergeAction.Add, metadata, comment);
 
     /// <summary>
@@ -272,8 +286,13 @@ public sealed class ItemGroupXmlBuilder
     /// <param name="mergeAction">The merge action to apply.</param>
     /// <param name="metadata">Optional child metadata elements (e.g., <c>DependentUpon</c>).</param>
     /// <param name="comment">Optional XML comment placed before the item element when added.</param>
-    public ItemGroupXmlBuilder Item(string itemType, string action, string pattern,
-        MergeAction mergeAction, Action<ItemMetadataXmlBuilder>? metadata = null, string? comment = null)
+    public ItemGroupXmlBuilder Item(
+        string itemType,
+        string action,
+        string pattern,
+        MergeAction mergeAction,
+        Action<ItemMetadataXmlBuilder>? metadata = null,
+        string? comment = null)
     {
         var element = new XElement(itemType, new XAttribute(action, pattern));
 
@@ -302,6 +321,7 @@ public sealed class ItemGroupXmlBuilder
     {
         if (condition)
             configure(this);
+
         return this;
     }
 
@@ -322,6 +342,7 @@ public sealed class ItemGroupXmlBuilder
             configure(this);
         else
             otherwise(this);
+
         return this;
     }
 
@@ -339,6 +360,7 @@ public sealed class ItemGroupXmlBuilder
 
         foreach (var item in items)
             configure(this, item);
+
         return this;
     }
 
@@ -371,6 +393,7 @@ public sealed class ItemMetadataXmlBuilder
     {
         if (condition)
             configure(this);
+
         return this;
     }
 
@@ -391,6 +414,7 @@ public sealed class ItemMetadataXmlBuilder
             configure(this);
         else
             otherwise(this);
+
         return this;
     }
 
@@ -408,6 +432,7 @@ public sealed class ItemMetadataXmlBuilder
 
         foreach (var item in items)
             configure(this, item);
+
         return this;
     }
 
@@ -484,6 +509,7 @@ public sealed class PropertyGroupXmlBuilder
     {
         if (condition)
             configure(this);
+
         return this;
     }
 
@@ -504,6 +530,7 @@ public sealed class PropertyGroupXmlBuilder
             configure(this);
         else
             otherwise(this);
+
         return this;
     }
 
@@ -521,6 +548,7 @@ public sealed class PropertyGroupXmlBuilder
 
         foreach (var item in items)
             configure(this, item);
+
         return this;
     }
 

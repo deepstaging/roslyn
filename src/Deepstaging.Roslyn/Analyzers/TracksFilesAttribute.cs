@@ -71,10 +71,7 @@ public sealed class TracksFilesAttribute : Attribute
     /// Initializes a new instance of the <see cref="TracksFilesAttribute"/> class.
     /// </summary>
     /// <param name="diagnosticId">The diagnostic ID shared by the missing and stale rules.</param>
-    public TracksFilesAttribute(string diagnosticId)
-    {
-        DiagnosticId = diagnosticId;
-    }
+    public TracksFilesAttribute(string diagnosticId) => DiagnosticId = diagnosticId;
 
     /// <summary>
     /// Creates the <see cref="DiagnosticDescriptor"/> for the "missing files" rule.

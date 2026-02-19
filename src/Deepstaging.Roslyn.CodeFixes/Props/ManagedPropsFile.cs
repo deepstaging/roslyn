@@ -90,10 +90,8 @@ public abstract class ManagedPropsFile
         var propertyGroup = FindOrCreateGroup(root, "PropertyGroup", group.Label);
 
         foreach (var (name, value) in group.Properties)
-        {
             if (propertyGroup.Element(name) is null)
                 propertyGroup.Add(new XElement(name, value));
-        }
     }
 
     private static void EnsureItemGroup(XElement root, PropsItemGroup itemGroup)
@@ -117,10 +115,8 @@ public abstract class ManagedPropsFile
             var itemElement = new XElement(item.ItemType, new XAttribute(item.Action, item.Pattern));
 
             if (item.Metadata is { Count: > 0 })
-            {
                 foreach (var (name, value) in item.Metadata)
                     itemElement.Add(new XElement(name, value));
-            }
 
             element.Add(itemElement);
         }

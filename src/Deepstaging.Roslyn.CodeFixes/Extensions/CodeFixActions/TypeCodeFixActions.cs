@@ -46,7 +46,9 @@ public static class TypeCodeFixActions
     /// <summary>
     /// Creates a code action that adds the 'readonly' modifier to a struct declaration.
     /// </summary>
-    public static CodeAction AddReadonlyModifierAction(this Document document, ValidSyntax<StructDeclarationSyntax> structDecl) =>
+    public static CodeAction AddReadonlyModifierAction(
+        this Document document,
+        ValidSyntax<StructDeclarationSyntax> structDecl) =>
         document.AddModifierAction(structDecl, SyntaxKind.ReadOnlyKeyword, "Add 'readonly' modifier");
 
     /// <summary>

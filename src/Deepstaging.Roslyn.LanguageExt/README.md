@@ -1,6 +1,7 @@
 # Deepstaging.Roslyn.LanguageExt
 
-LanguageExt type references and emit patterns for Roslyn source generators built with [Deepstaging.Roslyn](https://github.com/deepstaging/roslyn).
+LanguageExt type references and emit patterns for Roslyn source generators built
+with [Deepstaging.Roslyn](https://github.com/deepstaging/roslyn).
 
 ## Usage
 

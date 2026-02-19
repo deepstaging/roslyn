@@ -21,7 +21,11 @@ public static class ProjectCodeFixActions
     /// <param name="propertyName">The MSBuild property name (e.g., "UserSecretsId").</param>
     /// <param name="propertyValue">The property value.</param>
     /// <param name="comment">Optional XML comment placed above the property element.</param>
-    public static CodeAction AddProjectPropertyAction(this Project project, string propertyName, string propertyValue, string? comment = null)
+    public static CodeAction AddProjectPropertyAction(
+        this Project project,
+        string propertyName,
+        string propertyValue,
+        string? comment = null)
     {
         var title = $"Add <{propertyName}> to project";
 
@@ -52,7 +56,10 @@ public static class ProjectCodeFixActions
     /// <param name="project">The project to modify.</param>
     /// <param name="title">The title for the code action.</param>
     /// <param name="files">Pairs of (relativePath, content) for each file to write.</param>
-    public static CodeAction WriteFilesAction(this Project project, string title, ImmutableArray<(string RelativePath, string Content)> files) =>
+    public static CodeAction WriteFilesAction(
+        this Project project,
+        string title,
+        ImmutableArray<(string RelativePath, string Content)> files) =>
         new WriteProjectFilesCodeAction(title, project.FilePath, files);
 
     /// <summary>
@@ -72,9 +79,14 @@ public static class ProjectCodeFixActions
     /// <param name="title">The title for the code action.</param>
     /// <param name="relativePath">File path relative to the project directory.</param>
     /// <param name="modify">Action to modify the XML document.</param>
-    public static CodeAction ModifyXmlFileAction(this Project project, string title, string relativePath, Action<XDocument> modify)
+    public static CodeAction ModifyXmlFileAction(
+        this Project project,
+        string title,
+        string relativePath,
+        Action<XDocument> modify)
     {
         var projectDir = project.FilePath is not null ? Path.GetDirectoryName(project.FilePath) : null;
+
         if (projectDir is null)
             return CodeAction.Create(title, _ => Task.FromResult(project.Solution));
 
@@ -119,6 +131,7 @@ public static class ProjectCodeFixActions
             if (node is XElement && prev is XText text)
             {
                 var lines = text.Value.Split('\n');
+
                 if (lines.Length > 1)
                     return "\n" + lines[lines.Length - 1];
             }

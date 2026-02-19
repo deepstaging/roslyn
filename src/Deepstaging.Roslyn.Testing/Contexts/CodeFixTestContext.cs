@@ -364,20 +364,16 @@ public class AdditionalDocumentAssertion
             var content = text.ToString();
 
             foreach (var expected in _expectedContains)
-            {
                 if (!content.Contains(expected))
                     Assert.Fail(
                         $"Expected additional document to contain '{expected}', " +
                         $"but content was:\n{content}");
-            }
 
             foreach (var unexpected in _expectedNotContains)
-            {
                 if (content.Contains(unexpected))
                     Assert.Fail(
                         $"Expected additional document to NOT contain '{unexpected}', " +
                         $"but it was found in:\n{content}");
-            }
         }
     }
 }
@@ -455,20 +451,16 @@ public class SourceDocumentAssertion
             var content = text.ToString();
 
             foreach (var expected in _expectedContains)
-            {
                 if (!content.Contains(expected))
                     Assert.Fail(
                         $"Expected source document to contain '{expected}', " +
                         $"but content was:\n{content}");
-            }
 
             foreach (var unexpected in _expectedNotContains)
-            {
                 if (content.Contains(unexpected))
                     Assert.Fail(
                         $"Expected source document to NOT contain '{unexpected}', " +
                         $"but it was found in:\n{content}");
-            }
         }
     }
 }

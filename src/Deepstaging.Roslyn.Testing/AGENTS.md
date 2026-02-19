@@ -31,15 +31,15 @@ public static void Init() =>
 
 Every test starts by calling one method on `RoslynTestBase`:
 
-| Method | Returns | Use For |
-|--------|---------|---------|
-| `SymbolsFor(source)` | `SymbolTestContext` | Querying symbols from compiled source |
-| `CompilationFor(source)` | `Compilation` | Getting the raw Roslyn compilation |
-| `AnalyzeWith<T>(source)` | `AnalyzerTestContext` | Asserting analyzer diagnostics |
-| `GenerateWith<T>(source)` | `GeneratorTestContext` | Asserting generator output |
-| `FixWith<T>(source)` | `CodeFixTestContext` | Testing code fixes for compiler diagnostics |
-| `AnalyzeAndFixWith<TA, TF>(source)` | `CodeFixTestContext` | Testing code fixes for analyzer diagnostics |
-| `RenderTemplateFrom<T>(source)` | `TemplateTestContext` | Testing Scriban template rendering |
+| Method                              | Returns                | Use For                                     |
+|-------------------------------------|------------------------|---------------------------------------------|
+| `SymbolsFor(source)`                | `SymbolTestContext`    | Querying symbols from compiled source       |
+| `CompilationFor(source)`            | `Compilation`          | Getting the raw Roslyn compilation          |
+| `AnalyzeWith<T>(source)`            | `AnalyzerTestContext`  | Asserting analyzer diagnostics              |
+| `GenerateWith<T>(source)`           | `GeneratorTestContext` | Asserting generator output                  |
+| `FixWith<T>(source)`                | `CodeFixTestContext`   | Testing code fixes for compiler diagnostics |
+| `AnalyzeAndFixWith<TA, TF>(source)` | `CodeFixTestContext`   | Testing code fixes for analyzer diagnostics |
+| `RenderTemplateFrom<T>(source)`     | `TemplateTestContext`  | Testing Scriban template rendering          |
 
 ## Patterns
 

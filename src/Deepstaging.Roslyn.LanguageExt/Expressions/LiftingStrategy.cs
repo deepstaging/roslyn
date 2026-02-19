@@ -3,8 +3,7 @@
 
 namespace Deepstaging.Roslyn.LanguageExt.Expressions;
 
-using Emit.Refs;
-using Refs;
+using Types;
 
 /// <summary>
 /// Describes how a method call should be lifted into the Eff monad.
@@ -37,7 +36,7 @@ public enum LiftingStrategy
     SyncOptional,
 
     /// <summary>Sync operation with null-forgiving assertion: <c>rt =&gt; (expr)!</c>.</summary>
-    SyncNonNull,
+    SyncNonNull
 }
 
 /// <summary>

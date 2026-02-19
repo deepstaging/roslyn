@@ -18,7 +18,9 @@ public static class MethodCodeFixActions
     /// <summary>
     /// Creates a code action that adds the 'partial' modifier to a method declaration.
     /// </summary>
-    public static CodeAction AddPartialModifierAction(this Document document, ValidSyntax<MethodDeclarationSyntax> methodDecl) =>
+    public static CodeAction AddPartialModifierAction(
+        this Document document,
+        ValidSyntax<MethodDeclarationSyntax> methodDecl) =>
         document.AddMethodModifierAction(methodDecl, SyntaxKind.PartialKeyword, "Add 'partial' modifier");
 
     /// <summary>
@@ -30,19 +32,25 @@ public static class MethodCodeFixActions
     /// <summary>
     /// Creates a code action that adds the 'virtual' modifier to a method declaration.
     /// </summary>
-    public static CodeAction AddVirtualModifierAction(this Document document, ValidSyntax<MethodDeclarationSyntax> methodDecl) =>
+    public static CodeAction AddVirtualModifierAction(
+        this Document document,
+        ValidSyntax<MethodDeclarationSyntax> methodDecl) =>
         document.AddMethodModifierAction(methodDecl, SyntaxKind.VirtualKeyword, "Add 'virtual' modifier");
 
     /// <summary>
     /// Creates a code action that adds the 'override' modifier to a method declaration.
     /// </summary>
-    public static CodeAction AddOverrideModifierAction(this Document document, ValidSyntax<MethodDeclarationSyntax> methodDecl) =>
+    public static CodeAction AddOverrideModifierAction(
+        this Document document,
+        ValidSyntax<MethodDeclarationSyntax> methodDecl) =>
         document.AddMethodModifierAction(methodDecl, SyntaxKind.OverrideKeyword, "Add 'override' modifier");
 
     /// <summary>
     /// Creates a code action that adds the 'static' modifier to a method declaration.
     /// </summary>
-    public static CodeAction AddStaticMethodModifierAction(this Document document, ValidSyntax<MethodDeclarationSyntax> methodDecl) =>
+    public static CodeAction AddStaticMethodModifierAction(
+        this Document document,
+        ValidSyntax<MethodDeclarationSyntax> methodDecl) =>
         document.AddMethodModifierAction(methodDecl, SyntaxKind.StaticKeyword, "Add 'static' modifier");
 
     /// <summary>
@@ -160,7 +168,9 @@ public static class MethodCodeFixActions
     /// <summary>
     /// Creates a code action that wraps the return type in Task&lt;T&gt;.
     /// </summary>
-    public static CodeAction WrapReturnTypeInTaskAction(this Document document, ValidSyntax<MethodDeclarationSyntax> methodDecl)
+    public static CodeAction WrapReturnTypeInTaskAction(
+        this Document document,
+        ValidSyntax<MethodDeclarationSyntax> methodDecl)
     {
         var currentType = methodDecl.Node.ReturnType.ToString().Trim();
         var newType = currentType == "void" ? "Task" : $"Task<{currentType}>";
