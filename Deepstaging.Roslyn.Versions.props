@@ -20,5 +20,7 @@
     <PackageVersion Include="Deepstaging.Roslyn" Version="$(DeepstagingRoslynVersion)" />
     <PackageVersion Include="Deepstaging.Roslyn.LanguageExt" Version="$(DeepstagingRoslynVersion)" />
     <PackageVersion Include="Deepstaging.Roslyn.Testing" Version="$(DeepstagingRoslynVersion)" />
+    <PackageVersion Include="Deepstaging.Roslyn.TypeScript" Version="$(DeepstagingRoslynVersion)" />
+    <PackageVersion Include="Deepstaging.Roslyn.TypeScript.Testing" Version="$(DeepstagingRoslynVersion)" />
   </ItemGroup>
 </Project>

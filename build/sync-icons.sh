@@ -19,12 +19,16 @@ ICON_NAMES=(
   "Deepstaging.Roslyn"
   "Deepstaging.Roslyn.LanguageExt"
   "Deepstaging.Roslyn.Testing"
+  "Deepstaging.Roslyn.TypeScript"
+  "Deepstaging.Roslyn.TypeScript.Testing"
   "Deepstaging.Templates"
 )
 ICON_DIRS=(
   "src/Deepstaging.Roslyn"
   "src/Deepstaging.Roslyn.LanguageExt"
   "src/Deepstaging.Roslyn.Testing"
+  "src/Deepstaging.Roslyn.TypeScript"
+  "src/Deepstaging.Roslyn.TypeScript.Testing"
   "templates"
 )
 

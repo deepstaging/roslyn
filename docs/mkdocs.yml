@@ -166,6 +166,12 @@ nav:
       - TemplateTestContext: api/testing/template-test-context.md
       - Assertions: api/testing/assertions.md
       - ReferenceConfiguration: api/testing/reference-configuration.md
+    - TypeScript Emit:
+      - Overview: api/typescript/index.md
+      - Emit: api/typescript/emit.md
+      - Types: api/typescript/types.md
+      - Expressions: api/typescript/expressions.md
+      - Integration: api/typescript/integration.md
     - LanguageExt:
       - Overview: api/languageext/index.md
       - Types: api/languageext/types.md

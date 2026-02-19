@@ -1,0 +1,348 @@
+# Integration
+
+How to use the TypeScript emit library in real-world source generators and build pipelines.
+
+> **See also:** [Overview](index.md) | [Emit](emit.md) | [Types](types.md) | [Expressions](expressions.md)
+
+---
+
+## The Problem
+
+`TsTypeBuilder.Emit()` produces a `string`. Roslyn source generators can only add C# source files via `context.AddSource()` — there's no built-in mechanism to output `.ts` files. So how do generated TypeScript definitions reach disk?
+
+---
+
+## Option 1: Analyzer + Code Fix (Recommended)
+
+The same pattern used by the Scriban template scaffolder in this repo. An **analyzer** detects C# types that should have TypeScript counterparts; a **code fix** creates the `.ts` file as an additional document.
+
+### How It Works
+
+```
+┌──────────────────┐     ┌──────────────────┐     ┌──────────────────┐
+│  C# Source Code  │────▶│    Analyzer       │────▶│   Code Fix       │
+│  [GenerateTs]    │     │  "Missing .ts     │     │  Creates .ts     │
+│  public record   │     │   for UserDto"    │     │  additional file  │
+│  UserDto(...)    │     │  DSXXXX info diag │     │  via IDE lightbulb│
+└──────────────────┘     └──────────────────┘     └──────────────────┘
+```
+
+1. The **analyzer** scans for a marker attribute (e.g., `[GenerateTypeScript]`)
+2. It checks whether a corresponding `.ts` file already exists in `AdditionalFiles`
+3. If missing → reports an informational diagnostic
+4. The **code fix** responds by generating the TypeScript content and adding it as an additional document
+
+### Analyzer
+
+```csharp
+using Deepstaging.Roslyn.Analyzers;
+
+[DiagnosticAnalyzer(LanguageNames.CSharp)]
+public sealed class GenerateTypeScriptAnalyzer : SymbolAnalyzer<INamedTypeSymbol>
+{
+    public static readonly DiagnosticDescriptor Rule = new(
+        id: "MYGEN001",
+        title: "TypeScript definition available",
+        messageFormat: "TypeScript definition available for '{0}'",
+        category: "CodeGen",
+        defaultSeverity: DiagnosticSeverity.Info,
+        isEnabledByDefault: true);
+
+    protected override ImmutableArray<DiagnosticDescriptor> Rules =>
+        [Rule];
+
+    protected override void Analyze(
+        SymbolAnalysisContext context,
+        ValidSymbol<INamedTypeSymbol> symbol)
+    {
+        // Check for [GenerateTypeScript] attribute
+        if (symbol.Value.TryGetAttribute("GenerateTypeScript").IsNotValid(out _))
+            return;
+
+        // Check if .ts file already exists in AdditionalFiles
+        var expectedPath = $"TypeScript/{symbol.Value.Name}.ts";
+        var exists = context.Options.AdditionalFiles
+            .Any(f => f.Path.EndsWith(expectedPath));
+
+        if (!exists)
+        {
+            context.ReportDiagnostic(Diagnostic.Create(
+                Rule,
+                symbol.Value.Locations.FirstOrDefault(),
+                properties: ImmutableDictionary<string, string?>.Empty
+                    .Add("TypeName", symbol.Value.Name),
+                symbol.Value.Name));
+        }
+    }
+}
+```
+
+### Code Fix
+
+```csharp
+using Deepstaging.Roslyn.CodeFixes;
+using Deepstaging.Roslyn.TypeScript;
+using Deepstaging.Roslyn.TypeScript.Emit;
+
+[CodeFix("MYGEN001")]
+[ExportCodeFixProvider(LanguageNames.CSharp)]
+public sealed class GenerateTypeScriptCodeFix : AdditionalDocumentCodeFix
+{
+    protected override AdditionalDocument? CreateDocument(
+        Compilation compilation,
+        Diagnostic diagnostic)
+    {
+        if (!diagnostic.Properties.TryGetValue("TypeName", out var typeName)
+            || typeName is null)
+            return null;
+
+        // Find the type symbol
+        var type = compilation.GetSymbolsWithName(typeName)
+            .OfType<INamedTypeSymbol>()
+            .FirstOrDefault();
+
+        if (type is null) return null;
+
+        // Build TypeScript interface from C# properties
+        var builder = TsTypeBuilder.Interface(type.Name).Exported();
+
+        foreach (var prop in type.GetMembers().OfType<IPropertySymbol>())
+        {
+            var tsType = TsTypeRef.From(prop.Type.ToSystemType());
+            builder = builder.AddProperty(
+                prop.Name.ToCamelCase(),
+                tsType,
+                p => prop.NullableAnnotation == NullableAnnotation.Annotated
+                    ? p.AsOptional()
+                    : p);
+        }
+
+        var result = builder.Emit();
+        if (!result.TryValidate(out var valid))
+            return null;
+
+        return new AdditionalDocument(
+            $"TypeScript/{typeName}.ts",
+            valid.Code);
+    }
+
+    protected override string GetTitle(
+        AdditionalDocument document,
+        Diagnostic diagnostic) =>
+        $"Generate TypeScript: {document.Path}";
+}
+```
+
+### Consumer Usage
+
+In the target project:
+
+```csharp
+[GenerateTypeScript]
+public record UserDto(string Name, int Age, string? Email);
+```
+
+The IDE shows a lightbulb → "Generate TypeScript: TypeScript/UserDto.ts" → creates:
+
+```typescript
+// <auto-generated/>
+
+export interface UserDto {
+  name: string;
+  age: number;
+  email?: string;
+}
+```
+
+The generated `.ts` file is added to the project as an `AdditionalFiles` item, so subsequent builds see it and the analyzer stays quiet.
+
+### Pros & Cons
+
+✅ IDE integration — lightbulb, preview, undo  
+✅ Files are project-tracked and version-controlled  
+✅ Uses existing Roslyn infrastructure (`AdditionalDocumentCodeFix`)  
+✅ User can customize the generated file after creation  
+❌ Requires user action (clicking the lightbulb) — not fully automatic  
+❌ Won't update if the C# source changes (one-shot scaffolding)  
+
+---
+
+## Option 2: Source Generator + MSBuild Extraction
+
+A source generator embeds TypeScript content in a C# wrapper. An MSBuild target extracts it to `.ts` files during build.
+
+### Generator
+
+```csharp
+public void Initialize(IncrementalGeneratorInitializationContext context)
+{
+    var types = context.SyntaxProvider
+        .ForAttributeWithMetadataName(
+            "MyLib.GenerateTypeScriptAttribute",
+            predicate: (node, _) => node is RecordDeclarationSyntax,
+            transform: (ctx, _) => (INamedTypeSymbol)ctx.TargetSymbol)
+        .Collect();
+
+    context.RegisterSourceOutput(types, (ctx, symbols) =>
+    {
+        foreach (var symbol in symbols)
+        {
+            var tsCode = BuildTypeScriptForType(symbol);
+
+            // Embed as C# string constant — MSBuild extracts later
+            ctx.AddSource($"ts/{symbol.Name}.g.cs", $$"""
+                // <auto-generated/>
+                namespace Generated.TypeScript
+                {
+                    internal static partial class Definitions
+                    {
+                        /// <summary>TypeScript definition for {{symbol.Name}}</summary>
+                        internal const string {{symbol.Name}} = """
+                {{tsCode}}
+                """;
+                    }
+                }
+                """);
+        }
+    });
+}
+```
+
+### MSBuild Target
+
+```xml
+<!-- In your .csproj or a .targets file -->
+<Target Name="ExtractTypeScript"
+        AfterTargets="Build"
+        Condition="'$(DesignTimeBuild)' != 'true'">
+  <Exec Command="dotnet run --project tools/ExtractTs -- $(IntermediateOutputPath)" />
+</Target>
+```
+
+### Pros & Cons
+
+✅ Fully automatic — runs on every build  
+✅ Always up-to-date with C# source changes  
+✅ No user action required  
+❌ More complex build pipeline  
+❌ TypeScript hidden inside C# string constants (harder to debug)  
+❌ Extraction tool is a separate maintenance burden  
+
+---
+
+## Option 3: Standalone CLI Tool
+
+A `dotnet tool` that reads compiled assemblies and generates `.ts` files. Runs as a build step or manually.
+
+```csharp
+// tools/GenerateTs/Program.cs
+var assembly = Assembly.LoadFrom(args[0]);
+var outputDir = args[1];
+
+foreach (var type in assembly.GetTypes()
+    .Where(t => t.GetCustomAttribute<GenerateTypeScriptAttribute>() != null))
+{
+    var builder = TsTypeBuilder.Interface(type.Name).Exported();
+
+    foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+    {
+        // Use TsTypeRef.From(Type) for automatic .NET → TS mapping
+        var tsType = TsTypeRef.From(prop.PropertyType);
+        builder = builder.AddProperty(
+            ToCamelCase(prop.Name),
+            tsType,
+            p => IsNullable(prop) ? p.AsOptional() : p);
+    }
+
+    var result = builder.Emit();
+    var code = result.ValidateOrThrow().Code;
+    File.WriteAllText(Path.Combine(outputDir, $"{type.Name}.ts"), code);
+}
+```
+
+Invoke from MSBuild:
+
+```xml
+<Target Name="GenerateTypeScript" AfterTargets="Build">
+  <Exec Command="dotnet generate-ts $(TargetPath) ts/" />
+</Target>
+```
+
+This approach uses `TsTypeRef.From(Type)` to map .NET runtime types to TypeScript — ideal since the tool runs against the compiled assembly.
+
+### Pros & Cons
+
+✅ Simplest to implement and debug  
+✅ Full access to reflection metadata  
+✅ `TsTypeRef.From(Type)` handles all .NET → TS mapping automatically  
+✅ Runs independently of IDE  
+❌ Requires a build step — not integrated with IDE  
+❌ Runs after compilation, not during  
+❌ No Roslyn symbol information (just reflection)  
+
+---
+
+## Choosing an Approach
+
+| Concern | Analyzer + Code Fix | Generator + MSBuild | CLI Tool |
+|---------|:-------------------:|:-------------------:|:--------:|
+| IDE integration | ✅ Lightbulb | ❌ None | ❌ None |
+| Fully automatic | ❌ User clicks | ✅ On build | ✅ On build |
+| Always up-to-date | ❌ One-shot | ✅ Regenerates | ✅ Regenerates |
+| Complexity | Medium | High | Low |
+| Debugging | Easy | Hard | Easy |
+| Roslyn symbols available | ✅ Yes | ✅ Yes | ❌ Reflection only |
+| `TsTypeRef.From(Type)` | ❌ No `System.Type` | ❌ No `System.Type` | ✅ Yes |
+
+**Recommendation:** Start with **Option 1** (analyzer + code fix) if you want IDE integration and your TypeScript definitions are relatively stable. Use **Option 3** (CLI tool) if you want fully automatic regeneration and the simplest implementation. Use **Option 2** only if you need source-generator-level Roslyn symbol access with automatic builds.
+
+---
+
+## Testing Any Approach
+
+Regardless of integration method, use `Deepstaging.Roslyn.TypeScript.Testing` to verify your TypeScript output:
+
+```csharp
+using Deepstaging.Roslyn.TypeScript.Testing;
+
+public class MyTypeScriptGenerationTests : TsTestBase
+{
+    [Test]
+    public async Task UserDto_GeneratesValidTypeScript()
+    {
+        var result = TsTypeBuilder.Interface("UserDto")
+            .Exported()
+            .AddProperty("name", "string", p => p)
+            .AddProperty("age", "number", p => p)
+            .AddProperty("email", "string", p => p.AsOptional())
+            .Emit(ValidatedOptions);
+
+        // Fluent assertions from TsTestBase
+        await Assert.That(result.Success).IsTrue();
+        await Assert.That(result.Diagnostics).IsEmpty();
+
+        var code = result.ValidateOrThrow().Code;
+        await Assert.That(code).Contains("export interface UserDto");
+    }
+}
+```
+
+For the analyzer + code fix approach, also test the Roslyn components:
+
+```csharp
+using Deepstaging.Roslyn.Testing;
+
+public class GenerateTypeScriptCodeFixTests : RoslynTestBase
+{
+    [Test]
+    public async Task Creates_TypeScript_AdditionalDocument() =>
+        await AnalyzeAndFixWith<GenerateTypeScriptAnalyzer, GenerateTypeScriptCodeFix>("""
+            [GenerateTypeScript]
+            public record UserDto(string Name, int Age, string? Email);
+            """)
+            .ForDiagnostic("MYGEN001")
+            .ShouldAddAdditionalDocument()
+            .WithPathContaining("UserDto.ts")
+            .WithContentContaining("export interface UserDto");
+}
+```

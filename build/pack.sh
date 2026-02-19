@@ -13,6 +13,8 @@
 #   - Deepstaging.Roslyn.{version}.nupkg
 #   - Deepstaging.Roslyn.LanguageExt.{version}.nupkg
 #   - Deepstaging.Roslyn.Testing.{version}.nupkg
+#   - Deepstaging.Roslyn.TypeScript.{version}.nupkg
+#   - Deepstaging.Roslyn.TypeScript.Testing.{version}.nupkg
 #   - Deepstaging.Templates.{version}.nupkg
 #
 # After packing, automatically updates Deepstaging.Roslyn.Versions.props
@@ -125,6 +127,14 @@ echo "Packing Deepstaging.Roslyn.Testing..."
 dotnet pack $(build_pack_args "$REPO_ROOT/src/Deepstaging.Roslyn.Testing/Deepstaging.Roslyn.Testing.csproj")
 
 echo ""
+echo "Packing Deepstaging.Roslyn.TypeScript..."
+dotnet pack $(build_pack_args "$REPO_ROOT/src/Deepstaging.Roslyn.TypeScript/Deepstaging.Roslyn.TypeScript.csproj")
+
+echo ""
+echo "Packing Deepstaging.Roslyn.TypeScript.Testing..."
+dotnet pack $(build_pack_args "$REPO_ROOT/src/Deepstaging.Roslyn.TypeScript.Testing/Deepstaging.Roslyn.TypeScript.Testing.csproj")
+
+echo ""
 echo "Packing Deepstaging.Templates..."
 # Template packs don't need a prior build — pack directly
 TEMPLATE_ARGS=(
@@ -183,6 +193,8 @@ if [[ -n "$NUPKG" ]]; then
     <PackageVersion Include="Deepstaging.Roslyn" Version="\$(DeepstagingRoslynVersion)" />
     <PackageVersion Include="Deepstaging.Roslyn.LanguageExt" Version="\$(DeepstagingRoslynVersion)" />
     <PackageVersion Include="Deepstaging.Roslyn.Testing" Version="\$(DeepstagingRoslynVersion)" />
+    <PackageVersion Include="Deepstaging.Roslyn.TypeScript" Version="\$(DeepstagingRoslynVersion)" />
+    <PackageVersion Include="Deepstaging.Roslyn.TypeScript.Testing" Version="\$(DeepstagingRoslynVersion)" />
   </ItemGroup>
 </Project>
 EOF
