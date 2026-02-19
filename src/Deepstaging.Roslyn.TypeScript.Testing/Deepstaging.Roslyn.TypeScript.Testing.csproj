@@ -32,6 +32,8 @@
     <ItemGroup>
         <PackageReference Include="TUnit"/>
         <PackageReference Include="TUnit.Engine"/>
+        <PackageReference Include="Verify"/>
+        <PackageReference Include="Verify.TUnit"/>
     </ItemGroup>
 
     <ItemGroup>

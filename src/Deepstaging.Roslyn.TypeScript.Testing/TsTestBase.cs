@@ -3,7 +3,10 @@
 
 using System;
 using System.IO;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Deepstaging.Roslyn.TypeScript.Emit;
+using Verify = VerifyTUnit.Verifier;
 
 namespace Deepstaging.Roslyn.TypeScript.Testing;
 
@@ -91,6 +94,24 @@ public abstract class TsTestBase
             "tsc not found. Install TypeScript in your test project: npm init -y && npm install typescript --save-dev"),
         FormatOutput = true,
     };
+
+    /// <summary>
+    /// Snapshot-verifies the emitted TypeScript code using Verify.
+    /// Asserts the emit succeeded, then compares the code against the <c>.verified.txt</c> file
+    /// stored next to the calling test file.
+    /// </summary>
+    /// <param name="result">The emit result to verify.</param>
+    /// <param name="sourceFile">Auto-populated by the compiler; do not pass explicitly.</param>
+    /// <returns>A task that completes when the snapshot comparison is done.</returns>
+    /// <exception cref="InvalidOperationException">Thrown if the emit result indicates failure.</exception>
+    protected static Task VerifyEmit(TsOptionalEmit result, [CallerFilePath] string sourceFile = "")
+    {
+        if (!result.TryValidate(out var valid))
+            throw new InvalidOperationException(
+                $"Emit failed with diagnostics:\n{string.Join("\n", result.Diagnostics)}");
+
+        return Verify.Verify(valid.Code, sourceFile: sourceFile);
+    }
 
     private static string? DiscoverTscPath()
     {
