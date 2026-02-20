@@ -7,6 +7,7 @@ The `Deepstaging.Roslyn.Generators` namespace provides utilities for building Ro
 | Type | Description |
 |------|-------------|
 | [ForAttribute / AttributeMapper](for-attribute.md) | Fluent API for `ForAttributeWithMetadataName` |
+| [Combine Overloads](combine.md) | Multi-arity `Combine` with flat tuples and auto-collect |
 | [HintName](hint-name.md) | Consistent hint name generation for output files |
 | [OptionalEmit.AddSourceTo](source-output.md) | Safe source output with diagnostic reporting |
 

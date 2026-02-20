@@ -76,6 +76,72 @@ public sealed class EffectsGenerator : IIncrementalGenerator
 }
 ```
 
+### Combining Pipelines
+
+When a generator needs data from multiple attribute-driven pipelines, use the multi-arity `Combine` overloads to flatten nested tuples. These auto-collect plural providers and return a flat tuple:
+
+```csharp
+[Generator]
+public sealed class DispatchGenerator : IIncrementalGenerator
+{
+    public void Initialize(IncrementalGeneratorInitializationContext context)
+    {
+        var modules = context.ForAttribute<DispatchModuleAttribute>()
+            .Map(static (ctx, _) => ctx.TargetSymbol.AsValidNamedType().QueryDispatchModule());
+
+        var commandHandlers = context.ForAttribute<CommandHandlerAttribute>()
+            .Map(static (ctx, _) => ctx.TargetSymbol.AsValidNamedType().QueryCommandHandlerGroup());
+
+        var queryHandlers = context.ForAttribute<QueryHandlerAttribute>()
+            .Map(static (ctx, _) => ctx.TargetSymbol.AsValidNamedType().QueryQueryHandlerGroup());
+
+        // Flat tuple — no nesting, no manual .Collect() calls
+        var combined = modules
+            .Combine(commandHandlers, queryHandlers)
+            .Select(static (tuple, _) =>
+            {
+                var (module, commands, queries) = tuple;
+                return module with
+                {
+                    CommandHandlers = commands,
+                    QueryHandlers = queries
+                };
+            });
+
+        context.RegisterSourceOutput(combined, static (ctx, model) =>
+        {
+            model.WriteDispatchModule()
+                .AddSourceTo(ctx, HintName.From(model.Namespace, model.ContainerName));
+        });
+    }
+}
+```
+
+Without the overloads, Roslyn's `Combine` produces nested tuples that get increasingly painful to destructure:
+
+```csharp
+// ❌ Without overloads — nested tuples, manual .Collect()
+var combined = modules
+    .Combine(commandHandlers.Collect())
+    .Combine(queryHandlers.Collect())
+    .Select(static (tuple, _) =>
+    {
+        var ((module, commands), queries) = tuple;  // (((A, B), C), D) with 4 providers
+        ...
+    });
+
+// ✅ With overloads — flat tuple, auto-collect
+var combined = modules
+    .Combine(commandHandlers, queryHandlers)
+    .Select(static (tuple, _) =>
+    {
+        var (module, commands, queries) = tuple;  // always flat
+        ...
+    });
+```
+
+Overloads are available for 2, 3, and 4 additional providers, on both `IncrementalValuesProvider<T>` (plural) and `IncrementalValueProvider<T>` (singular).
+
 ### Static Output with Post-Initialization
 
 Use `RegisterPostInitializationOutput` for code that doesn't depend on user source:
