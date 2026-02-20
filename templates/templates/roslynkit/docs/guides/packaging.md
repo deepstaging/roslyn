@@ -74,3 +74,62 @@ Deploys to GitHub Pages automatically when docs change on `main`. To enable:
 3. Push a change to `docs/` — the workflow handles the rest
 
 The workflow is in `.github/workflows/docs.yml`.
+
+## Satellite Projection
+
+When you pack your project, the **Projection** assembly is bundled in a `satellite/` folder inside the NuGet package. This enables downstream projects to build upon your projection layer — your models, query extensions, and attribute wrappers — without you publishing a separate package.
+
+### How Consumers Use It
+
+A downstream generator project opts in with a single MSBuild property:
+
+```xml
+<PropertyGroup>
+    <DeepstagingRoslynKitSatellite>true</DeepstagingRoslynKitSatellite>
+</PropertyGroup>
+```
+
+This adds your `Deepstaging.RoslynKit.Projection.dll` as a compile reference, giving the downstream project access to all your projection types.
+
+### Naming Convention
+
+The property name follows the pattern `{PackageNameNoDots}Satellite`:
+
+| Package | Property |
+|---------|----------|
+| `Deepstaging.RoslynKit` | `DeepstagingRoslynKitSatellite` |
+| `Deepstaging` | `DeepstagingSatellite` |
+| `Deepstaging.Web` | `DeepstagingWebSatellite` |
+
+Downstream projects can compose multiple satellite references:
+
+```xml
+<PropertyGroup>
+    <DeepstagingSatellite>true</DeepstagingSatellite>
+    <DeepstagingRoslynKitSatellite>true</DeepstagingRoslynKitSatellite>
+</PropertyGroup>
+```
+
+### Package Layout
+
+After packing, your package contains:
+
+```
+Deepstaging.RoslynKit.nupkg
+├── lib/netstandard2.0/
+│   ├── Deepstaging.RoslynKit.Generators.dll     (compile-time reference for tests)
+│   ├── Deepstaging.RoslynKit.Projection.dll     (compile-time reference for tests)
+│   └── ...
+├── analyzers/dotnet/cs/
+│   ├── Deepstaging.RoslynKit.Generators.dll
+│   ├── Deepstaging.RoslynKit.Analyzers.dll
+│   ├── Deepstaging.RoslynKit.CodeFixes.dll
+│   ├── Deepstaging.RoslynKit.Projection.dll     (generator dependency)
+│   └── ...
+├── satellite/netstandard2.0/
+│   └── Deepstaging.RoslynKit.Projection.dll     (for downstream generators)
+└── build/
+    └── Deepstaging.RoslynKit.props              (auto-imported, checks satellite property)
+```
+
+The `satellite/` copy is separate from `lib/` and `analyzers/`. Regular consumers never see projection types in IntelliSense — only projects that explicitly opt in get the reference.

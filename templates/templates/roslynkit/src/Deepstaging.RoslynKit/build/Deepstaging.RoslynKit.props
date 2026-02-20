@@ -1,0 +1,21 @@
+<!-- SPDX-FileCopyrightText: 2024-present Deepstaging -->
+<!-- SPDX-License-Identifier: RPL-1.5 -->
+<Project>
+    <!-- Automatically imported by projects that reference this package -->
+
+    <!--
+        Satellite generator support.
+        Projects that set DeepstagingRoslynKitSatellite=true get the Projection assembly as a
+        compile reference, enabling downstream generators to build upon this package's projection
+        layer (models, queries, attribute wrappers) without duplicating discovery logic.
+
+        Usage in a downstream .csproj:
+            <PropertyGroup>
+                <DeepstagingRoslynKitSatellite>true</DeepstagingRoslynKitSatellite>
+            </PropertyGroup>
+    -->
+    <ItemGroup Condition="'$(DeepstagingRoslynKitSatellite)' == 'true'">
+        <Reference Include="Deepstaging.RoslynKit.Projection"
+                   HintPath="$(MSBuildThisFileDirectory)../satellite/netstandard2.0/Deepstaging.RoslynKit.Projection.dll"/>
+    </ItemGroup>
+</Project>

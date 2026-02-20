@@ -39,6 +39,18 @@
       "description": "Include a Runtime project with base classes (e.g., ObservableObject) for generated code.",
       "defaultValue": "false",
       "displayName": "Include Runtime project"
+    },
+    "satellitePrefix": {
+      "type": "generated",
+      "generator": "regex",
+      "datatype": "string",
+      "parameters": {
+        "source": "namespace",
+        "steps": [
+          { "regex": "\\.", "replacement": "" }
+        ]
+      },
+      "replaces": "DeepstagingRoslynKit"
     }
   },
   "sources": [

@@ -12,10 +12,18 @@
         <Title>Deepstaging.RoslynKit</Title>
         <Description>AutoNotify source generator, analyzers, and code fixes for INotifyPropertyChanged. Built with Deepstaging.Roslyn.</Description>
         <PackageTags>deepstaging;roslynkit;source-generator;analyzer;codefix;inpc;mvvm</PackageTags>
+
+        <!-- Suppress NU5100: satellite/ DLLs are intentionally outside lib/ (opt-in via build props) -->
+        <NoWarn>$(NoWarn);NU5100</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
         <None Include="../../README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+
+    <!-- Build props imported automatically by consuming projects -->
+    <ItemGroup>
+        <None Include="build\Deepstaging.RoslynKit.props" Pack="true" PackagePath="build"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -89,5 +97,11 @@
               Pack="true" PackagePath="lib/net10.0" Visible="false"/>
     </ItemGroup>
     <!--#endif -->
+
+    <!-- Satellite: Projection library for downstream generator projects (opt-in via DeepstagingRoslynKitSatellite property) -->
+    <ItemGroup>
+        <None Include="$(BundleArtifactsPath)/Deepstaging.RoslynKit.Projection/bin/$(Configuration)/netstandard2.0/Deepstaging.RoslynKit.Projection.dll"
+              Pack="true" PackagePath="satellite/netstandard2.0" Visible="false"/>
+    </ItemGroup>
 
 </Project>

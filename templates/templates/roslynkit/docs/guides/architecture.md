@@ -61,6 +61,10 @@ The **Projection** layer is the key insight — it extracts strongly-typed model
 
 All target `netstandard2.0` because Roslyn loads analyzers and generators in a constrained environment. Everything ships as a single NuGet package — the root `.csproj` bundles all DLLs into the correct package paths.
 
+### Satellite Extensibility
+
+The **Projection** project is also bundled in a `satellite/` folder within the NuGet package. This allows other packages to reference your projection models and query extensions, building new generators on top of your attribute semantics without duplicating symbol-walking logic. See the [Packaging guide](packaging.md#satellite-projection) for details.
+
 ## Key Deepstaging.Roslyn APIs
 
 | API | Purpose |

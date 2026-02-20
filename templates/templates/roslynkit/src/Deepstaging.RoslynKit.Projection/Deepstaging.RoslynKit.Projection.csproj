@@ -8,6 +8,13 @@
         <Nullable>enable</Nullable>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
+        <!--
+            Set DeepstagingSatellite=true to opt into Deepstaging core's projection layer.
+            This adds Deepstaging.Projection.dll as a compile reference, giving access to
+            DispatchModel, EffectsModuleModel, and all query extensions.
+        -->
+        <!-- <DeepstagingSatellite>true</DeepstagingSatellite> -->
+
         <!-- Package metadata -->
         <PackageId>Deepstaging.RoslynKit.Projection</PackageId>
         <Title>Deepstaging.RoslynKit.Projection</Title>
@@ -18,6 +25,8 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.Common"/>
         <PackageReference Include="Deepstaging.Roslyn"/>
+        <!-- Uncomment to depend on Deepstaging core (requires DeepstagingSatellite above): -->
+        <!-- <PackageReference Include="Deepstaging"/> -->
         <!-- PolySharp for polyfills on netstandard2.0 -->
         <PackageReference Include="PolySharp">
             <PrivateAssets>all</PrivateAssets>

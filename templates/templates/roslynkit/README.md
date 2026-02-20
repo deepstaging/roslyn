@@ -82,6 +82,8 @@ This project produces a single NuGet package that bundles everything — attribu
 
 Packages are written to `artifacts/packages/`.
 
+The package also includes a `satellite/` folder with the Projection assembly, enabling downstream packages to build upon your models and query extensions. See [Satellite Projection](docs/guides/packaging.md#satellite-projection) in the docs.
+
 ## Local Development Loop
 
 Tests cover correctness, but sometimes you need to see your generator/analyzer running in a real project. The fastest iteration loop:
