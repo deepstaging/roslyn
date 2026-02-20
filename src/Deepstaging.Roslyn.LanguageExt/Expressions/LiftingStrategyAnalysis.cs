@@ -41,6 +41,8 @@ public static class LiftingStrategyAnalysis
     /// <summary>
     /// Computes the raw effect result type for a method given its lifting strategy.
     /// Returns the unwrapped inner type (e.g., <c>"User"</c> not <c>"Option&lt;User&gt;"</c>).
+    /// For Optional strategies, strips the nullable annotation since <see cref="EffLiftExtensions.EffReturnType"/>
+    /// wraps the result in <c>Option&lt;T&gt;</c>.
     /// </summary>
     /// <param name="method">The method symbol to extract the result type from.</param>
     /// <param name="strategy">The lifting strategy previously determined for this method.</param>
@@ -48,11 +50,17 @@ public static class LiftingStrategyAnalysis
         strategy switch
         {
             AsyncVoid or SyncVoid => "Unit",
-            AsyncValue or AsyncOptional or AsyncNonNull =>
+            AsyncValue or AsyncNonNull =>
                 method.ReturnType
                     .GetFirstTypeArgument()
                     .Map(type => type.GloballyQualifiedName)
                     .OrThrow("Expected a type argument for async return type."),
+            AsyncOptional =>
+                method.ReturnType
+                    .GetFirstTypeArgument()
+                    .Map(type => type.GloballyQualifiedName.TrimEnd('?'))
+                    .OrThrow("Expected a type argument for async return type."),
+            SyncOptional => method.ReturnType.GloballyQualifiedName.TrimEnd('?'),
             _ => method.ReturnType.GloballyQualifiedName
         };
 }
