@@ -101,6 +101,8 @@ The template uses single-package bundling — one NuGet package contains everyth
 - Generator + Projection → `analyzers/dotnet/cs/`
 - Analyzers + CodeFixes → `analyzers/dotnet/cs/`
 - Runtime (if included) → `lib/net10.0/`
+- Projection (satellite) → `satellite/netstandard2.0/`
+- Build props → `build/`
 
 ```bash
 # Pack with dev version suffix
@@ -109,6 +111,8 @@ The template uses single-package bundling — one NuGet package contains everyth
 # Pack for release
 ./build/pack.sh --no-version-suffix
 ```
+
+The `satellite/` folder enables downstream packages to reference your Projection layer for building generators that extend your attributes. See [Satellite Projection](guides/project-organization.md#satellite-projection) for details.
 
 ### Documentation Site
 

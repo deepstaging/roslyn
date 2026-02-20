@@ -188,6 +188,121 @@ These constraints prevent circular dependencies and keep the architecture clean:
 !!! warning "Never reference Generators from Analyzers"
     If you find an analyzer needing generator logic, move that logic to the Projection layer.
 
+## Packaging
+
+Everything ships as a **single NuGet package**. The root project bundles all DLLs into the correct NuGet folders:
+
+```
+MyPackage.nupkg
+├── lib/netstandard2.0/
+│   └── MyPackage.dll                          (attributes — all consumers)
+├── lib/net10.0/
+│   ├── MyPackage.dll
+│   └── MyPackage.Runtime.dll                  (optional runtime classes)
+├── analyzers/dotnet/cs/
+│   ├── MyPackage.Generators.dll
+│   ├── MyPackage.Analyzers.dll
+│   ├── MyPackage.CodeFixes.dll
+│   ├── MyPackage.Projection.dll               (generator/analyzer dependency)
+│   └── Deepstaging.Roslyn.dll                 (generator dependency)
+├── satellite/netstandard2.0/
+│   └── MyPackage.Projection.dll               (for downstream generators)
+└── build/
+    └── MyPackage.props                        (auto-imported by consuming projects)
+```
+
+Consumers only need:
+
+```xml
+<PackageReference Include="MyPackage" Version="1.0.0" />
+```
+
+The [roslynkit template](../templates.md) generates this structure automatically via `./build/pack.sh`.
+
+### Satellite Projection
+
+The `satellite/` folder enables **downstream packages** to build upon your Projection layer — your models, query extensions, and attribute wrappers — without you publishing a separate package.
+
+#### The Problem
+
+When package A defines attributes and a generator, and package B wants to generate code that builds upon A's semantics, B needs access to A's `Projection.dll` as a compile-time reference. But the copy in `analyzers/dotnet/cs/` is only loaded by the Roslyn compiler — it's not available for B's code to reference.
+
+Putting Projection in `lib/` would expose Roslyn-specific types (symbol wrappers, query extensions) to all consumers via IntelliSense — types that only make sense for generator authors.
+
+#### The Solution
+
+A second copy of `Projection.dll` lives in `satellite/netstandard2.0/`. The package's build props conditionally add it as a reference when an opt-in property is set.
+
+In the package's `build/MyPackage.props`:
+
+```xml
+<ItemGroup Condition="'$(MyPackageSatellite)' == 'true'">
+    <Reference Include="MyPackage.Projection"
+               HintPath="$(MSBuildThisFileDirectory)../satellite/netstandard2.0/MyPackage.Projection.dll"/>
+</ItemGroup>
+```
+
+Downstream projects opt in with one property:
+
+```xml
+<PropertyGroup>
+    <MyPackageSatellite>true</MyPackageSatellite>
+</PropertyGroup>
+```
+
+#### Naming Convention
+
+Every package uses `{PackageNameNoDots}Satellite` as its property name:
+
+| Package | Property | Exposes |
+|---------|----------|---------|
+| `Deepstaging` | `DeepstagingSatellite` | `Deepstaging.Projection.dll` |
+| `Deepstaging.Web` | `DeepstagingWebSatellite` | `Deepstaging.Web.Projection.dll` |
+| `MyCompany.Foo` | `MyCompanyFooSatellite` | `MyCompany.Foo.Projection.dll` |
+
+This lets a downstream project compose multiple satellite references:
+
+```xml
+<PropertyGroup>
+    <DeepstagingSatellite>true</DeepstagingSatellite>
+    <DeepstagingWebSatellite>true</DeepstagingWebSatellite>
+</PropertyGroup>
+```
+
+#### Implementing Satellite Support
+
+1. **Create build props** at `build/{PackageId}.props`:
+
+    ```xml
+    <Project>
+        <ItemGroup Condition="'$({PackageNameNoDots}Satellite)' == 'true'">
+            <Reference Include="{PackageId}.Projection"
+                       HintPath="$(MSBuildThisFileDirectory)../satellite/netstandard2.0/{PackageId}.Projection.dll"/>
+        </ItemGroup>
+    </Project>
+    ```
+
+2. **Pack the build props** in your root `.csproj`:
+
+    ```xml
+    <None Include="build\{PackageId}.props" Pack="true" PackagePath="build"/>
+    ```
+
+3. **Pack Projection to satellite**:
+
+    ```xml
+    <None Include="path/to/{PackageId}.Projection.dll"
+          Pack="true" PackagePath="satellite/netstandard2.0" Visible="false"/>
+    ```
+
+4. **Suppress NU5100** (NuGet warns about DLLs outside `lib/`):
+
+    ```xml
+    <NoWarn>$(NoWarn);NU5100</NoWarn>
+    ```
+
+The [roslynkit template](../templates.md) includes all of this. The `satellitePrefix` template symbol automatically derives the property name by stripping dots from the package name.
+
 ## Getting Started
 
 | Resource | Purpose |
