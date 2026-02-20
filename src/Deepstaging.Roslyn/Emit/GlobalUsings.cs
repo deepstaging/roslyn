@@ -103,6 +103,141 @@ public static class GlobalUsings
         return Emit(options, strings);
     }
 
+    /// <summary>
+    /// Emits <c>global using</c> directives for the specified entries using default options.
+    /// Entries may include preprocessor directive conditions for conditional compilation.
+    /// </summary>
+    /// <param name="entries">The global using entries, which may include conditional directives.</param>
+    public static OptionalEmit Emit(params GlobalUsingEntry[] entries) => Emit(EmitOptions.Default, entries);
+
+    /// <summary>
+    /// Emits <c>global using</c> directives for the specified entries with the given options.
+    /// Entries may include preprocessor directive conditions for conditional compilation.
+    /// Unconditional usings are emitted first, followed by conditional groups wrapped in <c>#if</c>/<c>#endif</c>.
+    /// </summary>
+    /// <param name="options">Emit options controlling headers and formatting.</param>
+    /// <param name="entries">The global using entries, which may include conditional directives.</param>
+    public static OptionalEmit Emit(EmitOptions options, params GlobalUsingEntry[] entries)
+    {
+        try
+        {
+            var compilationUnit = SyntaxFactory.CompilationUnit();
+
+            // Separate unconditional from conditional entries
+            var unconditional = new List<GlobalUsingEntry>();
+            var conditionalGroups = new Dictionary<string, List<GlobalUsingEntry>>();
+
+            foreach (var entry in entries)
+            {
+                if (string.IsNullOrWhiteSpace(entry.Namespace))
+                    continue;
+
+                if (entry.Condition is null)
+                {
+                    unconditional.Add(entry);
+                }
+                else
+                {
+                    var key = entry.Condition.Value.Condition;
+
+                    if (!conditionalGroups.TryGetValue(key, out var group))
+                    {
+                        group = [];
+                        conditionalGroups[key] = group;
+                    }
+
+                    group.Add(entry);
+                }
+            }
+
+            // Emit unconditional usings
+            foreach (var entry in unconditional)
+                compilationUnit = compilationUnit.AddUsings(CreateUsingDirective(entry));
+
+            // Emit conditional groups wrapped in #if/#endif
+            foreach (var kvp in conditionalGroups)
+            {
+                var condition = kvp.Key;
+                var group = kvp.Value;
+
+                for (var i = 0; i < group.Count; i++)
+                {
+                    var directive = CreateUsingDirective(group[i]);
+
+                    if (i == 0)
+                        directive = AddIfDirective(directive, condition);
+
+                    if (i == group.Count - 1)
+                        directive = AddEndIfDirective(directive);
+
+                    compilationUnit = compilationUnit.AddUsings(directive);
+                }
+            }
+
+            compilationUnit = AddHeaders(compilationUnit, options);
+
+            var formatted = compilationUnit
+                .NormalizeWhitespace(options.Indentation, options.EndOfLine)
+                .ToFullString();
+
+            return OptionalEmit.FromSuccess(compilationUnit, formatted);
+        }
+        catch (Exception ex)
+        {
+            return OptionalEmit.FromFailure([
+                Diagnostic.Create(
+                    new DiagnosticDescriptor(
+                        "EMIT003",
+                        "GlobalUsings emit failed",
+                        "GlobalUsings.Emit failed: {0}",
+                        "Deepstaging.Emit",
+                        DiagnosticSeverity.Error,
+                        true),
+                    Location.None,
+                    ex.Message)
+            ]);
+        }
+    }
+
+    private static UsingDirectiveSyntax CreateUsingDirective(GlobalUsingEntry entry)
+    {
+        var directive = SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(entry.Namespace))
+            .WithGlobalKeyword(SyntaxFactory.Token(SyntaxKind.GlobalKeyword));
+
+        if (entry.IsStatic)
+            directive = directive.WithStaticKeyword(SyntaxFactory.Token(SyntaxKind.StaticKeyword));
+
+        return directive;
+    }
+
+    private static UsingDirectiveSyntax AddIfDirective(UsingDirectiveSyntax directive, string condition)
+    {
+        var newLine = SyntaxFactory.EndOfLine(Environment.NewLine);
+
+        var ifTrivia = SyntaxFactory.Trivia(
+            SyntaxFactory.IfDirectiveTrivia(
+                SyntaxFactory.ParseExpression(condition),
+                true, true, true));
+
+        var leading = directive.GetLeadingTrivia();
+        var newLeading = SyntaxFactory.TriviaList(ifTrivia, newLine).AddRange(leading);
+
+        return directive.WithLeadingTrivia(newLeading);
+    }
+
+    private static UsingDirectiveSyntax AddEndIfDirective(UsingDirectiveSyntax directive)
+    {
+        var newLine = SyntaxFactory.EndOfLine(Environment.NewLine);
+
+        var endIfTrivia = SyntaxFactory.Trivia(
+            SyntaxFactory.EndIfDirectiveTrivia(isActive: true));
+
+        var trailing = directive.GetTrailingTrivia();
+        var newTrailing = trailing.Add(newLine).Add(endIfTrivia);
+
+        return directive.WithTrailingTrivia(newTrailing);
+    }
+
     private static CompilationUnitSyntax AddHeaders(CompilationUnitSyntax compilationUnit, EmitOptions options)
     {
         var headerComment = SyntaxFactory.Comment(options.HeaderComment);

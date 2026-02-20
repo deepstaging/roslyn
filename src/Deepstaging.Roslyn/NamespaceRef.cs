@@ -3,6 +3,8 @@
 
 namespace Deepstaging.Roslyn;
 
+using Emit;
+
 /// <summary>
 /// Represents a namespace reference for use in code generation.
 /// Provides a <see cref="Type"/> factory to create fully-qualified <see cref="TypeRef"/> instances
@@ -66,6 +68,18 @@ public readonly record struct NamespaceRef
     /// Returns a static using string for this namespace (e.g., <c>static System.Math</c>).
     /// </summary>
     public string AsStatic() => $"static {Value}";
+
+    /// <summary>
+    /// Creates a <see cref="GlobalUsingEntry"/> for this namespace with a preprocessor directive condition.
+    /// </summary>
+    /// <param name="directive">The directive condition (e.g., <c>Directives.Net6OrGreater</c>).</param>
+    public GlobalUsingEntry When(Directive directive) => new(Value, directive);
+
+    /// <summary>
+    /// Creates a static <see cref="GlobalUsingEntry"/> for this namespace with a preprocessor directive condition.
+    /// </summary>
+    /// <param name="directive">The directive condition (e.g., <c>Directives.Net6OrGreater</c>).</param>
+    public GlobalUsingEntry AsStaticWhen(Directive directive) => new(Value, directive, isStatic: true);
 
     /// <summary>Returns the namespace string.</summary>
     public override string ToString() => Value;
