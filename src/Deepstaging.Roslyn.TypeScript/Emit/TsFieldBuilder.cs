@@ -105,4 +105,9 @@ public readonly record struct TsFieldBuilder
     /// <param name="initializer">The initializer expression (e.g., <c>"0"</c>, <c>"[]"</c>).</param>
     public TsFieldBuilder WithInitializer(string initializer) =>
         this with { Initializer = initializer };
+
+    /// <summary>Sets the initializer expression for the field from a <see cref="TsExpressionRef"/>.</summary>
+    /// <param name="initializer">The initializer expression.</param>
+    public TsFieldBuilder WithInitializer(TsExpressionRef initializer) =>
+        this with { Initializer = initializer.Value };
 }
