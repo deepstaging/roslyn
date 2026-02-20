@@ -3,14 +3,15 @@
 
 namespace Deepstaging.Roslyn.Tests.LanguageExt.Types;
 
+using Roslyn.LanguageExt;
 using Roslyn.LanguageExt.Types;
 
-public class LanguageExtRefsTests
+public class LanguageExtTypesTests
 {
     [Test]
     public async Task Namespace_returns_LanguageExt()
     {
-        var ns = NamespaceRef.From("LanguageExt");
+        var ns = LanguageExtTypes.Namespace;
 
         await Assert.That(ns.Value).IsEqualTo("LanguageExt");
     }
@@ -18,7 +19,7 @@ public class LanguageExtRefsTests
     [Test]
     public async Task EffectsNamespace_returns_LanguageExt_Effects()
     {
-        var ns = LanguageExtRefs.EffectsNamespace;
+        var ns = LanguageExtTypes.EffectsNamespace;
 
         await Assert.That(ns.Value).IsEqualTo("LanguageExt.Effects");
     }
@@ -26,7 +27,7 @@ public class LanguageExtRefsTests
     [Test]
     public async Task PreludeStatic_returns_static_using()
     {
-        var prelude = LanguageExtRefs.PreludeStatic;
+        var prelude = LanguageExtTypes.PreludeStatic;
 
         await Assert.That(prelude).IsEqualTo("static LanguageExt.Prelude");
     }
@@ -34,7 +35,7 @@ public class LanguageExtRefsTests
     [Test]
     public async Task Eff_creates_globally_qualified_type()
     {
-        var typeRef = LanguageExtRefs.Eff("RT", "int");
+        var typeRef = LanguageExtTypes.Eff("RT", "int");
 
         await Assert.That((string)typeRef).IsEqualTo("global::LanguageExt.Eff<RT, int>");
         await Assert.That((string)typeRef.Rt).IsEqualTo("RT");
@@ -44,7 +45,7 @@ public class LanguageExtRefsTests
     [Test]
     public async Task Option_creates_globally_qualified_type()
     {
-        var option = LanguageExtRefs.Option("string");
+        var option = LanguageExtTypes.Option("string");
 
         await Assert.That((string)option).IsEqualTo("global::LanguageExt.Option<string>");
         await Assert.That((string)option.InnerType).IsEqualTo("string");
@@ -53,7 +54,7 @@ public class LanguageExtRefsTests
     [Test]
     public async Task Fin_creates_globally_qualified_type()
     {
-        var typeRef = LanguageExtRefs.Fin("int");
+        var typeRef = LanguageExtTypes.Fin("int");
 
         await Assert.That((string)typeRef).IsEqualTo("global::LanguageExt.Fin<int>");
         await Assert.That((string)typeRef.InnerType).IsEqualTo("int");
@@ -62,7 +63,7 @@ public class LanguageExtRefsTests
     [Test]
     public async Task Seq_creates_globally_qualified_type()
     {
-        var typeRef = LanguageExtRefs.Seq("string");
+        var typeRef = LanguageExtTypes.Seq("string");
 
         await Assert.That((string)typeRef).IsEqualTo("global::LanguageExt.Seq<string>");
         await Assert.That((string)typeRef.ElementType).IsEqualTo("string");
@@ -71,7 +72,7 @@ public class LanguageExtRefsTests
     [Test]
     public async Task Either_creates_globally_qualified_type()
     {
-        var typeRef = LanguageExtRefs.Either("string", "int");
+        var typeRef = LanguageExtTypes.Either("string", "int");
 
         await Assert.That((string)typeRef).IsEqualTo("global::LanguageExt.Either<string, int>");
         await Assert.That((string)typeRef.Left).IsEqualTo("string");
@@ -81,7 +82,7 @@ public class LanguageExtRefsTests
     [Test]
     public async Task HashMap_creates_globally_qualified_type()
     {
-        var typeRef = LanguageExtRefs.HashMap("string", "int");
+        var typeRef = LanguageExtTypes.HashMap("string", "int");
 
         await Assert.That((string)typeRef).IsEqualTo("global::LanguageExt.HashMap<string, int>");
         await Assert.That((string)typeRef.KeyType).IsEqualTo("string");
@@ -91,7 +92,7 @@ public class LanguageExtRefsTests
     [Test]
     public async Task Unit_creates_globally_qualified_type()
     {
-        var typeRef = LanguageExtRefs.Unit;
+        var typeRef = LanguageExtTypes.Unit;
 
         await Assert.That(typeRef).IsEqualTo("global::LanguageExt.Unit");
     }
@@ -101,7 +102,7 @@ public class LanguageExtRefsTests
     [Test]
     public async Task Option_nullable()
     {
-        TypeRef typeRef = LanguageExtRefs.Option("string");
+        TypeRef typeRef = LanguageExtTypes.Option("string");
 
         await Assert.That(typeRef.Nullable()).IsEqualTo("global::LanguageExt.Option<string>?");
     }
@@ -109,7 +110,7 @@ public class LanguageExtRefsTests
     [Test]
     public async Task Eff_with_nested_option()
     {
-        var typeRef = LanguageExtRefs.Eff("RT", LanguageExtRefs.Option("string"));
+        var typeRef = LanguageExtTypes.Eff("RT", LanguageExtTypes.Option("string"));
 
         await Assert.That((string)typeRef)
             .IsEqualTo("global::LanguageExt.Eff<RT, global::LanguageExt.Option<string>>");
@@ -118,7 +119,7 @@ public class LanguageExtRefsTests
     [Test]
     public async Task Seq_with_nested_collection()
     {
-        var typeRef = LanguageExtRefs.Seq((TypeRef)new ListTypeRef("int"));
+        var typeRef = LanguageExtTypes.Seq((TypeRef)new ListTypeRef("int"));
 
         await Assert.That((string)typeRef)
             .IsEqualTo("global::LanguageExt.Seq<global::System.Collections.Generic.List<int>>");

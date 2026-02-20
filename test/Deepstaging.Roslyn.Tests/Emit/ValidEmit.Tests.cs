@@ -20,7 +20,7 @@ public class ValidEmitTests : RoslynTestBase
             .Emit()
             .ValidateOrThrow();
 
-        await Assert.That(emit.Usings.Length).IsEqualTo(2);
+        await Assert.That(emit.Usings.Length).IsEqualTo(4);
 
         await Assert.That(emit.Usings.Select(u => u.Name?.ToString()))
             .Contains("System");
@@ -159,7 +159,7 @@ public class ValidEmitTests : RoslynTestBase
 
         var combined = emit1.Combine(emit2);
 
-        await Assert.That(combined.Usings.Length).IsEqualTo(3);
+        await Assert.That(combined.Usings.Length).IsEqualTo(5);
     }
 
     [Test]
@@ -183,8 +183,8 @@ public class ValidEmitTests : RoslynTestBase
 
         var combined = emit1.Combine(emit2);
 
-        // Should have 2 regular + 2 static = 4 usings
-        await Assert.That(combined.Usings.Length).IsEqualTo(4);
+        // Should have 5 regular + 2 static = 7 usings
+        await Assert.That(combined.Usings.Length).IsEqualTo(7);
 
         // Verify static usings are present
         var staticUsings = combined.Usings.Where(u => u.StaticKeyword != default).ToList();

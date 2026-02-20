@@ -3,6 +3,7 @@
 
 namespace Deepstaging.Roslyn.Tests.LanguageExt.Expressions;
 
+using Roslyn.LanguageExt;
 using Roslyn.LanguageExt.Expressions;
 using Roslyn.LanguageExt.Types;
 
@@ -38,7 +39,7 @@ public class HashMapExpressionTests
     [Test]
     public async Task Empty_returns_typed_empty()
     {
-        var result = HashMapExpression.Empty(LanguageExtRefs.HashMap("string", "int"));
+        var result = HashMapExpression.Empty(LanguageExtTypes.HashMap("string", "int"));
 
         await Assert.That(result.Value)
             .IsEqualTo("global::LanguageExt.HashMap<string, int>.Empty");

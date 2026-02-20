@@ -94,6 +94,15 @@ public static class EntityFrameworkTypes
 
     /// <summary>Gets a <see cref="TypeRef"/> for <c>ModelBuilder</c>.</summary>
     public static TypeRef ModelBuilder => Namespace.GlobalType("ModelBuilder");
+
+    /// <summary>Creates a <c>DbSet&lt;T&gt;</c> type reference.</summary>
+    public static DbSetTypeRef DbSet(TypeRef entityType) => new(entityType);
+
+    /// <summary>Creates an <c>EntityTypeBuilder&lt;T&gt;</c> type reference.</summary>
+    public static EntityTypeBuilderTypeRef EntityTypeBuilder(TypeRef entityType) => new(entityType);
+
+    /// <summary>Creates an <c>IEntityTypeConfiguration&lt;T&gt;</c> type reference.</summary>
+    public static EntityTypeConfigurationTypeRef EntityTypeConfiguration(TypeRef entityType) => new(entityType);
 }
 
 /// <summary>

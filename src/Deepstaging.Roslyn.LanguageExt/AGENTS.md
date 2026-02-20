@@ -9,15 +9,15 @@ This is a satellite package — it extends the core `Deepstaging.Roslyn` emit AP
 Type refs carry constituent types for compile-time introspection, not just string names:
 
 ```csharp
-using Deepstaging.Roslyn.LanguageExt.Types;
+using Deepstaging.Roslyn.LanguageExt;
 
-var eff    = LanguageExtRefs.Eff("RT", "int");           // Eff<RT, int>
-var option = LanguageExtRefs.Option("string");            // Option<string>
-var either = LanguageExtRefs.Either("Error", "int");      // Either<Error, int>
-var fin    = LanguageExtRefs.Fin("int");                  // Fin<int>
-var seq    = LanguageExtRefs.Seq("string");               // Seq<string>
-var hash   = LanguageExtRefs.HashMap("string", "int");    // HashMap<string, int>
-var unit   = LanguageExtRefs.Unit;                        // Unit
+var eff    = LanguageExtTypes.Eff("RT", "int");           // Eff<RT, int>
+var option = LanguageExtTypes.Option("string");            // Option<string>
+var either = LanguageExtTypes.Either("Error", "int");      // Either<Error, int>
+var fin    = LanguageExtTypes.Fin("int");                  // Fin<int>
+var seq    = LanguageExtTypes.Seq("string");               // Seq<string>
+var hash   = LanguageExtTypes.HashMap("string", "int");    // HashMap<string, int>
+var unit   = LanguageExtTypes.Unit;                        // Unit
 ```
 
 All refs produce globally qualified type strings (e.g., `global::LanguageExt.Eff<RT, int>`).

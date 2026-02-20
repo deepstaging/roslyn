@@ -78,6 +78,33 @@ public class EntityFrameworkTypesTests
         await Assert.That(EntityFrameworkTypes.ModelBuilder.Value)
             .IsEqualTo("global::Microsoft.EntityFrameworkCore.ModelBuilder");
     }
+
+    [Test]
+    public async Task DbSet_produces_generic_DbSet()
+    {
+        var typeRef = EntityFrameworkTypes.DbSet("Customer");
+
+        await Assert.That((string)typeRef)
+            .IsEqualTo("global::Microsoft.EntityFrameworkCore.DbSet<Customer>");
+    }
+
+    [Test]
+    public async Task EntityTypeBuilder_produces_generic_EntityTypeBuilder()
+    {
+        var typeRef = EntityFrameworkTypes.EntityTypeBuilder("Customer");
+
+        await Assert.That((string)typeRef)
+            .IsEqualTo("global::Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Customer>");
+    }
+
+    [Test]
+    public async Task EntityTypeConfiguration_produces_generic_IEntityTypeConfiguration()
+    {
+        var typeRef = EntityFrameworkTypes.EntityTypeConfiguration("Customer");
+
+        await Assert.That((string)typeRef)
+            .IsEqualTo("global::Microsoft.EntityFrameworkCore.IEntityTypeConfiguration<Customer>");
+    }
 }
 
 public class EntityFrameworkAttributesTests

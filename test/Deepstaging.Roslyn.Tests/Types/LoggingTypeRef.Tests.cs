@@ -45,4 +45,13 @@ public class LoggingTypesTests
         await Assert.That(LoggingTypes.LogLevel.Value)
             .IsEqualTo("global::Microsoft.Extensions.Logging.LogLevel");
     }
+
+    [Test]
+    public async Task Logger_produces_generic_ILogger()
+    {
+        var typeRef = LoggingTypes.Logger("MyService");
+
+        await Assert.That((string)typeRef)
+            .IsEqualTo("global::Microsoft.Extensions.Logging.ILogger<MyService>");
+    }
 }

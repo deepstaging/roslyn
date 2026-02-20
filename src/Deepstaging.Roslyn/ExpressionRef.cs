@@ -25,7 +25,7 @@ namespace Deepstaging.Roslyn;
 /// <example>
 /// <code>
 /// // Instantiation
-/// ExceptionRefs.ArgumentNull.New("nameof(value)")
+/// ExceptionExpression.New(ExceptionTypes.ArgumentNull, "nameof(value)")
 ///     // "new global::System.ArgumentNullException(nameof(value))"
 ///
 /// // Static method call
@@ -37,7 +37,7 @@ namespace Deepstaging.Roslyn;
 ///     // "value.Name.ToUpper()"
 ///
 /// // Delegate invocation with fallback
-/// TypeRef.From("OnSave").Invoke("id").OrDefault(TaskRefs.CompletedTask)
+/// TypeRef.From("OnSave").Invoke("id").OrDefault(TaskExpression.CompletedTask)
 ///     // "OnSave?.Invoke(id) ?? global::System.Threading.Tasks.Task.CompletedTask"
 ///
 /// // Await with ConfigureAwait

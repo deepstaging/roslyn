@@ -50,6 +50,9 @@ public static class JsonTypes
 
     /// <summary>Gets a <see cref="TypeRef"/> for <c>Utf8JsonWriter</c>.</summary>
     public static TypeRef Writer => Namespace.GlobalType("Utf8JsonWriter");
+
+    /// <summary>Creates a <c>JsonConverter&lt;T&gt;</c> type reference.</summary>
+    public static JsonConverterTypeRef Converter(TypeRef valueType) => new(valueType);
 }
 
 /// <summary>

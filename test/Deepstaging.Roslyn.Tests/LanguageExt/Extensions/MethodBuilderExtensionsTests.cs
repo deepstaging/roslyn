@@ -28,7 +28,7 @@ public class MethodBuilderExtensionsTests
     {
         var method = MethodBuilder
             .Parse("public void FindUser()")
-            .AsEffMethod("RT", "IHasDb", LanguageExtRefs.Option("User"));
+            .AsEffMethod("RT", "IHasDb", LanguageExtTypes.Option("User"));
 
         await Assert.That(method.ReturnType)
             .IsEqualTo("global::LanguageExt.Eff<RT, global::LanguageExt.Option<User>>");

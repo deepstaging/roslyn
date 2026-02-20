@@ -41,6 +41,9 @@ public readonly record struct FuncTypeRef
         return $"global::System.Func<{allTypes}>";
     }
 
+    /// <summary>Returns a nullable version of this <c>Func&lt;...&gt;</c> type reference.</summary>
+    public TypeRef Nullable() => ((TypeRef)this).Nullable();
+
     /// <summary>Implicitly converts to <see cref="TypeRef"/> for use in type declarations.</summary>
     public static implicit operator TypeRef(FuncTypeRef self) =>
         TypeRef.From(self.ToString());
@@ -76,6 +79,9 @@ public readonly record struct ActionTypeRef
         var args = string.Join(", ", ParameterTypes.Select(t => t.Value));
         return $"global::System.Action<{args}>";
     }
+
+    /// <summary>Returns a nullable version of this <c>Action&lt;...&gt;</c> type reference.</summary>
+    public TypeRef Nullable() => ((TypeRef)this).Nullable();
 
     /// <summary>Implicitly converts to <see cref="TypeRef"/> for use in type declarations.</summary>
     public static implicit operator TypeRef(ActionTypeRef self) =>

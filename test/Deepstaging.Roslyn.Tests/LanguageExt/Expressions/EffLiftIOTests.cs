@@ -3,12 +3,13 @@
 
 namespace Deepstaging.Roslyn.Tests.LanguageExt.Expressions;
 
+using Roslyn.LanguageExt;
 using Roslyn.LanguageExt.Expressions;
 using Roslyn.LanguageExt.Types;
 
 public class EffLiftIOTests
 {
-    private readonly EffLiftIO _io = EffExpression.LiftIO(LanguageExtRefs.Eff("RT", "int"), "rt");
+    private readonly EffLiftIO _io = EffExpression.LiftIO(LanguageExtTypes.Eff("RT", "int"), "rt");
 
     [Test]
     public async Task Async_produces_LiftIO_with_await()
@@ -22,7 +23,7 @@ public class EffLiftIOTests
     [Test]
     public async Task AsyncOptional_produces_LiftIO_with_Optional_wrapper()
     {
-        var io = EffExpression.LiftIO(LanguageExtRefs.Eff("RT", LanguageExtRefs.Option("User")), "rt");
+        var io = EffExpression.LiftIO(LanguageExtTypes.Eff("RT", LanguageExtTypes.Option("User")), "rt");
 
         var result = io.AsyncOptional("query(rt).FirstOrDefaultAsync(token)");
 
@@ -34,7 +35,7 @@ public class EffLiftIOTests
     [Test]
     public async Task AsyncVoid_produces_LiftIO_with_unit_return()
     {
-        var io = EffExpression.LiftIO(LanguageExtRefs.Eff("RT", LanguageExtRefs.Unit), "rt");
+        var io = EffExpression.LiftIO(LanguageExtTypes.Eff("RT", LanguageExtTypes.Unit), "rt");
 
         var result = io.AsyncVoid("rt.Service.DeleteAsync(token)");
 
@@ -46,7 +47,7 @@ public class EffLiftIOTests
     [Test]
     public async Task AsyncNonNull_produces_LiftIO_with_null_forgiving()
     {
-        var io = EffExpression.LiftIO(LanguageExtRefs.Eff("RT", "T"), "rt");
+        var io = EffExpression.LiftIO(LanguageExtTypes.Eff("RT", "T"), "rt");
 
         var result = io.AsyncNonNull("query(rt).MaxAsync(token)");
 
@@ -66,7 +67,7 @@ public class EffLiftIOTests
     [Test]
     public async Task SyncVoid_produces_LiftIO_with_unit_return()
     {
-        var io = EffExpression.LiftIO(LanguageExtRefs.Eff("RT", LanguageExtRefs.Unit), "rt");
+        var io = EffExpression.LiftIO(LanguageExtTypes.Eff("RT", LanguageExtTypes.Unit), "rt");
 
         var result = io.SyncVoid("rt.Service.Reset()");
 
@@ -78,7 +79,7 @@ public class EffLiftIOTests
     [Test]
     public async Task SyncOptional_produces_LiftIO_with_Optional_wrapper()
     {
-        var io = EffExpression.LiftIO(LanguageExtRefs.Eff("RT", LanguageExtRefs.Option("string")), "rt");
+        var io = EffExpression.LiftIO(LanguageExtTypes.Eff("RT", LanguageExtTypes.Option("string")), "rt");
 
         var result = io.SyncOptional("rt.Config.TryGetValue(key)");
 
@@ -108,7 +109,7 @@ public class EffLiftIOTests
     [Test]
     public async Task LiftIO_with_custom_param()
     {
-        var io = EffExpression.LiftIO(LanguageExtRefs.Eff("RT", "bool"), "env");
+        var io = EffExpression.LiftIO(LanguageExtTypes.Eff("RT", "bool"), "env");
 
         var result = io.Async("env.Service.AnyAsync(token)");
 

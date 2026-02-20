@@ -57,7 +57,7 @@ public static Eff<RT, int> GetCount<RT>() where RT : IHasDb
 |---------------|--------------|
 | `.AsStatic()` | Makes the method `static` (effect methods are always static) |
 | `.AddTypeParameter(rt, ...)` | Adds a generic `<RT>` with a `where RT : IHasDb` constraint |
-| `.WithReturnType(...)` | Sets the return type to `Eff<RT, A>` using `LanguageExtRefs.Eff()` |
+| `.WithReturnType(...)` | Sets the return type to `Eff<RT, A>` using `LanguageExtTypes.Eff()` |
 
 ### Parameters
 
@@ -65,7 +65,7 @@ public static Eff<RT, int> GetCount<RT>() where RT : IHasDb
 |-----------|------|-------------|
 | `rt` | `string` | The runtime type parameter name (e.g., `"RT"`) |
 | `capability` | `TypeRef` | The capability interface constraint (e.g., `"IHasDb"`) |
-| `resultType` | `TypeRef` | The Eff result type (e.g., `"int"`, `LanguageExtRefs.Option("User")`) |
+| `resultType` | `TypeRef` | The Eff result type (e.g., `"int"`, `LanguageExtTypes.Option("User")`) |
 
 ### Combining with LiftingStrategy
 
@@ -108,14 +108,14 @@ type = type.AddMethod(MethodBuilder
 // Optional-returning async method
 type = type.AddMethod(MethodBuilder
     .Parse("public void Find(int id)")
-    .AsEffMethod("RT", "IHasUsers", LanguageExtRefs.Option("User"))
+    .AsEffMethod("RT", "IHasUsers", LanguageExtTypes.Option("User"))
     .WithExpressionBody(
-        lift.AsyncOptional(LanguageExtRefs.Option("User"), "rt.Users.FindAsync(id)")));
+        lift.AsyncOptional(LanguageExtTypes.Option("User"), "rt.Users.FindAsync(id)")));
 
 // Void async method
 type = type.AddMethod(MethodBuilder
     .Parse("public void Delete(int id)")
-    .AsEffMethod("RT", "IHasUsers", LanguageExtRefs.Unit)
+    .AsEffMethod("RT", "IHasUsers", LanguageExtTypes.Unit)
     .WithExpressionBody(lift.AsyncVoid("rt.Users.DeleteAsync(id)")));
 ```
 

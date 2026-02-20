@@ -1,17 +1,17 @@
 # Types
 
-Type-safe wrappers for LanguageExt types, created through the `LanguageExtRefs` factory.
+Type-safe wrappers for LanguageExt types, created through the `LanguageExtTypes` factory.
 
 > **See also:** [Overview](index.md) | [TypeRef & Primitives](../emit/type-ref.md) | [Core Types](../types.md)
 
 ---
 
-## LanguageExtRefs Factory
+## LanguageExtTypes Factory
 
-All refs are created through `LanguageExtRefs` — the central factory class:
+All refs are created through `LanguageExtTypes` — the central factory class:
 
 ```csharp
-using Deepstaging.Roslyn.LanguageExt.Types;
+using Deepstaging.Roslyn.LanguageExt;
 ```
 
 ### Type Factories
@@ -55,7 +55,7 @@ Represents `Eff<RT, A>` — an effect that requires a runtime `RT` and produces 
 | `Result` | `TypeRef` | The result type |
 
 ```csharp
-var eff = LanguageExtRefs.Eff("RT", "int");
+var eff = LanguageExtTypes.Eff("RT", "int");
 
 eff.Rt       // → "RT"
 eff.Result   // → "int"
@@ -74,7 +74,7 @@ Represents `Option<T>` — a value that may or may not be present.
 | `InnerType` | `TypeRef` | The wrapped type |
 
 ```csharp
-var opt = LanguageExtRefs.Option("User");
+var opt = LanguageExtTypes.Option("User");
 
 opt.InnerType  // → "User"
 opt.ToString() // → "global::LanguageExt.Option<User>"
@@ -89,7 +89,7 @@ Represents `Fin<A>` — a result that is either a success value or an `Error`.
 | `InnerType` | `TypeRef` | The success type |
 
 ```csharp
-var fin = LanguageExtRefs.Fin("int");
+var fin = LanguageExtTypes.Fin("int");
 
 fin.InnerType  // → "int"
 fin.ToString() // → "global::LanguageExt.Fin<int>"
@@ -105,7 +105,7 @@ Represents `Either<L, R>` — a discriminated union of left (error) and right (s
 | `Right` | `TypeRef` | The right (success) type |
 
 ```csharp
-var either = LanguageExtRefs.Either("Error", "int");
+var either = LanguageExtTypes.Either("Error", "int");
 
 either.Left    // → "Error"
 either.Right   // → "int"
@@ -121,7 +121,7 @@ Represents `Seq<A>` — an immutable lazy sequence.
 | `ElementType` | `TypeRef` | The element type |
 
 ```csharp
-var seq = LanguageExtRefs.Seq("string");
+var seq = LanguageExtTypes.Seq("string");
 
 seq.ElementType // → "string"
 seq.ToString()  // → "global::LanguageExt.Seq<string>"
@@ -137,7 +137,7 @@ Represents `HashMap<K, V>` — an immutable hash map.
 | `ValueType` | `TypeRef` | The value type |
 
 ```csharp
-var map = LanguageExtRefs.HashMap("string", "int");
+var map = LanguageExtTypes.HashMap("string", "int");
 
 map.KeyType    // → "string"
 map.ValueType  // → "int"
@@ -151,7 +151,7 @@ map.ToString() // → "global::LanguageExt.HashMap<string, int>"
 All `*TypeRef` structs convert implicitly to `TypeRef` and `string`. This means they drop into any API that accepts those types:
 
 ```csharp
-var option = LanguageExtRefs.Option("User");
+var option = LanguageExtTypes.Option("User");
 
 // As a return type (accepts TypeRef)
 method.WithReturnType(option);

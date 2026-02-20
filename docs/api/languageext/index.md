@@ -25,7 +25,7 @@ dotnet add package Deepstaging.Roslyn.LanguageExt --prerelease
 A typical generator that produces LanguageExt effect methods:
 
 ```csharp
-using Deepstaging.Roslyn.LanguageExt.Types;
+using Deepstaging.Roslyn.LanguageExt;
 using Deepstaging.Roslyn.LanguageExt.Expressions;
 using Deepstaging.Roslyn.LanguageExt.Extensions;
 
@@ -84,7 +84,7 @@ string returnType = "Option<User>";
 string liftExpr = $"liftEff<RT, {returnType}>(async rt => Optional(await ...))";
 
 // ✅ Type-safe — inner type accessible, compiler validates usage
-OptionTypeRef returnType = LanguageExtRefs.Option("User");
+OptionTypeRef returnType = LanguageExtTypes.Option("User");
 returnType.InnerType  // → "User" (accessible for downstream use)
 string liftExpr = lift.AsyncOptional(returnType, "rt.Service.FindAsync(id)");
 ```
@@ -93,7 +93,7 @@ Every `*TypeRef` has implicit conversions to `TypeRef` and `string`, so they dro
 
 ## Pages
 
-- **[Types](types.md)** — `LanguageExtRefs` factory and type-safe ref structs
+- **[Types](types.md)** — `LanguageExtTypes` factory and type-safe ref structs
 - **[Expressions](expressions.md)** — Option, Either, Fin, Seq, HashMap expression builders
 - **[Eff Lifting](eff-lifting.md)** — `EffLift`, `EffLiftIO`, `LiftingStrategy`, and `LiftingStrategyAnalysis`
 - **[Extensions](extensions.md)** — `AddLanguageExtUsings`, `AsEffMethod`

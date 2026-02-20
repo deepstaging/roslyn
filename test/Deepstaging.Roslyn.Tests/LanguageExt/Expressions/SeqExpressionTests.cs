@@ -3,6 +3,7 @@
 
 namespace Deepstaging.Roslyn.Tests.LanguageExt.Expressions;
 
+using Roslyn.LanguageExt;
 using Roslyn.LanguageExt.Expressions;
 using Roslyn.LanguageExt.Types;
 
@@ -38,7 +39,7 @@ public class SeqExpressionTests
     [Test]
     public async Task Empty_returns_typed_empty()
     {
-        var result = SeqExpression.Empty(LanguageExtRefs.Seq("string"));
+        var result = SeqExpression.Empty(LanguageExtTypes.Seq("string"));
 
         await Assert.That(result.Value)
             .IsEqualTo("global::LanguageExt.Seq<string>.Empty");

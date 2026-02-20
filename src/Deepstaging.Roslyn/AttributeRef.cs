@@ -14,13 +14,13 @@ using Emit;
 /// <example>
 /// <code>
 /// // Simple attribute — implicit string conversion
-/// builder.WithAttribute(EntityFrameworkRefs.Key)
+/// builder.WithAttribute(EntityFrameworkAttributes.Key)
 ///
 /// // With positional argument — .WithArgument returns AttributeBuilder
-/// builder.WithAttribute(EntityFrameworkRefs.Column.WithArgument("\"name\""))
+/// builder.WithAttribute(EntityFrameworkAttributes.Column.WithArgument("\"name\""))
 ///
 /// // With configure callback — implicit string conversion for name
-/// builder.WithAttribute(EntityFrameworkRefs.Column, a => a
+/// builder.WithAttribute(EntityFrameworkAttributes.Column, a => a
 ///     .WithNamedArgument("TypeName", "\"nvarchar(100)\""))
 /// </code>
 /// </example>

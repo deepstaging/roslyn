@@ -19,10 +19,10 @@ Both are created through the `EffExpression` entry point:
 
 ```csharp
 using Deepstaging.Roslyn.LanguageExt.Expressions;
-using Deepstaging.Roslyn.LanguageExt.Types;
+using Deepstaging.Roslyn.LanguageExt;
 
 var lift   = EffExpression.Lift("RT", "rt");
-var liftIO = EffExpression.LiftIO(LanguageExtRefs.Eff("RT", "int"), "rt");
+var liftIO = EffExpression.LiftIO(LanguageExtTypes.Eff("RT", "int"), "rt");
 ```
 
 ---
@@ -59,7 +59,7 @@ lift.AsyncVoid("rt.Db.SaveChangesAsync()");
 // → liftEff<RT, Unit>(async rt => { await rt.Db.SaveChangesAsync(); return unit; })
 
 // Async optional (nullable → Option)
-lift.AsyncOptional(LanguageExtRefs.Option("User"), "rt.Db.Users.FindAsync(id)");
+lift.AsyncOptional(LanguageExtTypes.Option("User"), "rt.Db.Users.FindAsync(id)");
 // → liftEff<RT, global::LanguageExt.Option<User>>(async rt => Optional(await rt.Db.Users.FindAsync(id)))
 
 // Async non-null (null-forgiving assertion)
@@ -76,7 +76,7 @@ lift.Body("int", "rt => { var x = rt.Get(); return x + 1; }");
 ```
 
 !!! tip "AsyncOptional requires OptionTypeRef"
-    `AsyncOptional` and `SyncOptional` accept `OptionTypeRef`, not `string`. This prevents mistakes like passing a raw type name — you must go through `LanguageExtRefs.Option()` which ensures the `Option<T>` wrapping is correct.
+    `AsyncOptional` and `SyncOptional` accept `OptionTypeRef`, not `string`. This prevents mistakes like passing a raw type name — you must go through `LanguageExtTypes.Option()` which ensures the `Option<T>` wrapping is correct.
 
 ---
 
@@ -101,7 +101,7 @@ Builds `Eff<RT, A>.LiftIO(...)` expressions. The Eff type is captured at constru
 ### Examples
 
 ```csharp
-var effType = LanguageExtRefs.Eff("RT", "int");
+var effType = LanguageExtTypes.Eff("RT", "int");
 var io = EffExpression.LiftIO(effType, "rt");
 
 io.Async("query(rt).CountAsync(token)");
@@ -165,8 +165,8 @@ LiftingStrategy.AsyncVoid.EffReturnType("ignored");
 | Strategy category | EffReturnType behavior |
 |-------------------|----------------------|
 | `*Value`, `*NonNull` | Returns `resultType` as-is |
-| `*Optional` | Wraps in `Option<T>` via `LanguageExtRefs.Option()` |
-| `*Void` | Returns `Unit` via `LanguageExtRefs.Unit` |
+| `*Optional` | Wraps in `Option<T>` via `LanguageExtTypes.Option()` |
+| `*Void` | Returns `Unit` via `LanguageExtTypes.Unit` |
 
 ---
 
@@ -227,7 +227,7 @@ A complete generator pattern that uses `LiftingStrategyAnalysis` to fully automa
 ```csharp
 using Deepstaging.Roslyn.LanguageExt.Expressions;
 using Deepstaging.Roslyn.LanguageExt.Extensions;
-using Deepstaging.Roslyn.LanguageExt.Types;
+using Deepstaging.Roslyn.LanguageExt;
 
 var lift = EffExpression.Lift("RT", "rt");
 

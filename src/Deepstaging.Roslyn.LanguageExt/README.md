@@ -6,20 +6,20 @@ with [Deepstaging.Roslyn](https://github.com/deepstaging/roslyn).
 ## Usage
 
 ```csharp
-using Deepstaging.Roslyn.LanguageExt.Types;
+using Deepstaging.Roslyn.LanguageExt;
 
 // Type references carry constituent types for compile-time introspection
-var effType = LanguageExtRefs.Eff("RT", "int");        // EffTypeRef → global::LanguageExt.Eff<RT, int>
-var optionType = LanguageExtRefs.Option("string");      // OptionTypeRef → global::LanguageExt.Option<string>
-var eitherType = LanguageExtRefs.Either("Error", "int");// EitherTypeRef → global::LanguageExt.Either<Error, int>
-var finType = LanguageExtRefs.Fin("int");               // FinTypeRef → global::LanguageExt.Fin<int>
-var seqType = LanguageExtRefs.Seq("string");            // SeqTypeRef → global::LanguageExt.Seq<string>
-var hashMapType = LanguageExtRefs.HashMap("string", "int"); // HashMapTypeRef
-var unitType = LanguageExtRefs.Unit;                    // global::LanguageExt.Unit
+var effType = LanguageExtTypes.Eff("RT", "int");        // EffTypeRef → global::LanguageExt.Eff<RT, int>
+var optionType = LanguageExtTypes.Option("string");      // OptionTypeRef → global::LanguageExt.Option<string>
+var eitherType = LanguageExtTypes.Either("Error", "int");// EitherTypeRef → global::LanguageExt.Either<Error, int>
+var finType = LanguageExtTypes.Fin("int");               // FinTypeRef → global::LanguageExt.Fin<int>
+var seqType = LanguageExtTypes.Seq("string");            // SeqTypeRef → global::LanguageExt.Seq<string>
+var hashMapType = LanguageExtTypes.HashMap("string", "int"); // HashMapTypeRef
+var unitType = LanguageExtTypes.Unit;                    // global::LanguageExt.Unit
 
 // Namespaces and Prelude
-var ns = LanguageExtRefs.Namespace;                     // LanguageExt
-var prelude = LanguageExtRefs.PreludeStatic;            // static LanguageExt.Prelude
+var ns = LanguageExtTypes.Namespace;                     // LanguageExt
+var prelude = LanguageExtTypes.PreludeStatic;            // static LanguageExt.Prelude
 ```
 
 ## Expressions
@@ -45,11 +45,11 @@ FinExpression.FinFail("Error.New(ex)");       // FinFail(Error.New(ex))
 // Seq
 SeqExpression.Seq("a", "b", "c");            // Seq(a, b, c)
 SeqExpression.toSeq("items");                // toSeq(items)
-SeqExpression.Empty(LanguageExtRefs.Seq("string"));  // global::LanguageExt.Seq<string>.Empty
+SeqExpression.Empty(LanguageExtTypes.Seq("string"));  // global::LanguageExt.Seq<string>.Empty
 
 // HashMap
 HashMapExpression.toHashMap("pairs");         // toHashMap(pairs)
-HashMapExpression.Empty(LanguageExtRefs.HashMap("string", "int"));
+HashMapExpression.Empty(LanguageExtTypes.HashMap("string", "int"));
 
 // All return ExpressionRef — chain with .Call(), .Await(), .Member(), etc.
 OptionExpression.Optional("value").Call("Map", "x => x.Name");
@@ -65,14 +65,14 @@ var lift = EffExpression.Lift("RT", "rt");
 lift.Async("int", "rt.Service.GetCountAsync()");
 // → liftEff<RT, int>(async rt => await rt.Service.GetCountAsync())
 
-lift.AsyncOptional(LanguageExtRefs.Option("User"), "rt.Service.FindAsync(id)");
+lift.AsyncOptional(LanguageExtTypes.Option("User"), "rt.Service.FindAsync(id)");
 // → liftEff<RT, Option<User>>(async rt => Optional(await rt.Service.FindAsync(id)))
 
 lift.SyncVoid("rt.Service.Reset()");
 // → liftEff<RT, Unit>(rt => { rt.Service.Reset(); return unit; })
 
 // LiftIO for terminal operations (type already known)
-var io = EffExpression.LiftIO(LanguageExtRefs.Eff("RT", "int"), "rt");
+var io = EffExpression.LiftIO(LanguageExtTypes.Eff("RT", "int"), "rt");
 io.Async("query(rt).CountAsync(token)");
 // → global::LanguageExt.Eff<RT, int>.LiftIO(async rt => await query(rt).CountAsync(token))
 ```

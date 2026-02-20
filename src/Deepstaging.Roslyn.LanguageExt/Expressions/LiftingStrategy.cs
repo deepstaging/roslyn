@@ -63,11 +63,11 @@ public static class EffLiftExtensions
         {
             LiftingStrategy.AsyncValue => lift.Async(resultType, expr),
             LiftingStrategy.AsyncVoid => lift.AsyncVoid(expr),
-            LiftingStrategy.AsyncOptional => lift.AsyncOptional(LanguageExtRefs.Option(resultType), expr),
+            LiftingStrategy.AsyncOptional => lift.AsyncOptional(LanguageExtTypes.Option(resultType), expr),
             LiftingStrategy.AsyncNonNull => lift.AsyncNonNull(resultType, expr),
             LiftingStrategy.SyncValue => lift.Sync(resultType, expr),
             LiftingStrategy.SyncVoid => lift.SyncVoid(expr),
-            LiftingStrategy.SyncOptional => lift.SyncOptional(LanguageExtRefs.Option(resultType), expr),
+            LiftingStrategy.SyncOptional => lift.SyncOptional(LanguageExtTypes.Option(resultType), expr),
             LiftingStrategy.SyncNonNull => lift.SyncNonNull(resultType, expr),
             _ => throw new ArgumentOutOfRangeException(nameof(strategy), strategy, "Unknown lifting strategy.")
         };
@@ -86,9 +86,9 @@ public static class EffLiftExtensions
         strategy switch
         {
             LiftingStrategy.AsyncOptional or LiftingStrategy.SyncOptional =>
-                LanguageExtRefs.Option(resultType),
+                LanguageExtTypes.Option(resultType),
             LiftingStrategy.AsyncVoid or LiftingStrategy.SyncVoid =>
-                LanguageExtRefs.Unit,
+                LanguageExtTypes.Unit,
             _ => resultType
         };
 }

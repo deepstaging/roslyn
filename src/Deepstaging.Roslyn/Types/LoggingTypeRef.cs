@@ -44,4 +44,7 @@ public static class LoggingTypes
 
     /// <summary>Gets a <see cref="TypeRef"/> for <c>LogLevel</c>.</summary>
     public static TypeRef LogLevel => Namespace.GlobalType("LogLevel");
+
+    /// <summary>Creates an <c>ILogger&lt;T&gt;</c> type reference.</summary>
+    public static LoggerTypeRef Logger(TypeRef categoryType) => new(categoryType);
 }

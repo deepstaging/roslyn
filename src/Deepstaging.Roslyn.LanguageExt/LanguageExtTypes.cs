@@ -1,7 +1,9 @@
 // SPDX-FileCopyrightText: 2024-present Deepstaging
 // SPDX-License-Identifier: RPL-1.5
 
-namespace Deepstaging.Roslyn.LanguageExt.Types;
+namespace Deepstaging.Roslyn.LanguageExt;
+
+using Types;
 
 /// <summary>
 /// Factory methods for LanguageExt core types.
@@ -12,13 +14,16 @@ namespace Deepstaging.Roslyn.LanguageExt.Types;
 /// project-specific convenience shortcuts (e.g., <c>Eff&lt;RT, Unit&gt;</c> with a fixed runtime
 /// type parameter) should be defined locally in consuming generators.
 /// </remarks>
-public static class LanguageExtRefs
+public static class LanguageExtTypes
 {
+    /// <summary>Gets the <c>LanguageExt</c> namespace.</summary>
+    public static NamespaceRef Namespace => NamespaceRef.From("LanguageExt");
+
     /// <summary>Gets the <c>LanguageExt.Effects</c> namespace.</summary>
-    public static NamespaceRef EffectsNamespace => NamespaceRef.From("LanguageExt").Append("Effects");
+    public static NamespaceRef EffectsNamespace => Namespace.Append("Effects");
 
     /// <summary>Gets a <c>static LanguageExt.Prelude</c> using reference.</summary>
-    public static string PreludeStatic => NamespaceRef.From("LanguageExt").Append("Prelude").AsStatic();
+    public static string PreludeStatic => Namespace.Append("Prelude").AsStatic();
 
     // ── Core Types ──────────────────────────────────────────────────────
 
@@ -41,5 +46,5 @@ public static class LanguageExtRefs
     public static HashMapTypeRef HashMap(TypeRef keyType, TypeRef valueType) => new(keyType, valueType);
 
     /// <summary>Gets a <c>Unit</c> type reference.</summary>
-    public static TypeRef Unit => NamespaceRef.From("LanguageExt").GlobalType("Unit");
+    public static TypeRef Unit => Namespace.GlobalType("Unit");
 }

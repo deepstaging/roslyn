@@ -63,4 +63,15 @@ public static class TaskExpression
 
     /// <summary>Gets a <c>ValueTask.CompletedTask</c> expression.</summary>
     public static ExpressionRef CompletedValueTask => ValueTaskType.Member("CompletedTask");
+
+    /// <summary>Produces a <c>ValueTask.FromResult(value)</c> expression.</summary>
+    /// <param name="value">The result value.</param>
+    public static ExpressionRef FromValueTaskResult(ExpressionRef value) =>
+        ValueTaskType.Call("FromResult", value);
+
+    /// <summary>Produces a <c>ValueTask.FromResult&lt;T&gt;(value)</c> expression with explicit type argument.</summary>
+    /// <param name="resultType">The result type.</param>
+    /// <param name="value">The result value.</param>
+    public static ExpressionRef FromValueTaskResult(TypeRef resultType, ExpressionRef value) =>
+        ValueTaskType.Call($"FromResult<{resultType.Value}>", value);
 }

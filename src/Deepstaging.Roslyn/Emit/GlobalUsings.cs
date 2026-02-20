@@ -10,9 +10,9 @@ namespace Deepstaging.Roslyn.Emit;
 /// <example>
 /// <code>
 /// var result = GlobalUsings.Emit(
-///     JsonRefs.Namespace,
-///     LoggingRefs.Namespace,
-///     CollectionRefs.Namespace);
+///     JsonTypes.Namespace,
+///     LoggingTypes.Namespace,
+///     CollectionTypes.Namespace);
 ///
 /// if (result.IsValid(out var valid))
 ///     context.AddSource("MyGenerator.GlobalUsings.g.cs", valid.Code);

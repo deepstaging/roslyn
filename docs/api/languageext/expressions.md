@@ -77,7 +77,7 @@ Builds `Seq<A>` construction and conversion expressions.
 SeqExpression.Seq("a", "b", "c");  // → Seq(a, b, c)
 SeqExpression.toSeq("items");      // → toSeq(items)
 
-var seqType = LanguageExtRefs.Seq("string");
+var seqType = LanguageExtTypes.Seq("string");
 SeqExpression.Empty(seqType);      // → global::LanguageExt.Seq<string>.Empty
 ```
 
@@ -103,7 +103,7 @@ HashMapExpression.HashMap("(\"key\", 1)", "(\"other\", 2)");
 HashMapExpression.toHashMap("pairs");
 // → toHashMap(pairs)
 
-var mapType = LanguageExtRefs.HashMap("string", "int");
+var mapType = LanguageExtTypes.HashMap("string", "int");
 HashMapExpression.Empty(mapType);
 // → global::LanguageExt.HashMap<string, int>.Empty
 ```

@@ -3,6 +3,7 @@
 
 namespace Deepstaging.Roslyn.Tests.LanguageExt.Expressions;
 
+using Roslyn.LanguageExt;
 using Roslyn.LanguageExt.Expressions;
 using Roslyn.LanguageExt.Types;
 
@@ -33,7 +34,7 @@ public class EffLiftTests
     [Test]
     public async Task AsyncOptional_produces_liftEff_with_Optional_wrapper()
     {
-        var result = _lift.AsyncOptional(LanguageExtRefs.Option("User"), "rt.Service.FindAsync(id)");
+        var result = _lift.AsyncOptional(LanguageExtTypes.Option("User"), "rt.Service.FindAsync(id)");
 
         await Assert.That(result)
             .IsEqualTo("liftEff<RT, global::LanguageExt.Option<User>>(async rt => Optional(await rt.Service.FindAsync(id)))");
@@ -71,7 +72,7 @@ public class EffLiftTests
     [Test]
     public async Task SyncOptional_produces_liftEff_with_Optional_wrapper()
     {
-        var result = _lift.SyncOptional(LanguageExtRefs.Option("string"), "rt.Config.TryGetValue(key)");
+        var result = _lift.SyncOptional(LanguageExtTypes.Option("string"), "rt.Config.TryGetValue(key)");
 
         await Assert.That(result)
             .IsEqualTo("liftEff<RT, global::LanguageExt.Option<string>>(rt => Optional(rt.Config.TryGetValue(key)))");

@@ -52,6 +52,15 @@ public class JsonTypesTests
         await Assert.That(JsonTypes.Writer.Value)
             .IsEqualTo("global::System.Text.Json.Utf8JsonWriter");
     }
+
+    [Test]
+    public async Task Converter_produces_generic_JsonConverter()
+    {
+        var typeRef = JsonTypes.Converter("MyEnum");
+
+        await Assert.That((string)typeRef)
+            .IsEqualTo("global::System.Text.Json.Serialization.JsonConverter<MyEnum>");
+    }
 }
 
 public class JsonAttributesTests

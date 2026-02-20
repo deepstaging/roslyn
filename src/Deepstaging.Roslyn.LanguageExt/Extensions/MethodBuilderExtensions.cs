@@ -35,6 +35,6 @@ public static class MethodBuilderExtensions
         return builder
             .AsStatic()
             .AddTypeParameter(rt, tp => tp.WithConstraint(capability))
-            .WithReturnType(LanguageExtRefs.Eff(rt, resultType));
+            .WithReturnType(LanguageExtTypes.Eff(rt, resultType));
     }
 }

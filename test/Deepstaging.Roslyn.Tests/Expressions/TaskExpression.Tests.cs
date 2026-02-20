@@ -58,4 +58,22 @@ public class TaskExpressionTests
         await Assert.That(expr.Value)
             .IsEqualTo("global::System.Threading.Tasks.Task.WhenAll(task1, task2)");
     }
+
+    [Test]
+    public async Task FromValueTaskResult_produces_expression()
+    {
+        var expr = TaskExpression.FromValueTaskResult("default!");
+
+        await Assert.That(expr.Value)
+            .IsEqualTo("global::System.Threading.Tasks.ValueTask.FromResult(default!)");
+    }
+
+    [Test]
+    public async Task FromValueTaskResult_with_type_produces_expression()
+    {
+        var expr = TaskExpression.FromValueTaskResult("string", "default!");
+
+        await Assert.That(expr.Value)
+            .IsEqualTo("global::System.Threading.Tasks.ValueTask.FromResult<string>(default!)");
+    }
 }

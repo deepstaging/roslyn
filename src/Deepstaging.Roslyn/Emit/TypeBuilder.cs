@@ -85,6 +85,15 @@ public record struct TypeBuilder
     #region Factory Methods
 
     /// <summary>
+    /// Default using directives included in all new <see cref="TypeBuilder"/> instances.
+    /// </summary>
+    public static readonly ImmutableArray<string> DefaultUsings = ImmutableArray.Create(
+        "System",
+        "System.Collections.Generic",
+        "System.Threading",
+        "System.Threading.Tasks");
+
+    /// <summary>
     /// Creates a class type builder.
     /// </summary>
     /// <param name="name">The class name (e.g., "Customer", "Repository").</param>
@@ -97,7 +106,8 @@ public record struct TypeBuilder
         {
             Name = name,
             Kind = TypeKind.Class,
-            Accessibility = Accessibility.Public
+            Accessibility = Accessibility.Public,
+            Usings = DefaultUsings
         };
     }
 
@@ -114,7 +124,8 @@ public record struct TypeBuilder
         {
             Name = name,
             Kind = TypeKind.Interface,
-            Accessibility = Accessibility.Public
+            Accessibility = Accessibility.Public,
+            Usings = DefaultUsings
         };
     }
 
@@ -131,7 +142,8 @@ public record struct TypeBuilder
         {
             Name = name,
             Kind = TypeKind.Struct,
-            Accessibility = Accessibility.Public
+            Accessibility = Accessibility.Public,
+            Usings = DefaultUsings
         };
     }
 
@@ -149,7 +161,8 @@ public record struct TypeBuilder
             Name = name,
             Kind = TypeKind.Class,
             IsRecord = true,
-            Accessibility = Accessibility.Public
+            Accessibility = Accessibility.Public,
+            Usings = DefaultUsings
         };
     }
 
