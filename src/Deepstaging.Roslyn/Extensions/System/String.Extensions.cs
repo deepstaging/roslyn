@@ -303,6 +303,22 @@ public static class StringExtensions
             : char.ToUpperInvariant(text[0]) + text.Substring(1);
 
         private bool IsAllUppercase() => !string.IsNullOrEmpty(text) && text.All(c => !char.IsLetter(c) || char.IsUpper(c));
+
+        /// <summary>
+        /// Returns the plural form of the string (e.g., "person" → "people", "cat" → "cats").
+        /// </summary>
+        /// <returns>The plural form of the string.</returns>
+        public string Pluralize() => string.IsNullOrEmpty(text)
+            ? text
+            : EnglishInflector.Pluralize(text);
+
+        /// <summary>
+        /// Returns the singular form of the string (e.g., "people" → "person", "cats" → "cat").
+        /// </summary>
+        /// <returns>The singular form of the string.</returns>
+        public string Singularize() => string.IsNullOrEmpty(text)
+            ? text
+            : EnglishInflector.Singularize(text);
     }
 
     private static bool ShouldInsertUnderscore(UnicodeCategory? previousCategory, int currentIndex, string text)
